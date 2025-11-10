@@ -1,0 +1,77 @@
+# =====================================
+# 🌐 NODE E BACKEND
+# =====================================
+
+# Dependências
+node_modules/
+package-lock.json
+
+# Builds e logs
+dist/
+build/
+coverage/
+logs/
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ambiente
+.env
+.env.backup
+.env.example
+
+# Configurações locais do VSCode / IDE
+.vscode/
+.idea/
+
+# Arquivos temporários e cache
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# =====================================
+# 🧪 TESTES E QA
+# =====================================
+
+# Relatórios e evidências geradas
+test-output/
+reports/
+screenshots/
+evidences/
+coverage/
+mochawesome-report/
+
+# Arquivos temporários de testes
+*.spec.js.map
+*.test.js.map
+
+# =====================================
+# 📝 DOCUMENTAÇÃO E QA
+# =====================================
+
+# Documentos Word, PDF e planilhas locais
+*.docx
+*.pdf
+*.xlsx
+*.xls
+*.pptx
+
+# (exceto se quiser manter uma pasta docs)
+!docs/
+!documentos/
+
+# =====================================
+# 🧰 SISTEMA OPERACIONAL E UTILITÁRIOS
+# =====================================
+
+# Windows
+desktop.ini
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon?

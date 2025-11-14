@@ -1,4 +1,0 @@
-    "/auth/logout": {
-      "post": { "tags": ["Auth"], "summary": "Revoga o token atual", "responses": { "204": { "description": "Deslogado" } } }
-    },
-    "/customers": {

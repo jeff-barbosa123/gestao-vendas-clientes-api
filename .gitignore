@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 node_modules/
 .env
 .DS_Store
@@ -9,3 +10,16 @@ coverage/
 .env.local
 .env.*.local
 
+=======
+# GLOBAL BACKEND + QA IGNORE
+# ==========================
+node_modules/
+.env
+dist/
+coverage/
+.vscode/
+.idea/
+*.log
+.env.local
+.env.*.local
+>>>>>>> 6d7b62e (refactor: organizar Documentação em pastas e limpar arquivos duplicados)

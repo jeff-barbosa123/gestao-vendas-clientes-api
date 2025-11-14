@@ -1,5 +1,19 @@
 [
-  { "name": "Cliente Teste 1", "email": "cliente1+test@example.com", "phone": "11999990001" },
-  { "name": "Cliente Teste 2", "email": "cliente2+test@example.com", "phone": "11999990002" }
+  {
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test@example.com",
+    "phone": "11999990001"
+  },
+  {
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test@example.com",
+    "phone": "11999990002"
+  },
+  {
+    "id": "e35d8daa-1654-45f4-a727-f0cca78458b3",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-10T18:25:40.893Z"
+  }
 ]
-

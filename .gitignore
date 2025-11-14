@@ -1,25 +1,32 @@
-<<<<<<< HEAD
+# GLOBAL BACKEND + QA IGNORE
+# ==========================
+
+# Node modules
 node_modules/
+
+# Env files
 .env
-.DS_Store
-.vscode/
-.idea/
-dist/
-coverage/
-*.log
 .env.local
 .env.*.local
 
-=======
-# GLOBAL BACKEND + QA IGNORE
-# ==========================
-node_modules/
-.env
-dist/
-coverage/
+# System
+.DS_Store
+
+# IDE / Editor
 .vscode/
 .idea/
+
+# Build / Coverage
+dist/
+coverage/
+
+# Logs
 *.log
-.env.local
-.env.*.local
->>>>>>> 6d7b62e (refactor: organizar Documentação em pastas e limpar arquivos duplicados)
+
+# Arquivos temporários
+Tmp/
+tmp_*.txt
+temp_tail_swagger.txt
+
+# Backup
+README.backup.MD

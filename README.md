@@ -1,4 +1,4 @@
-﻿![Banner do projeto](banner-qa-jefferson-paulo.png)
+﻿![Banner do projeto](https://cdn.jsdelivr.net/gh/jeff-barbosa123/gestao-vendas-clientes-api@main/banner-qa-jefferson-paulo.png)
 
 # Gestão de Vendas e Clientes (API)
 
@@ -99,5 +99,7 @@ gestao-vendas-clientes-api/
 Jefferson Barbosa — Técnico de Qualidade / QA / Automação de Testes  
 GitHub: https://github.com/jeff-barbosa123  
 LinkedIn: https://www.linkedin.com/in/jeffersonpaulo-
+
+
 
 

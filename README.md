@@ -1,106 +1,107 @@
-🧩 README.md — API de Gestão de Vendas e Clientes
-# 💼 Software para Gestão de Vendas e Clientes
+﻿![Banner do projeto](banner-qa-jefferson-paulo.png)
 
-API RESTful desenvolvida durante o **Implementation Day**, com o objetivo de gerenciar **clientes, produtos e vendas** de microempreendedores.
+# Gestão de Vendas e Clientes (API)
 
----
+API REST em evolução para microempreendedores controlarem clientes, produtos e vendas. Nasceu em um Implementation Day e segue como portfólio em desenvolvimento, com ênfase em regras de negócio, segurança e qualidade automatizada.
 
-## ⚙️ Tecnologias Utilizadas
+## Status do MVP e foco atual
+- Status: em andamento (armazenamento em memória, sem persistência ainda).
+- Segurança: JWT com bloqueio após 3 tentativas (15 min) e expiração por inatividade (30 min); próximos passos incluem hash de senha e rate limiting.
+- Qualidade: suíte de testes Mocha/Chai/Supertest e planos/documentos de QA; pipeline CI/CD a habilitar.
+- Board publico: https://github.com/users/jeff-barbosa123/projects/6
 
-- **Node.js** + **Express**
-- **JWT Authentication**
-- **Swagger UI** para documentação
-- **Mocha + Chai** para testes automatizados
-- **Cypress / Postman** para automação QA
-- **Git + GitHub** para versionamento e integração contínua
+## Destaques do produto
+- Autenticação JWT com logout que revoga tokens.
+- CRUD de clientes e produtos com validação e e-mail único.
+- Registro e cancelamento de vendas; faturamento diário, semanal e mensal com filtros por período.
+- Relatórios exportáveis em CSV, PDF ou Excel; Swagger interativo em `/api-docs`.
+- MVP em memória para acelerar demonstração e iteração.
 
----
+## Stack e arquitetura
+- Node.js 18+, Express, CORS, JWT, Swagger UI, PDFKit, uuid.
+- Camadas: `routes` → `controllers` → `services` → `models` + `middleware` (auth/erros).
+- Swagger em `api/resources/swagger.json`, servido via `/api-docs`.
 
-## 📁 Estrutura de Pastas
+## Endpoints principais
+- Auth: `POST /api/auth/login`, `POST /api/auth/logout`
+- Clientes: `GET|POST /api/customers`, `PUT|DELETE /api/customers/:id`
+- Produtos: `GET|POST /api/products`, `PUT|DELETE /api/products/:id`
+- Vendas: `GET|POST /api/sales`, `PUT /api/sales/:id`, `DELETE /api/sales/:id`
+- Relatórios: `GET /api/reports/revenue`, `GET /api/reports/revenue/export?format=csv|pdf|excel`
 
+## Execução local
+1) Pré-requisitos: Node.js 18+ e npm.
+2) Clone o repositório:
 ```bash
-📦 Software-para-Gestao-de-Vendas-e-Clientes
-├── 📁 API
-│   ├── src/                # Código-fonte principal
-│   ├── test/               # Testes automatizados (Mocha / Chai)
-│   ├── package.json        # Dependências e scripts
-│   ├── .gitignore          # Regras de exclusão do Git
-│   └── README.md           # Documentação local da API
-│
-├── 📁 Documentação          # Planos de teste, estratégias e artefatos QA
-├── .env.exemplo             # Modelo de variáveis de ambiente
-├── .gitignore               # Ignora node_modules, .env e caches
-└── README.md                # Este arquivo
-
-🚀 Como Executar o Projeto
-1️⃣ Clonar o repositório:
-git clone https://github.com/jeff-barbosa123/Software-para-Gest-o-de-Vendas-e-Clientes.git
-
-2️⃣ Acessar a pasta da API:
-cd Software-para-Gest-o-de-Vendas-e-Clientes/API
-
-3️⃣ Instalar dependências:
+git clone https://github.com/jeff-barbosa123/gestao-vendas-clientes-api.git
+cd gestao-vendas-clientes-api
+```
+3) Instale dependências:
+```bash
 npm install
-
-4️⃣ Criar o arquivo .env:
-
-Baseado no .env.exemplo da raiz.
-
-Exemplo:
-
+```
+4) Crie `.env` (raiz ou `api/.env`):
+```env
 PORT=3000
-JWT_SECRET=minha_chave_segura
+JWT_SECRET=sua_chave_segura
+BASE_URL=http://localhost:3000/api
+ADMIN_EMAIL=admin@negocio.com
+ADMIN_PASSWORD=admin123
+```
+5) Rode a API:
+- Desenvolvimento: `npm run dev`
+- Produção/local: `npm start`
 
-5️⃣ Iniciar o servidor:
-npm start
+- Base: `http://localhost:3000/api`
+- Swagger: `http://localhost:3000/api-docs`
+- Credenciais demo: `admin@negocio.com` / `admin123`
+
+## Documentação e QA
+- Escopo de validação: `Documentação/condiçoes de teste.txt`.
+- Plano de teste de Login: `Documentação/Plano_de_Teste_da_Funcionalidade_Login_SGVC.docx`.
+- Plano e Estratégia de Testes (MVP 1.0): `Documentação/Plano_e_Estrategia_de_Testes_Adaptada_SGVC(MVP 1.0).docx`.
+- Plano e Estratégia de Testes (revisão): `Documentação/Plano_e_Estrategia_de_Testes_Adaptada_SGVC.docx` e `Documentação/Plano_e_Estrategia_de_Testes_Adaptada_SGVC.docx.docx`.
+- Relatórios de sessão:
+  - `Documentação/Relatório_de_Sessão_Funcionalidade_Login_Empreendedores_SGVC.docx`
+  - `Documentação/Relatório_de_Sessão_Funcionalidade_Cadastro_de_Clientes_Produtos_SGVC.docx`
+
+## Testes e qualidade
+- Testes de API: `npm test`
+- Relatório HTML: `npm run test:report` (saída em `api/reports`)
+- Evidências e planos adicionais na pasta `Documentação/`
+
+## Estrutura de pastas
+```
+gestao-vendas-clientes-api/
+├─ api/
+│  ├─ src/
+│  │  ├─ routes/          # Rotas da API
+│  │  ├─ controllers/     # Orquestra requisições/respostas
+│  │  ├─ services/        # Regras de negócio
+│  │  ├─ middleware/      # Autenticação e erros
+│  │  └─ models/          # Armazenamento em memória (MVP)
+│  ├─ test/               # Mocha, Chai, Supertest, fixtures
+│  └─ resources/swagger.json
+├─ Documentação/          # Evidências e planos de teste
+├─ .env.example
+└─ README.md
+```
+
+## Roadmap (próximas entregas)
+- Persistência (Postgres/NoSQL) e migração de dados.
+- Hardening de segurança: hash de senhas, rate limiting por IP, logs de auditoria.
+- Observabilidade: logs estruturados e métricas; alertas básicos.
+- CI/CD: pipeline com lint, testes e publicação de relatórios.
+- Analytics/finanças: dashboard de faturamento e CMV avançado.
+
+## Autor
+Jefferson Barbosa — Técnico de Qualidade / QA / Automação de Testes  
+GitHub: https://github.com/jeff-barbosa123  
+LinkedIn: https://www.linkedin.com/in/jeffersonpaulo-
 
 
-A API ficará disponível em:
-👉 http://localhost:3000
 
-🧪 Testes Automatizados
-Testes unitários (Mocha + Chai)
-npm test
 
-Testes de integração (Postman / Cypress)
 
-Arquivos de coleção disponíveis em /Documentação/fixtures
 
-Logs e evidências em /Documentação/reports
 
-📊 Documentação Swagger
-
-Acesse:
-👉 http://localhost:3000/api-docs
-
-Interface interativa para explorar e testar os endpoints da API.
-
-🧱 Funcionalidades Principais
-Endpoint	Método	Descrição
-/auth/login	POST	Autenticação de empreendedores
-/clientes	CRUD	Cadastro e consulta de clientes
-/produtos	CRUD	Cadastro de produtos
-/vendas	POST	Registro de vendas e faturamento
-/relatorios	GET	Visualização de faturamento total
-👩‍💻 Sobre o Projeto
-
-Este projeto foi criado como parte de um desafio técnico para consolidar conhecimentos em:
-
-Qualidade de Software (QA)
-
-Automação de Testes
-
-Desenvolvimento de APIs REST
-
-Documentação e boas práticas ágeis
-
-🧩 Autor
-
-Jefferson Barbosa
-📧 GitHub https://github.com/jeff-barbosa123
-
-💼 Técnico de Qualidade | QA | Automação de Testes
-🌐 LinkedIn https://www.linkedin.com/in/jeffersonpaulo-/
-
-📄 Licença: MIT
-Desenvolvido com ❤️ e foco em qualidade.

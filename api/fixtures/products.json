@@ -1,5 +1,15 @@
 [
-  { "name": "Produto Teste A", "price": 19.9, "stock": 10 },
-  { "name": "Produto Teste B", "price": 5.5, "stock": 100 }
+  {
+    "name": "Produto Teste A",
+    "price": 19.9,
+    "purchase_price": 11.5,
+    "stock": 10
+  },
+  {
+    "name": "Produto Teste B",
+    "price": 5.5,
+    "purchase_price": 2.5,
+    "stock": 100
+  }
 ]
 

@@ -15,5 +15,1776 @@
     "email": "jefferson.p.barbosa@gmail.com",
     "phone": "81-997707039",
     "createdAt": "2025-11-10T18:25:40.893Z"
+  },
+  {
+    "id": "03e05dbf-e785-4cde-b2b8-76e1a2593bf9",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T05:13:19.208Z"
+  },
+  {
+    "id": "6a891839-dbf1-4058-a505-0a5a48ddb3db",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T05:17:34.688Z"
+  },
+  {
+    "id": "f1fc85e8-4890-4e98-924c-0911426f0271",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T05:20:49.694Z"
+  },
+  {
+    "id": "9842f672-170d-4c30-acf6-d7b9ed5eb2c6",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T05:21:59.581Z"
+  },
+  {
+    "id": "8a869dcb-40c0-4643-8b7a-d8f86eb3050e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T05:24:13.874Z"
+  },
+  {
+    "id": "61370d97-2848-4ac6-a502-a24396d8c55d",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T17:07:03.421Z"
+  },
+  {
+    "id": "77de02a9-1761-4113-a5fc-267ea8a3d754",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T17:07:03.429Z"
+  },
+  {
+    "id": "a97a9db0-0748-4fe9-8cbf-fe597db74cd8",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T17:07:03.435Z"
+  },
+  {
+    "id": "c6811fdd-c9ac-4e44-baf6-dc1afab06fea",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T17:07:03.441Z"
+  },
+  {
+    "id": "4d82d3f8-f35b-4557-92ea-a8aa4e11d6f2",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T17:07:03.446Z"
+  },
+  {
+    "id": "846648a0-ec3f-48cc-a1eb-577ff5f9c627",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T17:07:03.451Z"
+  },
+  {
+    "id": "9e49d8ab-aa63-4f62-8c12-d2afaa4740cf",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T17:07:03.457Z"
+  },
+  {
+    "id": "7e5b4e5a-3cf9-4183-bb8a-cd4b43ac6ec4",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T17:07:03.567Z"
+  },
+  {
+    "id": "a4ec6b99-1bd7-4a9f-9882-3c97bf32f4f2",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:08:19.646Z"
+  },
+  {
+    "id": "614bd751-d4ad-488d-90aa-171dddb801f3",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:08:19.654Z"
+  },
+  {
+    "id": "ed2ef0ed-529c-4425-b978-791e6e1ea9a8",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:08:19.665Z"
+  },
+  {
+    "id": "dfccbdf5-52b1-437c-afb2-ad4d2a884781",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.673Z"
+  },
+  {
+    "id": "1405c12f-6fa6-4d6e-b0fe-ebc5d259d467",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.680Z"
+  },
+  {
+    "id": "749d0994-9843-438f-8513-1d4834fac5e8",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.686Z"
+  },
+  {
+    "id": "117e0fcf-3232-4f6e-9a5e-03442cb5bdd1",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.692Z"
+  },
+  {
+    "id": "4ae17627-aa5f-4d93-bd6a-7a7ea7f5c56e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.700Z"
+  },
+  {
+    "id": "6f0c021d-d2df-4562-a439-578f0ffd56e8",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:08:19.707Z"
+  },
+  {
+    "id": "533ed73e-49c4-4598-91d1-8d0c662d4394",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:08:19.713Z"
+  },
+  {
+    "id": "99aad07a-9cac-4c4c-bde3-3d4bf3a126a3",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:08:19.719Z"
+  },
+  {
+    "id": "4c1a0cc3-fe4b-43f2-a579-af59d99c1b70",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.726Z"
+  },
+  {
+    "id": "f394a148-a14c-429f-a11f-4e701ea808f7",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.732Z"
+  },
+  {
+    "id": "3c793811-d58d-43b1-8f4f-6a57e38fbbb9",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.738Z"
+  },
+  {
+    "id": "2144b427-ebc5-4b13-b1b2-5a4738a6028f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.744Z"
+  },
+  {
+    "id": "5b4b3295-c860-4848-b7e9-0f1102cd4252",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316499936@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:08:19.944Z"
+  },
+  {
+    "id": "af491bf3-f906-42ca-840a-22e266b3d7c3",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316690215@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:11:30.222Z"
+  },
+  {
+    "id": "feffda48-661f-4861-a7de-fea8dc69b259",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316690226@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:11:30.231Z"
+  },
+  {
+    "id": "84fcb3a3-890b-4325-a63c-a9234e410db9",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316690233@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:11:30.241Z"
+  },
+  {
+    "id": "3b581886-7214-4479-94a4-598ac9671bf4",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316690244@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.252Z"
+  },
+  {
+    "id": "3f09bb89-a84b-4762-b2cc-b31fe4dea608",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316690255@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.261Z"
+  },
+  {
+    "id": "1d7b836c-c716-4c52-bbb1-47847fcf9a3d",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316690264@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.269Z"
+  },
+  {
+    "id": "57acefad-117d-46cb-a9d6-027e02a4b040",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316690271@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.275Z"
+  },
+  {
+    "id": "70b1ec32-002f-4acf-b7b6-264578a95f26",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316690278@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.283Z"
+  },
+  {
+    "id": "60399e33-91f3-4282-85e4-39740bcb328b",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316690285@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:11:30.289Z"
+  },
+  {
+    "id": "f2dafab9-67e7-4efa-81a6-63db8fc0028b",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316690291@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:11:30.295Z"
+  },
+  {
+    "id": "b1bb4e2d-eefd-4887-8ae6-491253411e82",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316690297@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:11:30.301Z"
+  },
+  {
+    "id": "8da860bc-b327-4dea-bea7-4c1334160ce8",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316690304@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.308Z"
+  },
+  {
+    "id": "a469077e-ca63-4480-b33a-be510c803339",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316690310@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.314Z"
+  },
+  {
+    "id": "65fc06c5-645f-440d-a81f-57328e7dbd16",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316690315@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.320Z"
+  },
+  {
+    "id": "d1125227-f2f2-4cb7-9706-b2a45782e5b1",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316690322@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.326Z"
+  },
+  {
+    "id": "b9df5117-5509-4ad4-bb0d-cdb9bcc1bef0",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316690328@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.331Z"
+  },
+  {
+    "id": "fab9cf85-8e2d-4320-b3e6-eb0755dfcb32",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316690333@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:11:30.338Z"
+  },
+  {
+    "id": "09fae5ef-3f6b-410a-8616-e83d047841e7",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316690340@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:11:30.344Z"
+  },
+  {
+    "id": "e078e83a-0eac-49a2-b144-ef4a89e1d345",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316690346@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:11:30.350Z"
+  },
+  {
+    "id": "920058c1-b4c7-4b87-9ab3-a4c51e4edb04",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316690352@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.356Z"
+  },
+  {
+    "id": "87e55699-8efe-4b35-8936-d546cd732202",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316690358@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.362Z"
+  },
+  {
+    "id": "17d968ad-7c83-40e3-ab31-640ddf9d11d3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316690363@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.367Z"
+  },
+  {
+    "id": "50cab6a2-cf6c-4846-80ef-fc3e98542fe4",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316690370@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.374Z"
+  },
+  {
+    "id": "963b2b55-a18f-4585-b567-2e98f026d409",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316690375@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.379Z"
+  },
+  {
+    "id": "f840aae3-b4e1-4ed1-bb69-3ce4c32d4742",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316690381@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:11:30.385Z"
+  },
+  {
+    "id": "addfc3d1-8f6f-42c0-b49a-e5ad607fd66f",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316690387@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:11:30.390Z"
+  },
+  {
+    "id": "81020463-9311-4e1b-8f2a-f4f2232c134d",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316690398@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:11:30.402Z"
+  },
+  {
+    "id": "165ba54a-7d94-409a-ac78-4c105cbf0aa8",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316690404@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.408Z"
+  },
+  {
+    "id": "3fecac18-2205-4aab-ac94-c44fe033ba6c",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316690409@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.413Z"
+  },
+  {
+    "id": "98b22c9d-0a1a-45ec-8cd6-a743e7783116",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316690415@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.419Z"
+  },
+  {
+    "id": "966e8b14-ec84-43bf-8796-2e40c63f1198",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316690421@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.425Z"
+  },
+  {
+    "id": "81df849d-fdc5-4cff-a942-ae25fcc324e3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316690597@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:11:30.602Z"
+  },
+  {
+    "id": "b017f480-d74d-479f-aa54-8306b7bdf781",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316896031@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.037Z"
+  },
+  {
+    "id": "b0794150-5a08-451c-9640-dd9633271697",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316896042@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.047Z"
+  },
+  {
+    "id": "c7b0a85d-5945-4e26-8e2e-38cf2ed426e8",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316896051@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.059Z"
+  },
+  {
+    "id": "cd306753-40d7-4dec-aff2-cecce48e36b0",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316896063@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.069Z"
+  },
+  {
+    "id": "ae13cc85-a2f4-42e5-aa22-8168216829e1",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316896073@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.078Z"
+  },
+  {
+    "id": "438b00b2-0780-4c55-a6e7-2bc36c50a309",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316896081@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.085Z"
+  },
+  {
+    "id": "f7a8c1c2-7270-4307-aed0-849e91cc9a2e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316896088@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.091Z"
+  },
+  {
+    "id": "57e2eafa-7194-46a3-81c6-227d49c57725",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316896094@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.098Z"
+  },
+  {
+    "id": "163baacb-cc90-4122-8856-58d5cc9f037e",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316896100@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.103Z"
+  },
+  {
+    "id": "d185e118-1aa2-47b6-a680-6b249afed4d9",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316896106@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.109Z"
+  },
+  {
+    "id": "ee07240c-1fa1-430b-959d-e006e68d5bed",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316896112@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.115Z"
+  },
+  {
+    "id": "289bdd9f-c620-4743-a9ab-1fdbeef2cc03",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316896118@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.121Z"
+  },
+  {
+    "id": "6f8ab2a9-a577-4e2b-8374-c0fd38f7a82a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316896124@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.127Z"
+  },
+  {
+    "id": "0b28349f-c030-41ab-bd66-f899ffbde6e7",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316896129@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.134Z"
+  },
+  {
+    "id": "36b1213c-0eeb-4897-9b2a-ba06424e4021",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316896141@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.144Z"
+  },
+  {
+    "id": "f9f61bd9-60f7-41e5-862b-8dacc94e3e8d",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316896147@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.151Z"
+  },
+  {
+    "id": "b62466aa-083d-443a-86be-727d0caef409",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316896153@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.157Z"
+  },
+  {
+    "id": "14676eb2-c32a-4ed6-a049-ea29e5142086",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316896160@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.163Z"
+  },
+  {
+    "id": "ef733e5d-8351-4917-a8f6-bf2e2fc7562b",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316896166@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.169Z"
+  },
+  {
+    "id": "9e4ceb6e-3a2c-40b8-838d-55eefbc78275",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316896171@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.175Z"
+  },
+  {
+    "id": "c5488466-e81c-4b9e-a45b-ceb99ee4542a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316896178@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.181Z"
+  },
+  {
+    "id": "134b6bc3-3731-4d87-a8d1-e48a78cfae12",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316896184@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.187Z"
+  },
+  {
+    "id": "36d4c078-d604-474f-a8f9-09fa226e4ff3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316896189@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.193Z"
+  },
+  {
+    "id": "94077da8-f76a-4d93-837a-c6909111feaf",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316896196@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.199Z"
+  },
+  {
+    "id": "d78a82da-7868-4ce5-9730-c70d6e2b9fbd",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316896201@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.204Z"
+  },
+  {
+    "id": "272e1a3c-349f-4b2d-8cb2-0393a3fd0d60",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316896207@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.210Z"
+  },
+  {
+    "id": "b67f0029-d52f-44d2-951b-b66954ea0275",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316896213@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.216Z"
+  },
+  {
+    "id": "4932015f-fa2b-4054-98f8-3ca175f342f9",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316896218@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.221Z"
+  },
+  {
+    "id": "b9f7bfe8-85f4-4806-bd12-eb40217f4643",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316896223@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.226Z"
+  },
+  {
+    "id": "b5d2a4e9-a9f9-40f8-97a2-580260b9092f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316896228@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.232Z"
+  },
+  {
+    "id": "9e73fc73-7a86-44ab-a48e-dff68f15d975",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316896234@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.237Z"
+  },
+  {
+    "id": "9a0d1e51-e71d-4c96-a19f-2baf7cdbd2c3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316499936+1763316896240@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.243Z"
+  },
+  {
+    "id": "1b220058-f491-4e1a-aafc-b395566b8042",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316690215+1763316896246@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.249Z"
+  },
+  {
+    "id": "81aabf23-c210-4d6c-9cc8-423a61e741f6",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316690226+1763316896251@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.255Z"
+  },
+  {
+    "id": "fa658633-1a4c-48c6-8383-fccac4f9d00e",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316690233+1763316896257@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.260Z"
+  },
+  {
+    "id": "1a27f05f-ce9e-44ad-b019-6a66a22da47d",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316690244+1763316896263@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.266Z"
+  },
+  {
+    "id": "f5d0df82-c17e-4a51-99a4-9d52aaeb83fe",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316690255+1763316896269@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.272Z"
+  },
+  {
+    "id": "62703584-a98d-4655-a36c-e00150916e0f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316690264+1763316896275@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.277Z"
+  },
+  {
+    "id": "26b97c59-6bd4-46d9-b887-889fc0bae05d",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316690271+1763316896280@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.283Z"
+  },
+  {
+    "id": "4f93ad32-4d29-4a93-98f0-b8c4feb9159c",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316690278+1763316896286@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.289Z"
+  },
+  {
+    "id": "863c6478-f117-4ae5-a2cb-00e65701a362",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316690285+1763316896291@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.294Z"
+  },
+  {
+    "id": "38a909ee-34b3-48bd-8d8c-9ee03f3b5dd1",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316690291+1763316896297@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.300Z"
+  },
+  {
+    "id": "a060915d-6e9c-457c-bca3-97de26417b18",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316690297+1763316896302@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.305Z"
+  },
+  {
+    "id": "cad8052e-6bea-423c-8201-85fc72410e3f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316690304+1763316896307@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.310Z"
+  },
+  {
+    "id": "aabd59d3-141b-4df5-af20-7a86035c1a7c",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316690310+1763316896313@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.316Z"
+  },
+  {
+    "id": "ea2772d4-8b1f-4c1b-89ee-66d389e5d27e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316690315+1763316896319@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.322Z"
+  },
+  {
+    "id": "87f3e35a-4b1c-4583-b4c6-0a91ef28c588",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316690322+1763316896324@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.327Z"
+  },
+  {
+    "id": "78fa2cc2-181d-4811-a687-3a91aa47d319",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316690328+1763316896330@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.334Z"
+  },
+  {
+    "id": "b0665f0d-a30c-4d87-81a7-a86485f69397",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316690333+1763316896336@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.340Z"
+  },
+  {
+    "id": "db79fdc7-9064-4e82-b426-2d4d7bfca0da",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316690340+1763316896342@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.346Z"
+  },
+  {
+    "id": "31564946-d1a6-4a2c-80f0-e979bd274090",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316690346+1763316896349@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.352Z"
+  },
+  {
+    "id": "df186ad3-3a94-4cd4-9080-bcf730f0872a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316690352+1763316896355@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.358Z"
+  },
+  {
+    "id": "0806b96d-4126-4362-afd6-711cf3db67e6",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316690358+1763316896362@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.365Z"
+  },
+  {
+    "id": "52c0446b-14e3-4076-b506-abee71078f39",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316690363+1763316896369@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.371Z"
+  },
+  {
+    "id": "8befa89c-90fe-4072-b945-9d246c705d0f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316690370+1763316896374@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.377Z"
+  },
+  {
+    "id": "6fc6e684-ae06-4b2e-a01c-6303a8d273fb",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316690375+1763316896380@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.384Z"
+  },
+  {
+    "id": "477e9b76-1f22-4203-af72-2d0a2fbdf293",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316690381+1763316896386@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T18:14:56.389Z"
+  },
+  {
+    "id": "f6894a27-befb-4d87-bb58-38eace049436",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316690387+1763316896392@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T18:14:56.395Z"
+  },
+  {
+    "id": "697fa4cd-bbc2-488a-965a-04f31c021481",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316690398+1763316896398@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T18:14:56.401Z"
+  },
+  {
+    "id": "9fe7a2b7-5956-444a-abe4-e2a4f8ecafcb",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316690404+1763316896404@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.407Z"
+  },
+  {
+    "id": "555c02ff-6dab-48fe-8011-248635b56bd0",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316690409+1763316896410@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.412Z"
+  },
+  {
+    "id": "e20ad1d6-4dd6-4eb5-abfb-fc45c0d8ad50",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316690415+1763316896415@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.418Z"
+  },
+  {
+    "id": "0f7c3747-b197-479d-b3fe-f19c6fde5f2a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316690421+1763316896421@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.425Z"
+  },
+  {
+    "id": "aa995b2e-2740-4bdf-80df-836470035572",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316896617@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T18:14:56.621Z"
+  },
+  {
+    "id": "28c58c99-0ccf-4e4a-abc8-ed1b46e623ee",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763335917485@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.490Z"
+  },
+  {
+    "id": "95fcd563-984e-46ce-bbbf-263c667dd7ca",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763335917493@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.497Z"
+  },
+  {
+    "id": "86996122-794e-4683-95dc-4b289577797a",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763335917499@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.504Z"
+  },
+  {
+    "id": "a6fcbf01-0e23-42a8-9642-fdf396a984bb",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763335917506@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.510Z"
+  },
+  {
+    "id": "ebbee1a0-bc38-492e-a58d-109f4a9752b5",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763335917512@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.517Z"
+  },
+  {
+    "id": "919715a9-a944-4fdd-8908-8ef6bc7cec66",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763335917518@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.522Z"
+  },
+  {
+    "id": "c7139a0a-0c49-40ca-9863-dfd2515b247e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763335917524@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.527Z"
+  },
+  {
+    "id": "935e1b9e-c6dd-42b4-8dfa-00839598a56a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763335917529@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.533Z"
+  },
+  {
+    "id": "57ac579f-79a5-4ede-b16e-82ee2d1ad273",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763335917534@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.537Z"
+  },
+  {
+    "id": "ae27e7d7-3c80-4031-9aed-5a7ad4286def",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763335917539@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.543Z"
+  },
+  {
+    "id": "f591451e-f77d-4ecf-91b1-e7cd166b6d08",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763335917544@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.548Z"
+  },
+  {
+    "id": "24d2d983-c1e9-4e18-9fbb-b068b7088c69",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763335917550@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.553Z"
+  },
+  {
+    "id": "665f881a-bd61-42d2-938c-96ef25aa18ca",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763335917555@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.558Z"
+  },
+  {
+    "id": "8defa3c7-aaa6-4901-87d3-996b6ef8c709",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763335917560@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.563Z"
+  },
+  {
+    "id": "d6e0561a-6442-4dd5-99a7-c9f31859363f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763335917564@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.568Z"
+  },
+  {
+    "id": "2fcf8c65-b523-40be-a3ae-aec167e737ee",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763335917569@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.572Z"
+  },
+  {
+    "id": "7e4b28c8-09f5-433a-82e3-5626a2fa5e2b",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763335917573@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.577Z"
+  },
+  {
+    "id": "7d247600-1596-4bd1-8aa6-2a5fe7b782d2",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763335917578@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.581Z"
+  },
+  {
+    "id": "cd240f52-5432-4b54-9eee-1b2d58e74570",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763335917582@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.586Z"
+  },
+  {
+    "id": "1cf0f1e6-dcc1-4927-9962-9119f944d450",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763335917587@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.590Z"
+  },
+  {
+    "id": "82747a3d-46e9-4597-af43-4f9e8e99d9a6",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763335917591@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.594Z"
+  },
+  {
+    "id": "43a09d72-da19-433a-af5d-b47719a7e6e1",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763335917595@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.599Z"
+  },
+  {
+    "id": "ec0eabd3-5f2d-4cf5-b7c0-d93c5da6c83a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763335917601@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.604Z"
+  },
+  {
+    "id": "378e04b5-ed6f-4305-b8b5-9e2bf7854f9b",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763335917605@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.609Z"
+  },
+  {
+    "id": "f7721439-44f4-4ba3-a610-54eadcc11977",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763335917610@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.613Z"
+  },
+  {
+    "id": "e45474ce-c5ad-4716-8c67-fac887e9e4ba",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763335917615@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.618Z"
+  },
+  {
+    "id": "9399cdd7-6437-427b-a134-876394cab3b2",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763335917620@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.623Z"
+  },
+  {
+    "id": "448494d6-e7c1-492a-af91-702964d58259",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763335917624@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.628Z"
+  },
+  {
+    "id": "66674fed-1a01-459a-aad1-754b54a4a8ce",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763335917629@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.632Z"
+  },
+  {
+    "id": "f5069c50-4d29-4161-b8f8-74a0c40b2d74",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763335917634@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.637Z"
+  },
+  {
+    "id": "22e44214-40f3-4a80-ba05-21781673bf7b",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763335917638@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.641Z"
+  },
+  {
+    "id": "0b77b5fd-a61c-43d7-9625-ae680fa5cbea",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316499936+1763335917642@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.645Z"
+  },
+  {
+    "id": "1ca64452-feb8-476e-8b3e-d02a37b9e8eb",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316690215+1763335917646@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.650Z"
+  },
+  {
+    "id": "cf61c643-9ef1-4bc6-a76c-a112ad8d847e",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316690226+1763335917652@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.655Z"
+  },
+  {
+    "id": "b5b4df62-8c9e-40d7-825a-b0f206f8a449",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316690233+1763335917656@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.658Z"
+  },
+  {
+    "id": "8d84d378-50e9-4923-aec7-c44fd7f6cfb3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316690244+1763335917660@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.662Z"
+  },
+  {
+    "id": "a5d7b14a-cdea-4b6c-83cf-7178e778cc46",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316690255+1763335917664@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.668Z"
+  },
+  {
+    "id": "5b5ed8c6-88a4-4003-be17-9b7524775dc9",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316690264+1763335917670@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.673Z"
+  },
+  {
+    "id": "66064908-cafd-4f1c-94fd-da60a61a5b26",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316690271+1763335917674@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.677Z"
+  },
+  {
+    "id": "d4714174-f171-4479-b12f-6b4435673bbf",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316690278+1763335917678@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.682Z"
+  },
+  {
+    "id": "f559097c-2dff-4fa6-93d2-2c41425a2519",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316690285+1763335917683@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.687Z"
+  },
+  {
+    "id": "f4ef9536-93cc-44d0-8583-a42b3e622615",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316690291+1763335917688@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.691Z"
+  },
+  {
+    "id": "2d46e668-d91b-4d38-8729-9859d660473d",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316690297+1763335917692@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.695Z"
+  },
+  {
+    "id": "734ca877-c3ca-4896-aff8-63f79f80291f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316690304+1763335917697@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.701Z"
+  },
+  {
+    "id": "e0bd0dd5-bd3c-4d29-88d2-62912d5e96bd",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316690310+1763335917702@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.705Z"
+  },
+  {
+    "id": "1b846756-56b9-4e1b-bd81-bdf75f2671d1",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316690315+1763335917706@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.710Z"
+  },
+  {
+    "id": "58efbedf-e5bc-465c-b7f7-ad09b457b3b3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316690322+1763335917711@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.714Z"
+  },
+  {
+    "id": "5719c3f8-49a9-4501-8539-b6a33cd18ab3",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316690328+1763335917716@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.720Z"
+  },
+  {
+    "id": "b005d8de-9486-45ca-b8f2-7f26a4f1ac50",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316690333+1763335917720@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.724Z"
+  },
+  {
+    "id": "5d7f0a15-29d9-48df-a6e9-34dda2c68105",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316690340+1763335917725@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.728Z"
+  },
+  {
+    "id": "0fd2bdb4-ed7d-434d-a1ad-c5317bf12a58",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316690346+1763335917729@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.733Z"
+  },
+  {
+    "id": "a0f31a72-a6db-4c58-8f11-cde727664402",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316690352+1763335917735@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.738Z"
+  },
+  {
+    "id": "f167fe73-2a81-4aa2-8c38-5e432977daa2",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316690358+1763335917739@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.743Z"
+  },
+  {
+    "id": "569837e6-f408-441f-893e-fa1da171ff13",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316690363+1763335917744@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.747Z"
+  },
+  {
+    "id": "0f98f692-26b4-4a09-8782-c69aa767ef59",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316690370+1763335917749@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.752Z"
+  },
+  {
+    "id": "b3a4bbbd-000d-424f-ba9e-2962a74a258e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316690375+1763335917753@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.757Z"
+  },
+  {
+    "id": "2ce4d490-7a13-4a3c-9d75-1ce8b84ae392",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316690381+1763335917758@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.762Z"
+  },
+  {
+    "id": "e747ec89-548f-49d6-89e9-63ffe396b5e0",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316690387+1763335917763@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.766Z"
+  },
+  {
+    "id": "24cad653-4214-4507-8999-e3e933b6d897",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316690398+1763335917768@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.771Z"
+  },
+  {
+    "id": "f213f2ff-c6dd-4ec3-b885-62b3d1232157",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316690404+1763335917772@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.775Z"
+  },
+  {
+    "id": "dc3baa7f-2d18-49e4-964c-0a6b26125d71",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316690409+1763335917776@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.780Z"
+  },
+  {
+    "id": "45b1dadf-d041-412a-87d2-4f3c76da1364",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316690415+1763335917782@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.785Z"
+  },
+  {
+    "id": "fe0bcb19-d015-44f7-bf0b-2b148ef1f11e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316690421+1763335917786@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.790Z"
+  },
+  {
+    "id": "0687d11a-5e64-4573-9473-48d036c8e8ed",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316690597+1763335917791@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.794Z"
+  },
+  {
+    "id": "78de167e-62b3-421a-9b8c-df641880dd8e",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316896031+1763335917795@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.799Z"
+  },
+  {
+    "id": "13efd26d-0458-4df2-9a23-a4cd282ebcff",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316896042+1763335917801@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.804Z"
+  },
+  {
+    "id": "d7df9dc2-37e0-43a1-9753-74864dcd4eae",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316896051+1763335917805@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.808Z"
+  },
+  {
+    "id": "abb34bdd-50c9-4928-a295-3453344f0077",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316896063+1763335917809@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.813Z"
+  },
+  {
+    "id": "1f544f1a-86a0-451f-aea6-dee505332359",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316896073+1763335917814@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.818Z"
+  },
+  {
+    "id": "5082a146-78e9-4a04-8615-5f11400cc6cb",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316896081+1763335917819@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.822Z"
+  },
+  {
+    "id": "e056be54-9b50-4836-88f9-043de8201d99",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316896088+1763335917823@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.827Z"
+  },
+  {
+    "id": "3617d110-3d88-4701-999f-70f64f443108",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316896094+1763335917828@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.831Z"
+  },
+  {
+    "id": "9147e52d-e068-4564-b668-42d5653515c8",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316896100+1763335917832@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.836Z"
+  },
+  {
+    "id": "8d388437-453b-4bf1-ae63-ed1984ae1716",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316896106+1763335917837@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.841Z"
+  },
+  {
+    "id": "6be3d9b4-45af-4896-98e6-3664552f7c9d",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316896112+1763335917842@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.845Z"
+  },
+  {
+    "id": "3572cfdc-1293-471b-b418-b17040a50973",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316896118+1763335917846@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.850Z"
+  },
+  {
+    "id": "4edd7907-6c92-4bea-9caf-fcdd2871d688",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316896124+1763335917851@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.854Z"
+  },
+  {
+    "id": "3bb53505-042c-4a76-929d-06f8eb9a06c0",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316896129+1763335917855@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.860Z"
+  },
+  {
+    "id": "504fc5e6-3416-4542-912b-d7ec9dd94966",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316896141+1763335917861@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.864Z"
+  },
+  {
+    "id": "755f4132-4029-44cf-a2c8-e8a837ff2423",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316896147+1763335917866@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.869Z"
+  },
+  {
+    "id": "1b0fe165-ef5c-473e-9cfa-6f50fd1c89e0",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316896153+1763335917870@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.874Z"
+  },
+  {
+    "id": "de7ea872-f284-495c-9266-d30addc9c01f",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316896160+1763335917875@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.879Z"
+  },
+  {
+    "id": "8b6883be-bb80-4358-8dcc-7f183eab8e78",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316896166+1763335917880@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.884Z"
+  },
+  {
+    "id": "e218d413-3671-43cc-8b54-a7ba26de58cf",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316896171+1763335917885@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.888Z"
+  },
+  {
+    "id": "fd9a8e6b-5d5e-46fc-82a0-be8bcfba1947",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316896178+1763335917890@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.894Z"
+  },
+  {
+    "id": "3574cb70-d920-4cbe-8981-a97c399de228",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316896184+1763335917896@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.900Z"
+  },
+  {
+    "id": "f945521b-e5ad-4eba-9efa-06d80d0ff43c",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316896189+1763335917901@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.904Z"
+  },
+  {
+    "id": "b46922ca-f630-449e-9a1d-24fa9963c467",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316896196+1763335917906@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.910Z"
+  },
+  {
+    "id": "3f4534ec-b0d2-48e7-acec-e11cb19a91b4",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316896201+1763335917911@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.915Z"
+  },
+  {
+    "id": "24989e55-078e-4b03-82a7-a9e73c6c047d",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316896207+1763335917916@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.919Z"
+  },
+  {
+    "id": "08ab9d51-7483-4cd3-8dd0-91ae6885ef4c",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316896213+1763335917920@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.924Z"
+  },
+  {
+    "id": "f590b956-ee95-41f6-b023-61b23236c128",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316896218+1763335917925@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.927Z"
+  },
+  {
+    "id": "c0d5aef0-9387-4787-a965-258400191c17",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316896223+1763335917929@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.932Z"
+  },
+  {
+    "id": "dceeeaf5-afe8-4395-8da9-17a8f621e132",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316896228+1763335917934@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.937Z"
+  },
+  {
+    "id": "9b73cd96-003e-4187-a23a-dc557d1619cd",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316896234+1763335917938@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.942Z"
+  },
+  {
+    "id": "9890b4de-fe8a-4255-9e41-973329ab9d35",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763316499936+1763316896240+1763335917943@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.946Z"
+  },
+  {
+    "id": "ec99102a-525a-45b8-86e4-188ed3eae4f0",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316690215+1763316896246+1763335917947@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.952Z"
+  },
+  {
+    "id": "6bcc14e3-98ba-46e7-908b-c2d68e116254",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316690226+1763316896251+1763335917953@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.957Z"
+  },
+  {
+    "id": "32dc9acc-34dc-4643-a28d-a6c5336e531f",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316690233+1763316896257+1763335917958@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:57.961Z"
+  },
+  {
+    "id": "76ac8e0f-c18f-4996-afb0-9b4b3e397fd4",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316690244+1763316896263+1763335917962@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.966Z"
+  },
+  {
+    "id": "fecdfafb-1cf7-4796-8298-5c296ee3a88a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316690255+1763316896269+1763335917968@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.972Z"
+  },
+  {
+    "id": "4995125b-1e6f-41ce-848c-15b649780e62",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316690264+1763316896275+1763335917973@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.976Z"
+  },
+  {
+    "id": "c9f3c849-75aa-481d-b170-018db21401b8",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316690271+1763316896280+1763335917977@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.982Z"
+  },
+  {
+    "id": "ab8a1776-613c-4507-ae35-4709811a8125",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316690278+1763316896286+1763335917984@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:57.987Z"
+  },
+  {
+    "id": "1e3f5121-5b02-4dcb-86f6-8ee1abf129e2",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316690285+1763316896291+1763335917989@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:57.992Z"
+  },
+  {
+    "id": "028c17f0-4e4b-4411-aaa7-e9687abe5b3e",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316690291+1763316896297+1763335917994@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:57.997Z"
+  },
+  {
+    "id": "dc8fab4f-083b-4034-850e-2d1243d7f11d",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316690297+1763316896302+1763335917999@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:58.002Z"
+  },
+  {
+    "id": "67e3aa7d-e719-4583-83bf-a2b576ecdfca",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316690304+1763316896307+1763335918003@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.006Z"
+  },
+  {
+    "id": "7d90bd02-3f76-436d-94a2-4810962ad3e7",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316690310+1763316896313+1763335918007@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.011Z"
+  },
+  {
+    "id": "d7b5da2d-8f35-467a-ab5d-cb2cece82932",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316690315+1763316896319+1763335918012@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.016Z"
+  },
+  {
+    "id": "be1b17a8-baf6-4d7c-b61a-9b7709b68ed6",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316690322+1763316896324+1763335918017@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.020Z"
+  },
+  {
+    "id": "2da720b5-ab07-46e3-b3ca-be7e2cc9843d",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763312823564+1763316690328+1763316896330+1763335918022@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.025Z"
+  },
+  {
+    "id": "7a8cea3f-9545-4e77-9a2a-94582eb00269",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763316499640+1763316690333+1763316896336+1763335918026@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:58.030Z"
+  },
+  {
+    "id": "faae67ee-644c-4f3f-8217-8820142fcfa6",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763316499649+1763316690340+1763316896342+1763335918030@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:58.034Z"
+  },
+  {
+    "id": "224ecaf3-c1d5-4915-86c0-f90a198dbd09",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763316499656+1763316690346+1763316896349+1763335918036@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:58.039Z"
+  },
+  {
+    "id": "642018d3-99f1-40eb-904b-fb1cc60810e9",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763316499668+1763316690352+1763316896355+1763335918040@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.044Z"
+  },
+  {
+    "id": "406eb4d3-2e3e-40c4-b7de-b2bf4d33adce",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763316499676+1763316690358+1763316896362+1763335918045@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.047Z"
+  },
+  {
+    "id": "152c271e-92ea-492e-aa30-0652d3435c8a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763316499682+1763316690363+1763316896369+1763335918049@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.052Z"
+  },
+  {
+    "id": "315136aa-a601-4181-8185-c1ddd6083a01",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763316499689+1763316690370+1763316896374+1763335918054@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.057Z"
+  },
+  {
+    "id": "8950cb65-adf3-4804-997c-a8c7aa4a0c7e",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270653867+1763316499695+1763316690375+1763316896380+1763335918058@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.062Z"
+  },
+  {
+    "id": "5157b58b-d5d8-431b-a556-12e58a6987e7",
+    "name": "Cliente Teste 1",
+    "email": "cliente1+test+1763312823416+1763316499702+1763316690381+1763316896386+1763335918063@example.com",
+    "phone": "11988887777",
+    "createdAt": "2025-11-16T23:31:58.067Z"
+  },
+  {
+    "id": "a845d892-ad39-415f-8cfc-0391761c1286",
+    "name": "Cliente Teste 2",
+    "email": "cliente2+test+1763312823425+1763316499710+1763316690387+1763316896392+1763335918068@example.com",
+    "phone": "11999990002",
+    "createdAt": "2025-11-16T23:31:58.072Z"
+  },
+  {
+    "id": "f2f764cf-8d08-4d00-b851-5c77bec8fa68",
+    "name": "jefferson",
+    "email": "jefferson.p.barbosa+1763312823431+1763316499715+1763316690398+1763316896398+1763335918073@gmail.com",
+    "phone": "81-997707039",
+    "createdAt": "2025-11-16T23:31:58.076Z"
+  },
+  {
+    "id": "5e177090-b2e6-419b-ae82-d46ed018122f",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763269999197+1763312823437+1763316499721+1763316690404+1763316896404+1763335918077@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.081Z"
+  },
+  {
+    "id": "b660f084-d2b9-4789-b4cd-1eccb5fb9560",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270254681+1763312823442+1763316499728+1763316690409+1763316896410+1763335918083@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.086Z"
+  },
+  {
+    "id": "da81a421-80b6-4eff-ad87-2a6ac5c28b94",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270449690+1763312823448+1763316499734+1763316690415+1763316896415+1763335918087@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.091Z"
+  },
+  {
+    "id": "749f03ff-303a-4d0c-a5aa-fe714a99591a",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763270519576+1763312823452+1763316499741+1763316690421+1763316896421+1763335918093@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.096Z"
+  },
+  {
+    "id": "78f2433b-8b19-4c08-b4dc-28a009d79c82",
+    "name": "Cliente Venda",
+    "email": "cli.sale.1763335918228@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-11-16T23:31:58.231Z"
   }
 ]

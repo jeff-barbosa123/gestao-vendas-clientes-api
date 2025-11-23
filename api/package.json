@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "API Rest para gestão de vendas e clientes com autenticação JWT e Swagger",
   "main": "src/server.js",
-  "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon ./src/server.js",
-    "test": "mocha --config .mocharc.json",
-    "test:report": "mocha --config .mocharc.json --reporter mochawesome --reporter-options reportDir=reports,reportFilename=index,quiet=true,overwrite=true,html=true,json=false",
-    "test:watch": "mocha --config .mocharc.json --watch"
-  },
+"scripts": {
+  "start": "node src/server.js",
+  "dev": "nodemon ./src/server.js",
+  "test": "mocha --config .mocharc.json --exit",
+  "test:report": "mocha --config .mocharc.json --reporter mochawesome --reporter-options reportDir=reports,reportFilename=index,quiet=true,overwrite=true,html=true,json=false",
+  "test:watch": "mocha --config .mocharc.json --watch"
+},
   "keywords": [
     "express",
     "jwt",
@@ -29,7 +29,8 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "chai": "^5.1.1",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
     "dotenv": "^16.4.5",
     "mocha": "^10.7.0",
     "mochawesome": "^7.1.3",

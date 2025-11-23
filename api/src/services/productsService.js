@@ -1,17 +1,12 @@
 const { db, createProduct } = require('../models/db');
 
-function list() {
+
+function getAll() {
   return db.products;
 }
 
 function getById(id) {
-  const product = db.products.find(p => p.id === id);
-  if (!product) {
-    const err = new Error('Produto não encontrado');
-    err.status = 404;
-    throw err;
-  }
-  return product;
+  return db.products.find(p => p.id === id) || null;
 }
 
 function create(data) {
@@ -20,13 +15,33 @@ function create(data) {
     err.status = 400;
     throw err;
   }
+
   const price = Number(data.price);
   if (Number.isNaN(price) || price < 0) {
     const err = new Error('Preço inválido');
     err.status = 400;
     throw err;
   }
-  return createProduct({ ...data, price });
+
+  // purchase_price obrigatório para CMV
+  if (data.purchase_price == null) {
+    const err = new Error('purchase_price é obrigatório');
+    err.status = 400;
+    throw err;
+  }
+
+  const purchase_price = Number(data.purchase_price);
+  if (Number.isNaN(purchase_price) || purchase_price < 0) {
+    const err = new Error('purchase_price inválido');
+    err.status = 400;
+    throw err;
+  }
+
+  return createProduct({
+    ...data,
+    price,
+    purchase_price,
+  });
 }
 
 function update(id, data) {
@@ -36,16 +51,33 @@ function update(id, data) {
     err.status = 404;
     throw err;
   }
+
   if (data.price != null) {
-    const price = Number(data.price);
-    if (Number.isNaN(price) || price < 0) {
+    const p = Number(data.price);
+    if (Number.isNaN(p) || p < 0) {
       const err = new Error('Preço inválido');
       err.status = 400;
       throw err;
     }
-    data.price = price;
+    data.price = p;
   }
-  db.products[index] = { ...db.products[index], ...data, id };
+
+  if (data.purchase_price != null) {
+    const pp = Number(data.purchase_price);
+    if (Number.isNaN(pp) || pp < 0) {
+      const err = new Error('purchase_price inválido');
+      err.status = 400;
+      throw err;
+    }
+    data.purchase_price = pp;
+  }
+
+  db.products[index] = {
+    ...db.products[index],
+    ...data,
+    id,
+  };
+
   return db.products[index];
 }
 
@@ -56,9 +88,13 @@ function remove(id) {
     err.status = 404;
     throw err;
   }
-  const [removed] = db.products.splice(index, 1);
-  return removed;
+  return db.products.splice(index, 1)[0];
 }
 
-module.exports = { list, getById, create, update, remove };
-
+module.exports = {
+  getAll,
+  getById,
+  create,
+  update,
+  remove,
+};

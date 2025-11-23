@@ -4,6 +4,18 @@ describe('Vendas', () => {
   let customer;
   let products = [];
   let sale;
+  let token;
+
+  before(async () => {
+    const res = await global.api
+      .post('/auth/login')
+      .send({
+        email: 'admin@negocio.com',
+        password: 'admin123',
+      });
+
+    token = res.body.token;
+  });
 
   it('prepara dados (cliente e produtos)', async () => {
     const custEmail = `cli.sale.${Date.now()}@example.com`;
@@ -12,7 +24,7 @@ describe('Vendas', () => {
     customer = cRes.body;
 
     for (const name of ['Item A', 'Item B']) {
-      const pRes = await global.withAuth(global.api.post('/products')).send({ name: `${name} ${Date.now()}`, price: 10.0, stock: 100 });
+      const pRes = await global.withAuth(global.api.post('/products')).send({ name: `${name} ${Date.now()}`, price: 10.0, purchase_price: 5.0, stock: 100 });
       expect(pRes.status).to.equal(201);
       products.push(pRes.body);
     }
@@ -24,6 +36,37 @@ describe('Vendas', () => {
     const res = await global.withAuth(global.api.post('/sales')).send(payload);
     expect([200,201]).to.include(res.status);
     sale = res.body;
+  });
+
+  it('calcula CMV corretamente ao criar venda', async () => {
+    const items = products.map(p => ({
+      productId: p.id || p._id || p.uuid,
+      quantity: 3, // Quantidade para teste
+      price: p.price || 10.0,
+      purchase_price: 5.0 // Simulando preço de compra
+    }));
+
+    // Adicionando purchase_price ao produto
+    for (const item of items) {
+      const productUpdateRes = await global.withAuth(global.api.put(`/products/${item.productId}`))
+        .send({ purchase_price: item.purchase_price });
+      expect(productUpdateRes.status).to.equal(200);
+    }
+
+    const payload = { customerId: customer.id || customer._id || customer.uuid, items };
+    const res = await global.api
+      .post('/sales')
+      .set('Authorization', `Bearer ${token}`)
+      .send(payload);
+
+    expect(res.status).to.equal(201);
+
+    const sale = res.body;
+    expect(sale).to.have.property('cmv');
+
+    // Verificar cálculo do CMV
+    const expectedCMV = items.reduce((sum, item) => sum + item.purchase_price * item.quantity, 0);
+    expect(sale.cmv).to.equal(expectedCMV);
   });
 
   it('lista vendas (200)', async () => {

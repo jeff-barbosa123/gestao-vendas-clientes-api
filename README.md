@@ -1,4 +1,4 @@
-﻿![Banner do projeto](https://cdn.jsdelivr.net/gh/jeff-barbosa123/gestao-vendas-clientes-api@main/banner-qa-jefferson-paulo.png)
+![banner](./assets/banner-qa-jefferson-paulo.png)
 
 # Gestão de Vendas e Clientes (API)
 

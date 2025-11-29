@@ -1,22 +1,9 @@
+// Ensure tests outside the workspace can resolve dev dependencies from api/node_modules
 const path = require('path');
-const dotenv = require('dotenv');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+const Module = require('module');
 
-// Força carregar o .env da RAIZ do projeto (não de /test)
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-// (Opcional) logs de depuração — pode remover depois
-console.log('✅ .env carregado de:', path.resolve(__dirname, '../.env'));
-console.log('ADMIN_EMAIL:', process.env.ADMIN_EMAIL);
-
-// Configura o chai para usar chai-http
-chai.use(chaiHttp);
-
-global.chai = chai;
-global.expect = chai.expect;
-
-// Configurações globais para testes HTTP
-const app = require('../src/app');
-global.api = chai.request(app);
-global.withAuth = (req) => req.set('Authorization', `Bearer ${process.env.TEST_JWT}`);
+const apiNodeModules = path.join(__dirname, '..', 'node_modules');
+process.env.NODE_PATH = [apiNodeModules, process.env.NODE_PATH || '']
+  .filter(Boolean)
+  .join(path.delimiter);
+Module._initPaths();

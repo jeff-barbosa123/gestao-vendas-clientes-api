@@ -8,5 +8,26 @@
     "start": "npm --workspace api start",
     "dev": "npm --workspace api run dev",
     "test": "npm --workspace api test"
-  }
+  },
+  "version": "1.0.0",
+  "description": "![banner](./assets/banner-qa-jefferson-paulo.png)",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "gestao-vendas-clientes-api": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeff-barbosa123/gestao-vendas-clientes-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeff-barbosa123/gestao-vendas-clientes-api/issues"
+  },
+  "homepage": "https://github.com/jeff-barbosa123/gestao-vendas-clientes-api#readme"
 }

@@ -1,7 +1,9 @@
 // test/login.test.js
 const request = require('supertest');
 const { expect } = require('chai');
-const app = require('../../api/src/app');
+const app = require('../../../api/src/app');
+
+
 
 describe('Login', () => {
 

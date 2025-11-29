@@ -5,7 +5,14 @@ const cors = require('cors');
 const routes = require('./routes');
 const { errorHandler } = require('./middleware/errorHandler');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../resources/swagger.json'); // ✅ caminho corrigido
+let swaggerDocument = {};
+try {
+  const swaggerPath = require('path').join(__dirname, '../resources/swagger.json');
+  swaggerDocument = require(swaggerPath);
+} catch (err) {
+  console.warn('⚠ Swagger não carregado nos testes. Ignorando.');
+}
+
 
 const app = express();
 

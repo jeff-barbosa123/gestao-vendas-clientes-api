@@ -1,6 +1,16 @@
 {
   "require": ["test/setup.js"],
-  "spec": ["test/**/*.js"],
+  "spec": ["test/**/*.js", "../tests/**/*.js"],
+  "ignore": ["test/**/*.copia.js", "../tests/**/*.copia.js"],
   "timeout": 15000,
-  "recursive": true
+  "recursive": true,
+  "reporter": "mochawesome",
+  "reporter-option": [
+    "reportDir=mochawesome-report",
+    "reportFilename=mochawesome",
+    "quiet=true",
+    "overwrite=true",
+    "html=true",
+    "json=false"
+  ]
 }

@@ -8,5 +8,8 @@
     "start": "npm --workspace api start",
     "dev": "npm --workspace api run dev",
     "test": "npm --workspace api test"
+  },
+  "dependencies": {
+    "mochawesome": "^7.1.4"
   }
 }

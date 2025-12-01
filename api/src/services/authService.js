@@ -3,8 +3,9 @@ const { v4: uuidv4 } = require('uuid');
 const { db, failedAttempts, tokenStore } = require('../models/db');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
-const TOKEN_TTL_SECONDS = 2 * 60 * 60; // 2h absolute TTL
-const BLOCK_MINUTES = 15;
+const TOKEN_TTL_SECONDS = Number(process.env.JWT_TTL_SECONDS || 2 * 60 * 60); // 2h absolute TTL
+const BLOCK_MINUTES = Number(process.env.LOGIN_BLOCK_MINUTES || 15);
+const MAX_FAILED_ATTEMPTS = Number(process.env.LOGIN_RATE_LIMIT_COUNT || 3);
 
 // 🔹 Localiza usuário por e-mail
 function getUserByEmail(email) {
@@ -31,7 +32,7 @@ function recordFailedAttempt(email) {
   const entry = failedAttempts.get(email) || { count: 0, blockedUntil: null };
   entry.count += 1;
 
-  if (entry.count >= 3) {
+  if (entry.count >= MAX_FAILED_ATTEMPTS) {
     entry.blockedUntil = Date.now() + BLOCK_MINUTES * 60 * 1000;
   }
 

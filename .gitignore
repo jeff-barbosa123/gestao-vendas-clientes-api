@@ -31,7 +31,6 @@ temp_tail_swagger.txt
 # Backup
 README.backup.MD
 
-
+# Test reports
 api/mochawesome-report/
- api/reports/
- api/reports/
+api/reports/

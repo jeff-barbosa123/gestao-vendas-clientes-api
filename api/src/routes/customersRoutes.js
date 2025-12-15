@@ -12,4 +12,3 @@ router.put('/:id', customersController.update);
 router.delete('/:id', customersController.remove);
 
 module.exports = router;
-

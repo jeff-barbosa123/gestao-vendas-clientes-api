@@ -1,10 +1,22 @@
 const { v4: uuidv4 } = require('uuid');
+const PDFDocument = require('pdfkit');
 const { db } = require('../models/db');
 
 function ensurePositiveNumber(value, fallback = 0) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
   return parsed;
+}
+
+function computeLaborCost(payload) {
+  const minutes = ensurePositiveNumber(payload.laborMinutes, null);
+  const hourlyRate = ensurePositiveNumber(payload.laborHourlyRate, null);
+
+  if (minutes != null && hourlyRate != null) {
+    return (hourlyRate / 60) * minutes;
+  }
+
+  return ensurePositiveNumber(payload.labor, 0);
 }
 
 function normalizeIngredients(list) {
@@ -29,17 +41,25 @@ function normalizeIngredients(list) {
       throw err;
     }
 
-    const cost = ensurePositiveNumber(item.cost, 0);
-    if (cost < 0) {
+    const packageQuantity = ensurePositiveNumber(item.packageQuantity, 1) || 1;
+    const packageCost = ensurePositiveNumber(item.cost, 0);
+    if (packageCost < 0) {
       const err = new Error(`Custo inválido para ${name}`);
       err.status = 400;
       throw err;
     }
 
+    // CMV de ingrediente: (preço da embalagem / quantidade da embalagem) * quantidade usada
+    const unitCost = packageCost / packageQuantity;
+    const totalCost = unitCost * quantity;
+
     return {
       name,
       quantity,
-      cost,
+      cost: packageCost,
+      packageQuantity,
+      unitCost,
+      totalCost,
     };
   });
 }
@@ -66,7 +86,7 @@ function normalizeOverhead(overhead, overheadItems) {
 function calculateFinancials(payload = {}) {
   const ingredients = normalizeIngredients(payload.ingredients);
   const ingredientCost = ingredients.reduce(
-    (sum, item) => sum + item.quantity * item.cost,
+    (sum, item) => sum + item.totalCost,
     0
   );
 
@@ -75,7 +95,7 @@ function calculateFinancials(payload = {}) {
     payload.overheadItems
   );
 
-  const laborCost = ensurePositiveNumber(payload.labor, 0);
+  const laborCost = computeLaborCost(payload);
   const yieldQty = ensurePositiveNumber(payload.yield, 1) || 1;
 
   const totalCost = ingredientCost + overheadCost + laborCost;
@@ -252,6 +272,77 @@ function calculate(payload = {}) {
   };
 }
 
+function exportRecipe(id, format = 'csv') {
+  const recipe = getById(id);
+
+  if (format === 'csv' || format === 'excel') {
+    const header =
+      'name,yield,totalCost,costPerUnit,priceMinimum,priceSuggested,margin,estimatedProfit';
+    const details = [
+      recipe.name,
+      recipe.yield,
+      recipe.totalCost,
+      recipe.costPerUnit,
+      recipe.priceMinimum,
+      recipe.priceSuggested,
+      recipe.marginLabel,
+      recipe.estimatedProfit,
+    ].join(',');
+
+    const ingredientHeader = 'ingredient,quantity,unitCost,totalCost';
+    const ingredientLines = (recipe.ingredients || []).map((ing) =>
+      [
+        ing.name,
+        ing.quantity,
+        ing.unitCost,
+        ing.totalCost,
+      ].join(',')
+    );
+
+    const body = [header, details, '', ingredientHeader, ...ingredientLines].join('\n');
+    return { contentType: 'text/csv', body };
+  }
+
+  if (format === 'pdf') {
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+    const chunks = [];
+    doc.on('data', (c) => chunks.push(c));
+
+    doc.fontSize(18).text('Ficha Técnica', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12);
+    doc.text(`Nome: ${recipe.name}`);
+    doc.text(`Rendimento: ${recipe.yield}`);
+    doc.text(`Custo total: R$ ${recipe.totalCost.toFixed(2)}`);
+    doc.text(`Custo unitário: R$ ${recipe.costPerUnit.toFixed(2)}`);
+    doc.text(`Preço mínimo: R$ ${recipe.priceMinimum.toFixed(2)}`);
+    doc.text(`Preço sugerido: R$ ${recipe.priceSuggested.toFixed(2)} (${recipe.marginLabel})`);
+    doc.text(`Lucro estimado: R$ ${recipe.estimatedProfit.toFixed(2)}`);
+
+    doc.moveDown();
+    doc.fontSize(14).text('Ingredientes');
+    doc.fontSize(12);
+    (recipe.ingredients || []).forEach((ing) => {
+      doc.text(
+        `${ing.name} - Qtde: ${ing.quantity} | Custo unit: R$ ${ing.unitCost.toFixed(
+          2
+        )} | Total: R$ ${ing.totalCost.toFixed(2)}`
+      );
+    });
+    doc.end();
+
+    return new Promise((resolve) => {
+      doc.on('end', () => {
+        resolve({ contentType: 'application/pdf', body: Buffer.concat(chunks) });
+      });
+    });
+  }
+
+  const err = new Error('Formato de exportação inválido');
+  err.status = 400;
+  throw err;
+}
+
 module.exports = {
   list,
   getById,
@@ -259,4 +350,5 @@ module.exports = {
   update,
   remove,
   calculate,
+  exportRecipe,
 };

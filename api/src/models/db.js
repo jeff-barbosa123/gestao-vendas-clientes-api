@@ -1,21 +1,31 @@
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
-const path = require('path');
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const path = require("path");
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@negocio.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const OTHER_USER_EMAIL = process.env.OTHER_USER_EMAIL || "user@negocio.com";
+const OTHER_USER_PASSWORD = process.env.OTHER_USER_PASSWORD || "user123";
+const PLACEHOLDER_USER_EMAIL = "<EMAIL>".toLowerCase();
+const PLACEHOLDER_USER_PASSWORD = "<PASSWORD>";
 
 // Caminho do arquivo fixtures
-const customersPath = path.join(__dirname, '../../fixtures/customers.json');
+const customersPath = path.join(__dirname, "../../fixtures/customers.json");
 let customersFromFile = [];
 
 try {
-  customersFromFile = JSON.parse(fs.readFileSync(customersPath, 'utf-8'));
+  customersFromFile = JSON.parse(fs.readFileSync(customersPath, "utf-8"));
 } catch (err) {
-  console.warn('‚ö†Ô∏è Nenhum arquivo customers.json encontrado, iniciando vazio.');
+  console.warn("Nenhum arquivo customers.json encontrado, iniciando vazio.");
 }
 
-// Banco de dados em mem√≥ria
+// Banco de dados em mem¢ria
 const db = {
   users: [
-    { id: 'u1', email: 'admin@negocio.com', password: 'admin123', name: 'Admin' },
+    { id: "u1", email: ADMIN_EMAIL, password: ADMIN_PASSWORD, name: "Admin" },
+    { id: "u2", email: OTHER_USER_EMAIL, password: OTHER_USER_PASSWORD, name: "User" },
+    { id: "u3", email: PLACEHOLDER_USER_EMAIL, password: PLACEHOLDER_USER_PASSWORD, name: "Placeholder User" },
+    { id: "u_block", email: "bloqueado@teste.com", password: "123456", name: "Bloqueado", blocked: true },
   ],
   customers: [...customersFromFile],
   products: [],
@@ -26,6 +36,7 @@ const db = {
 // Auth tracking
 const failedAttempts = new Map();
 const tokenStore = new Map();
+const refreshStore = new Map();
 
 /* ===============================
       CREATE CUSTOMER
@@ -37,6 +48,7 @@ function createCustomer(data) {
     name: data.name,
     email: data.email,
     phone: data.phone || null,
+    ownerId: data.ownerId || null,
     createdAt: new Date().toISOString(),
   };
 
@@ -53,24 +65,24 @@ function createCustomer(data) {
 function createProduct(data) {
   const id = uuidv4();
 
-  // price (pre√ßo de venda)
+  // price (preáo de venda)
   const price = Number(data.price);
   if (Number.isNaN(price) || price < 0) {
-    const err = new Error('Pre√ßo inv√°lido');
+    const err = new Error("Preáo inv†lido");
     err.status = 400;
     throw err;
   }
 
-  // purchase_price (pre√ßo de compra ‚Äì obrigat√≥rio)
+  // purchase_price (preáo de compra - obrigat¢rio)
   if (data.purchase_price == null) {
-    const err = new Error('purchase_price √© obrigat√≥rio');
+    const err = new Error("purchase_price Ç obrigat¢rio");
     err.status = 400;
     throw err;
   }
 
   const purchase_price = Number(data.purchase_price);
   if (Number.isNaN(purchase_price) || purchase_price < 0) {
-    const err = new Error('purchase_price inv√°lido');
+    const err = new Error("purchase_price inv†lido");
     err.status = 400;
     throw err;
   }
@@ -93,28 +105,25 @@ function createProduct(data) {
 ================================*/
 function createSale(data) {
   const id = uuidv4();
-  const date = data.date ? new Date(data.date) : new Date();
+  const saleDate = data.date ? new Date(data.date) : new Date();
 
   const items = (data.items || []).map(it => ({
     productId: it.productId,
     quantity: Number(it.quantity),
     unitPrice: Number(it.unitPrice),
-    cmv: it.cmv, // ‚Üê CMV por item
+    cmv: it.cmv,
   }));
-
-  const total = items.reduce(
-    (sum, it) => sum + it.quantity * it.unitPrice,
-    0
-  );
 
   const sale = {
     id,
     customerId: data.customerId,
+    ownerId: data.ownerId || null,
     items,
-    total,
-    cmv: data.cmv, // ‚Üê CMV total
-    date: date.toISOString(),
-    status: data.status || 'confirmed',
+    total: data.total != null ? data.total : items.reduce((sum, it) => sum + it.quantity * it.unitPrice, 0),
+    cmv: data.cmv,
+    date: saleDate.toISOString(),
+    status: data.status || "ACTIVE",
+    canceledAt: data.canceledAt || null,
     createdAt: new Date().toISOString(),
   };
 
@@ -123,17 +132,17 @@ function createSale(data) {
 }
 
 /* ===============================
-      RELAT√ìRIO
+      RELAT‡RIO
 ================================*/
-function revenueBetween(start, end) {
-  const s = start ? new Date(start) : new Date(0);
-  const e = end ? new Date(end) : new Date();
+function revenueBetween(startDate, endDate) {
+  const start = startDate instanceof Date ? startDate : new Date(0);
+  const end = endDate instanceof Date ? endDate : new Date();
 
   return db.sales
-    .filter(x => x.status === 'confirmed')
+    .filter(x => x.status === "ACTIVE")
     .filter(x => {
       const dx = new Date(x.date);
-      return dx >= s && dx <= e;
+      return dx >= start && dx <= end;
     });
 }
 
@@ -141,6 +150,7 @@ module.exports = {
   db,
   failedAttempts,
   tokenStore,
+  refreshStore,
   createCustomer,
   createProduct,
   createSale,

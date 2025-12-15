@@ -11,5 +11,6 @@ router.post('/calculate', recipesController.calculate);
 router.get('/:id', recipesController.getById);
 router.put('/:id', recipesController.update);
 router.delete('/:id', recipesController.remove);
+router.get('/:id/export', recipesController.exportRecipe);
 
 module.exports = router;

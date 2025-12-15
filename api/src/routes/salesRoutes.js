@@ -6,10 +6,10 @@ const { authenticate } = require('../middleware/authMiddleware');
 router.use(authenticate);
 
 router.get('/', salesController.list);
+router.get('/summary', salesController.summary);
 router.post('/', salesController.create);
 router.get('/:id', salesController.getById);
 router.put('/:id', salesController.update);
 router.post('/:id/cancel', salesController.cancel);
 
 module.exports = router;
-

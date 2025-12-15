@@ -1,0 +1,91 @@
+﻿# Cenarios Exploratorios - US001 (Autenticacao e Sessao)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados no login e no uso de tokens JWT (SGVC - MVP 1.0).
+
+## Cenarios sugeridos
+- **EXP-AUT-001 | Credenciais em limites de formato**
+  - Dado que envio login com e-mail em maiusculas, com espacos ou caracteres invisiveis
+  - Quando a API processa o login
+  - Entao verifico se normaliza ou rejeita corretamente e se nao cria contas duplicadas
+- **EXP-AUT-002 | Tentativas consecutivas com senha errada**
+  - Dado que realizo varias tentativas de login com senha incorreta
+  - Quando atinjo limiares de bloqueio ou retentativa
+  - Entao observo se ha throttling, bloqueio temporario ou mensagem clara sem vazar informacao
+- **EXP-AUT-003 | Token expirado**
+  - Dado que obtenho um token valido
+  - Quando aguardo expirar e tento acessar rota protegida
+  - Entao confirmo 401 e se ha diferenca de comportamento entre token expirado e ausente
+- **EXP-AUT-004 | JWT adulterado**
+  - Dado que gero um token com payload alterado ou assinatura quebrada
+  - Quando chamo uma rota protegida
+  - Entao observo se a API rejeita com 401/403 sem expor stack trace
+- **EXP-AUT-005 | Usuario desativado com token ativo**
+  - Dado que um usuario obtem token valido
+  - Quando o usuario e desativado no sistema
+  - Entao verifico se o token continua aceito ou se ha invalidacao imediata
+- **EXP-AUT-006 | Header Authorization ausente ou esquema errado**
+  - Dado que acesso rota protegida sem header ou usando esquema Bearer incorreto (prefixo errado)
+  - Quando executo a requisicao
+  - Entao confirmo retorno 401/403 consistente e mensagens sem revelar detalhes
+- **EXP-AUT-007 | Reuso de token apos logout**
+  - Dado que faco login e logout
+  - Quando tento reutilizar o mesmo token em seguida
+  - Entao observo se ha blacklist ou se o token permanece valido
+- **EXP-AUT-008 | Diferenca de horario (clock skew)**
+  - Dado que simulo clientes com relogio adiantado ou atrasado
+  - Quando gero e uso tokens nesses cenarios
+  - Entao verifico se o backend tolera pequeno skew ou rejeita por iat/nbf/exp fora do intervalo
+- **EXP-AUT-009 | Payload invalido no login**
+  - Dado que envio JSON malformado, tipos errados ou campos faltando
+  - Quando executo o login
+  - Entao confirmo 400 com mensagem coerente e sem processar parcialmente
+- **EXP-AUT-010 | Acesso cruzado em rotas publicas x protegidas**
+  - Dado que acesso rota publica com token e rota protegida sem token
+  - Quando verifico respostas
+  - Entao observo se a API ignora token em rotas publicas e exige em todas as protegidas
+- **EXP-AUT-011 | Tamanho extremo de payload**
+  - Dado que envio campos de login com tamanho muito grande
+  - Quando executo a requisicao
+  - Entao verifico se ha limite de tamanho e se retorna erro controlado (sem DoS)
+- **EXP-AUT-012 | Token de ambiente errado**
+  - Dado que gero token com audience ou issuer diferente ou chave de outro ambiente
+  - Quando acesso rota protegida
+  - Entao confirmo rejeicao consistente e auditoria do evento
+- **EXP-AUT-013 | Concorrencia de sessoes**
+  - Dado que o mesmo usuario realiza logins simultaneos em dispositivos diferentes
+  - Quando cada sessao chama rotas protegidas
+  - Entao observo se ha limite de sessoes ou revogacao da anterior
+- **EXP-AUT-014 | Rotas de erro padronizadas**
+  - Dado que forco 404, 405 e 500 em endpoints com e sem token
+  - Quando leio a resposta
+  - Entao verifico se o formato de erro segue padrao e nao vaza stack ou informacao sensivel
+- **EXP-AUT-015 | Refresh token reutilizado**
+  - Dado que recebo refresh token
+  - Quando reutilizo o mesmo refresh varias vezes ou apos logout
+  - Entao observo se ha rotacao/invalidacao e se access tokens antigos sao revogados
+- **EXP-AUT-016 | CORS/origem inesperada**
+  - Dado que disparo login a partir de origem ou referer diferente
+  - Quando a resposta e entregue
+  - Entao verifico se ha bloqueio de CORS ou exposicao inadvertida de tokens
+- **EXP-AUT-017 | MFA/2FA ausente ou opcional**
+  - Dado que a aplicacao deveria exigir segundo fator (quando existir)
+  - Quando realizo login sem MFA ou com segundo fator invalido
+  - Entao observo se o backend aceita indevidamente ou falha de forma clara
+- **EXP-AUT-018 | Brute force distribuido**
+  - Dado que realizo tentativas de senha errada de varios IPs/origens
+  - Quando atinjo alto volume distribuido
+  - Entao verifico se a API limita por usuario ou origem e se responde com tempos constantes
+- **EXP-AUT-019 | Fixacao de sessao e troca de senha**
+  - Dado que estou logado e altero a propria senha
+  - Quando tento usar o token antigo apos a troca
+  - Entao observo se o token e revogado e se a sessao antiga e encerrada
+- **EXP-AUT-020 | Escalada de privilegio via token**
+  - Dado que possuo token de usuario comum
+  - Quando tento acessar rotas/admin ou mudar claims (role, scope)
+  - Entao verifico se o backend valida escopos e rejeita elevacao indevida
+
+## Notas
+- Registrar status, corpo e tempos de resposta para cada execucao manual.
+- Confirmar que mensagens de erro nao vazam se usuario existe ou nao.
+- Avaliar logs do backend para correlacionar com bloqueios, expiracoes, rejeicao de assinatura e uso de refresh.

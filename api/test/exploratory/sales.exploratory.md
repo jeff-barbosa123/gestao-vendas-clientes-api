@@ -1,0 +1,91 @@
+# Cenarios Exploratorios - US003 (Vendas e Faturamento)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados no fluxo de vendas e faturamento (SGVC - MVP 1.0).
+
+## Cenarios sugeridos
+- **EXP-VEN-001 | Venda criada, mas nao refletida no faturamento**
+  - Dado que registro uma venda valida
+  - Quando consulto o faturamento total imediatamente apos o registro
+  - Entao observo se o valor foi somado corretamente e se ha inconsistencias
+- **EXP-VEN-002 | Cancelamento com atraso de calculo**
+  - Dado que existe uma venda ativa registrada
+  - Quando realizo o cancelamento da venda
+  - Entao verifico se o faturamento e atualizado na hora ou se ha atraso na remocao
+- **EXP-VEN-003 | Interrupcao durante o registro da venda**
+  - Dado que inicio o registro de uma venda
+  - Quando a requisicao e interrompida antes da resposta final
+  - Entao verifico se houve persistencia parcial ou se a operacao e atomica
+- **EXP-VEN-004 | Race condition em vendas simultaneas**
+  - Dado que duas requisicoes de venda sao enviadas ao mesmo tempo
+  - Quando ambas tentam atualizar o faturamento
+  - Entao observo conflito, duplicidade ou inconsistencia e integridade financeira
+- **EXP-VEN-005 | Reinicio da API durante registro de venda**
+  - Dado que uma venda esta sendo registrada
+  - Quando a API e reiniciada durante o processamento
+  - Entao vejo se a venda foi concluida, revertida ou perdida e se o sistema fica consistente
+- **EXP-VEN-006 | Valores extremos no registro da venda**
+  - Dado que envio venda com valor extremamente alto ou igual a zero
+  - Quando realizo o registro
+  - Entao verifico se o sistema valida, limita ou rejeita corretamente
+- **EXP-VEN-007 | Produto removido apos venda registrada**
+  - Dado que uma venda foi registrada com produto valido
+  - Quando o produto e removido depois
+  - Entao vejo se a venda permanece integra e se o faturamento segue correto
+- **EXP-VEN-008 | Instabilidade de rede durante operacoes**
+  - Dado que a rede apresenta perda de pacotes ou lentidao
+  - Quando registro ou cancelo uma venda
+  - Entao observo falhas, retries ou inconsistencias no faturamento
+- **EXP-VEN-009 | Erro 500 intermitente**
+  - Dado que a API retorna erro 500 em uma tentativa de venda
+  - Quando tento novamente em seguida
+  - Entao vejo se o sistema se recupera e se nao gera duplicidade
+- **EXP-VEN-010 | Reprocessamento da mesma requisicao**
+  - Dado que uma requisicao de venda foi enviada
+  - Quando a mesma requisicao e reenviada por timeout do cliente
+  - Entao observo se ocorre duplicidade ou se ha tratamento de idempotencia
+- **EXP-VEN-011 | Venda registrada sem produtos validos**
+  - Dado que envio uma venda com lista de produtos vazia ou invalida
+  - Quando realizo o registro
+  - Entao verifico se a API bloqueia ou se permite venda inconsistente
+- **EXP-VEN-012 | Alteracao de venda refletindo incorretamente no faturamento**
+  - Dado que uma venda existente e editada
+  - Quando o valor total e alterado
+  - Entao observo se o faturamento e recalculado corretamente
+- **EXP-VEN-013 | Cancelamento multiplo da mesma venda**
+  - Dado que uma venda ja foi cancelada
+  - Quando tento cancelar novamente
+  - Entao vejo se o sistema bloqueia e mantem o faturamento consistente
+- **EXP-VEN-014 | Venda com cliente removido posteriormente**
+  - Dado que uma venda foi registrada para cliente valido
+  - Quando o cliente e removido do sistema
+  - Entao vejo se a venda continua acessivel e o faturamento sem impacto
+- **EXP-VEN-015 | Venda criada com data/hora incorreta**
+  - Dado que registro uma venda
+  - Quando verifico a data e hora armazenadas
+  - Entao observo se correspondem ao momento real do registro
+- **EXP-VEN-016 | Venda criada proximo a virada de dia**
+  - Dado que registro venda perto da meia-noite
+  - Quando consulto faturamento diario
+  - Entao observo se a venda e atribuida ao dia correto
+- **EXP-VEN-017 | Inconsistencia entre listagem e faturamento**
+  - Dado que existem vendas registradas
+  - Quando comparo listagem de vendas com o faturamento total
+  - Entao observo coerencia de valores
+- **EXP-VEN-018 | Venda parcialmente persistida**
+  - Dado que ocorre falha durante a gravacao da venda
+  - Quando consulto banco ou listagem
+  - Entao observo se dados incompletos foram salvos
+- **EXP-VEN-019 | Grande volume de vendas em curto periodo**
+  - Dado que varias vendas sao registradas em poucos segundos
+  - Quando consulto faturamento
+  - Entao observo atrasos, perdas ou inconsistencias
+- **EXP-VEN-020 | Concorrencia entre edicao e cancelamento**
+  - Dado que uma venda esta sendo editada
+  - Quando outro processo tenta cancela-la ao mesmo tempo
+  - Entao observo como o sistema resolve o conflito e se o faturamento permanece correto
+
+## Notas
+- Registrar status, corpo e tempos de resposta para cada execucao manual.
+- Validar integridade do faturamento apos falhas (interrupcao, reinicio, concorrencia).
+- Se possivel, registrar logs/backend para correlacionar com eventos de rede/erro 500.

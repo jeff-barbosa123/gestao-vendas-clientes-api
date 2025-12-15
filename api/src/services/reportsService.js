@@ -1,55 +1,73 @@
 const PDFDocument = require('pdfkit');
 const { revenueBetween } = require('../models/db');
+const {
+  resolveTemporalRange,
+  validateBreakdown,
+  toIsoDay,
+  toWeekKeyUTC,
+  toMonthKeyUTC,
+  buildError,
+} = require('../utils/dateValidation');
 
 function summarize(sales, granularity = 'total') {
   if (granularity === 'total') {
-    return { total: sales.reduce((s, v) => s + v.total, 0) };
+    const total = sales.reduce((s, v) => s + (v.total || 0), 0);
+    return { total: Number(total.toFixed(2)) };
   }
   const buckets = {};
   for (const s of sales) {
     const d = new Date(s.date);
     let key = '';
     if (granularity === 'day') {
-      key = d.toISOString().slice(0, 10);
+      key = toIsoDay(d);
     } else if (granularity === 'week') {
-      const temp = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-      const dayNum = temp.getUTCDay() || 7;
-      temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
-      const yearStart = new Date(Date.UTC(temp.getUTCFullYear(), 0, 1));
-      const weekNo = Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
-      key = `${temp.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+      key = toWeekKeyUTC(d);
     } else if (granularity === 'month') {
-      key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+      key = toMonthKeyUTC(d);
+    } else if (granularity === 'year') {
+      key = String(d.getUTCFullYear());
     }
-    buckets[key] = (buckets[key] || 0) + s.total;
+    buckets[key] = (buckets[key] || 0) + (s.total || 0);
   }
-  return Object.entries(buckets).map(([period, total]) => ({ period, total }));
+  return Object.entries(buckets)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([period, total]) => ({ period, total: Number(total.toFixed(2)) }));
 }
 
-function getRevenue({ start, end, breakdown }) {
-  const sales = revenueBetween(start, end);
-  if (!breakdown || breakdown === 'total') return summarize(sales, 'total');
-  if (!['day', 'week', 'month'].includes(breakdown)) {
-    const err = new Error('Parâmetro breakdown inválido');
-    err.status = 400; throw err;
+function getRevenue({ start, end, day, week, month, year, breakdown }) {
+  const normalizedBreakdown = validateBreakdown(breakdown || 'total');
+  const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
+  const sales = revenueBetween(startDate, endDate);
+  if (normalizedBreakdown === 'total') return summarize(sales, 'total');
+  if (!['day', 'week', 'month', 'year'].includes(normalizedBreakdown)) {
+    const err = new Error('Parametro breakdown invalido');
+    err.status = 400;
+    throw err;
   }
-  return summarize(sales, breakdown);
+  return summarize(sales, normalizedBreakdown);
 }
 
-function exportRevenue({ start, end, format = 'csv', breakdown = 'day' }) {
-  const data = getRevenue({ start, end, breakdown });
-  if (format === 'csv' || format === 'excel') {
+function exportRevenue({ start, end, day, week, month, year, format = 'csv', breakdown = 'day' }) {
+  const data = getRevenue({ start, end, day, week, month, year, breakdown });
+  const normalizedFormat = format.toLowerCase();
+
+  if (normalizedFormat === 'csv' || normalizedFormat === 'excel') {
     const rows = Array.isArray(data) ? data : [{ period: 'total', total: data.total }];
     const header = 'period,total';
     const lines = rows.map(r => `${r.period},${r.total}`);
-    return { contentType: 'text/csv', body: [header, ...lines].join('\n') };
+    const body = [header, ...lines].join('\n');
+    const contentType = normalizedFormat === 'excel'
+      ? 'application/vnd.ms-excel'
+      : 'text/csv';
+    const filename = normalizedFormat === 'excel' ? 'relatorio.xlsx' : 'relatorio.csv';
+    return { contentType, body, filename };
   }
-  if (format === 'pdf') {
+
+  if (normalizedFormat === 'pdf') {
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const chunks = [];
     doc.on('data', c => chunks.push(c));
-    doc.on('end', () => {});
-    doc.fontSize(18).text('Relatório de Faturamento', { align: 'center' });
+    doc.fontSize(18).text('Relatorio de Faturamento', { align: 'center' });
     doc.moveDown();
     const rows = Array.isArray(data) ? data : [{ period: 'total', total: data.total }];
     doc.fontSize(12);
@@ -57,13 +75,78 @@ function exportRevenue({ start, end, format = 'csv', breakdown = 'day' }) {
     doc.end();
     return new Promise(resolve => {
       doc.on('end', () => {
-        resolve({ contentType: 'application/pdf', body: Buffer.concat(chunks) });
+        resolve({ contentType: 'application/pdf', body: Buffer.concat(chunks), filename: 'relatorio.pdf' });
       });
     });
   }
-  const err = new Error('Formato inválido');
-  err.status = 400; throw err;
+  const err = buildError('Formato invalido');
+  throw err;
 }
 
-module.exports = { getRevenue, exportRevenue };
+function getFinancialPerformance({ start, end, day, week, month, year, breakdown }) {
+  const normalizedBreakdown = validateBreakdown(breakdown || 'total');
+  const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
+  const sales = revenueBetween(startDate, endDate);
+  const total = sales.reduce(
+    (acc, sale) => {
+      const revenue = sale.total || 0;
+      const cmv = sale.cmv || 0;
+      acc.revenue += revenue;
+      acc.cmv += cmv;
+      acc.profit += revenue - cmv;
+      acc.count += 1;
+      return acc;
+    },
+    { revenue: 0, cmv: 0, profit: 0, count: 0 }
+  );
 
+  const baseMetrics = {
+    revenue: Number(total.revenue.toFixed(2)),
+    cmv: Number(total.cmv.toFixed(2)),
+    profit: Number(total.profit.toFixed(2)),
+    margin: total.revenue > 0 ? total.profit / total.revenue : 0,
+    avgTicket: total.count > 0 ? Number((total.revenue / total.count).toFixed(2)) : 0,
+    salesCount: total.count,
+  };
+
+  if (normalizedBreakdown === 'total') return baseMetrics;
+  if (!['day', 'week', 'month', 'year'].includes(normalizedBreakdown)) {
+    const err = new Error('Parametro breakdown invalido');
+    err.status = 400;
+    throw err;
+  }
+
+  const buckets = {};
+
+  sales.forEach((sale) => {
+    const d = new Date(sale.date);
+    let key = '';
+    if (normalizedBreakdown === 'day') key = toIsoDay(d);
+    else if (normalizedBreakdown === 'week') key = toWeekKeyUTC(d);
+    else if (normalizedBreakdown === 'month') key = toMonthKeyUTC(d);
+    else key = String(d.getUTCFullYear());
+
+    buckets[key] = buckets[key] || [];
+    buckets[key].push(sale);
+  });
+
+  return Object.entries(buckets)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([period, list]) => {
+      const revenue = list.reduce((sum, s) => sum + (s.total || 0), 0);
+      const cmv = list.reduce((sum, s) => sum + (s.cmv || 0), 0);
+      const profit = revenue - cmv;
+      const count = list.length;
+      return {
+        period,
+        revenue: Number(revenue.toFixed(2)),
+        cmv: Number(cmv.toFixed(2)),
+        profit: Number(profit.toFixed(2)),
+        margin: revenue > 0 ? profit / revenue : 0,
+        avgTicket: count > 0 ? Number((revenue / count).toFixed(2)) : 0,
+        salesCount: count,
+      };
+    });
+}
+
+module.exports = { getRevenue, exportRevenue, getFinancialPerformance };

@@ -34,3 +34,8 @@ README.backup.MD
 # Test reports
 api/mochawesome-report/
 api/reports/
+
+node_modules/
+*.tmp
+~WRL*.tmp
+.env

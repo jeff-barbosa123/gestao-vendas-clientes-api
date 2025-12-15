@@ -2,7 +2,7 @@ const salesService = require('../services/salesService');
 
 async function list(req, res, next) {
   try {
-    res.json(salesService.getAll());
+    res.json(salesService.getAll(req.user));
   } catch (e) {
     next(e);
   }
@@ -10,7 +10,7 @@ async function list(req, res, next) {
 
 async function getById(req, res, next) {
   try {
-    res.json(salesService.getById(req.params.id));
+    res.json(salesService.getById(req.params.id, req.user));
   } catch (e) {
     next(e);
   }
@@ -18,7 +18,7 @@ async function getById(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const sale = salesService.create(req.body);
+    const sale = salesService.create(req.body, req.user);
     res.status(201).json(sale);
   } catch (e) {
     next(e);
@@ -27,7 +27,7 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    res.json(salesService.update(req.params.id, req.body));
+    res.json(salesService.update(req.params.id, req.body, req.user));
   } catch (e) {
     next(e);
   }
@@ -35,11 +35,18 @@ async function update(req, res, next) {
 
 async function cancel(req, res, next) {
   try {
-    res.json(salesService.cancel(req.params.id));
+    res.json(salesService.cancel(req.params.id, req.user));
   } catch (e) {
     next(e);
   }
 }
 
-module.exports = { list, getById, create, update, cancel };
+async function summary(_req, res, next) {
+  try {
+    res.json(salesService.summary());
+  } catch (e) {
+    next(e);
+  }
+}
 
+module.exports = { list, getById, create, update, cancel, summary };

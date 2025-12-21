@@ -56,35 +56,35 @@ function create(data, user) {
 
   if (!payload.name || !payload.email) {
     const err = new Error('Campos obrigat\u00f3rios ausentes');
-    err.status = 400;
+    err.status = 422;
     err.code = 'REQUIRED_FIELDS';
     throw err;
   }
 
   if (!validateNameLength(payload.name)) {
     const err = new Error('Nome excede o tamanho permitido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'NAME_TOO_LONG';
     throw err;
   }
 
   if (hasSqlInjectionRisk(payload.name) || hasXssRisk(payload.name)) {
     const err = new Error('Nome inv\u00e1lido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'INVALID_NAME';
     throw err;
   }
 
   if (!validateEmailFormat(payload.email)) {
     const err = new Error('Formato de e-mail inv\u00e1lido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'INVALID_EMAIL';
     throw err;
   }
 
   if (hasSqlInjectionRisk(payload.phone) || hasXssRisk(payload.phone)) {
     const err = new Error('Telefone inv\u00e1lido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'INVALID_PHONE';
     throw err;
   }
@@ -122,21 +122,21 @@ function update(id, data, user) {
 
   if (payload.name && !validateNameLength(payload.name)) {
     const err = new Error('Nome excede o tamanho permitido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'NAME_TOO_LONG';
     throw err;
   }
 
   if (payload.name && (hasSqlInjectionRisk(payload.name) || hasXssRisk(payload.name))) {
     const err = new Error('Nome inv\u00e1lido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'INVALID_NAME';
     throw err;
   }
 
   if (payload.phone && (hasSqlInjectionRisk(payload.phone) || hasXssRisk(payload.phone))) {
     const err = new Error('Telefone inv\u00e1lido');
-    err.status = 400;
+    err.status = 422;
     err.code = 'INVALID_PHONE';
     throw err;
   }
@@ -144,7 +144,7 @@ function update(id, data, user) {
   if (payload.email) {
     if (!validateEmailFormat(payload.email)) {
       const err = new Error('Formato de e-mail inv\u00e1lido');
-      err.status = 400;
+      err.status = 422;
       err.code = 'INVALID_EMAIL';
       throw err;
     }

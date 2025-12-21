@@ -1,0 +1,90 @@
+# Cenarios Exploratorios - US006 (Simulacao de Preco Ideal)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados na simulacao de preco ideal.
+
+## Cenarios sugeridos (BDD)
+- **EXP-SIM-001 | Receita inexistente**
+  - Dado que informo receitaId inexistente
+  - Quando simulo preco
+  - Entao devo receber 404 com mensagem clara
+- **EXP-SIM-002 | Receita inativa**
+  - Dado que a receita esta inativa
+  - Quando simulo preco
+  - Entao devo receber 404
+- **EXP-SIM-003 | Receita de outro usuario (IDOR)**
+  - Dado que uso token de outro usuario
+  - Quando simulo com receita alheia
+  - Entao devo receber 403
+- **EXP-SIM-004 | Margem negativa**
+  - Dado que informo margem negativa
+  - Quando simulo
+  - Entao devo receber erro 400
+- **EXP-SIM-005 | Margem muito alta**
+  - Dado que informo margem muito alta
+  - Quando simulo
+  - Entao os valores devem ser coerentes e sem overflow
+- **EXP-SIM-006 | Margem zero**
+  - Dado que informo margem zero
+  - Quando simulo
+  - Entao preco_ideal deve ser igual ao preco_minimo
+- **EXP-SIM-007 | Taxa de entrega negativa**
+  - Dado que informo taxaEntrega negativa
+  - Quando simulo
+  - Entao devo receber erro 400
+- **EXP-SIM-008 | Taxa de entrega alta**
+  - Dado que informo taxaEntrega alta
+  - Quando simulo
+  - Entao preco_final_simulado deve refletir a taxa
+- **EXP-SIM-009 | Ingrediente invalido na simulacao rapida**
+  - Dado que informo ingrediente com nome vazio
+  - Quando simulo rapido
+  - Entao devo receber 400
+- **EXP-SIM-010 | Ingredientes vazios**
+  - Dado que informo lista vazia de ingredientes
+  - Quando simulo rapido
+  - Entao devo receber 400
+- **EXP-SIM-011 | Overheads invalidos**
+  - Dado que informo overheads com valor negativo
+  - Quando simulo rapido
+  - Entao devo receber 400
+- **EXP-SIM-012 | Mao de obra negativa**
+  - Dado que informo mao de obra negativa
+  - Quando simulo rapido
+  - Entao devo receber 400
+- **EXP-SIM-013 | Rendimento zero**
+  - Dado que informo rendimento zero
+  - Quando simulo rapido
+  - Entao devo receber 400
+- **EXP-SIM-014 | Arredondamento financeiro**
+  - Dado que informo valores com muitas casas
+  - Quando simulo
+  - Entao devo ver arredondamento em 2 casas
+- **EXP-SIM-015 | Determinismo**
+  - Dado que simulo com os mesmos dados
+  - Quando repito a simulacao
+  - Entao o resultado deve ser identico
+- **EXP-SIM-016 | Simulacao nao persistente**
+  - Dado que simulo a partir da receita
+  - Quando consulto a receita
+  - Entao nao deve haver alteracao de custos
+- **EXP-SIM-017 | Parametros extras**
+  - Dado que envio parametros extras no payload
+  - Quando simulo
+  - Entao devo receber erro ou ignorar de forma consistente
+- **EXP-SIM-018 | GET com margem e taxaEntrega**
+  - Dado que uso GET /simulacao/preco/:id
+  - Quando informo margem e taxaEntrega
+  - Entao recebo simulacao equivalente ao POST
+- **EXP-SIM-019 | Token ausente**
+  - Dado que nao envio token
+  - Quando simulo preco
+  - Entao devo receber 401/403
+- **EXP-SIM-020 | Token invalido**
+  - Dado que envio token invalido
+  - Quando simulo preco
+  - Entao devo receber 401
+
+## Notas
+- Registrar status, corpo e tempos de resposta para cada execucao.
+- Validar campos calculados: custo_total, preco_minimo, preco_ideal, preco_final_simulado.

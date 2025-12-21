@@ -11,5 +11,6 @@ router.post('/', salesController.create);
 router.get('/:id', salesController.getById);
 router.put('/:id', salesController.update);
 router.post('/:id/cancel', salesController.cancel);
+router.get('/:id/audit', salesController.audit);
 
 module.exports = router;

@@ -7,7 +7,14 @@
   "scripts": {
     "start": "npm --workspace api start",
     "dev": "npm --workspace api run dev",
-    "test": "npm --workspace api test"
+    "test": "npm --workspace api test",
+    "us001": "npm --workspace api run test:us001",
+    "us002": "npm --workspace api run test:us002",
+    "us003": "npm --workspace api run test:us003",
+    "us004": "npm --workspace api run test:us004",
+    "us005": "npm --workspace api run test:us005",
+    "us006": "npm --workspace api run test:us006",
+    "us007": "npm --workspace api run test:us007"
   },
   "dependencies": {
     "mochawesome": "^7.1.4"

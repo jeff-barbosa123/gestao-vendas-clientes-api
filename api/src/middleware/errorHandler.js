@@ -1,3 +1,5 @@
+const { logError } = require("../utils/logger");
+
 function errorHandler(err, req, res, next) {
   if (res.headersSent) return next(err);
 
@@ -22,19 +24,33 @@ function errorHandler(err, req, res, next) {
       404: 'NOT_FOUND',
       409: 'CONFLICT',
       413: 'PAYLOAD_TOO_LARGE',
+      422: 'UNPROCESSABLE_ENTITY',
     };
     code = defaultCodes[status] || 'INTERNAL_ERROR';
   }
 
   const details = Array.isArray(err.details) ? err.details : err.details ? [err.details] : [];
 
-  res.status(status).json({
+  const payload = {
     success: false,
     code,
     message,
     error: message, // compatibilidade com clientes que já esperam "error"
     errors: details,
+  };
+
+  // registra falhas reais
+  logError({
+    event: "ERROR_RESPONSE",
+    message,
+    requestId: req.requestId,
+    status,
+    code,
+    path: req.originalUrl,
+    userId: req.user ? req.user.id : undefined,
   });
+
+  res.status(status).json(payload);
 }
 
 module.exports = { errorHandler };

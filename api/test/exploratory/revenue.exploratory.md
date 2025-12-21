@@ -1,0 +1,173 @@
+# Cenarios Exploratorios - US004 (Visualizacao do Faturamento)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados na visualizacao/exportacao do faturamento (SGVC - MVP 1.0).
+
+## Cenarios sugeridos
+- **EXP-REP-001 | Venda criada mas nao refletida**
+  - Dado que registro uma venda valida
+  - Quando consulto o faturamento total imediatamente apos
+  - Entao verifico se o valor foi somado corretamente e aponto inconsistencias se nao refletir
+- **EXP-REP-002 | Cancelamento ainda contado**
+  - Dado que existe uma venda ativa
+  - Quando a venda e cancelada
+  - Entao o faturamento nao deve mais considerar o valor; registrar se permanecer no total
+- **EXP-REP-003 | Concorrencia com multiplas vendas**
+  - Dado que multiplas vendas sao registradas simultaneamente
+  - Quando consulto o faturamento durante o processo
+  - Entao observo valores intermediarios inconsistentes e registro divergencias
+- **EXP-REP-004 | Cancelamentos em massa**
+  - Dado que varias vendas sao canceladas em curto intervalo
+  - Quando consulto o faturamento durante os cancelamentos
+  - Entao verifico se o sistema mantem consistencia financeira
+- **EXP-REP-005 | Virada de dia**
+  - Dado que ha vendas proximas a meia-noite
+  - Quando consulto antes e depois da virada
+  - Entao observo se a atribuicao de dia esta correta
+- **EXP-REP-006 | Virada de mes**
+  - Dado que ha vendas no ultimo dia do mes
+  - Quando consulto o faturamento mensal apos a virada
+  - Entao observo se as vendas permanecem no mes correto
+- **EXP-REP-007 | Virada de ano**
+  - Dado que ha vendas no ultimo dia do ano
+  - Quando consulto o faturamento anual
+  - Entao valido se nao migram para o ano seguinte
+- **EXP-REP-008 | Data inexistente (29/02 ano nao bissexto)**
+  - Dado que informo 29/02 em ano nao bissexto
+  - Quando consulto o faturamento
+  - Entao observo a mensagem de erro e avalio clareza
+- **EXP-REP-009 | Semana ISO limite (53)**
+  - Dado que informo semana ISO 53
+  - Quando consulto faturamento semanal
+  - Entao valido tratamento correto da semana
+- **EXP-REP-010 | Impacto de timezone**
+  - Dado que altero o timezone da requisicao
+  - Quando consulto o faturamento
+  - Entao observo se ha impacto indevido nos valores
+- **EXP-REP-011 | Exportacao durante consultas**
+  - Dado que consultas de faturamento estao ocorrendo
+  - Quando inicio uma exportacao
+  - Entao observo se os valores exportados permanecem consistentes
+- **EXP-REP-012 | Exportacao interrompida**
+  - Dado que inicio exportacao de faturamento
+  - Quando ocorre falha de rede durante o processo
+  - Entao observo se a falha e controlada
+- **EXP-REP-013 | Exportacoes consecutivas**
+  - Dado que realizo varias exportacoes em curto intervalo
+  - Quando observo o sistema
+  - Entao identifico degradacao ou bloqueios (rate limit)
+- **EXP-REP-014 | Filtro valido sem dados**
+  - Dado que informo periodo valido sem vendas
+  - Quando consulto o faturamento
+  - Entao observo retorno claro e consistente (zero)
+- **EXP-REP-015 | Mensagens de erro**
+  - Dado que envio filtros invalidos
+  - Quando recebo mensagens
+  - Entao avalio se sao compreensiveis e consistentes
+- **EXP-REP-016 | Ordem dos parametros**
+  - Dado que envio os mesmos parametros em ordem diferente
+  - Quando consulto o faturamento
+  - Entao valido se o resultado permanece igual
+- **EXP-REP-017 | Precisao de arredondamento**
+  - Dado que ha vendas com valores decimais extensos
+  - Quando consulto faturamento
+  - Entao valido se o arredondamento monetario esta correto
+- **EXP-REP-018 | Uso prolongado**
+  - Dado que realizo consultas continuas por longo periodo
+  - Quando observo o sistema
+  - Entao identifico degradacao progressiva ou vazamento
+- **EXP-REP-019 | Divergencia entre consulta e exportacao**
+  - Dado que consulto e exporto o mesmo periodo
+  - Quando comparo valores
+  - Entao identifico qualquer divergencia
+- **EXP-REP-020 | Cache desatualizado**
+  - Dado que o sistema pode usar cache
+  - Quando consulto apos alteracoes nas vendas
+  - Entao observo se dados antigos sao retornados
+
+## Cenarios adicionais (demais US)
+- **EXP-REP-021 | Token expirado em relatorios**
+  - Dado que o token expirou
+  - Quando consulto faturamento
+  - Entao valido resposta 401 e mensagem clara
+- **EXP-REP-022 | Token revogado apos logout**
+  - Dado que realizo logout
+  - Quando consulto faturamento com o mesmo token
+  - Entao valido bloqueio e ausencia de dados
+- **EXP-REP-023 | Usuario bloqueado**
+  - Dado que o usuario esta bloqueado
+  - Quando tenta acessar relatorios
+  - Entao avalio resposta consistente e segura
+- **EXP-REP-024 | IDOR com userId**
+  - Dado que informo userId de outro usuario
+  - Quando consulto faturamento
+  - Entao valido que o acesso e negado
+- **EXP-REP-025 | Produto inativo nao deve gerar vendas validas**
+  - Dado que um produto esta INATIVO
+  - Quando tento registrar venda e consultar faturamento
+  - Entao valido bloqueio da venda e ausencia no total
+- **EXP-REP-026 | Produto sem purchase_price**
+  - Dado que um produto nao possui purchase_price
+  - Quando tento registrar venda
+  - Entao valido erro e impacto zero no faturamento
+- **EXP-REP-027 | Venda sem customerId e com clienteNome**
+  - Dado que registro venda com clienteNome
+  - Quando consulto faturamento
+  - Entao valido se a venda entra no total corretamente
+- **EXP-REP-028 | Alteracao de receita vinculada**
+  - Dado que uma ficha tecnica vinculada e atualizada
+  - Quando realizo novas vendas do produto
+  - Entao observo se CMV/relatorio financeiro reflete o novo custo
+- **EXP-REP-029 | Remocao de vinculo ficha tecnica**
+  - Dado que removo o vinculo ficha x produto
+  - Quando registro venda
+  - Entao valido se o CMV continua coerente e sem erro
+- **EXP-REP-030 | Simulacao nao deve persistir**
+  - Dado que executo simulacao de preco
+  - Quando consulto faturamento
+  - Entao valido que nao houve alteracao de vendas/revenue
+- **EXP-REP-031 | Margem negativa bloqueada na simulacao**
+  - Dado que envio margem negativa
+  - Quando simulo preco e consulto faturamento
+  - Entao valido erro na simulacao e zero impacto no revenue
+- **EXP-REP-032 | Exportacao sem vendas**
+  - Dado que nao ha vendas no periodo
+  - Quando exporto faturamento
+  - Entao valido arquivo consistente com total zero
+- **EXP-REP-033 | Exportacao com formato invalido**
+  - Dado que informo format invalido
+  - Quando exporto faturamento
+  - Entao valido erro e mensagem clara
+- **EXP-REP-034 | Breakdown por ano**
+  - Dado que uso breakdown=year
+  - Quando consulto faturamento
+  - Entao valido agrupamento correto por ano
+- **EXP-REP-035 | Parametros duplicados**
+  - Dado que envio parametros duplicados (start/end)
+  - Quando consulto faturamento
+  - Entao valido comportamento deterministico
+- **EXP-REP-036 | Intervalo invertido**
+  - Dado que start > end
+  - Quando consulto faturamento
+  - Entao valido erro e mensagem clara
+- **EXP-REP-037 | Venda cancelada em janela de consulta**
+  - Dado que uma venda e criada e cancelada dentro do periodo
+  - Quando consulto faturamento por periodo
+  - Entao valido se o total exclui a venda cancelada
+- **EXP-REP-038 | Multiplas vendas do mesmo produto**
+  - Dado que registro varias vendas do mesmo produto
+  - Quando consulto faturamento
+  - Entao valido soma correta e ausencia de duplicidade
+- **EXP-REP-039 | Payload grande em exportacao**
+  - Dado que existem muitas vendas
+  - Quando exporto faturamento
+  - Entao observo tempo de resposta e limite de tamanho
+- **EXP-REP-040 | Tolerancia a campos extras**
+  - Dado que envio parametros extras na consulta
+  - Quando consulto faturamento
+  - Entao valido rejeicao ou ignorar com resposta consistente
+
+## Notas
+- Registrar status, corpo, valores e tempos de resposta em cada execucao.
+- Variar filtros (dia/semana/mes/ano) e formatos de exportacao (csv/pdf/excel) para detectar incoerencias.
+- Repetir testes perto de viradas de dia/mes/ano e com filtros limite (ex.: semana 53, 29/02) para validar mensagens de erro.

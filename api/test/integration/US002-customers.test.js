@@ -1,16 +1,9 @@
 // api/test/integration/customers.test.js
 const { expect } = require('chai');
 const { getClient } = require('../utils/httpClient');
+const { loginAndGetToken } = require('../utils/authHelper');
 
-const LOGIN_PATH = '/api/auth/login';
 const CUSTOMERS_PATH = '/api/customers';
-
-const ENV = {
-  adminEmail: process.env.ADMIN_EMAIL || 'admin@negocio.com',
-  adminPassword: process.env.ADMIN_PASSWORD || 'Admin@123!',
-  otherEmail: process.env.OTHER_USER_EMAIL || 'user@negocio.com',
-  otherPassword: process.env.OTHER_USER_PASSWORD || 'user123',
-};
 
 const MESSAGES = {
   required: 'Campos obrigat\u00f3rios ausentes',
@@ -38,11 +31,7 @@ describe('Clientes', () => {
 
   before(async () => {
     http = getClient();
-    const login = await http.post(LOGIN_PATH).send({
-      email: ENV.adminEmail,
-      password: ENV.adminPassword,
-    });
-    token = login.body.token;
+    token = await loginAndGetToken('admin');
   });
 
   describe('GET /customers', () => {
@@ -53,35 +42,35 @@ describe('Clientes', () => {
   });
 
   describe('POST /customers', () => {
-    it('API-CAD-002 | Deve retornar 400 quando o nome n?o for informado', async () => {
+    it('API-CAD-002 | Deve retornar 422 quando o nome não for informado', async () => {
       const resposta = await postCustomer(token, {});
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.required);
     });
 
-    it('API-CAD-003 | Deve retornar 400 quando o e-mail n?o for informado', async () => {
+    it('API-CAD-003 | Deve retornar 422 quando o e-mail não for informado', async () => {
       const resposta = await postCustomer(token, { name: 'Cliente Teste' });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.required);
     });
 
-    it('API-CAD-004 | Deve retornar 400 ao enviar e-mail inv?lido', async () => {
+    it('API-CAD-004 | Deve retornar 422 ao enviar e-mail inválido', async () => {
       const resposta = await postCustomer(token, {
         name: 'Cliente Teste',
         email: 'usuario.com',
         phone: '11999999999',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.invalidEmail);
     });
 
-    it('API-CAD-005 | Deve retornar 400 ao enviar e-mail sem dom?nio v?lido', async () => {
+    it('API-CAD-005 | Deve retornar 422 ao enviar e-mail sem domínio válido', async () => {
       const resposta = await postCustomer(token, {
         name: 'Cliente Teste',
         email: 'com',
         phone: '11999999999',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.invalidEmail);
     });
 
@@ -107,13 +96,13 @@ describe('Clientes', () => {
       expect(resposta.body.name).to.equal('Cliente Teste');
     });
 
-    it('API-CAD-008 | Deve retornar 400 quando o nome ultrapassar 255 caracteres', async () => {
+    it('API-CAD-008 | Deve retornar 422 quando o nome ultrapassar 255 caracteres', async () => {
       const resposta = await postCustomer(token, {
         name: 'a'.repeat(256),
         email: makeUniqueEmail('longname'),
         phone: '11999999999',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.nameTooLong);
     });
 
@@ -219,7 +208,7 @@ describe('Clientes', () => {
   });
 
   describe('Erros de payload', () => {
-    it('API-CAD-017 | Deve retornar 400 ao enviar JSON inv?lido', async () => {
+    it('API-CAD-017 | Deve retornar 400 ao enviar JSON inválido', async () => {
       const resposta = await http
         .post(CUSTOMERS_PATH)
         .set(authHeaders(token))
@@ -237,7 +226,7 @@ describe('Clientes', () => {
         email: makeUniqueEmail('sqlinjection'),
         phone: '11944444444',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.nameInvalid);
     });
 
@@ -247,17 +236,17 @@ describe('Clientes', () => {
         email: "  robert'); DROP TABLE users; --@teste.com",
         phone: '11933333333',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.invalidEmail);
     });
 
-    it('SEC-CAD-003 | Deve bloquear tentativa de SQL Injection no pre?o', async () => {
+    it('SEC-CAD-003 | Deve bloquear tentativa de SQL Injection no preço', async () => {
       const resposta = await postCustomer(token, {
         name: 'Cliente SQL Injection',
         email: makeUniqueEmail('safeemail'),
         phone: "11922222222'); DROP TABLE orders; --",
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.phoneInvalid);
     });
 
@@ -267,7 +256,7 @@ describe('Clientes', () => {
         email: makeUniqueEmail('xss-name'),
         phone: '11911111111',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.nameInvalid);
     });
 
@@ -277,7 +266,7 @@ describe('Clientes', () => {
         email: makeUniqueEmail('xss-phone'),
         phone: '<script>alert("XSS")</script>',
       });
-      expect(resposta.status).to.equal(400);
+      expect(resposta.status).to.equal(422);
       expect(resposta.body.error).to.equal(MESSAGES.phoneInvalid);
     });
 
@@ -289,12 +278,7 @@ describe('Clientes', () => {
         phone: '11900000000',
       });
       const id = created.body.id;
-
-      const outraLogin = await http.post(LOGIN_PATH).send({
-        email: ENV.otherEmail,
-        password: ENV.otherPassword,
-      });
-      const outraToken = outraLogin.body.token;
+      const outraToken = await loginAndGetToken('other');
 
       const resposta = await putCustomer(outraToken, id, {
         name: 'Cliente Atualizado',
@@ -314,12 +298,7 @@ describe('Clientes', () => {
         phone: '11899999999',
       });
       const id = created.body.id;
-
-      const outraLogin = await http.post(LOGIN_PATH).send({
-        email: ENV.otherEmail,
-        password: ENV.otherPassword,
-      });
-      const outraToken = outraLogin.body.token;
+      const outraToken = await loginAndGetToken('other');
 
       const resposta = await deleteCustomer(outraToken, id);
       expect(resposta.status).to.equal(403);
@@ -347,3 +326,5 @@ describe('Clientes', () => {
     });
   });
 });
+
+

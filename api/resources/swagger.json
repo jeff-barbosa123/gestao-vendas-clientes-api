@@ -3,7 +3,7 @@
   "info": {
     "title": "Gestão de Vendas e Clientes API",
     "version": "1.0.0",
-    "description": "API Rest para gestão de vendas e clientes. Autenticação via JWT."
+    "description": "API REST para gestão de vendas e clientes. Autenticação via JWT."
   },
   "servers": [
     { "url": "/api", "description": "API base" }
@@ -14,7 +14,8 @@
     { "name": "Produtos" },
     { "name": "Vendas" },
     { "name": "Relatórios" },
-    { "name": "Receitas" }
+    { "name": "Receitas" },
+    { "name": "Simulação" }
   ],
   "paths": {
     "/auth/login": {
@@ -40,7 +41,7 @@
           },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "403": {
-            "description": "Acesso bloqueado por múltiplas tentativas",
+            "description": "Acesso bloqueado por múltiplas tentativas.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -81,6 +82,54 @@
             }
           },
           "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+
+    "/auth/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Retorna dados do usuário autenticado",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Usuário autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+
+    "/auth/validate": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Valida o token atual",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Token válido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -250,6 +299,7 @@
             }
           },
           "400": { "$ref": "#/components/responses/BadRequest" },
+          "422": { "$ref": "#/components/responses/Unprocessable" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -303,6 +353,7 @@
           },
           "404": { "$ref": "#/components/responses/NotFound" },
           "400": { "$ref": "#/components/responses/BadRequest" },
+          "422": { "$ref": "#/components/responses/Unprocessable" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       },
@@ -360,6 +411,7 @@
                   "value": {
                     "name": "Bolo de Rolo 500g",
                     "yield": 1,
+                    "yieldType": "UN",
                     "margin": 2,
                     "ingredients": [
                       { "name": "Farinha", "quantity": 0.5, "cost": 9.2 },
@@ -405,6 +457,7 @@
                   "value": {
                     "name": "Bolo de Rolo 500g",
                     "yield": 1,
+                    "yieldType": "UN",
                     "margin": 2,
                     "ingredients": [
                       { "name": "Farinha", "quantity": 0.5, "cost": 9.2 },
@@ -507,6 +560,91 @@
       }
     },
 
+    "/simulacao/preco": {
+      "post": {
+        "tags": ["Simulação"],
+        "summary": "Simula preço ideal por receita",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PriceSimulationByIdRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Simulação realizada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PriceSimulationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
+    "/simulacao/preco/rapida": {
+      "post": {
+        "tags": ["Simulação"],
+        "summary": "Simulação rápida sem persistir",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PriceSimulationQuickRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Simulação realizada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PriceSimulationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+
+    "/simulacao/preco/{id}": {
+      "get": {
+        "tags": ["Simulação"],
+        "summary": "Simula preço por ID via GET",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "margem", "in": "query", "required": true, "schema": { "type": "number" } },
+          { "name": "taxaEntrega", "in": "query", "required": false, "schema": { "type": "number" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Simulação realizada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PriceSimulationResponse" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
     "/sales": {
       "get": {
         "tags": ["Vendas"],
@@ -550,6 +688,7 @@
             }
           },
           "400": { "$ref": "#/components/responses/BadRequest" },
+          "422": { "$ref": "#/components/responses/Unprocessable" },
           "404": { "$ref": "#/components/responses/NotFound" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
@@ -640,7 +779,13 @@
         "parameters": [
           { "name": "start", "in": "query", "schema": { "type": "string", "format": "date-time" } },
           { "name": "end", "in": "query", "schema": { "type": "string", "format": "date-time" } },
-          { "name": "breakdown", "in": "query", "schema": { "type": "string", "enum": ["total", "day", "week", "month"] } }
+          { "name": "day", "in": "query", "schema": { "type": "string" } },
+          { "name": "week", "in": "query", "schema": { "type": "string" } },
+          { "name": "month", "in": "query", "schema": { "type": "string" } },
+          { "name": "year", "in": "query", "schema": { "type": "string" } },
+          { "name": "breakdown", "in": "query", "schema": { "type": "string", "enum": ["total", "day", "week", "month", "year"] } },
+          { "name": "timezone", "in": "query", "schema": { "type": "string" } },
+          { "name": "userId", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
@@ -668,54 +813,57 @@
     "/reports/revenue/export": {
       "get": {
         "tags": ["Relatórios"],
-        "summary": "Exporta faturamento (csv/pdf)",
+        "summary": "Exporta faturamento (CSV/PDF)",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "start", "in": "query", "schema": { "type": "string", "format": "date-time" } },
           { "name": "end", "in": "query", "schema": { "type": "string", "format": "date-time" } },
-          { "name": "breakdown", "in": "query", "schema": { "type": "string", "enum": ["total", "day", "week", "month"] } },
-          { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["csv", "pdf", "excel"] } }
+          { "name": "day", "in": "query", "schema": { "type": "string" } },
+          { "name": "week", "in": "query", "schema": { "type": "string" } },
+          { "name": "month", "in": "query", "schema": { "type": "string" } },
+          { "name": "year", "in": "query", "schema": { "type": "string" } },
+          { "name": "breakdown", "in": "query", "schema": { "type": "string", "enum": ["total", "day", "week", "month", "year"] } },
+          { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["csv", "pdf", "excel"] } },
+          { "name": "timezone", "in": "query", "schema": { "type": "string" } },
+          { "name": "userId", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": { "description": "Arquivo de exportação" },
+          "200": { "description": "Arquivo de exportaÃ§Ã£o" },
           "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
 
-    "/reports/cmv": {
+    "/reports/financial": {
       "get": {
         "tags": ["Relatórios"],
-        "summary": "Calcula o CMV (Custo da Mercadoria Vendida)",
+        "summary": "Relatório financeiro (receita, CMV e lucro)",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "start", "in": "query", "schema": { "type": "string", "format": "date-time" } },
-          { "name": "end", "in": "query", "schema": { "type": "string", "format": "date-time" } }
+          { "name": "end", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "day", "in": "query", "schema": { "type": "string" } },
+          { "name": "week", "in": "query", "schema": { "type": "string" } },
+          { "name": "month", "in": "query", "schema": { "type": "string" } },
+          { "name": "year", "in": "query", "schema": { "type": "string" } },
+          { "name": "breakdown", "in": "query", "schema": { "type": "string", "enum": ["total", "day", "week", "month", "year"] } },
+          { "name": "timezone", "in": "query", "schema": { "type": "string" } },
+          { "name": "userId", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
-            "description": "CMV calculado com sucesso",
+            "description": "Relatório financeiro",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cmv_total": { "type": "number" },
-                    "items": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/FinancialSummary" },
+                    {
                       "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "productId": { "type": "string" },
-                          "productName": { "type": "string" },
-                          "quantity": { "type": "number" },
-                          "costUnit": { "type": "number" },
-                          "costTotal": { "type": "number" }
-                        }
-                      }
+                      "items": { "$ref": "#/components/schemas/FinancialRow" }
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -740,8 +888,11 @@
       "ErrorResponse": {
         "type": "object",
         "properties": {
+          "success": { "type": "boolean", "example": false },
+          "code": { "type": "string" },
+          "message": { "type": "string" },
           "error": { "type": "string" },
-          "details": { "type": "object" }
+          "errors": { "type": "array", "items": { "type": "string" } }
         }
       },
 
@@ -758,12 +909,19 @@
         "type": "object",
         "properties": {
           "token": { "type": "string" },
+          "refreshToken": { "type": "string" },
+          "exp": { "type": "number" },
+          "jti": { "type": "string" },
+          "refreshJti": { "type": "string" },
           "user": {
             "type": "object",
             "properties": {
               "id": { "type": "string" },
               "email": { "type": "string" },
-              "name": { "type": "string" }
+              "name": { "type": "string" },
+              "statusUsuario": { "type": "string", "enum": ["ATIVO", "BLOQUEADO"] },
+              "dataUltimoLogin": { "type": "string", "format": "date-time", "nullable": true },
+              "tentativasFalha": { "type": "integer" }
             }
           }
         }
@@ -785,6 +943,9 @@
           "id": { "type": "string" },
           "email": { "type": "string", "format": "email" },
           "name": { "type": "string" },
+          "statusUsuario": { "type": "string", "enum": ["ATIVO", "BLOQUEADO"] },
+          "dataUltimoLogin": { "type": "string", "format": "date-time", "nullable": true },
+          "tentativasFalha": { "type": "integer" },
           "createdAt": { "type": "string", "format": "date-time" }
         },
         "required": ["id", "email", "name"]
@@ -835,19 +996,39 @@
         "properties": {
           "id": { "type": "string" },
           "name": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "descricao": { "type": "string", "nullable": true },
           "price": { "type": "number" },
+          "purchase_price": { "type": "number" },
+          "statusProduto": { "type": "string", "enum": ["ATIVO", "INATIVO"] },
+          "ownerId": { "type": "string", "nullable": true },
+          "usuarioId": { "type": "string", "nullable": true },
+          "fichaTecnicaId": { "type": "string", "nullable": true },
+          "custo_por_unidade": { "type": "number", "nullable": true },
+          "preco_minimo": { "type": "number", "nullable": true },
+          "preco_minimo_sugerido": { "type": "number", "nullable": true },
+          "cmv_previsto": { "type": "number", "nullable": true },
+          "cmv_futuro": { "type": "number", "nullable": true },
+          "data_vinculo": { "type": "string", "format": "date-time", "nullable": true },
           "stock": { "type": "integer", "nullable": true },
-          "createdAt": { "type": "string", "format": "date-time" }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time", "nullable": true },
+          "dataCriacao": { "type": "string", "format": "date-time" },
+          "dataAtualizacao": { "type": "string", "format": "date-time", "nullable": true }
         },
         "required": ["id", "name", "price", "createdAt"]
       },
 
       "ProductCreate": {
         "type": "object",
-        "required": ["name", "price"],
+        "required": ["name", "price", "purchase_price"],
         "properties": {
           "name": { "type": "string" },
+          "description": { "type": "string" },
+          "descricao": { "type": "string" },
           "price": { "type": "number" },
+          "purchase_price": { "type": "number" },
+          "statusProduto": { "type": "string", "enum": ["ATIVO", "INATIVO"] },
           "stock": { "type": "integer" }
         }
       },
@@ -856,7 +1037,11 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
+          "description": { "type": "string" },
+          "descricao": { "type": "string" },
           "price": { "type": "number" },
+          "purchase_price": { "type": "number" },
+          "statusProduto": { "type": "string", "enum": ["ATIVO", "INATIVO"] },
           "stock": { "type": "integer" }
         }
       },
@@ -869,6 +1054,15 @@
           "cost": { "type": "number", "description": "Custo unitário utilizado no cálculo" }
         }
       },
+      "RecipeIngredientBR": {
+        "type": "object",
+        "properties": {
+          "nomeIngrediente": { "type": "string" },
+          "nome": { "type": "string" },
+          "quantidade": { "type": "number" },
+          "custoUnitario": { "type": "number" }
+        }
+      },
       "RecipeOverheadItem": {
         "type": "object",
         "properties": {
@@ -876,21 +1070,40 @@
           "cost": { "type": "number" }
         }
       },
+      "RecipeOverheadItemBR": {
+        "type": "object",
+        "properties": {
+          "descricao": { "type": "string" },
+          "valor": { "type": "number" }
+        }
+      },
       "RecipeCreateRequest": {
         "type": "object",
-        "required": ["name", "ingredients"],
+        "required": ["name", "ingredients", "yieldType"],
         "properties": {
           "name": { "type": "string" },
+          "nomeReceita": { "type": "string" },
           "description": { "type": "string" },
+          "descricao": { "type": "string" },
           "yield": { "type": "number", "default": 1 },
+          "rendimento": { "type": "number" },
+          "yieldType": { "type": "string" },
           "ingredients": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeIngredient" }
+          },
+          "ingredientes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeIngredientBR" }
           },
           "overhead": { "type": "number", "description": "Custos indiretos (gás, energia, embalagem)" },
           "overheadItems": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeOverheadItem" }
+          },
+          "gastosIndiretos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeOverheadItemBR" }
           },
           "labor": { "type": "number", "description": "Custo de mão de obra" },
           "margin": { "type": "number", "description": "Fator (>1) ou percentual (0-1) de margem" },
@@ -901,16 +1114,28 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
+          "nomeReceita": { "type": "string" },
           "description": { "type": "string" },
+          "descricao": { "type": "string" },
           "yield": { "type": "number" },
+          "rendimento": { "type": "number" },
+          "yieldType": { "type": "string" },
           "ingredients": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeIngredient" }
+          },
+          "ingredientes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeIngredientBR" }
           },
           "overhead": { "type": "number" },
           "overheadItems": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeOverheadItem" }
+          },
+          "gastosIndiretos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeOverheadItemBR" }
           },
           "labor": { "type": "number" },
           "margin": { "type": "number" },
@@ -921,12 +1146,21 @@
         "type": "object",
         "properties": {
           "id": { "type": "string" },
+          "idFichaTecnica": { "type": "string" },
           "name": { "type": "string" },
+          "nomeReceita": { "type": "string" },
           "description": { "type": "string" },
+          "descricao": { "type": "string" },
           "yield": { "type": "number" },
+          "rendimento": { "type": "number" },
+          "yieldType": { "type": "string" },
           "ingredients": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeIngredient" }
+          },
+          "ingredientes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeIngredientBR" }
           },
           "overheadItems": {
             "type": "array",
@@ -936,12 +1170,15 @@
           "labor": { "type": "number" },
           "costIngredients": { "type": "number" },
           "totalCost": { "type": "number" },
+          "custoTotal": { "type": "number" },
           "costPerUnit": { "type": "number" },
+          "custoUnitarioFinal": { "type": "number" },
           "priceMinimum": { "type": "number" },
           "priceSuggested": { "type": "number" },
           "marginLabel": { "type": "string" },
           "estimatedProfit": { "type": "number" },
           "linkProductId": { "type": "string", "nullable": true },
+          "usuarioId": { "type": "string", "nullable": true },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time", "nullable": true }
         },
@@ -952,18 +1189,27 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
+          "nomeReceita": { "type": "string" },
           "yield": { "type": "number" },
+          "rendimento": { "type": "number" },
+          "yieldType": { "type": "string" },
           "ingredients": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RecipeIngredient" }
+          },
+          "ingredientes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RecipeIngredientBR" }
           },
           "overhead": { "type": "number" },
           "labor": { "type": "number" },
           "costIngredients": { "type": "number" },
           "totalCost": { "type": "number" },
+          "custoTotal": { "type": "number" },
           "priceMinimum": { "type": "number" },
           "priceSuggested": { "type": "number" },
           "costPerUnit": { "type": "number" },
+          "custoUnitarioFinal": { "type": "number" },
           "marginLabel": { "type": "string" },
           "estimatedProfit": { "type": "number" }
         }
@@ -985,6 +1231,8 @@
         "properties": {
           "id": { "type": "string" },
           "customerId": { "type": "string" },
+          "customerName": { "type": "string", "nullable": true },
+          "clienteNome": { "type": "string", "nullable": true },
           "items": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SaleItem" }
@@ -992,17 +1240,20 @@
           "total": { "type": "number" },
           "cmv": { "type": "number" },
           "date": { "type": "string", "format": "date-time" },
-          "status": { "type": "string", "enum": ["confirmed", "canceled"] },
+          "status": { "type": "string", "enum": ["ACTIVE", "CANCELED"] },
+          "statusVenda": { "type": "string", "enum": ["ativa", "cancelada"] },
           "createdAt": { "type": "string", "format": "date-time" }
         },
-        "required": ["id", "customerId", "items", "total", "date", "status", "createdAt"]
+        "required": ["id", "items", "total", "date", "status", "createdAt"]
       },
 
       "SaleCreate": {
         "type": "object",
-        "required": ["customerId", "items"],
+        "required": ["items"],
         "properties": {
           "customerId": { "type": "string" },
+          "customerName": { "type": "string", "description": "Opcional quando customerId nao for informado." },
+          "clienteNome": { "type": "string", "description": "Opcional quando customerId nao for informado." },
           "items": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SaleItem" }
@@ -1015,19 +1266,23 @@
         "type": "object",
         "properties": {
           "customerId": { "type": "string" },
+          "customerName": { "type": "string" },
+          "clienteNome": { "type": "string" },
           "items": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SaleItem" }
           },
           "date": { "type": "string", "format": "date-time" },
-          "status": { "type": "string", "enum": ["confirmed", "canceled"] }
+          "status": { "type": "string", "enum": ["ACTIVE", "CANCELED"] }
         }
       },
 
       "RevenueTotal": {
         "type": "object",
         "properties": {
-          "total": { "type": "number" }
+          "total": { "type": "number" },
+          "totalFaturamento": { "type": "number" },
+          "quantidadeVendas": { "type": "integer" }
         },
         "required": ["total"]
       },
@@ -1036,15 +1291,95 @@
         "type": "object",
         "properties": {
           "period": { "type": "string" },
-          "total": { "type": "number" }
+          "total": { "type": "number" },
+          "quantidadeVendas": { "type": "integer" }
         },
         "required": ["period", "total"]
+      },
+
+      "FinancialSummary": {
+        "type": "object",
+        "properties": {
+          "revenue": { "type": "number" },
+          "cmv": { "type": "number" },
+          "profit": { "type": "number" },
+          "margin": { "type": "number" },
+          "avgTicket": { "type": "number" },
+          "salesCount": { "type": "integer" }
+        }
+      },
+
+      "FinancialRow": {
+        "type": "object",
+        "properties": {
+          "period": { "type": "string" },
+          "revenue": { "type": "number" },
+          "cmv": { "type": "number" },
+          "profit": { "type": "number" },
+          "margin": { "type": "number" },
+          "avgTicket": { "type": "number" },
+          "salesCount": { "type": "integer" }
+        }
+      },
+
+      "PriceSimulationByIdRequest": {
+        "type": "object",
+        "required": ["receitaId", "margem"],
+        "properties": {
+          "receitaId": { "type": "string" },
+          "margem": { "type": "number" },
+          "taxaEntrega": { "type": "number" }
+        }
+      },
+      "PriceSimulationQuickRequest": {
+        "type": "object",
+        "required": ["ingredientes", "rendimento", "margem"],
+        "properties": {
+          "nome": { "type": "string" },
+          "rendimento": { "type": "number" },
+          "ingredientes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nome": { "type": "string" },
+                "quantidade": { "type": "number" },
+                "custo": { "type": "number" }
+              }
+            }
+          },
+          "overhead": { "type": "number" },
+          "overheads": { "type": "object", "additionalProperties": { "type": "number" } },
+          "maoDeObra": { "type": "number" },
+          "margem": { "type": "number" },
+          "taxaEntrega": { "type": "number" }
+        }
+      },
+      "PriceSimulationResponse": {
+        "type": "object",
+        "properties": {
+          "custo_total": { "type": "number" },
+          "custo_por_unidade": { "type": "number" },
+          "preco_minimo": { "type": "number" },
+          "preco_ideal": { "type": "number" },
+          "margem": { "type": "number" },
+          "taxa_entrega": { "type": "number" },
+          "preco_final_simulado": { "type": "number" },
+          "valor_lucro": { "type": "number" },
+          "lucro_estimado": { "type": "number" },
+          "custoUnitario": { "type": "number" },
+          "margemLucroPercentual": { "type": "number" },
+          "taxaEntrega": { "type": "number" },
+          "precoFinalSimulado": { "type": "number" },
+          "valorLucro": { "type": "number" },
+          "lucroEstimado": { "type": "number" }
+        }
       }
     },
 
     "responses": {
       "Unauthorized": {
-        "description": "Não autorizado",
+        "description": "Não autorizado.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -1053,7 +1388,7 @@
       },
 
       "BadRequest": {
-        "description": "Solicitação inválida",
+        "description": "Solicitação inválida.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -1062,7 +1397,7 @@
       },
 
       "Conflict": {
-        "description": "Conflito de dados",
+        "description": "Conflito de dados.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -1071,7 +1406,7 @@
       },
 
       "NotFound": {
-        "description": "Recurso não encontrado",
+        "description": "Recurso não encontrado.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -1080,7 +1415,7 @@
       },
 
       "Unprocessable": {
-        "description": "Regra de negócio impede operação",
+        "description": "Regra de negócio impede operação.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" }

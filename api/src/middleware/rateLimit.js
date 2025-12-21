@@ -2,7 +2,13 @@ function rateLimit({ windowMs = 60_000, max = 5, message = 'Muitas requisicoes, 
   const hits = new Map();
 
   return (req, res, next) => {
-    const key = req.ip || req.headers['x-forwarded-for'] || 'global';
+    const forwarded = req.headers['x-forwarded-for'];
+    const forwardedIp = Array.isArray(forwarded)
+      ? forwarded[0]
+      : typeof forwarded === 'string'
+      ? forwarded.split(',')[0].trim()
+      : null;
+    const key = forwardedIp || req.ip || 'global';
     const now = Date.now();
     const entry = hits.get(key) || { count: 0, windowStart: now };
 

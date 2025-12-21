@@ -1,6 +1,6 @@
 ## Projeto: API de Gestão de Vendas e Clientes
 
-Esta API REST, construída com Express, implementa as funcionalidades e regras de negócio do sistema de gestão de vendas e clientes. Inclui autenticação JWT via middleware, armazenamento em memória, documentação Swagger e endpoint para exportação de relatórios (CSV/PDF).
+Esta API REST, construída com Express, implementa funcionalidades e regras de negócio do sistema de gestão de vendas e clientes. Inclui autenticação JWT via middleware, armazenamento em memória, documentação Swagger e exportação de relatórios (CSV/PDF).
 
 ### Como executar
 
@@ -24,12 +24,15 @@ Servidor em `http://localhost:3000` com base `/api`.
 
 ### Autenticação
 
-- `POST /api/auth/login` retorna um token JWT.
-- Envie `Authorization: Bearer <token>` nas demais rotas.
+- `POST /api/auth/login` retorna token JWT e metadados de sessão.
+- `GET /api/auth/me` retorna o usuário autenticado.
+- `GET /api/auth/validate` valida o token ativo.
+- `POST /api/auth/logout` revoga o token ativo.
+- Envie `Authorization: Bearer <token>` nas rotas protegidas.
 - Regras:
-  - Após 3 tentativas erradas de login, bloqueia por 15 minutos (403).
-  - Sessão expira por inatividade de 30 minutos (401). Implementado via verificação em middleware e store de tokens em memória.
-  - `POST /api/auth/logout` revoga o token ativo.
+  - Após 3 tentativas erradas de login, bloqueia por 15 minutos (423, "Acesso temporariamente bloqueado").
+  - Token ausente → 403 "Acesso negado".
+  - Token inválido ou expirado/inatividade (30 min) → 401 "Sessão expirada, faça login novamente".
 
 ### Camadas
 
@@ -46,20 +49,23 @@ Servidor em `http://localhost:3000` com base `/api`.
 
 ### Endpoints principais
 
-- Auth: `/auth/login`, `/auth/logout`
+- Auth: `/auth/login`, `/auth/logout`, `/auth/me`, `/auth/validate`
 - Clientes: `/customers` (CRUD, e-mail único)
-- Produtos: `/products` (CRUD, nome e preço obrigatórios)
-- Vendas: `/sales` (CRUD básico, cancelamento, regra de não editar cancelada)
-- Relatórios: `/reports/revenue` (total, dia, semana, mês com filtros `start`/`end`), `/reports/revenue/export?format=csv|pdf|excel`
+- Produtos: `/products` (CRUD, nome/preço obrigatórios e `purchase_price` obrigatório)
+- Vendas: `/sales` (CRUD básico, cancelamento)
+- Relatórios: `/reports/revenue`, `/reports/revenue/export?format=csv|pdf|excel`, `/reports/financial`
+- Simulação: `/simulacao/preco`, `/simulacao/preco/rapida`, `/simulacao/preco/:id`
+- Receitas/Fichas técnicas: `/recipes` (CRUD, cálculo e exportação)
 
 ### Códigos de erro
 
 - 400: validação/entrada inválida
-- 401: não autorizado/token inválido ou sessão inativa
-- 403: login bloqueado por tentativas
+- 401: não autorizado/token inválido ou sessão expirada/inativa
+- 403: acesso negado (token ausente)
 - 404: recurso não encontrado
-- 409: conflito (e-mail duplicado)
+- 409: conflito (ex.: e-mail duplicado)
 - 422: regra de negócio impede operação
+- 423: acesso temporariamente bloqueado (3 falhas de login)
 - 500: erro interno
 
 ---
@@ -109,4 +115,3 @@ Regras de Negócio:
 - Deve permitir filtros por período (ex: data inicial e final).
 - O cálculo deve considerar apenas vendas confirmadas.
 - O empreendedor pode exportar o relatório em formato PDF ou Excel (CSV para Excel).
-

@@ -4,6 +4,9 @@ const dotenv = require('dotenv');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
+// Ambiente de teste (força NODE_ENV=test para silenciar console nos loggers)
+process.env.NODE_ENV = 'test';
+
 // Allow tests outside api/ to resolve dev deps from api/node_modules (e.g., supertest)
 const apiNodeModules = path.join(__dirname, '..', 'node_modules');
 process.env.NODE_PATH = [apiNodeModules, process.env.NODE_PATH || '']
@@ -13,9 +16,6 @@ Module._initPaths();
 
 // Load .env from api root
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-console.log('ENV carregado de:', path.resolve(__dirname, '../.env'));
-console.log('ADMIN_EMAIL:', process.env.ADMIN_EMAIL);
 
 // Chai setup
 chai.use(chaiHttp);

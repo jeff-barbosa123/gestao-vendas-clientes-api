@@ -1,4 +1,5 @@
 const { randomUUID } = require("crypto");
+const { logInfo } = require("../utils/logger");
 
 function requestLogger(req, res, next) {
   const requestId = randomUUID();
@@ -11,8 +12,9 @@ function requestLogger(req, res, next) {
     const durationNs = Number(process.hrtime.bigint() - startedAt);
     const durationMs = Math.round(durationNs / 1e6 * 100) / 100; // 2 casas
 
-    const logEntry = {
-      level: 'info',
+    logInfo({
+      event: 'HTTP_REQUEST',
+      message: 'HTTP request finalizado',
       requestId,
       method: req.method,
       path: req.originalUrl,
@@ -20,9 +22,7 @@ function requestLogger(req, res, next) {
       durationMs,
       userId: req.user ? req.user.id : undefined,
       ip: req.ip,
-    };
-
-    console.log(JSON.stringify(logEntry));
+    });
   });
 
   next();

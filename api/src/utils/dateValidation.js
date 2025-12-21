@@ -3,6 +3,7 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const ISO_WEEK_RE = /^(\d{4})-W(\d{2})$/;
 const ISO_MONTH_RE = /^(\d{4})-(\d{2})$/;
 const ISO_YEAR_RE = /^\d{4}$/;
+const TIMEZONE_RE = /^(UTC|[+-](?:0[0-9]|1[0-4]):[0-5][0-9]|[A-Za-z_]+\/[A-Za-z_]+)$/;
 
 function buildError(message, status = 400) {
   const err = new Error(message);
@@ -104,6 +105,13 @@ function validateBreakdown(breakdown) {
   return breakdown;
 }
 
+function validateTimezone(value) {
+  if (!value) return;
+  if (typeof value !== 'string' || !TIMEZONE_RE.test(value)) {
+    throw buildError('timezone invalido');
+  }
+}
+
 function toIsoDay(date) {
   return date.toISOString().slice(0, 10);
 }
@@ -127,6 +135,7 @@ module.exports = {
   resolveTemporalRange,
   validateDateRange,
   validateBreakdown,
+  validateTimezone,
   toIsoDay,
   toWeekKeyUTC,
   toMonthKeyUTC,

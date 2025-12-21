@@ -1,3 +1,5 @@
+const { logAudit } = require("../utils/logger");
+
 const SENSITIVE_KEYS = ["password", "senha", "token", "refreshToken"];
 
 function scrubBody(body) {
@@ -20,8 +22,9 @@ function auditLogger(req, res, next) {
 
   const start = Date.now();
   res.on("finish", () => {
-    const logEntry = {
-      level: "audit",
+    logAudit({
+      event: "AUDIT",
+      message: "Ação auditada",
       requestId: req.requestId,
       userId: req.user ? req.user.id : undefined,
       method: req.method,
@@ -29,8 +32,7 @@ function auditLogger(req, res, next) {
       status: res.statusCode,
       durationMs: Date.now() - start,
       body: scrubBody(req.body),
-    };
-    console.log(JSON.stringify(logEntry));
+    });
   });
 
   next();

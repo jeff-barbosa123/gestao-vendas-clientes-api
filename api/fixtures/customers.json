@@ -10172,5 +10172,4341 @@
     "email": "cli.sale.1764432500508@example.com",
     "phone": "11977778888",
     "createdAt": "2025-11-29T16:08:20.513Z"
+  },
+  {
+    "id": "07ce6272-0325-42a2-9c1a-125eccae8989",
+    "name": "Cliente Venda",
+    "email": "cli.1765049199276@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:26:39.282Z"
+  },
+  {
+    "id": "5143df65-6518-4fb0-80c5-30a966906930",
+    "name": "Cliente Venda",
+    "email": "cli.1765049228732@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:27:08.737Z"
+  },
+  {
+    "id": "770cc3f4-d624-44fc-8a13-6415c2563ceb",
+    "name": "Cliente Venda",
+    "email": "cli.1765049339043@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:28:59.049Z"
+  },
+  {
+    "id": "d23483f5-afde-4dba-8a84-7b9ae1d0a781",
+    "name": "Cliente Venda",
+    "email": "cli.1765050177089@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:42:57.100Z"
+  },
+  {
+    "id": "13fa48bf-8c60-4588-92e3-cf77c299dd5a",
+    "name": "Cliente Venda",
+    "email": "cli.1765050574243@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:49:34.248Z"
+  },
+  {
+    "id": "4c91d8dc-c2fc-4f92-a668-17786a8f2cc0",
+    "name": "Cliente Venda",
+    "email": "cli.1765050727030@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:52:07.035Z"
+  },
+  {
+    "id": "3525c922-0503-452b-be75-793dbeaa493f",
+    "name": "Cliente Venda",
+    "email": "cli.1765050811214@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:53:31.220Z"
+  },
+  {
+    "id": "b9446463-8ebe-485d-919c-98ffaa93c322",
+    "name": "Cliente Venda",
+    "email": "cli.1765050879313@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:54:39.319Z"
+  },
+  {
+    "id": "87be3ec5-397c-42bf-b35f-9bd94b2984ce",
+    "name": "Cliente Venda",
+    "email": "cli.1765050910374@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T19:55:10.380Z"
+  },
+  {
+    "id": "3aae3b45-7ffd-4327-ba58-c70a07b30bd7",
+    "name": "Cliente Venda",
+    "email": "cli.1765052029706@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T20:13:49.711Z"
+  },
+  {
+    "id": "055720de-a488-44d5-8b73-5e2a8ba39067",
+    "name": "Cliente Venda",
+    "email": "cli.1765052040472@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T20:14:00.478Z"
+  },
+  {
+    "id": "89731a3b-a5c7-42f2-b066-908d98aa474a",
+    "name": "Cliente Venda",
+    "email": "cli.1765052776777@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T20:26:16.784Z"
+  },
+  {
+    "id": "2783593f-e0d9-4a96-b33f-a00cc5e606a9",
+    "name": "Cliente Venda",
+    "email": "cli.1765052896777@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T20:28:16.783Z"
+  },
+  {
+    "id": "f2a902d0-16a4-4edd-a6ac-941fd6dfb43e",
+    "name": "Cliente Venda",
+    "email": "cli.1765054364603@example.com",
+    "phone": "11977778888",
+    "createdAt": "2025-12-06T20:52:44.609Z"
+  },
+  {
+    "id": "2e05add4-4167-4702-9100-72ff5820bc3e",
+    "name": "Cliente Teste",
+    "email": "usuario.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-08T23:27:06.966Z"
+  },
+  {
+    "id": "62c0a8ef-1f2b-4b56-bca3-873615a0d38c",
+    "name": "Cliente Teste",
+    "email": "com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-09T00:10:43.098Z"
+  },
+  {
+    "id": "cc9804e2-e29d-48f0-af21-b7c3f1624005",
+    "name": "Cliente Teste",
+    "email": "joao@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T00:11:34.295Z"
+  },
+  {
+    "id": "3c61174f-a529-4da0-a537-2191752f31b5",
+    "name": "Cliente Teste",
+    "email": "joao+1765508831516@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:07:11.522Z"
+  },
+  {
+    "id": "a5d4a8a4-60c5-4923-85ee-3c3d3cf3a151",
+    "name": "Cliente Teste",
+    "email": "joao+1765508831529@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:07:11.538Z"
+  },
+  {
+    "id": "1a5fadbe-ab7f-4adc-ad10-7c4f7b49bec8",
+    "name": "Cliente Teste",
+    "email": "joao+1765511155529@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.536Z"
+  },
+  {
+    "id": "f2a473b1-a8ce-4330-ab87-e6f9e1b0b288",
+    "name": "Cliente Teste",
+    "email": "joao+1765511155545@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.550Z"
+  },
+  {
+    "id": "96ae7ea5-92ae-44a5-b097-9bdef8a3740b",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765511155570@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.577Z"
+  },
+  {
+    "id": "ee11a2ea-dba4-4da7-848e-6b9f8170d3a6",
+    "name": "Cliente Teste",
+    "email": "joao+1765511155705@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.713Z"
+  },
+  {
+    "id": "1be9d7ba-1f3f-4e1e-aff5-806bb0995bd6",
+    "name": "Cliente Teste",
+    "email": "joao+1765511155721@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.726Z"
+  },
+  {
+    "id": "5fc7cbe1-b4a5-4668-80e7-330bca678bad",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765511155743@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:45:55.747Z"
+  },
+  {
+    "id": "7101b238-c0c2-4864-b39b-f484e9d44f11",
+    "name": "Cliente Teste",
+    "email": "joao+1765511236044@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:47:16.050Z"
+  },
+  {
+    "id": "8bfddd2c-a7f2-4962-93da-3d170ff06d36",
+    "name": "Cliente Teste",
+    "email": "joao+1765511236059@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:47:16.066Z"
+  },
+  {
+    "id": "b7fb725f-7677-4df8-bb1a-7d2699a6031c",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765511236086@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:47:16.095Z"
+  },
+  {
+    "id": "cd6bc56a-e8d3-49e5-bc8a-1ef10e1921b5",
+    "name": "Cliente Teste",
+    "email": "joao+1765511387784@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:49:47.790Z"
+  },
+  {
+    "id": "6630aaec-fc3c-4156-841f-1cf0ea9729a7",
+    "name": "Cliente Teste",
+    "email": "joao+1765511387798@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:49:47.804Z"
+  },
+  {
+    "id": "922d9574-78c4-454f-b305-9e837b3d34fb",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765511387827@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:49:47.835Z"
+  },
+  {
+    "id": "abbed90f-0ef2-4063-99c3-52d97f6fd180",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765511387844@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:49:47.850Z"
+  },
+  {
+    "id": "b7270169-def0-4780-858b-b3ec5a7046cd",
+    "name": "Cliente Teste",
+    "email": "joao+1765511792883@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:56:32.886Z"
+  },
+  {
+    "id": "b363184b-2f39-4030-a703-0012bb777203",
+    "name": "Cliente Teste",
+    "email": "joao+1765511792892@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:56:32.897Z"
+  },
+  {
+    "id": "a7931c17-186a-413c-bea4-7a031c364830",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765511792915@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:56:32.919Z"
+  },
+  {
+    "id": "80486248-a929-41c6-a403-5d8059acbdc9",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765511792927@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T03:56:32.932Z"
+  },
+  {
+    "id": "9db2f092-269f-4702-92a8-1f2450cecbe9",
+    "name": "Cliente Atualizado",
+    "email": "update+1765512066340@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:01:06.344Z"
+  },
+  {
+    "id": "8e42302b-4f5e-4040-a83a-2c3055bf9a9b",
+    "name": "Cliente Teste",
+    "email": "joao+1765512066411@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:01:06.418Z"
+  },
+  {
+    "id": "b15d49ec-8495-458c-ab59-ea33d457403d",
+    "name": "Cliente Teste",
+    "email": "joao+1765512066425@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:01:06.430Z"
+  },
+  {
+    "id": "2aee0e7c-8b99-4ebe-a382-c93419c5dc4f",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765512066444@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:01:06.449Z"
+  },
+  {
+    "id": "617b5404-88bb-4115-a162-761489a63c6b",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765512066456@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:01:06.459Z"
+  },
+  {
+    "id": "38af2b7c-897a-4c4a-b3b7-4cdfd34a3067",
+    "name": "Cliente Atualizado",
+    "email": "update+1765512271920@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:04:31.925Z"
+  },
+  {
+    "id": "fd862c2f-f33f-4a78-8235-91700b7acab2",
+    "name": "Cliente Teste",
+    "email": "joao+1765512272013@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:04:32.017Z"
+  },
+  {
+    "id": "fd0e72d6-64fd-41e2-9dca-e92b61504e99",
+    "name": "Cliente Teste",
+    "email": "joao+1765512272023@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:04:32.027Z"
+  },
+  {
+    "id": "b4f748b3-0940-471a-874a-5d24ab3dd203",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765512272043@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:04:32.047Z"
+  },
+  {
+    "id": "ed103844-31ec-4f8b-9be4-3a583a00c2a7",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765512272054@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:04:32.057Z"
+  },
+  {
+    "id": "5b16feb3-115f-4d77-aea2-f0ddb54cc493",
+    "name": "Cliente Atualizado",
+    "email": "update+1765512431181@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:07:11.185Z"
+  },
+  {
+    "id": "9347e4b0-397d-423e-b3a3-1b27dd64de04",
+    "name": "Cliente Teste",
+    "email": "joao+1765512431279@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:07:11.282Z"
+  },
+  {
+    "id": "c2487811-c0dd-41aa-a259-01d7ed06b427",
+    "name": "Cliente Teste",
+    "email": "joao+1765512431288@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:07:11.292Z"
+  },
+  {
+    "id": "c53c80df-a1d3-406b-8218-a097979519c7",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765512431304@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:07:11.308Z"
+  },
+  {
+    "id": "a9c5a9ed-bae1-4237-95aa-ea984b71ccb2",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765512431313@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:07:11.318Z"
+  },
+  {
+    "id": "d0bce569-d8b3-4492-9d95-2b5f7119968b",
+    "name": "Cliente Atualizado",
+    "email": "update+1765512737926@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:12:17.932Z"
+  },
+  {
+    "id": "ae7d52fe-c928-411d-ae83-eb691c58ad2e",
+    "name": "Cliente Teste",
+    "email": "joao+1765512738015@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:12:18.018Z"
+  },
+  {
+    "id": "32098eac-b3e9-475e-b454-3dc34a2b0228",
+    "name": "Cliente Teste",
+    "email": "joao+1765512738027@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:12:18.031Z"
+  },
+  {
+    "id": "0fa0042f-e65e-4f17-af01-7520cc3c9b17",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765512738044@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:12:18.048Z"
+  },
+  {
+    "id": "739969ae-d92e-4b7b-84a8-40c5fdfd0ce0",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765512738055@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:12:18.059Z"
+  },
+  {
+    "id": "1172c8d3-f35c-49bc-aecd-70eceb126d7a",
+    "name": "Cliente Atualizado",
+    "email": "update+1765513150848@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:19:10.853Z"
+  },
+  {
+    "id": "59c73311-8ccc-4e6b-b3cd-cf163032ab39",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765513150907@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:19:10.912Z"
+  },
+  {
+    "id": "298bc3dd-fe97-4975-b611-d35a1f14d0a6",
+    "name": "Cliente Teste",
+    "email": "joao+1765513150966@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:19:10.970Z"
+  },
+  {
+    "id": "5ed57c8a-7fe9-429f-8797-2e334343d2f3",
+    "name": "Cliente Teste",
+    "email": "joao+1765513150976@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:19:10.979Z"
+  },
+  {
+    "id": "1dbc18f6-6dd5-4961-b1e5-22cea0c0d4f5",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765513150995@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:19:10.998Z"
+  },
+  {
+    "id": "26f97fe3-3e68-4fe5-9e06-1c7c5766a7c8",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765513151007@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:19:11.012Z"
+  },
+  {
+    "id": "edbd90ac-b401-4dd4-969c-e4f46df27f56",
+    "name": "Cliente Teste",
+    "email": "joao+1765513507833@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:25:07.836Z"
+  },
+  {
+    "id": "c13eb982-023f-4cfb-9bcb-1b66fe921a13",
+    "name": "Cliente Teste",
+    "email": "joao+1765513507842@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:25:07.846Z"
+  },
+  {
+    "id": "4f7fede2-2012-44a0-bc64-ec971cc45b62",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765513507861@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:25:07.866Z"
+  },
+  {
+    "id": "4e63d07c-72f4-45b5-a609-61643d73ed1f",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765513507873@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:25:07.877Z"
+  },
+  {
+    "id": "2879c8ee-ed49-4b79-9299-01d749d140bf",
+    "name": "Cliente Atualizado",
+    "email": "update+1765513507889@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:25:07.892Z"
+  },
+  {
+    "id": "08b7198e-dc23-4b35-9560-f45747b783cc",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765513507953@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:25:07.956Z"
+  },
+  {
+    "id": "c044bf7c-9a4b-4e71-a635-06ae799e1098",
+    "name": "Cliente Teste",
+    "email": "joao+1765514165608@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:36:05.611Z"
+  },
+  {
+    "id": "d67d6d75-c920-42a9-bd66-ed5901a42e50",
+    "name": "Cliente Teste",
+    "email": "joao+1765514165617@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:36:05.620Z"
+  },
+  {
+    "id": "84edb6b4-ba88-4338-ac97-f92a7841d9b2",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765514165638@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:36:05.644Z"
+  },
+  {
+    "id": "dbe1cc35-6688-4a7d-9902-143d53ed947e",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765514165650@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:36:05.655Z"
+  },
+  {
+    "id": "d0630ae0-6850-46d1-b5d0-2e3654636874",
+    "name": "Cliente Atualizado",
+    "email": "update+1765514165666@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:36:05.668Z"
+  },
+  {
+    "id": "880aa767-815b-4bcf-8eef-570ab86442f4",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765514165720@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:36:05.724Z"
+  },
+  {
+    "id": "1185f883-1333-43c1-aa62-2c5371fe0db8",
+    "name": "Cliente Teste",
+    "email": "joao+1765514453937@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:40:53.940Z"
+  },
+  {
+    "id": "6298956b-de03-4793-ab95-4edbc5f69f8c",
+    "name": "Cliente Teste",
+    "email": "joao+1765514453946@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:40:53.950Z"
+  },
+  {
+    "id": "673a0e7c-d032-47cf-9815-e3cd92a6f9a6",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765514453967@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:40:53.971Z"
+  },
+  {
+    "id": "f659931e-88e9-442c-bb24-6a007ff63329",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765514453978@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:40:53.982Z"
+  },
+  {
+    "id": "99374b42-b12d-4a2f-8eab-0ae9a2c10035",
+    "name": "Cliente Atualizado",
+    "email": "update+1765514453992@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:40:53.995Z"
+  },
+  {
+    "id": "21f25ecf-688c-4306-95d9-c57d5462e4f3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765514454056@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:40:54.061Z"
+  },
+  {
+    "id": "6cd26272-e394-41af-b589-f21432ee3a4b",
+    "name": "Cliente Teste",
+    "email": "joao+1765514685929@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:44:45.934Z"
+  },
+  {
+    "id": "814e540a-a71f-4578-9f6c-bca8f85a7d07",
+    "name": "Cliente Teste",
+    "email": "joao+1765514685939@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:44:45.943Z"
+  },
+  {
+    "id": "80fdb390-979a-412f-83c3-06a46201a056",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765514685963@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:44:45.969Z"
+  },
+  {
+    "id": "4a26f28d-a8b8-451a-bfb1-5532ac788d2c",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765514685976@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:44:45.979Z"
+  },
+  {
+    "id": "13773eb0-542c-4329-bbf3-e40be32bdf8c",
+    "name": "Cliente Atualizado",
+    "email": "update+1765514685992@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:44:45.995Z"
+  },
+  {
+    "id": "e4ae20ae-cf01-40a9-af11-c36f786e5386",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765514686052@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:44:46.055Z"
+  },
+  {
+    "id": "e12b2b4f-896c-401a-8de8-10962325f653",
+    "name": "Cliente Teste",
+    "email": "joao+1765514795507@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:46:35.510Z"
+  },
+  {
+    "id": "ac35d5b6-ccba-4b16-9c4c-86f517cb129c",
+    "name": "Cliente Teste",
+    "email": "joao+1765514795516@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:46:35.522Z"
+  },
+  {
+    "id": "da096a64-799a-40f8-b1d6-6ef8cccc90f1",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765514795540@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:46:35.543Z"
+  },
+  {
+    "id": "9efb40ba-c5b7-430c-806f-6bb175148072",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765514795549@teste.com",
+    "phone": "11999999999",
+    "createdAt": "2025-12-12T04:46:35.554Z"
+  },
+  {
+    "id": "f05ee95e-a7c5-414a-9c86-d273ad975e08",
+    "name": "Cliente Atualizado",
+    "email": "update+1765514795565@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T04:46:35.569Z"
+  },
+  {
+    "id": "4d6d279b-fb74-476e-af25-cdebd3f10fb3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765514795632@teste.com",
+    "phone": "11955555555",
+    "createdAt": "2025-12-12T04:46:35.635Z"
+  },
+  {
+    "id": "0f658b8a-1077-46ec-b78d-bdfefbd745e7",
+    "name": "Cliente SQL Injection",
+    "email": "safeemail+1765515118773@teste.com",
+    "phone": "11922222222'); DROP TABLE orders; --",
+    "createdAt": "2025-12-12T04:51:58.776Z"
+  },
+  {
+    "id": "9a5f56ce-4495-4b9f-a02e-7a2679c7e21d",
+    "name": "<script>alert(\"XSS\")</script>",
+    "email": "xss+1765515118784@teste.com",
+    "phone": "11911111111",
+    "createdAt": "2025-12-12T04:51:58.787Z"
+  },
+  {
+    "id": "8aaaf271-09a9-44b7-b5cc-dd408779945b",
+    "name": "Cliente Atualizado",
+    "email": "idor+1765554900149@teste.com",
+    "phone": "11988888888",
+    "createdAt": "2025-12-12T15:55:00.156Z"
+  },
+  {
+    "id": "b04c439f-39a7-4406-bce0-bf8ac20fa5c7",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765554900203@teste.com",
+    "phone": "11899999999",
+    "createdAt": "2025-12-12T15:55:00.210Z"
+  },
+  {
+    "id": "c43964e4-9879-46b9-8031-7f3b1401bcb9",
+    "name": "Cliente IDOR",
+    "email": "idor+1765555568516@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:06:08.525Z"
+  },
+  {
+    "id": "70fb7285-e80e-4f29-b8eb-5a2a04a1fdff",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765555568644@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:06:08.655Z"
+  },
+  {
+    "id": "cf2548c3-d74c-4f53-b070-4fd049b0aed3",
+    "name": "Cliente IDOR",
+    "email": "idor+1765555727886@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:08:47.893Z"
+  },
+  {
+    "id": "24e9e9b8-4521-4ab8-80b4-2e6c7940aff9",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765555727930@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:08:47.939Z"
+  },
+  {
+    "id": "ea662291-f12f-42b5-b110-0b00a9c24468",
+    "name": "Cliente IDOR",
+    "email": "idor+1765555850561@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.566Z"
+  },
+  {
+    "id": "c0aa7897-8766-48d2-8448-dd59b9dd32d9",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765555850597@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.609Z"
+  },
+  {
+    "id": "cb8adb53-c1ee-4b13-935c-f12f58e4bcce",
+    "name": "Cliente Teste",
+    "email": "joao+1765555850787@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.795Z"
+  },
+  {
+    "id": "46f19efb-29f7-4c8f-8924-56aa799a1388",
+    "name": "Cliente Teste",
+    "email": "joao+1765555850803@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.811Z"
+  },
+  {
+    "id": "3d275245-c921-4db3-aeeb-ac354772b414",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765555850830@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.837Z"
+  },
+  {
+    "id": "1258c61d-336a-4c08-9338-eeda6a3234bf",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765555850850@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.857Z"
+  },
+  {
+    "id": "278f7f3b-db9e-4b76-aa75-479f4b29cddf",
+    "name": "Cliente Atualizado",
+    "email": "update+1765555850896@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:50.904Z"
+  },
+  {
+    "id": "60a79ddc-b259-47bf-8328-9c07d44d6b1a",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765555851019@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:10:51.033Z"
+  },
+  {
+    "id": "80095533-e97a-4e7d-b8ce-aac12885d9f1",
+    "name": "Cliente IDOR",
+    "email": "idor+1765556626435@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.441Z"
+  },
+  {
+    "id": "302031d7-c0c5-46fd-ad07-36adb1bae003",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765556626472@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.482Z"
+  },
+  {
+    "id": "3234c339-793e-4af6-b53a-3ef2aece35d6",
+    "name": "Cliente Teste",
+    "email": "joao+1765556626675@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.682Z"
+  },
+  {
+    "id": "636963c7-72d4-4ecf-ae7b-99bee19b8b3a",
+    "name": "Cliente Teste",
+    "email": "joao+1765556626693@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.700Z"
+  },
+  {
+    "id": "3e33b81f-77b0-4a78-99fb-ac6ce7c9f405",
+    "name": "Cliente Teste ÁÉÍÓÚ ÇÃÕ âêîôû àèìòù äëïöü ñ Ñ",
+    "email": "utf8name+1765556626737@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.745Z"
+  },
+  {
+    "id": "9d07999a-2a52-4199-b4cc-c48a8eee50ed",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765556626754@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.763Z"
+  },
+  {
+    "id": "6d368e70-cdb0-4383-973c-96301d981a82",
+    "name": "Cliente Atualizado",
+    "email": "update+1765556626790@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.798Z"
+  },
+  {
+    "id": "c5ca1ff6-ec1d-484f-a0ab-35bc0a469790",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765556626914@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:23:46.935Z"
+  },
+  {
+    "id": "ad9297e3-2854-45aa-a75f-4b95372d3943",
+    "name": "Cliente IDOR",
+    "email": "idor+1765556668585@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:24:28.594Z"
+  },
+  {
+    "id": "ef9b5150-cbeb-4465-8f82-e0b45d41f9fb",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765556668636@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:24:28.644Z"
+  },
+  {
+    "id": "74cb322d-cfc2-432a-ba82-60caa564b22b",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765558126772+c59af6ab1135b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:46.781Z"
+  },
+  {
+    "id": "eafb358a-a4b5-4478-a602-0a91a1e53461",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765558126791+599262b9b0d99@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:46.800Z"
+  },
+  {
+    "id": "af50f8f6-d2a6-442c-8f98-80b6a70881f6",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765558126846+f1b89e00f6483@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:46.856Z"
+  },
+  {
+    "id": "9717a9ed-173d-4563-a978-f1eb14ac4238",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765558126870+c4dd373a684b3@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:46.880Z"
+  },
+  {
+    "id": "38c1c7ea-ff2e-4aa8-a233-be6ce94a34a1",
+    "name": "Cliente Atualizado",
+    "email": "update+1765558126907+74127a82ef927@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:46.915Z"
+  },
+  {
+    "id": "148a6de6-36d2-4b54-a24a-808aeb3b4768",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765558127042+29516b494779d@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:47.055Z"
+  },
+  {
+    "id": "79e19741-3cb5-4fd4-82df-35e274356eb4",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765558127222+183934603fb77@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:47.231Z"
+  },
+  {
+    "id": "80b7e59d-e01e-4627-aa33-3496f8289bf9",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765558127289+cea6fd4e3a635@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:48:47.298Z"
+  },
+  {
+    "id": "01f996e1-9fbc-450e-a9f2-d16e0f520a8d",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765558357578+5bb9eaa0b0da5@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.585Z"
+  },
+  {
+    "id": "cc229048-2acd-4771-99ad-992939898c83",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765558357596+784d10f0114fc@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.604Z"
+  },
+  {
+    "id": "6ce6833c-0836-4144-ab9f-7f38642a252a",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765558357636+4bd9c073358fe@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.646Z"
+  },
+  {
+    "id": "c76ba5cd-2e9b-4360-b7a0-859147165103",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765558357662+1a5ec2b71218d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.672Z"
+  },
+  {
+    "id": "916c4da3-53b4-4b97-aa62-743a7854c24b",
+    "name": "Cliente Atualizado",
+    "email": "update+1765558357699+904979839ca7@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.705Z"
+  },
+  {
+    "id": "3966281a-f6b7-4b5a-bed1-f8a6ba91a2c8",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765558357862+f2d30ea70668f@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:37.869Z"
+  },
+  {
+    "id": "fccc499b-65e3-432c-b9fe-e0f0c6dce996",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765558358083+68da1cd19d9e5@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:38.097Z"
+  },
+  {
+    "id": "739685e7-65d0-4d88-aef1-c494cb544d4b",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765558358154+a598b956b8956@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-12T16:52:38.162Z"
+  },
+  {
+    "id": "f84d56c5-eb61-415a-9b35-78d4a359ba98",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765593885889+a02b550d14f6b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:45.894Z"
+  },
+  {
+    "id": "f16cfb85-ce10-4944-9aaf-41c1c1fb2e25",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765593885903+115eb20e030e8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:45.909Z"
+  },
+  {
+    "id": "21cf3344-8031-4e79-8638-b7847516d6d9",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765593885935+d081266776be9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:45.943Z"
+  },
+  {
+    "id": "e4c20e1e-7004-4301-9890-b7c4d54b5ee9",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765593885953+5ba9daf298aea@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:45.958Z"
+  },
+  {
+    "id": "a1cf2d17-4ed4-4a60-b74d-3906134adfb7",
+    "name": "Cliente Atualizado",
+    "email": "update+1765593885978+495c8f84e86d2@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:45.987Z"
+  },
+  {
+    "id": "5d3223c1-fae3-47d3-8d3a-4e7b5987bf83",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765593886093+a2704468744ed@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:46.101Z"
+  },
+  {
+    "id": "82823166-e21e-4ccb-8546-c31ab71cb8bc",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765593886226+9df413e61ae1d@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:46.236Z"
+  },
+  {
+    "id": "8304f966-9ac5-492d-bf49-2ae906aebba8",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765593886276+b7cbf9f3d6efe@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:44:46.288Z"
+  },
+  {
+    "id": "780ab8e0-1bc3-49c0-a2ca-e36404047744",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765594028268+bd2abd5051d92@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.273Z"
+  },
+  {
+    "id": "f804af72-0359-4777-8923-7a7084d34cba",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765594028280+2a56ab3860713@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.287Z"
+  },
+  {
+    "id": "98c27109-1942-46c1-b1cb-afc90aeb00c3",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765594028311+9a726fdbfda94@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.318Z"
+  },
+  {
+    "id": "e515d35d-e375-4ec9-b682-622593b695a9",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765594028328+14d6e7a6fd803@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.334Z"
+  },
+  {
+    "id": "061144fa-3095-42a7-b3e0-162b33e55728",
+    "name": "Cliente Atualizado",
+    "email": "update+1765594028353+753e4df73505b@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.361Z"
+  },
+  {
+    "id": "6dac31dc-b242-483f-88e9-58faff032d92",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765594028465+1f0bfdc656865@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.472Z"
+  },
+  {
+    "id": "9256db58-9dd4-4985-8a53-6661af537de7",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765594028589+ee755cee0736b@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.599Z"
+  },
+  {
+    "id": "a0d15fc8-a2f8-4872-9905-f7b0268c5a55",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765594028660+2128c93d5f322@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T02:47:08.671Z"
+  },
+  {
+    "id": "cbcf94b5-d899-4c1e-80a0-9565e7416405",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765599320634+e6f997f636025@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.639Z"
+  },
+  {
+    "id": "03ea3264-ef70-4609-baf2-090b368b8e11",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765599320650+c0bad65da5369@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.656Z"
+  },
+  {
+    "id": "182757a8-6e15-4711-8c0c-99a6831039dc",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765599320683+7c6083a2d5ffe@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.690Z"
+  },
+  {
+    "id": "9065c38c-3019-4ce2-bfb5-195cd4358374",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765599320705+6542c6e925625@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.714Z"
+  },
+  {
+    "id": "1e7b1295-10b6-4b48-a812-675f95671a7d",
+    "name": "Cliente Atualizado",
+    "email": "update+1765599320747+88132f2262cdc@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.756Z"
+  },
+  {
+    "id": "e278cf5f-6ae3-4e66-a4d1-1ef3fed43337",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765599320921+c3b92f47af5b5@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:20.930Z"
+  },
+  {
+    "id": "1bb8dd72-f92a-4688-96ad-86910652c7e6",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765599321305+eb8c114137a61@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:21.319Z"
+  },
+  {
+    "id": "5833ec97-7322-4e1c-866e-82a7ff167e52",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765599321402+100d766c80353@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:15:21.416Z"
+  },
+  {
+    "id": "71169f5a-2ac7-4e85-85de-6f9b613d38ca",
+    "name": "Cliente Venda",
+    "email": "sale+1765600235771@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T04:30:35.782Z"
+  },
+  {
+    "id": "d42e8228-0c7f-42e9-b912-7ad88143f4bf",
+    "name": "Cliente Venda",
+    "email": "sale+1765640986694@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T15:49:46.700Z"
+  },
+  {
+    "id": "0ba278cc-7ae7-4e49-a345-62351dcd14b1",
+    "name": "Cliente Venda",
+    "email": "sale+1765641162443@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T15:52:42.450Z"
+  },
+  {
+    "id": "b715d8b1-ed61-441d-a626-e50fe31e84b1",
+    "name": "Cliente Venda",
+    "email": "sale+1765641194112@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T15:53:14.119Z"
+  },
+  {
+    "id": "636ed487-b844-41fb-ab2e-a9e94c4ae093",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765646113717+8af204a34b0c9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.722Z"
+  },
+  {
+    "id": "569ebf8c-f4a2-4b00-b0b0-fa233f4652db",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765646113728+1c9b939c3dcbe@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.733Z"
+  },
+  {
+    "id": "f1c3ac5e-2ecf-40c8-9b25-c2cabea936a8",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765646113749+6400e936ee178@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.758Z"
+  },
+  {
+    "id": "733cbbd2-bea5-4a26-bb0b-a4aa9a13ea22",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765646113765+c9986c9ce9915@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.770Z"
+  },
+  {
+    "id": "307ba67c-b0e2-4c0b-af6e-9e9209b88625",
+    "name": "Cliente Atualizado",
+    "email": "update+1765646113785+f91288a914b7f@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.789Z"
+  },
+  {
+    "id": "8882ed09-5fa4-4fd5-9962-5dbc7e3fa8cf",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765646113860+46e2625f3e3cb@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.865Z"
+  },
+  {
+    "id": "9ed8ffde-9087-431d-a788-1a6f5d246ebc",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765646113931+45a38027129a@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.935Z"
+  },
+  {
+    "id": "fc3a2615-5f06-44a1-aa57-89114e12eed4",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765646113959+6dbac20b54cc9@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:15:13.965Z"
+  },
+  {
+    "id": "50bdb01e-e952-4583-836e-fd2cf30794e1",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765646820810+01f6e58f074db@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.815Z"
+  },
+  {
+    "id": "ef775650-92ad-49a4-b94f-c1da2df45f87",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765646820821+4c2d6036ba7a8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.825Z"
+  },
+  {
+    "id": "54cfe2c3-1feb-4327-a84e-a3e49eb505bf",
+    "name": "Cliente Teste µÖàé €Çå ƒˆŒ“– …Š•— „‰‹” ¤ ¥",
+    "email": "utf8name+1765646820848+420a0f879ed4c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.856Z"
+  },
+  {
+    "id": "183ff8f8-0bac-4141-9d9d-914c0ae20387",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765646820871+18c5992e4f289@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.879Z"
+  },
+  {
+    "id": "08c3b2e3-0e76-4119-bd2a-04c76c484b1a",
+    "name": "Cliente Atualizado",
+    "email": "update+1765646820903+3fc6c4ca12fe@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.912Z"
+  },
+  {
+    "id": "1b6c3235-ada8-4ec8-8637-7c834e218b9f",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765646820981+082aa0f268e7d@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:00.986Z"
+  },
+  {
+    "id": "5d870f67-e200-422f-b7e5-2c0204cf7a49",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765646821050+93304a149359@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:01.055Z"
+  },
+  {
+    "id": "c40a6855-5619-4f10-902d-95eb3e48e1d1",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765646821083+fe290b784b3f2@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:27:01.091Z"
+  },
+  {
+    "id": "b48820f6-eab8-492c-a13a-86815b226295",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765647098728+56a68443907@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.735Z"
+  },
+  {
+    "id": "6cbbb9a0-09c9-4af6-bdc3-97e95f589d0b",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765647098742+a193aace07032@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.748Z"
+  },
+  {
+    "id": "bca7941c-872d-45ea-ae1b-00ebc8710e27",
+    "name": "Cliente Teste ????? ??? ?^O\"- .S?\u0007- \"%<\"? ? ?",
+    "email": "utf8name+1765647098767+6f972e52e8e3e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.774Z"
+  },
+  {
+    "id": "9ed6c29f-354c-4bdc-ae10-5bb4045e3b05",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765647098784+5e03edadc8a36@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.789Z"
+  },
+  {
+    "id": "fd92bcca-f83a-44d8-b490-8f00ee77ab82",
+    "name": "Cliente Atualizado",
+    "email": "update+1765647098813+02484e67b92a8@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.820Z"
+  },
+  {
+    "id": "ef35cfc4-2545-40fe-86ae-0529d46ddcb0",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765647098902+c5cb67563e5fa@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:38.907Z"
+  },
+  {
+    "id": "8cc48106-a219-4319-a842-d30839a67b61",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765647099070+4688d6a582459@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:39.077Z"
+  },
+  {
+    "id": "c03f9763-a48b-41f7-bcd8-c8eeea511d80",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765647099105+709bc2a5449bc@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:31:39.111Z"
+  },
+  {
+    "id": "3c9e45cc-8388-4349-b29c-540da55030b0",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765647157905+0fbacf0bfd23f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:37.910Z"
+  },
+  {
+    "id": "25752b88-7054-40eb-91ce-13bfddf7cda9",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765647157917+f90b8fd8cf0c3@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:37.921Z"
+  },
+  {
+    "id": "a2b1cc06-c30d-4197-ba34-e478da209c65",
+    "name": "Cliente Teste aaaaa aaa a^O\"- .Sa\u0007- \"%<\"a a a",
+    "email": "utf8name+1765647157938+12b1f8ec2aeb2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:37.943Z"
+  },
+  {
+    "id": "d6a6c15f-7898-46ae-9d52-7abe3d161a60",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765647157951+9c9b22270b5b2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:37.955Z"
+  },
+  {
+    "id": "700e874f-3b57-4025-b99e-36f6b69e1e3d",
+    "name": "Cliente Atualizado",
+    "email": "update+1765647157972+794f1feecb042@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:37.977Z"
+  },
+  {
+    "id": "05a2b627-e29f-47ad-8ebd-27d68c5c7d60",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765647158042+a9a2eafc4afc8@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:38.046Z"
+  },
+  {
+    "id": "50caaa3b-854d-4055-956b-9403dcad72cf",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765647158104+e6ca42f0c3aae@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:38.108Z"
+  },
+  {
+    "id": "f7064503-e1c4-42b8-a41b-ebe066dac35e",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765647158138+44583c634f72b@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:32:38.145Z"
+  },
+  {
+    "id": "c79a3566-e0b2-4f16-af5b-a7572056057d",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765647326021+52334da40c1ee@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.026Z"
+  },
+  {
+    "id": "5bee287f-46cd-4c48-959a-a5130cbf1999",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765647326035+872f99e0d77c8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.040Z"
+  },
+  {
+    "id": "e1c7c535-11d8-4f1f-9441-78068e7a1fc7",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765647326063+ea5ab94065072@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.071Z"
+  },
+  {
+    "id": "e10578ba-85db-4486-86f2-2860d51af346",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765647326079+ed5d719480baa@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.085Z"
+  },
+  {
+    "id": "58890d6a-ce66-4905-9218-8e89a753bee4",
+    "name": "Cliente Atualizado",
+    "email": "update+1765647326106+4103608c0957c@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.111Z"
+  },
+  {
+    "id": "8b7c1a23-7154-4a9e-980e-ef42e862a945",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765647326219+f421d65e29c53@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.229Z"
+  },
+  {
+    "id": "04ff330f-5825-4ed1-8b55-e22d889bcedb",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765647326339+f49166ba27f55@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.343Z"
+  },
+  {
+    "id": "1dc3ea93-5637-40f0-95f3-785f3f606e2c",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765647326370+f87f702f4139a@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:35:26.377Z"
+  },
+  {
+    "id": "f6413c6a-0d91-45b4-9d7d-d77812f5e3f4",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765647907867+afbccc9da7d8a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:07.873Z"
+  },
+  {
+    "id": "d5d4e787-f3c2-472c-a48b-0358f444d074",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765647907882+a6fce576668ff@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:07.888Z"
+  },
+  {
+    "id": "11dcaf0c-9b63-41fd-86e5-af17ca028fe9",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765647907909+0459a9a9014ca@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:07.915Z"
+  },
+  {
+    "id": "7141d3cf-56d3-4b8b-9672-fa053ad59a94",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765647907924+202ff4a4a7cd9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:07.930Z"
+  },
+  {
+    "id": "677a81f1-80c5-4a45-b393-44d892d7e520",
+    "name": "Cliente Atualizado",
+    "email": "update+1765647907947+6e4d7e9476635@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:07.953Z"
+  },
+  {
+    "id": "e4d8f48f-a499-48a0-a302-c54c9121ba5c",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765647908036+4502f5db5bee6@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:08.043Z"
+  },
+  {
+    "id": "3fea6ce8-6960-459f-a895-f60dce8201ce",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765647908133+f46398784b0fe@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:08.144Z"
+  },
+  {
+    "id": "5d2001cc-4773-4c7d-957e-edeee664a6c1",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765647908176+4bf242001ec95@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:45:08.182Z"
+  },
+  {
+    "id": "2b567e3f-8886-4712-886c-ea3e55146fec",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765648038836+1a42b1ccd6723@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:18.844Z"
+  },
+  {
+    "id": "af4da946-08c4-4290-8fa1-7ff6eb834a4f",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765648038851+2a2319168bdbf@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:18.855Z"
+  },
+  {
+    "id": "ab001666-95ea-48aa-a490-6ab1383b1e5b",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765648038878+d96074a41fae1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:18.885Z"
+  },
+  {
+    "id": "23523053-8bad-4e17-9695-e284e28b1247",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765648038895+4f1c086e617f9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:18.900Z"
+  },
+  {
+    "id": "87e1ad48-dfb4-4dc7-89cf-9da1e6b4d965",
+    "name": "Cliente Atualizado",
+    "email": "update+1765648038919+74bae7c58da04@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:18.930Z"
+  },
+  {
+    "id": "2d205dc1-c151-44d7-9eb2-f29be5e80f9b",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765648039010+c49efc8eded15@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:19.015Z"
+  },
+  {
+    "id": "575013ee-5053-41bb-b92f-ee967fe87071",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765648039140+355c26f1c4f37@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:19.147Z"
+  },
+  {
+    "id": "b63ca60f-82a8-419a-b92a-01593f0672d8",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765648039178+0531baaa55913@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:47:19.184Z"
+  },
+  {
+    "id": "51ef0fd8-7e4c-4756-9a9a-9197468b1132",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765648352146+5b6245994d431@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.151Z"
+  },
+  {
+    "id": "66fa8ef8-e551-490a-b9da-91712dd13126",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765648352158+46957aff0a381@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.163Z"
+  },
+  {
+    "id": "a9f160a8-6ba0-4281-a7b2-958ae1aca57d",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765648352184+a9b46fabf8566@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.190Z"
+  },
+  {
+    "id": "0578ce5d-a561-436b-9faf-6cf07296b7c1",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765648352199+47332fa8b413a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.204Z"
+  },
+  {
+    "id": "d58dc6a6-0485-421a-87c6-d979ea4942bf",
+    "name": "Cliente Atualizado",
+    "email": "update+1765648352227+ee0fa4011126a@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.232Z"
+  },
+  {
+    "id": "b35e3cf6-5731-4fcc-8ea4-5ae7ce6142fa",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765648352338+a916466fd00fc@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.345Z"
+  },
+  {
+    "id": "1b140de8-43a9-4ac1-8d34-ea6f9f0f7906",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765648352427+5e9fa47a259ce@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.432Z"
+  },
+  {
+    "id": "63c3bac4-9e9d-45a6-9b58-a3d6a30d6be8",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765648352456+655c9796eef66@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:52:32.464Z"
+  },
+  {
+    "id": "dc5b9387-7eaa-4be8-b579-c9a42a944034",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765648478945+a29dcb9824e6b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:38.950Z"
+  },
+  {
+    "id": "c97a40b4-9da3-44ed-986b-3c6c046fcb5f",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765648478957+e3a18f9d7ca47@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:38.961Z"
+  },
+  {
+    "id": "a10d8200-da78-44ce-89e5-de481df98c04",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765648478979+f431ba78a71a1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:38.985Z"
+  },
+  {
+    "id": "c4969f76-a8e8-4447-a565-0c39807f769d",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765648478994+581f510fdab0c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:38.998Z"
+  },
+  {
+    "id": "1e6d36db-60a8-49e8-99d4-94fd1cf06056",
+    "name": "Cliente Atualizado",
+    "email": "update+1765648479016+75fb1fb3ab458@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:39.020Z"
+  },
+  {
+    "id": "dd2467b9-11a3-4848-ba8b-a8bec409eb3b",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765648479084+a9b11eebe678a@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:39.088Z"
+  },
+  {
+    "id": "b23c4aa6-e813-4b8d-925f-a941ae77d5bc",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765648479146+b473df37f7a9c@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:39.151Z"
+  },
+  {
+    "id": "b5b4a205-020e-469a-94a3-a68d581cc869",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765648479173+c8e7e1be3b71d@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:54:39.178Z"
+  },
+  {
+    "id": "19680f29-ca62-488f-ad56-cd8e9d958242",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765648707479+ffdf982445966@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.483Z"
+  },
+  {
+    "id": "d5f78c4d-8419-4bb6-aeda-e86fd6e28bdd",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765648707490+ace942dbae8ee@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.494Z"
+  },
+  {
+    "id": "20f31a89-9601-45c1-8392-4729b91dc580",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765648707507+37cf872895a11@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.512Z"
+  },
+  {
+    "id": "b4d21fc7-c0e8-4c7f-b524-98ef90bc474d",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765648707519+955c7b5bff492@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.524Z"
+  },
+  {
+    "id": "95c02c19-aea9-408b-b7cf-0d595db024cb",
+    "name": "Cliente Atualizado",
+    "email": "update+1765648707537+6b28519377f91@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.541Z"
+  },
+  {
+    "id": "e110157e-4fe5-46c5-b262-085da83aca24",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765648707607+dd90e031a0404@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.611Z"
+  },
+  {
+    "id": "20e26ccb-9a3f-4afd-ba5c-966710cd015b",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765648707678+0ce1d872e1bd2@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.682Z"
+  },
+  {
+    "id": "e8f4f6cc-d941-4bf9-8bb4-b3cd8e168ca8",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765648707705+6b6b6f943b80b@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.710Z"
+  },
+  {
+    "id": "4a2d3760-0db6-4d32-bf71-297dda4429d8",
+    "name": "Cliente Venda",
+    "email": "sale+1765648707946@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T17:58:27.950Z"
+  },
+  {
+    "id": "926578de-6a52-43bd-9628-7c73a9303b8d",
+    "name": "Cliente Venda",
+    "email": "sale+1765649964025@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:19:24.030Z"
+  },
+  {
+    "id": "c6e622eb-c276-46de-a770-eb9ec48c2b79",
+    "name": "Cliente Venda",
+    "email": "sale+1765650136149@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:22:16.157Z"
+  },
+  {
+    "id": "45ec4f58-3631-4851-af3f-bcb518520720",
+    "name": "Cliente Venda",
+    "email": "sale+1765650406252@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:26:46.258Z"
+  },
+  {
+    "id": "30545f4f-e611-49d8-ab0b-ea8e79068263",
+    "name": "Cliente Venda",
+    "email": "sale+1765650512717@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:28:32.723Z"
+  },
+  {
+    "id": "b3a24aaf-2379-4f61-9362-5edfa7aabe5f",
+    "name": "Cliente Venda",
+    "email": "sale+1765650677456@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:31:17.461Z"
+  },
+  {
+    "id": "905546b1-4d19-494f-899e-a92781a18da9",
+    "name": "Cliente Venda",
+    "email": "sale+1765652201986@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:56:41.997Z"
+  },
+  {
+    "id": "0e051e9f-a492-4bec-8c66-816f79699f1a",
+    "name": "Test",
+    "email": "u1765652297618@t.com",
+    "phone": "1",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:58:17.628Z"
+  },
+  {
+    "id": "cc63247d-0ce9-46fa-a383-500095809b38",
+    "name": "Test",
+    "email": "u1765652377222@t.com",
+    "phone": "1",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T18:59:37.234Z"
+  },
+  {
+    "id": "6ab9068d-5774-49ae-87de-43d8d11d791d",
+    "name": "Cliente Venda",
+    "email": "sale+1765652414451@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:14.460Z"
+  },
+  {
+    "id": "20881067-1ce1-498d-939a-ddafb2bf9327",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765652415209+210de2d3a0e5c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.217Z"
+  },
+  {
+    "id": "b8dd3597-e000-4422-9858-2b5f65a1bcfd",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765652415227+3c02ea4006124@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.236Z"
+  },
+  {
+    "id": "49f1a0e6-25f7-4f5b-84ba-9b24d9439432",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765652415256+8346331a1c705@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.263Z"
+  },
+  {
+    "id": "8c3f759d-393f-4d4c-a6fb-462995b3910a",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765652415274+0560ab68d84d1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.280Z"
+  },
+  {
+    "id": "87d21f8a-323f-4f78-8b8b-8d8ef99e724c",
+    "name": "Cliente Atualizado",
+    "email": "update+1765652415300+cd8848975d27e@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.306Z"
+  },
+  {
+    "id": "93d68575-3e9b-4e2b-ab6a-7a9520a42e9e",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765652415404+6df384079bc36@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.412Z"
+  },
+  {
+    "id": "4f4e56ef-2730-4848-bf96-e751a0d87768",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765652415514+72ddd4b1a4e81@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.525Z"
+  },
+  {
+    "id": "081e47c2-008e-4df3-8951-8316379a843b",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765652415556+9578b025c7db2@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:00:15.564Z"
+  },
+  {
+    "id": "8ad54aa5-944e-4863-bd34-44abfc3083f5",
+    "name": "Cliente Venda",
+    "email": "sale+1765652551038@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.048Z"
+  },
+  {
+    "id": "8937a315-c08c-43dc-b60f-97c012361a09",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765652551842+4b58abb98b677@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.848Z"
+  },
+  {
+    "id": "e2bb23a2-582f-4081-8fb3-db2ec49f18d4",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765652551856+f6abc4d645819@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.861Z"
+  },
+  {
+    "id": "7bd2fc78-ecd4-4c81-ab4b-5a98ab53aa01",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765652551880+42039aaf34886@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.886Z"
+  },
+  {
+    "id": "5a0d82aa-3db3-413b-afbc-37a1f0d17867",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765652551896+8e942a5f4be18@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.903Z"
+  },
+  {
+    "id": "bd18653d-02e6-4075-8ae1-c9164aa7cc5e",
+    "name": "Cliente Atualizado",
+    "email": "update+1765652551924+59fe012ad3af6@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:31.932Z"
+  },
+  {
+    "id": "13c12f96-eb57-40df-91f8-4830f38a6b3e",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765652552031+cac110d609cbd@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:32.037Z"
+  },
+  {
+    "id": "3915858c-c056-4664-a50b-1046a0481f9f",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765652552134+d3905e033188a@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:32.142Z"
+  },
+  {
+    "id": "fa48dbf0-748f-489e-afe8-0faa591c2db9",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765652552176+1de87a7673469@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T19:02:32.186Z"
+  },
+  {
+    "id": "c5b9935b-d8c0-4882-a080-a6a82ce11893",
+    "name": "Cliente Venda",
+    "email": "sale+1765663782238@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:42.248Z"
+  },
+  {
+    "id": "f12c08d7-e7d2-428b-83d6-b28f09b812fe",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765663782975+ee62e3365743d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:42.981Z"
+  },
+  {
+    "id": "35c5e69d-30fb-4f92-adb7-9ef8f9a1f8a1",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765663782991+2f271f212e9d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:42.997Z"
+  },
+  {
+    "id": "b62ed24b-6ffc-426d-967a-c4f5316b3c93",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765663783017+79e7f08389983@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.024Z"
+  },
+  {
+    "id": "cbaa56d0-20d3-4b95-9fe0-ec9f8adaa77b",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765663783034+d33fb97bb8827@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.040Z"
+  },
+  {
+    "id": "9fca55a1-5e86-486d-a792-cca2643d6e28",
+    "name": "Cliente Atualizado",
+    "email": "update+1765663783059+e3a90e92e2246@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.066Z"
+  },
+  {
+    "id": "834fdfbc-0693-4b58-9624-373eac713983",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765663783163+8a2a3bfdf7fad@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.170Z"
+  },
+  {
+    "id": "652c8990-f181-4fd0-be9b-f9a32db5e500",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765663783334+8618ffc2f07fb@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.341Z"
+  },
+  {
+    "id": "1f979ab0-de30-4403-a971-954ec54d75c2",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765663783374+ea2c118b6a4c2@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:09:43.380Z"
+  },
+  {
+    "id": "a16bf00b-cf10-422c-8b80-5943463de741",
+    "name": "Cliente Venda",
+    "email": "sale+1765664158027@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.035Z"
+  },
+  {
+    "id": "66b38438-0516-42da-90fb-706eba171090",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765664158755+42da59b23926a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.763Z"
+  },
+  {
+    "id": "9f5f3d72-8e68-41e3-b85a-dec59f08a7db",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765664158772+f37b16855919d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.781Z"
+  },
+  {
+    "id": "fe16a38e-a6ff-427b-961c-0f8f7a02c325",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765664158799+545182536aecf@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.806Z"
+  },
+  {
+    "id": "95044739-ffb5-4bcf-b0c0-f61fa760982c",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765664158816+5d4ee90f01b4a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.823Z"
+  },
+  {
+    "id": "9b5078ac-882b-4a14-9da0-23e86cd15f79",
+    "name": "Cliente Atualizado",
+    "email": "update+1765664158842+fe8cafef27805@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.848Z"
+  },
+  {
+    "id": "5dca8afc-a944-472a-9ebf-db67acf2d3d9",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765664158946+b2ad3941c7195@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:58.951Z"
+  },
+  {
+    "id": "33e2f054-97f4-463d-99c5-b9beb1062865",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765664159043+6591527d5f711@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:59.050Z"
+  },
+  {
+    "id": "8dfd5122-b92d-4b47-941a-36463d8007d3",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765664159086+8d02322710897@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:15:59.096Z"
+  },
+  {
+    "id": "19582ef7-81f2-46bd-bf62-7c6dfce3a4df",
+    "name": "Cliente Venda",
+    "email": "sale+1765664651485@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:11.494Z"
+  },
+  {
+    "id": "70ac587d-5c36-400b-b614-f0fa9e0c329c",
+    "name": "Cliente Venda",
+    "email": "sale+1765664690535@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:50.544Z"
+  },
+  {
+    "id": "2d1cf834-9ee4-49d3-8826-cddf04b523fd",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765664691402+a12a8c8924943@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.408Z"
+  },
+  {
+    "id": "a0544e81-6545-4e6a-aecc-9077987336f8",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765664691419+98969c83ad0fc@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.426Z"
+  },
+  {
+    "id": "6fb145bd-04b6-4847-9803-a847f2cc4ee8",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765664691448+6c99a3a80b9ab@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.454Z"
+  },
+  {
+    "id": "3f21e77f-402a-4045-9ae8-cd662c0bcd5e",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765664691464+67cfc256b9d33@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.473Z"
+  },
+  {
+    "id": "7efaf9a6-380e-4072-9475-17ee711c0ee4",
+    "name": "Cliente Atualizado",
+    "email": "update+1765664691499+e6beabdbd19f2@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.509Z"
+  },
+  {
+    "id": "091ef446-9aac-4d72-b789-cdde57556b47",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765664691638+cbe6fc64c1078@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.646Z"
+  },
+  {
+    "id": "5896b88f-e9b8-47be-b921-9830c8134c42",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765664691759+6351f84703243@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.768Z"
+  },
+  {
+    "id": "30ff9144-5693-4269-a142-f53a19887ca9",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765664691817+051f39cb31d35@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:24:51.827Z"
+  },
+  {
+    "id": "23079d97-bb8d-4b9d-a31f-a15e786de694",
+    "name": "Cliente Venda",
+    "email": "sale+1765665202978@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:22.987Z"
+  },
+  {
+    "id": "5b0fd8d0-97ff-405b-8f2f-9b9c803dc762",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765665203922+0a2525808b12e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:23.929Z"
+  },
+  {
+    "id": "2ae21dcd-a49a-42eb-b945-8786b4150358",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765665203938+75134e26019ff@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:23.945Z"
+  },
+  {
+    "id": "5af8d46b-5c80-47a3-850b-79a786d268c5",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765665203969+4081efc45b07a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:23.977Z"
+  },
+  {
+    "id": "a5e7f51e-ed18-411c-bea4-af0f9c6bc62a",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765665203989+f69e48c3413fb@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:23.996Z"
+  },
+  {
+    "id": "484dd70f-e265-4ae3-8784-1bed6ae26ad8",
+    "name": "Cliente Atualizado",
+    "email": "update+1765665204021+8c15647415308@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:24.029Z"
+  },
+  {
+    "id": "a5be9cb3-793e-4ecc-9939-3b195028f615",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765665204158+6a40fa42cbc1e@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:24.166Z"
+  },
+  {
+    "id": "19933de1-8613-46ed-8b3f-e23dd1ac7e39",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765665204320+4fa161895e2b5@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:24.346Z"
+  },
+  {
+    "id": "7cff1c81-c127-4fc4-9653-468c67280499",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765665204390+d43239417e70b@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:33:24.399Z"
+  },
+  {
+    "id": "22b83eac-9fc3-4cc8-8da3-e3cd20fccd2d",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765665289023+f27e7100dc189@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.030Z"
+  },
+  {
+    "id": "555acc6c-ff17-48d0-9364-9d6a4105ddf8",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765665289039+f999696ed7c2b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.047Z"
+  },
+  {
+    "id": "4f5cfba5-c2bd-48f1-a407-56741fea5cb3",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765665289068+da460b301d6c6@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.075Z"
+  },
+  {
+    "id": "0de9edfd-bbc5-4ee8-8d72-a7dedb88a6e1",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765665289086+5f19ba7d1ce9a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.092Z"
+  },
+  {
+    "id": "e7cc1036-11a5-4830-b9dd-aa5d40141282",
+    "name": "Cliente Atualizado",
+    "email": "update+1765665289115+0dd8bb110e91c@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.121Z"
+  },
+  {
+    "id": "a7ff188b-9ffe-4fb0-b6de-6ce80ac12f3e",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765665289223+25fa11bd9172a@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.230Z"
+  },
+  {
+    "id": "b456a00e-7d85-458f-9d4c-7406cc492c34",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765665289338+555c124e53272@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.349Z"
+  },
+  {
+    "id": "efd72c7e-7b20-43cb-a541-86472c447dff",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765665289401+44179c12b8823@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.472Z"
+  },
+  {
+    "id": "03fa268e-8b87-4623-b1e7-90d38c202250",
+    "name": "Cliente Venda",
+    "email": "sale+1765665289845@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:34:49.849Z"
+  },
+  {
+    "id": "e2273ee3-855e-42ca-834c-0dffeecc5332",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765665674533+6490357e188d2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.541Z"
+  },
+  {
+    "id": "427ba06b-c5e8-4793-bb48-ee8a70ad3a56",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765665674551+b282c9470e389@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.557Z"
+  },
+  {
+    "id": "0f7cc1bc-697f-4405-9ca3-1e183791fbda",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765665674578+6088efd96c66b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.583Z"
+  },
+  {
+    "id": "4e5cdb40-44f6-4523-bdd3-5c08b40c620e",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765665674595+a4ea3bf5bd51f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.601Z"
+  },
+  {
+    "id": "3157a05a-f12c-45c7-9515-9be31c00ffc0",
+    "name": "Cliente Atualizado",
+    "email": "update+1765665674621+2779a7c63623e@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.627Z"
+  },
+  {
+    "id": "284b6b31-1139-4551-9281-252df24e23e9",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765665674726+89109eb9c9628@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.732Z"
+  },
+  {
+    "id": "9e9bab41-2c88-464b-ba06-3ae55afd2ba0",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765665674830+fdd2537d47ed3@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.840Z"
+  },
+  {
+    "id": "db3a48c8-83cc-4ee0-87ea-2729ec1ebc1e",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765665674878+04c3c33cdc521@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:14.886Z"
+  },
+  {
+    "id": "d83e60a5-af3e-46a7-9818-97d75b3344b0",
+    "name": "Cliente Venda",
+    "email": "sale+1765665675195@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-13T22:41:15.201Z"
+  },
+  {
+    "id": "9d77220e-5ba5-4af4-a0f9-4901cd28afa3",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765723480215+1ee10f9289f5e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.220Z"
+  },
+  {
+    "id": "1e4d6542-5746-444c-bdbc-7cdaec7935e1",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765723480230+aacc774b7a4ec@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.235Z"
+  },
+  {
+    "id": "f7ce992c-d6a5-498e-bf00-112494a6aa1d",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765723480250+6e497a0996e1b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.256Z"
+  },
+  {
+    "id": "49bdcbb4-60c6-47a2-92d9-f4967c3a85c1",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765723480262+b7216e324c179@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.266Z"
+  },
+  {
+    "id": "2cc88337-12f3-4512-8399-d17814c0e6bd",
+    "name": "Cliente Atualizado",
+    "email": "update+1765723480280+a68446ffd87cb@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.286Z"
+  },
+  {
+    "id": "08865fd6-cb26-4a98-a046-ca434071560a",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765723480378+0ea938ed100b2@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.383Z"
+  },
+  {
+    "id": "d7581b36-d963-4378-978e-df9970b0e973",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765723480444+9dadcb753a795@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.449Z"
+  },
+  {
+    "id": "3cb4ad7f-8aa0-4d8f-8105-042abd23e384",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765723480471+1e3a28a66fffd@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.475Z"
+  },
+  {
+    "id": "620287cc-9d35-474a-9af9-cf34acda9abc",
+    "name": "Cliente Venda",
+    "email": "sale+1765723480701@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:44:40.708Z"
+  },
+  {
+    "id": "2014f693-60a1-4760-912b-9d2ada06a46f",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765723584884+41020c702a43b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:24.890Z"
+  },
+  {
+    "id": "38cc4db7-7eb9-4cda-80fa-7cb1a29d58a7",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765723584901+de84f5faf6a5c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:24.907Z"
+  },
+  {
+    "id": "8c3ef1d3-fe20-47b5-a520-85699b9bfe77",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765723584928+2c14e2a85a5e2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:24.934Z"
+  },
+  {
+    "id": "25edf399-75ef-45a9-b07c-e9ce14381d50",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765723584944+510903b741406@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:24.951Z"
+  },
+  {
+    "id": "80f08463-40d5-4689-8798-bf9faab0a5d5",
+    "name": "Cliente Atualizado",
+    "email": "update+1765723584971+a1f451b9d31c7@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:24.976Z"
+  },
+  {
+    "id": "9eee63e1-ef51-4c91-b732-58181b27b170",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765723585073+fdfa0d31a9d4f@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:25.079Z"
+  },
+  {
+    "id": "da329782-3811-4d84-9f41-b7736897ea4d",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765723585165+50cf67d3ad6d4@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:25.172Z"
+  },
+  {
+    "id": "db468315-d59e-467a-a7af-ab2a1fc35c0c",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765723585199+ca01857bdb3b6@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:25.205Z"
+  },
+  {
+    "id": "2f418513-5b98-4ce5-be86-cfe7bf1c9868",
+    "name": "Cliente Venda",
+    "email": "sale+1765723585494@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-14T14:46:25.498Z"
+  },
+  {
+    "id": "f3e309fe-bbf6-41aa-b08d-3586e2c74018",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765919596851+995f362149f5a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:16.856Z"
+  },
+  {
+    "id": "922b0e02-cb77-41cd-be6a-b4142923229a",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765919596865+b349ca935110e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:16.870Z"
+  },
+  {
+    "id": "b6382e13-bd29-4f9f-8629-8812526826fb",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765919596885+ea8fbfeb71fb8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:16.891Z"
+  },
+  {
+    "id": "8dd7c863-6b00-4961-bec5-489648165f0a",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765919596899+75f2d666079b8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:16.904Z"
+  },
+  {
+    "id": "b258898b-23ed-420f-b450-d3681ba11f45",
+    "name": "Cliente Atualizado",
+    "email": "update+1765919596920+3e8ac743efc2d@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:16.925Z"
+  },
+  {
+    "id": "92e25acf-f728-4975-91ad-9307c7069d18",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765919597003+21b17767b9d0a@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:17.008Z"
+  },
+  {
+    "id": "dfeda87b-f8bb-4f8f-adbf-9354c18d7f9f",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765919597080+356e6249448e4@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:17.085Z"
+  },
+  {
+    "id": "7261c83c-719d-4187-a67a-a4ef2bb7a62c",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765919597109+4d7c94337864e@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:17.114Z"
+  },
+  {
+    "id": "f5809396-1271-4624-862e-b3617929c407",
+    "name": "Cliente Venda",
+    "email": "sale+1765919597390@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:13:17.395Z"
+  },
+  {
+    "id": "fcea384c-c5e4-4357-bcad-27a1b1303e08",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765920276131+c55454b76ac7b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.137Z"
+  },
+  {
+    "id": "6ddf2dcb-6866-4557-8f64-c0339e87b68a",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765920276147+9ca1e30033874@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.153Z"
+  },
+  {
+    "id": "9959260c-102b-4812-8bba-29d26f77ee93",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765920276172+782286a536da1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.177Z"
+  },
+  {
+    "id": "3fa59f4a-2926-4a89-ae50-ee71c5fcc344",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765920276188+74a85975254a1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.193Z"
+  },
+  {
+    "id": "0fca12e5-a843-47b1-ab8a-4f16a15f42e9",
+    "name": "Cliente Atualizado",
+    "email": "update+1765920276213+56d3b8b4b2c27@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.218Z"
+  },
+  {
+    "id": "4ffa8095-82f3-486b-b667-620575244d28",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765920276308+25d2ec1c318d1@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.312Z"
+  },
+  {
+    "id": "69fdc3c2-eb58-4743-ba25-1847a2bf441e",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765920276380+0d152ab753fca@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.386Z"
+  },
+  {
+    "id": "c0a6f0bb-574a-48e8-a00c-0951d6331ada",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765920276412+72d0b649430c1@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.417Z"
+  },
+  {
+    "id": "82ba62c2-c690-432b-933f-8990cdaa872c",
+    "name": "Cliente Venda",
+    "email": "sale+1765920276702@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:24:36.707Z"
+  },
+  {
+    "id": "4826b18e-7e3b-4f67-98b8-d586709ca69c",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765920649187+aeaac5004ad42@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.193Z"
+  },
+  {
+    "id": "633331c8-d96e-4b86-bcc8-b6c9d9a91e35",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765920649203+04fd5172c0d8a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.209Z"
+  },
+  {
+    "id": "34507cc1-4243-41f7-bb6d-1a7888ecd83c",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765920649227+93d02d5e42b2f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.233Z"
+  },
+  {
+    "id": "cad75218-892a-40bb-ae71-2d5e9e596262",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765920649242+230dc911a3154@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.249Z"
+  },
+  {
+    "id": "c77472b3-dd93-4d48-9baa-85fa08884acc",
+    "name": "Cliente Atualizado",
+    "email": "update+1765920649268+e5265cabf7c1@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.273Z"
+  },
+  {
+    "id": "d9ae8834-0877-4365-a9df-b29a28e31bb3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765920649354+c267b5c63c108@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.360Z"
+  },
+  {
+    "id": "af451498-9239-4798-a9a5-1943415f1217",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765920649432+85a254cbdd5b7@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.437Z"
+  },
+  {
+    "id": "5a5a39d1-e547-4ef3-9b77-1c23887dcb7a",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765920649464+b1a4a7c4303af@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.468Z"
+  },
+  {
+    "id": "d877243f-5e64-402d-8535-82a922cf0aa8",
+    "name": "Cliente Venda",
+    "email": "sale+1765920649807@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T21:30:49.811Z"
+  },
+  {
+    "id": "a6291945-25a9-4b6c-bc74-9717892307a0",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765926617606+ba69ddeeac548@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.613Z"
+  },
+  {
+    "id": "6530de5c-6404-491f-840e-93df18f65d0b",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765926617624+5e66cc96cfe59@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.629Z"
+  },
+  {
+    "id": "d1c94577-bc1c-4cd2-84a0-b2b283b231a9",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765926617646+9137e708fe4e7@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.650Z"
+  },
+  {
+    "id": "9a1c9a36-aebf-49c5-b58e-7aaa4e4c379e",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765926617659+b60bc2d8249dd@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.664Z"
+  },
+  {
+    "id": "773f15d2-489c-4c5d-bb49-f53177dee10d",
+    "name": "Cliente Atualizado",
+    "email": "update+1765926617680+bb183f384812b@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.685Z"
+  },
+  {
+    "id": "632f4a69-8cbe-46a3-aeb7-a90151de005c",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765926617759+9991d9cadf69f@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.764Z"
+  },
+  {
+    "id": "53b35528-56d4-4e0a-853e-130dec75af7a",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765926617858+16b16aff061ae@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.863Z"
+  },
+  {
+    "id": "95b819f4-3768-4749-9d1a-86bb5b1a2839",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765926617889+0a8c7ed537258@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:17.895Z"
+  },
+  {
+    "id": "e88b57b4-cf94-4e17-a27b-e991ee9f263e",
+    "name": "Cliente Venda",
+    "email": "sale+1765926618165@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:10:18.172Z"
+  },
+  {
+    "id": "77a9c904-d9de-41df-b0dd-34aee1024642",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765929000141+8e808fc6c7c31@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.146Z"
+  },
+  {
+    "id": "aebdf933-8f87-484b-80d6-53f1acfdda6b",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765929000152+9d8769654e47d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.157Z"
+  },
+  {
+    "id": "d8f93d3c-8ece-44d1-9a07-5dd9d028e2c1",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765929000170+b986fe904328f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.175Z"
+  },
+  {
+    "id": "20d817dc-3994-4ae9-9ec7-edfbed3498ee",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765929000182+fe452c57c786f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.185Z"
+  },
+  {
+    "id": "b9162e29-d5d1-4295-919c-fdc8f91a4d2d",
+    "name": "Cliente Atualizado",
+    "email": "update+1765929000198+b07545ef6d69e@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.202Z"
+  },
+  {
+    "id": "3f02933b-87e8-4d34-8765-be06175edc9c",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765929000261+8996b0eb9d55f@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.265Z"
+  },
+  {
+    "id": "311971bb-6780-4d76-b19a-38a793365136",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765929000320+1ab41d298569f@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.324Z"
+  },
+  {
+    "id": "6668ef8e-bb20-4894-9594-712e02da8d6d",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765929000344+c8c77695ba5f3@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.349Z"
+  },
+  {
+    "id": "0f8148f3-a322-4ef6-94f6-e056521f10f6",
+    "name": "Cliente Venda",
+    "email": "sale+1765929000585@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:50:00.588Z"
+  },
+  {
+    "id": "f824bee2-19d3-4768-b015-c7cb6251d5d9",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765929309584+030356bd85076@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.588Z"
+  },
+  {
+    "id": "e9c49749-4fcd-4bd6-b032-b390569bdea4",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765929309594+9aefa25721f32@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.598Z"
+  },
+  {
+    "id": "f21e9114-5bfb-4aeb-8806-9721a1e0ff10",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765929309610+26dd9cbc65054@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.613Z"
+  },
+  {
+    "id": "93fb7047-f05c-4e81-86c0-9ee52d31eaa3",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765929309620+c0e7d4087555a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.624Z"
+  },
+  {
+    "id": "edf60204-c63f-40d7-9abe-a92ec4e7e724",
+    "name": "Cliente Atualizado",
+    "email": "update+1765929309635+77038f2273697@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.639Z"
+  },
+  {
+    "id": "fb60e876-1cbc-40c9-9034-70663181033c",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765929309693+1fe562fc7bec6@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.698Z"
+  },
+  {
+    "id": "314d765d-6054-4de9-8e5d-5531853bf9de",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765929309746+d9532777e21b6@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.750Z"
+  },
+  {
+    "id": "1f08bca5-bce5-494a-bdee-2baeb8dd5b3d",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765929309768+a400257d2f512@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.772Z"
+  },
+  {
+    "id": "9c0a9cad-2529-4886-9e78-9b17e5c1b16a",
+    "name": "Cliente Venda",
+    "email": "sale+1765929309970@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:09.973Z"
+  },
+  {
+    "id": "284d8be8-cd5d-4225-86c5-d3335820b52b",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765929334062+85070290e331c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.065Z"
+  },
+  {
+    "id": "c527694e-aa6e-4af7-9013-1e25b0222475",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765929334072+784ca14616651@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.076Z"
+  },
+  {
+    "id": "3961b7fb-4b95-4984-87d2-8fd419e4eb8b",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765929334089+fc283a573aa76@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.092Z"
+  },
+  {
+    "id": "78844622-b21a-47da-b258-800f33dc06f9",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765929334099+1b267c91ef988@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.102Z"
+  },
+  {
+    "id": "b270eb23-6e4d-4269-b4d4-b94e186484ac",
+    "name": "Cliente Atualizado",
+    "email": "update+1765929334114+95e334e5da034@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.118Z"
+  },
+  {
+    "id": "11e756e7-87bd-4db1-bdb4-620c67145272",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765929334169+ebe98b49ad1ff@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.173Z"
+  },
+  {
+    "id": "39183502-8cb7-4b66-8dd9-7e50fe8dd6a5",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765929334222+6c347fb0f2077@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.225Z"
+  },
+  {
+    "id": "159aaed5-8a6c-4b50-8804-682499561229",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765929334242+a340164f4379f@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.245Z"
+  },
+  {
+    "id": "2a6acf54-6e89-4cee-b561-3f510a1f93a8",
+    "name": "Cliente Venda",
+    "email": "sale+1765929334421@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-16T23:55:34.424Z"
+  },
+  {
+    "id": "d21d6fac-87b0-49e7-b775-14319b9e39c4",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765929721262+c2bacdc951c12@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.265Z"
+  },
+  {
+    "id": "7caaed24-dca5-40da-9c8c-5ff57cd9de7f",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765929721272+e79809c91cf37@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.276Z"
+  },
+  {
+    "id": "74f3775b-4d64-4ed7-9312-991bec1f7067",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765929721289+3c7992a8d4aa3@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.292Z"
+  },
+  {
+    "id": "7bcbd114-8fe3-418e-8235-3cbbb75f78ee",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765929721299+de5f2adb5a37a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.302Z"
+  },
+  {
+    "id": "0b8533a2-952f-484a-8a2f-f933d41e5a3b",
+    "name": "Cliente Atualizado",
+    "email": "update+1765929721314+6cb2b71d28fc9@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.317Z"
+  },
+  {
+    "id": "c52816bb-08e1-4f98-9fed-886dcd80dbca",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765929721372+b5baf26908547@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.375Z"
+  },
+  {
+    "id": "a30f68c6-e73d-4671-9539-68d56c314625",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765929721428+3125d6fe5f968@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.431Z"
+  },
+  {
+    "id": "9badfb4c-155b-4860-ba5e-bd61aaffdf2b",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765929721449+06b7d6db61f86@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.452Z"
+  },
+  {
+    "id": "fafd8810-58f4-4d7a-a06b-c603ae4dfed0",
+    "name": "Cliente Venda",
+    "email": "sale+1765929721644@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T00:02:01.646Z"
+  },
+  {
+    "id": "cb846039-494e-48a3-9777-a714f34b6d28",
+    "name": "Cliente Teste",
+    "email": "trim-email+1765934855941+e5c6bc91216a8@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:35.945Z"
+  },
+  {
+    "id": "dfc0ec89-0e7b-462f-ab19-95aecae5a32b",
+    "name": "Cliente Teste",
+    "email": "trim-name+1765934855952+a3fbfb84811e3@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:35.955Z"
+  },
+  {
+    "id": "6c58deb3-9656-4f1e-a3de-59403ae71451",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1765934855970+20d4349a5837b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:35.973Z"
+  },
+  {
+    "id": "e7aeb3aa-deb0-49fd-9365-261fecd3fecf",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1765934855981+a6ce38903332c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:35.984Z"
+  },
+  {
+    "id": "dcbb2d43-6ab2-45be-8ac9-51546e89a6ec",
+    "name": "Cliente Atualizado",
+    "email": "update+1765934855997+1be5013bfe9c2@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:36.000Z"
+  },
+  {
+    "id": "d42e1285-2363-42c3-a258-25294dd9534d",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1765934856050+bcb156cabdd7c@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:36.053Z"
+  },
+  {
+    "id": "8fb2645f-b858-4cf3-9a2e-da13f563c8ae",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1765934856101+ac0d0bfd8d986@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:36.104Z"
+  },
+  {
+    "id": "f65afa18-aaa5-4c65-997e-70c13742c08a",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1765934856121+fdf0815527c49@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:36.124Z"
+  },
+  {
+    "id": "4da475de-b45a-499d-8edd-5d0052e3a776",
+    "name": "Cliente Venda",
+    "email": "sale+1765934856312@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-17T01:27:36.316Z"
+  },
+  {
+    "id": "0699b41d-e979-46e4-b15e-24caf25d8aba",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766154736612+5b663bda8d62e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.617Z"
+  },
+  {
+    "id": "c668fbff-1d2d-4ff5-9340-57f30253baaf",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766154736624+59540186ef5ed@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.631Z"
+  },
+  {
+    "id": "bd4661bc-776b-40d0-9f65-721883232237",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766154736650+c278dc871a58f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.657Z"
+  },
+  {
+    "id": "5764f0c8-bcc7-4c4d-8e13-7c429fb901cc",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766154736667+68cf06e42ccd1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.672Z"
+  },
+  {
+    "id": "6fc767f5-3e2e-4bbb-8c74-41d1005b7225",
+    "name": "Cliente Atualizado",
+    "email": "update+1766154736688+74d26dbccbc53@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.693Z"
+  },
+  {
+    "id": "ffb4b08e-d337-471e-ba94-7f40316813d9",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766154736750+98a47eb397bed@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.753Z"
+  },
+  {
+    "id": "66d08903-5abd-4b65-94b9-f853af999394",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766154736808+30a4f909c92f@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.811Z"
+  },
+  {
+    "id": "db552e3d-7543-4c08-8acb-c084159bf5ad",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766154736830+56c71ca7cdcf7@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:16.834Z"
+  },
+  {
+    "id": "48524890-ea18-4fab-b822-a77c6fb15445",
+    "name": "Cliente Venda",
+    "email": "sale+1766154737099@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T14:32:17.102Z"
+  },
+  {
+    "id": "2243c86d-3007-4b50-a6ce-bef630dc8505",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766171798142+327d3cd1e8a6a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.149Z"
+  },
+  {
+    "id": "2fdeeef6-87eb-48c6-9c97-e60f3328f420",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766171798157+3cd4ad4e5da54@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.167Z"
+  },
+  {
+    "id": "dcfb3e76-6cb2-4175-bd50-4492e83fb456",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766171798197+efad64340c802@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.204Z"
+  },
+  {
+    "id": "b40ac90c-b757-4242-aa39-16ccac96209b",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766171798214+9cd1f77406e73@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.220Z"
+  },
+  {
+    "id": "186e85c9-322d-4512-92cb-acea380511ab",
+    "name": "Cliente Atualizado",
+    "email": "update+1766171798238+827851e209f67@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.243Z"
+  },
+  {
+    "id": "28f0441d-1e0c-4994-9f3e-d92077f9a136",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766171798317+884c285689c0d@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.321Z"
+  },
+  {
+    "id": "809f1305-a937-431d-95f6-ba229204643f",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766171798398+f9cfc74131ee7@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.403Z"
+  },
+  {
+    "id": "b03c285c-1f11-4d48-9b64-42dc1f79687c",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766171798431+0b9c3c76e5af2@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.436Z"
+  },
+  {
+    "id": "629d6680-ddd3-4210-a826-73198babfc8b",
+    "name": "Cliente Venda",
+    "email": "sale+1766171798761@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:16:38.765Z"
+  },
+  {
+    "id": "195a9ff3-4055-4267-9d27-6564e6c2aaac",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766172003371+ff0dc0d11208a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.377Z"
+  },
+  {
+    "id": "21f90703-e729-4115-89cb-3ac06a624fb2",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766172003390+75fbf79e6bafe@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.395Z"
+  },
+  {
+    "id": "ea0909e2-1521-4ead-8f76-b61a74f4fb04",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766172003414+f603bd24cb5b7@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.420Z"
+  },
+  {
+    "id": "0182b473-44fa-43c2-8f60-68b70fec4e9c",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766172003429+85c39ec4bb0a4@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.434Z"
+  },
+  {
+    "id": "6051b150-8ee9-4579-a657-1d06123e469c",
+    "name": "Cliente Atualizado",
+    "email": "update+1766172003453+e120c925c1a6@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.459Z"
+  },
+  {
+    "id": "cd60d6d7-1d18-4c17-b1da-0ebf1cb50434",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766172003541+e8da408f916a6@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.547Z"
+  },
+  {
+    "id": "81043e95-7b7a-4a2e-9320-1785c87c4925",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766172003613+f7e02ca8d079a@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.619Z"
+  },
+  {
+    "id": "6857faaf-a49c-4997-91e7-05498cdcf8b1",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766172003645+413466aa60a84@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.651Z"
+  },
+  {
+    "id": "eebc7d24-aeb4-4680-9239-d96b7aee9f41",
+    "name": "Cliente Venda",
+    "email": "sale+1766172003958@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:20:03.963Z"
+  },
+  {
+    "id": "bc4c0e02-4ad3-41ac-b09e-f96c0cd34d21",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766172887210+56d96a3c80a9d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.216Z"
+  },
+  {
+    "id": "2b632560-1735-40f3-beda-3c9fca1aa6dc",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766172887228+340b041076cc9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.234Z"
+  },
+  {
+    "id": "ab0618d4-d1a0-4c2e-a3ed-cdfc5c302e9c",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766172887263+84610afdb8d9b@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.269Z"
+  },
+  {
+    "id": "ea3ecf6b-dfc8-4cb8-992d-b3ac5ce74f21",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766172887281+08fcc68457ecd@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.289Z"
+  },
+  {
+    "id": "19deecb0-bb7f-480a-87eb-91f32f211273",
+    "name": "Cliente Atualizado",
+    "email": "update+1766172887314+052e4513679e4@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.324Z"
+  },
+  {
+    "id": "40946daa-a7f6-4bbb-8c34-e21fb24dcd91",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766172887449+a47d1f2873ec3@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.457Z"
+  },
+  {
+    "id": "cd637f8d-e0f3-4822-b4de-0aa283bca54f",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766172887599+79be812c7bb92@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.612Z"
+  },
+  {
+    "id": "70c9cebf-a5a9-416d-9993-2b1044ec6c89",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766172887665+5d22fcad57e7e@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:47.674Z"
+  },
+  {
+    "id": "06557eaa-e1b7-4552-8475-dc394dec4895",
+    "name": "Cliente Venda",
+    "email": "sale+1766172888021@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T19:34:48.026Z"
+  },
+  {
+    "id": "3176396d-348d-4445-8148-033b5c6a5dd4",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766174681125+d1a37510e60ba@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.132Z"
+  },
+  {
+    "id": "cefe82a2-bfbc-40e1-ada9-48069c38df5d",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766174681143+88c73fe499538@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.150Z"
+  },
+  {
+    "id": "0f6d8c72-54ab-4047-a8ec-4b1f6c19c643",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766174681190+7b15d5c414247@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.198Z"
+  },
+  {
+    "id": "b15f299d-c443-490d-b0ef-8cfda4884918",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766174681212+e7e3a51a5de26@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.224Z"
+  },
+  {
+    "id": "b7232887-d70c-4ce6-adfb-c4722f895ebf",
+    "name": "Cliente Atualizado",
+    "email": "update+1766174681260+9057ce1943e1@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.267Z"
+  },
+  {
+    "id": "a4c04f7e-dd19-4f01-a72a-70c5f0245222",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766174681372+bf7157c1e94cd@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.379Z"
+  },
+  {
+    "id": "09a1ef0e-d609-42fb-a620-dc6a5d1e7c24",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766174681498+109f01a5768bd@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.504Z"
+  },
+  {
+    "id": "2346ba45-5e57-4a7a-bb4f-049ceb5c9727",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766174681544+4721f60b42965@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.552Z"
+  },
+  {
+    "id": "af663550-0e9a-4471-a141-68fe616c5855",
+    "name": "Cliente Venda",
+    "email": "sale+1766174681913@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:04:41.918Z"
+  },
+  {
+    "id": "a1df0b75-c11a-400a-a0e6-4ddbd2b98888",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766174727901+34a94cdc466be@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:27.906Z"
+  },
+  {
+    "id": "b67787b8-a1e2-46bf-be36-09cd51ee083f",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766174727913+5f8bf4f97ace2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:27.917Z"
+  },
+  {
+    "id": "31a8714f-6642-4ef5-a71e-d805f97a7f9f",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766174727934+f1c3beb72c2cc@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:27.941Z"
+  },
+  {
+    "id": "dbeb46bd-0348-4505-a411-5fe6eaf48544",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766174727949+4184fe8b32966@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:27.963Z"
+  },
+  {
+    "id": "343a7d79-183a-4668-b5b0-81942ffe4b6c",
+    "name": "Cliente Atualizado",
+    "email": "update+1766174727987+0add59753482f@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:27.994Z"
+  },
+  {
+    "id": "ee43fbcb-abc1-4751-b3e7-4211f0602c75",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766174728077+991a293283dc2@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:28.082Z"
+  },
+  {
+    "id": "1ee28cc9-fba9-44bf-9bbd-0b45349a6e4e",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766174728147+d800bd2324411@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:28.153Z"
+  },
+  {
+    "id": "958af44f-7b90-47d0-81e0-ffdbd84f1b43",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766174728184+6825903633c94@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:28.192Z"
+  },
+  {
+    "id": "150a9f3a-a4bd-4739-9036-bd49932d33af",
+    "name": "Cliente Venda",
+    "email": "sale+1766174728444@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:05:28.447Z"
+  },
+  {
+    "id": "32770a1d-3fdc-46a2-b9ba-5d5b2e53cd99",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766174893540+5970cf5318ce6@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.546Z"
+  },
+  {
+    "id": "ed9c412a-2048-4464-9e04-4b6d1ed57bba",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766174893555+919b897043e5a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.564Z"
+  },
+  {
+    "id": "b4b68298-a3b7-48de-9b66-4934202aa0c2",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766174893583+04b312ac2f515@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.589Z"
+  },
+  {
+    "id": "4b3f60c8-6621-4552-88bf-7e559f9dffa3",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766174893599+a6e386c2dfdb7@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.605Z"
+  },
+  {
+    "id": "4aab4ada-0a73-40f3-a449-8b7894199c51",
+    "name": "Cliente Atualizado",
+    "email": "update+1766174893624+17382b6ad1dc@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.630Z"
+  },
+  {
+    "id": "73b26bb2-efc2-4c74-ba72-fb2ea28b889e",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766174893728+bc50b261b3bd6@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.734Z"
+  },
+  {
+    "id": "1022280b-509c-47db-a74a-6846298fc18d",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766174893835+c44fb38c57de6@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.844Z"
+  },
+  {
+    "id": "47942289-a166-4818-91e9-b3743c95b5ab",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766174893875+b4eb8942b5268@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:13.880Z"
+  },
+  {
+    "id": "499d25bd-9416-4578-b47e-15103c403cb5",
+    "name": "Cliente Venda",
+    "email": "sale+1766174894204@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:08:14.208Z"
+  },
+  {
+    "id": "7bcacc87-c187-424b-b293-ae9686e846a7",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766175913256+4656fd6a986c6@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.263Z"
+  },
+  {
+    "id": "b14d43b0-25e9-481e-bba7-2642e32e63e6",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766175913273+c6abf82ade228@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.282Z"
+  },
+  {
+    "id": "0000d68f-87e5-4d10-b138-2d399192a2c0",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766175913312+2b5bfe71e4222@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.319Z"
+  },
+  {
+    "id": "ae44dbae-115f-4549-b48d-d8e2ccd20391",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766175913336+3dd515871914f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.342Z"
+  },
+  {
+    "id": "92ff8602-0c0a-4da4-8dac-7667472dfaa3",
+    "name": "Cliente Atualizado",
+    "email": "update+1766175913364+7bb276da792cc@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.371Z"
+  },
+  {
+    "id": "03a0cba6-d5f3-410e-ba91-2500f513ca05",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766175913463+db5fbee3fde5@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.470Z"
+  },
+  {
+    "id": "e968f139-f197-4817-aa86-864d4387d881",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766175913555+a8d7e3a21977a@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.563Z"
+  },
+  {
+    "id": "30bc8c42-54d4-4662-86b2-3aa953356e99",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766175913601+85a7b7e1b89d5@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T20:25:13.608Z"
+  },
+  {
+    "id": "acad5dfe-8038-402d-ae02-f8ba267be541",
+    "name": "Cliente Receita",
+    "email": "revenue+1766183473789@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T22:31:13.797Z"
+  },
+  {
+    "id": "ed1c7114-044c-4b3d-adaf-4e1687ae0f89",
+    "name": "Cliente Receita",
+    "email": "revenue+1766183699086@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-19T22:34:59.094Z"
+  },
+  {
+    "id": "cbb51477-2658-48ce-a80a-5526966632ae",
+    "name": "Cliente-1766188937577-8faef86c304f3",
+    "email": "cliente+1766188937577@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:02:17.583Z"
+  },
+  {
+    "id": "d9413efa-8ee0-4381-9b2a-dbf0226dc717",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766190022674+26653a670b357@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.679Z"
+  },
+  {
+    "id": "b03b9e15-b35d-4d7d-bb94-1438b12a08c1",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766190022688+6cd6c3ff23753@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.695Z"
+  },
+  {
+    "id": "5476fc10-93aa-4720-b43a-c05f0fced245",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766190022718+d69179d9d8ea6@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.725Z"
+  },
+  {
+    "id": "7a3d77bd-b689-4dfb-a0dc-249e203aeef2",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766190022736+35800d6b75cd4@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.743Z"
+  },
+  {
+    "id": "68842d2d-3a7b-4ef0-8791-8d2f010ed866",
+    "name": "Cliente Atualizado",
+    "email": "update+1766190022763+8c239ade653fd@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.769Z"
+  },
+  {
+    "id": "545a0e19-00ea-44a8-bf1e-7748f72b05c2",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766190022883+a8c74432d5804@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:22.891Z"
+  },
+  {
+    "id": "c046eb44-0860-453a-80c2-0dc85d555fa6",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766190023012+85a0d9efc6f38@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:23.021Z"
+  },
+  {
+    "id": "4cc4d5ec-42cd-473d-9f16-f947e9c4e460",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766190023087+cae9c64605f2a@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:23.097Z"
+  },
+  {
+    "id": "20704bf1-790e-4336-8047-c4712dc93614",
+    "name": "Cliente Venda",
+    "email": "sale+1766190023598@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:23.614Z"
+  },
+  {
+    "id": "66a01f5f-8629-4c4e-96d1-634604e4c8e4",
+    "name": "Cliente Receita",
+    "email": "revenue+1766190024194@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:24.198Z"
+  },
+  {
+    "id": "242e16a1-a174-4b1e-8afc-deaa670c7d62",
+    "name": "Cliente-1766190026966-12997aba266f8",
+    "email": "cliente+1766190026966@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:20:26.969Z"
+  },
+  {
+    "id": "76219761-d3ab-4575-8a8d-5a6abbbed8a1",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766190385333+acc574900c3bc@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.339Z"
+  },
+  {
+    "id": "30f47599-bd57-4a29-8ca0-3b5edc4839e8",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766190385350+2038da2766a07@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.357Z"
+  },
+  {
+    "id": "416aea28-de6b-43b6-8b0e-f7ef161b72b8",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766190385384+f9b9b69342754@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.390Z"
+  },
+  {
+    "id": "3d76b2db-4720-43e8-be9f-3e4b256bce3c",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766190385401+084770c3bdf93@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.408Z"
+  },
+  {
+    "id": "b82cbb0a-4a42-4937-aaf3-bdb1aa85dfb6",
+    "name": "Cliente Atualizado",
+    "email": "update+1766190385433+0223bde7ba069@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.442Z"
+  },
+  {
+    "id": "6edff9ce-4b08-4b37-b1d6-ba669b0054ac",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766190385585+c34ea9e036d7b@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.593Z"
+  },
+  {
+    "id": "c3bbe873-da17-49b2-ab06-b4e389566cc3",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766190385718+6a5f1a8f4dba2@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.733Z"
+  },
+  {
+    "id": "0028e683-de44-4010-8cb6-4be8fd84e4a6",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766190385814+895614332623b@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:25.820Z"
+  },
+  {
+    "id": "f64e49fa-fbc6-4a6a-aecd-82805bdd6083",
+    "name": "Cliente Venda",
+    "email": "sale+1766190386306@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:26.313Z"
+  },
+  {
+    "id": "b4638386-753f-4ae6-b665-b6ce69d599e5",
+    "name": "Cliente Receita",
+    "email": "revenue+1766190386928@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:26.934Z"
+  },
+  {
+    "id": "32e41e36-5948-4454-8e83-20b2139fa72c",
+    "name": "Cliente-1766190389906-bd65253974184",
+    "email": "cliente+1766190389906@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T00:26:29.909Z"
+  },
+  {
+    "id": "34dfb335-a8c7-4412-8375-e45220a6a34b",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766233560894+050a8bb2df3ec@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:00.898Z"
+  },
+  {
+    "id": "d8108c9d-1d1d-4add-9ed0-58038ef2f4d3",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766233560904+91c1554ffac56@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:00.909Z"
+  },
+  {
+    "id": "73b17ea4-d1b9-42c9-bedc-5f59f3b4a418",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766233560922+df6895509b2ea@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:00.927Z"
+  },
+  {
+    "id": "76ecea97-f1b4-4d8b-8367-5fba429ebcc9",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766233560934+e7db49bcaf59f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:00.939Z"
+  },
+  {
+    "id": "b7331a8b-a84d-4c04-9442-bf69a830f61b",
+    "name": "Cliente Atualizado",
+    "email": "update+1766233560954+b5d6b11acae32@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:00.958Z"
+  },
+  {
+    "id": "feff959f-b38e-4e1a-a6af-b0ff934d2bc3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766233561031+44c950f7db1bc@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:01.035Z"
+  },
+  {
+    "id": "49effe6c-7cac-42cc-8aea-7da6d36c3fca",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766233561101+fce12aad64713@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:01.105Z"
+  },
+  {
+    "id": "e9b6facc-3528-4169-babb-dc52cbc0b096",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766233561162+c1e48909e8e1b@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:01.169Z"
+  },
+  {
+    "id": "6bfb5204-4077-4954-a6f7-356f9e64fe21",
+    "name": "Cliente Venda",
+    "email": "sale+1766233561435@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:01.438Z"
+  },
+  {
+    "id": "2514e5e9-7fa6-4cf5-a2f5-3113e1b0fa64",
+    "name": "Cliente Receita",
+    "email": "revenue+1766233561846@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:01.851Z"
+  },
+  {
+    "id": "238f3bde-a9f9-4c13-9ba9-7e7d73a245ef",
+    "name": "Cliente-1766233563891-a9e5d899da69a",
+    "email": "cliente+1766233563891@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:26:03.895Z"
+  },
+  {
+    "id": "ed759130-9b14-486a-ac9b-bedef2911dd8",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766235300593+e547a278dd981@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.597Z"
+  },
+  {
+    "id": "4ba5a1e3-d38d-4afe-ab89-e6b618462b5f",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766235300607+d4592f07846d1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.610Z"
+  },
+  {
+    "id": "39c96091-92fa-45d9-a0c7-a958a7441b0d",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766235300625+b8f47b5c1bc9e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.629Z"
+  },
+  {
+    "id": "2a6f6679-6bdc-45f6-963b-f2ebb6587f2d",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766235300637+9df357cf4f54e@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.642Z"
+  },
+  {
+    "id": "62802bfc-bd8a-4abd-beae-19e75b7df47b",
+    "name": "Cliente Atualizado",
+    "email": "update+1766235300656+f4b597a365532@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.660Z"
+  },
+  {
+    "id": "c9bb2125-0a91-4ea4-830e-ac3311b9e1b3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766235300733+05f485e906745@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.740Z"
+  },
+  {
+    "id": "eb117d8d-0aca-4d33-ae1d-7b34c5f6844c",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766235300816+21cd7b803be4c@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.823Z"
+  },
+  {
+    "id": "2d931f07-2f9e-4705-9899-0b1935064867",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766235300854+75e992c820a69@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:00.861Z"
+  },
+  {
+    "id": "061d361c-f1dd-4563-807c-7241cab92b37",
+    "name": "Cliente Venda Extra",
+    "email": "sale-extra+1766235301100@teste.com",
+    "phone": null,
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:01.104Z"
+  },
+  {
+    "id": "beaa0391-4b05-4a6a-93a1-e9eb14acdad3",
+    "name": "Cliente Venda",
+    "email": "sale+1766235301154@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:01.160Z"
+  },
+  {
+    "id": "d0cfd22d-31ec-4e57-9b45-f303744b71e2",
+    "name": "Cliente Receita",
+    "email": "revenue+1766235301624@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:01.628Z"
+  },
+  {
+    "id": "27f46514-9b2a-4b1b-8c23-ce294f8e5b1e",
+    "name": "Cliente-1766235303605-94bc8c1b551a6",
+    "email": "cliente+1766235303605@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:55:03.608Z"
+  },
+  {
+    "id": "afda0a13-f2f0-49f4-9f82-ed7323802a1a",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766235467050+72a585e1d1845@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.055Z"
+  },
+  {
+    "id": "56614962-7222-4437-b3ec-23bdd78d4bc9",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766235467062+ef9d9f2368fa9@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.067Z"
+  },
+  {
+    "id": "3df2a2e8-ca03-4137-9f82-924f804dc54b",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766235467081+573583f7ed163@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.087Z"
+  },
+  {
+    "id": "c3d0fa5f-c674-4a43-8606-06dc8482a1ff",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766235467095+17cd3c074ce8d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.099Z"
+  },
+  {
+    "id": "ae855789-494a-4f97-ac9f-6e6acf858500",
+    "name": "Cliente Atualizado",
+    "email": "update+1766235467112+dd23253bb7756@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.117Z"
+  },
+  {
+    "id": "ed5dd4ed-5b92-4f85-ba5f-55007b74a5a1",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766235467185+3f67c8dbaf677@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.189Z"
+  },
+  {
+    "id": "1024fdf8-8aa0-41d2-9cea-ecf76f79a362",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766235467252+049133137767d@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.257Z"
+  },
+  {
+    "id": "4de5d470-d4b9-4884-97c7-4cc52eadb4a8",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766235467287+ce2398b14c451@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.293Z"
+  },
+  {
+    "id": "ef353b0f-3c73-4e8d-b7eb-8ab5dac7e4fa",
+    "name": "Cliente Venda Extra",
+    "email": "sale-extra+1766235467519@teste.com",
+    "phone": null,
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.522Z"
+  },
+  {
+    "id": "a33d1406-4fe3-4eab-bfec-9f912ab79963",
+    "name": "Cliente Venda",
+    "email": "sale+1766235467560@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.564Z"
+  },
+  {
+    "id": "7138a96b-2170-46e9-b134-547a83c0fe35",
+    "name": "Cliente Receita",
+    "email": "revenue+1766235467925@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:47.928Z"
+  },
+  {
+    "id": "6851bbad-f5b9-463f-bc1a-e1d16248e343",
+    "name": "Cliente-1766235469859-01694dfafe4c3",
+    "email": "cliente+1766235469859@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-20T12:57:49.862Z"
   }
 ]

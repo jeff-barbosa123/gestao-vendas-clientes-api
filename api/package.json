@@ -8,7 +8,14 @@
     "dev": "nodemon ./src/server.js",
     "test": "mocha --config .mocharc.json --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=mochawesome,quiet=true,overwrite=true,html=true,json=false --exit",
     "test:report": "mocha --config .mocharc.json --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=mochawesome,quiet=true,overwrite=true,html=true,json=false",
-    "test:watch": "mocha --config .mocharc.json --watch"
+    "test:watch": "mocha --config .mocharc.json --watch",
+    "test:us001": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US001*.test.js",
+    "test:us002": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US002*.test.js",
+    "test:us003": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US003*.test.js",
+    "test:us004": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US004*.test.js",
+    "test:us005": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US005*.test.js",
+    "test:us006": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US006*.test.js",
+    "test:us007": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US007*.test.js"
   },
   "keywords": [
     "express",

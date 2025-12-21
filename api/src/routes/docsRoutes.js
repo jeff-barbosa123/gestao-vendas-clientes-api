@@ -13,10 +13,11 @@ try {
   swaggerDoc = { openapi: '3.0.3', info: { title: 'API', version: '1.0.0' } };
 }
 
-router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-router.get('/raw', (req, res) => {
+router.get('/raw', (_req, res) => {
   res.sendFile(swaggerPath);
 });
+
+router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 module.exports = router;
 

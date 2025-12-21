@@ -39,3 +39,4 @@ node_modules/
 *.tmp
 ~WRL*.tmp
 .env
+logs/

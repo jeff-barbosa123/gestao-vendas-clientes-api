@@ -1,4 +1,4 @@
-const authService = require("../services/authService");
+﻿const authService = require("../services/authService");
 
 module.exports = {
   login: (req, res) => {
@@ -18,7 +18,7 @@ module.exports = {
       return res.status(200).json({ token, refreshToken, user, exp, jti, refreshJti });
     } catch (err) {
       const status = err.status || 401;
-      const message = err.message || "Refresh token inv�lido";
+      const message = err.message || "Refresh token inválido";
       return res.status(status).json({ error: message, message });
     }
   },
@@ -33,10 +33,10 @@ module.exports = {
   register: (req, res) => {
     try {
       const user = authService.registerUser(req.body);
-      return res.status(201).json({ message: "Usu�rio criado com sucesso", user });
+      return res.status(201).json({ message: "Usuário criado com sucesso", user });
     } catch (err) {
       const status = err.status || 400;
-      const message = err.message || "Erro ao registrar usu�rio";
+      const message = err.message || "Erro ao registrar usuário";
       return res.status(status).json({ error: message });
     }
   },
@@ -44,9 +44,9 @@ module.exports = {
   me: (req, res) => {
     const user = authService.getUserById(req.user.id);
     if (!user) {
-      return res.status(404).json({ error: "Usu�rio n�o encontrado" });
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
-    return res.status(200).json({ user: { id: user.id, email: user.email, name: user.name } });
+    return res.status(200).json({ user: { id: user.id, email: user.email, name: user.name, statusUsuario: user.statusUsuario, dataUltimoLogin: user.dataUltimoLogin, tentativasFalha: user.tentativasFalha } });
   },
 
   validate: (_req, res) => {

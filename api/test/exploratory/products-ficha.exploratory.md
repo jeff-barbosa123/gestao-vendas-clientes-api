@@ -1,0 +1,90 @@
+# Cenarios Exploratorios - US007 (Vinculo Ficha Tecnica x Produto)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados no vinculo entre produto e ficha tecnica.
+
+## Cenarios sugeridos (BDD)
+- **EXP-VIN-001 | Produto inexistente**
+  - Dado que informo productId inexistente
+  - Quando tento vincular ficha tecnica
+  - Entao devo receber 404
+- **EXP-VIN-002 | Ficha inexistente**
+  - Dado que informo fichaTecnicaId inexistente
+  - Quando tento vincular
+  - Entao devo receber 404
+- **EXP-VIN-003 | Ficha de outro usuario (IDOR)**
+  - Dado que a ficha pertence a outro usuario
+  - Quando tento vincular
+  - Entao devo receber 403
+- **EXP-VIN-004 | Produto de outro usuario (IDOR)**
+  - Dado que o produto pertence a outro usuario
+  - Quando tento vincular
+  - Entao devo receber 403
+- **EXP-VIN-005 | Produto ja vinculado**
+  - Dado que o produto ja possui ficha
+  - Quando tento vincular outra ficha
+  - Entao devo receber 409
+- **EXP-VIN-006 | Receita inativa**
+  - Dado que a ficha esta inativa
+  - Quando tento vincular
+  - Entao devo receber 404
+- **EXP-VIN-007 | Rendimento zero**
+  - Dado que a ficha tem rendimento zero
+  - Quando tento vincular
+  - Entao devo receber 400
+- **EXP-VIN-008 | Atualizacao de custo no produto**
+  - Dado que vinculo uma ficha
+  - Quando consulto o produto
+  - Entao purchase_price e preco_minimo devem refletir a ficha
+- **EXP-VIN-009 | Atualizacao de CMV futuro**
+  - Dado que vinculo uma ficha
+  - Quando consulto o produto
+  - Entao cmv_previsto e cmv_futuro devem ser coerentes
+- **EXP-VIN-010 | Data de vinculo**
+  - Dado que vinculo uma ficha
+  - Quando consulto o produto
+  - Entao data_vinculo deve estar preenchida
+- **EXP-VIN-011 | Remocao de vinculo**
+  - Dado que removo o vinculo
+  - Quando consulto o produto
+  - Entao fichaTecnicaId e custos devem ser limpos
+- **EXP-VIN-012 | Remocao com vendas existentes**
+  - Dado que o produto tem vendas ativas
+  - Quando tento remover o vinculo
+  - Entao devo receber 409
+- **EXP-VIN-013 | Atualizacao da ficha vinculada**
+  - Dado que altero a ficha vinculada
+  - Quando consulto o produto
+  - Entao custos devem ser recalculados
+- **EXP-VIN-014 | Vinculo com campos extras**
+  - Dado que envio campos extras no payload
+  - Quando vinculo a ficha
+  - Entao devo receber erro ou ignorar consistentemente
+- **EXP-VIN-015 | Concorrencia de vinculo**
+  - Dado que duas requisicoes tentam vincular ao mesmo tempo
+  - Quando executo simultaneamente
+  - Entao nao deve haver vinculos duplicados
+- **EXP-VIN-016 | Produto com preco zero**
+  - Dado que produto tem preco zero
+  - Quando vinculo a ficha
+  - Entao cmv_previsto deve ser nulo ou tratado
+- **EXP-VIN-017 | Produto sem price**
+  - Dado que produto nao tem price definido
+  - Quando vinculo a ficha
+  - Entao deve manter consistencia sem erro
+- **EXP-VIN-018 | Atualizacao de preco do produto apos vinculo**
+  - Dado que o produto esta vinculado
+  - Quando altero o preco de venda
+  - Entao cmv_previsto deve refletir o novo preco
+- **EXP-VIN-019 | Integridade em reinicio da API**
+  - Dado que vinculo uma ficha
+  - Quando reinicio a API
+  - Entao verifico se o vinculo permanece consistente em memoria
+- **EXP-VIN-020 | Token ausente**
+  - Dado que nao envio token
+  - Quando tento vincular
+  - Entao devo receber 401/403
+
+## Notas
+- Registrar status, corpo e tempos de resposta para cada execucao.
+- Verificar consistencia entre produto e receita apos cada acao.

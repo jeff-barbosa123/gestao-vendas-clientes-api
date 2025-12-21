@@ -1,0 +1,90 @@
+# Cenarios Exploratorios - US005 (Ficha Tecnica)
+
+## Objetivo
+Explorar riscos e comportamentos nao cobertos pelos testes automatizados no cadastro e calculo de ficha tecnica.
+
+## Cenarios sugeridos (BDD)
+- **EXP-REC-001 | Criacao com ingredientes invalidos**
+  - Dado que envio ingrediente com nome vazio ou quantidade zero
+  - Quando crio uma ficha tecnica
+  - Entao devo receber erro claro e nenhum registro deve ser criado
+- **EXP-REC-002 | Rendimento fracionado extremo**
+  - Dado que uso rendimento muito pequeno (ex.: 0.01)
+  - Quando calculo a ficha
+  - Entao o custo unitario deve ser coerente e arredondado corretamente
+- **EXP-REC-003 | Rendimento muito alto**
+  - Dado que uso rendimento muito alto
+  - Quando calculo a ficha
+  - Entao o custo unitario deve ser pequeno e consistente
+- **EXP-REC-004 | Overhead negativo**
+  - Dado que informo overhead negativo
+  - Quando crio a ficha
+  - Entao devo receber erro de validacao
+- **EXP-REC-005 | Mao de obra negativa**
+  - Dado que informo mao de obra negativa
+  - Quando crio a ficha
+  - Entao devo receber erro de validacao
+- **EXP-REC-006 | Ingrediente com custo negativo**
+  - Dado que informo custo negativo do ingrediente
+  - Quando crio a ficha
+  - Entao devo receber erro e nao persistir
+- **EXP-REC-007 | Ingrediente com XSS/SQLi**
+  - Dado que informo nome do ingrediente com script ou SQL
+  - Quando crio a ficha
+  - Entao a API deve bloquear com 400
+- **EXP-REC-008 | Nome duplicado do mesmo usuario**
+  - Dado que ja existe ficha com mesmo nome
+  - Quando tento criar outra
+  - Entao devo receber conflito
+- **EXP-REC-009 | Nome duplicado de outro usuario**
+  - Dado que outro usuario tem ficha com mesmo nome
+  - Quando crio uma ficha
+  - Entao deve permitir e manter isolamento
+- **EXP-REC-010 | Atualizacao parcial sem alterar custos**
+  - Dado que atualizo apenas o nome
+  - Quando consulto a ficha
+  - Entao os custos nao devem mudar
+- **EXP-REC-011 | Atualizacao com ingredientes alterados**
+  - Dado que altero quantidade de ingredientes
+  - Quando atualizo a ficha
+  - Entao o custo total deve ser recalculado
+- **EXP-REC-012 | Atualizacao de rendimento**
+  - Dado que altero o rendimento
+  - Quando atualizo a ficha
+  - Entao o custo unitario deve mudar
+- **EXP-REC-013 | Exclusao de ficha vinculada**
+  - Dado que a ficha esta vinculada a produto
+  - Quando removo a ficha
+  - Entao o vinculo no produto deve ser limpo
+- **EXP-REC-014 | Exportacao CSV**
+  - Dado que tenho ficha valida
+  - Quando exporto CSV
+  - Entao o arquivo deve conter resumo e ingredientes
+- **EXP-REC-015 | Exportacao PDF**
+  - Dado que tenho ficha valida
+  - Quando exporto PDF
+  - Entao o arquivo deve ter dados e valores formatados
+- **EXP-REC-016 | Exportacao com rate limit**
+  - Dado que realizo varias exportacoes em curto periodo
+  - Quando excedo o limite
+  - Entao devo receber bloqueio controlado
+- **EXP-REC-017 | Payload grande**
+  - Dado que envio muitos ingredientes
+  - Quando crio a ficha
+  - Entao devo observar limite ou desempenho aceitavel
+- **EXP-REC-018 | Campos extras**
+  - Dado que envio campos desconhecidos
+  - Quando crio a ficha
+  - Entao a API deve ignorar ou rejeitar de forma consistente
+- **EXP-REC-019 | Acesso sem autenticacao**
+  - Dado que nao envio token
+  - Quando consulto fichas
+  - Entao devo receber 401/403 consistente
+- **EXP-REC-020 | IDOR em receita de outro usuario**
+  - Dado que tento acessar ficha de outro usuario
+  - Quando consulto por ID
+  - Entao devo receber 403
+
+## Notas
+- Registrar status, corpo e tempos de resposta para cada execucao.
+- Validar arredondamento financeiro e consistencia de custos.

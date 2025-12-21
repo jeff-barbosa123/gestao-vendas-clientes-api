@@ -9,6 +9,7 @@ const reportsRoutes = require('./reportsRoutes');
 const docsRoutes = require('./docsRoutes');
 const recipesRoutes = require('./recipesRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
+const priceSimulationRoutes = require('./priceSimulationRoutes');
 
 router.use('/auth', authRoutes);
 router.use('/customers', customersRoutes);
@@ -18,5 +19,6 @@ router.use('/reports', reportsRoutes);
 router.use('/docs', docsRoutes);
 router.use('/recipes', recipesRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/simulacao', priceSimulationRoutes);
 
 module.exports = router;

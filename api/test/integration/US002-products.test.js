@@ -1,13 +1,8 @@
 const { expect } = require('chai');
 const { getClient } = require('../utils/httpClient');
+const { loginAndGetToken } = require('../utils/authHelper');
 
-const LOGIN_PATH = '/api/auth/login';
 const PRODUCTS_PATH = '/api/products';
-
-const ENV = {
-  adminEmail: process.env.ADMIN_EMAIL || 'admin@negocio.com',
-  adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-};
 
 const MESSAGES = {
   required: 'Campos obrigat\u00f3rios ausentes',
@@ -29,11 +24,7 @@ describe('Produtos', () => {
 
   before(async () => {
     http = getClient();
-    const login = await http.post(LOGIN_PATH).send({
-      email: ENV.adminEmail,
-      password: ENV.adminPassword,
-    });
-    token = login.body.token;
+    token = await loginAndGetToken('admin');
   });
 
   it('API-PROD-001 | Deve listar produtos (200)', async () => {
@@ -42,15 +33,15 @@ describe('Produtos', () => {
     expect(res.body).to.be.an('array');
   });
 
-  it('API-PROD-002 | Deve retornar 400 sem nome', async () => {
+  it('API-PROD-002 | Deve retornar 422 sem nome', async () => {
     const res = await postProduct({ price: 10, purchase_price: 5 });
-    expect(res.status).to.equal(400);
+    expect(res.status).to.equal(422);
     expect(res.body.error).to.equal(MESSAGES.required);
   });
 
-  it('API-PROD-003 | Deve retornar 400 sem pre?o', async () => {
+  it('API-PROD-003 | Deve retornar 422 sem pre\u00e7o', async () => {
     const res = await postProduct({ name: uniqueName('SemPreco'), purchase_price: 5 });
-    expect(res.status).to.equal(400);
+    expect(res.status).to.equal(422);
     expect(res.body.error).to.equal(MESSAGES.required);
   });
 
@@ -62,9 +53,9 @@ describe('Produtos', () => {
     expect(res.body).to.have.property('id');
   });
 
-  it('API-PROD-005 | Deve retornar 400 para pre?o inv?lido', async () => {
+  it('API-PROD-005 | Deve retornar 422 para pre\u00e7o inv\u00e1lido', async () => {
     const res = await postProduct({ name: uniqueName('PrecoInvalido'), price: -1, purchase_price: 5 });
-    expect(res.status).to.equal(400);
+    expect(res.status).to.equal(422);
     expect(res.body.error).to.equal(MESSAGES.invalidPrice);
   });
 

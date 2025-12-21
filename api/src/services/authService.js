@@ -48,6 +48,19 @@ function getUserById(id) {
   return db.users.find(u => u.id === id) || null;
 }
 
+function updateUserStatus(user, { attemptsCount, blockedUntil } = {}) {
+  if (!user) return;
+  if (typeof attemptsCount === "number") {
+    user.tentativasFalha = attemptsCount;
+  }
+  if (user.blocked) {
+    user.statusUsuario = "BLOQUEADO";
+    return;
+  }
+  const blockedNow = blockedUntil && Date.now() < blockedUntil;
+  user.statusUsuario = blockedNow ? "BLOQUEADO" : "ATIVO";
+}
+
 function normalizeEmailKey(email) {
   return String(email || "").toLowerCase();
 }
@@ -65,6 +78,11 @@ function setAttempt(email, value) {
 function clearAttempts(email) {
   const key = normalizeEmailKey(email);
   failedAttempts.delete(key);
+  const user = getUserByEmail(email);
+  if (user) {
+    user.tentativasFalha = 0;
+    updateUserStatus(user, { attemptsCount: 0, blockedUntil: null });
+  }
 }
 
 function isBlocked(email) {
@@ -87,6 +105,8 @@ function recordFailedAttempt(email) {
   }
 
   setAttempt(key, entry);
+  const user = getUserByEmail(email);
+  updateUserStatus(user, { attemptsCount: entry.count, blockedUntil: entry.blockedUntil });
   return entry;
 }
 
@@ -252,13 +272,22 @@ function login(rawEmail, rawPassword) {
   }
 
   clearAttempts(email);
+  user.dataUltimoLogin = new Date().toISOString();
+  updateUserStatus(user, { attemptsCount: 0, blockedUntil: null });
 
   const { token, refreshToken, exp, jti, refreshJti } = issueTokens(user);
 
   return {
     token,
     refreshToken,
-    user: { id: user.id, email: user.email, name: user.name },
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      statusUsuario: user.statusUsuario,
+      dataUltimoLogin: user.dataUltimoLogin,
+      tentativasFalha: user.tentativasFalha,
+    },
     exp,
     jti,
     refreshJti,
@@ -328,6 +357,9 @@ function registerUser(data) {
     email,
     password,
     name,
+    statusUsuario: "ATIVO",
+    dataUltimoLogin: null,
+    tentativasFalha: 0,
     createdAt: new Date().toISOString(),
   };
   db.users.push(newUser);

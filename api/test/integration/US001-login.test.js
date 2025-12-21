@@ -388,4 +388,86 @@ describe('Login', () => {
     expect(meResp.status).to.equal(401);
     expect(meResp.body.error).to.equal(MESSAGES.forbidden);
   });
+
+it('API-035 | Deve retornar 403 ao tentar realizar logout sem token', async () => {
+  const resposta = await http.post('/api/auth/logout');
+
+  expect(resposta.status).to.equal(403);
+  expect(resposta.body.error).to.equal(MESSAGES.forbidden);
+});
+
+
+
+it('API-036 | Deve retornar 401 ao tentar realizar logout com token inválido', async () => {
+  const resposta = await http
+    .post('/api/auth/logout')
+    .set('Authorization', 'Bearer token-invalido');
+
+  expect(resposta.status).to.equal(401);
+  expect(resposta.body.error).to.equal(MESSAGES.forbidden);
+});
+
+
+it('API-037 | Deve impedir reutilização do token após logout', async () => {
+  const token = await loginAndGetToken();
+
+  await http
+    .post('/api/auth/logout')
+    .set('Authorization', `Bearer ${token}`);
+
+  const resposta = await http
+    .get('/api/customers')
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(resposta.status).to.equal(401);
+  expect(resposta.body.error).to.equal(MESSAGES.forbidden);
+});
+
+
+it('API-038 | Deve retornar sucesso ao realizar logout duas vezes com o mesmo token', async () => {
+  const token = await loginAndGetToken();
+
+  const firstLogout = await http
+    .post('/api/auth/logout')
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(firstLogout.status).to.equal(204);
+
+  const secondLogout = await http
+    .post('/api/auth/logout')
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(secondLogout.status).to.be.oneOf([204, 401]);
+});
+
+
+it('API-039 | Deve retornar token inválido em /auth/validate após logout', async () => {
+  const token = await loginAndGetToken();
+
+  await http
+    .post('/api/auth/logout')
+    .set('Authorization', `Bearer ${token}`);
+
+  const resposta = await http
+    .get(VALIDATE_PATH)
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(resposta.status).to.equal(401);
+});
+
+
+it('API-040 | Deve invalidar token expirado mesmo sem logout explícito', async () => {
+  const expiredToken = jwt.sign(
+    { sub: 'u1', email: ENV.adminEmail },
+    JWT_SECRET,
+    { expiresIn: -1 }
+  );
+
+  const resposta = await http
+    .get('/api/customers')
+    .set('Authorization', `Bearer ${expiredToken}`);
+
+  expect(resposta.status).to.equal(401);
+});
+
 });

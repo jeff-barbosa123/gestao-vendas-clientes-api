@@ -1,5 +1,7 @@
-require("dotenv").config(); // carrega as variáveis do arquivo .env logo no início
+ï»¿require("dotenv").config(); // carrega as variaveis do arquivo .env
 
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes");
@@ -9,14 +11,15 @@ const { securityHeaders } = require("./middleware/securityHeaders");
 const { auditLogger } = require("./middleware/auditLogger");
 const { metricsMiddleware, renderPrometheus } = require("./middleware/metrics");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("../resources/swagger.json");
 const { URL } = require("url");
 
 const app = express();
 
+const swaggerPath = path.resolve(__dirname, "../resources/swagger.json");
+
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
   .split(",")
-  .map(o => o.trim())
+  .map((o) => o.trim())
   .filter(Boolean);
 
 const corsOptions = {
@@ -40,8 +43,22 @@ app.use(metricsMiddleware);
 app.use(auditLogger);
 app.use(express.json({ limit: process.env.JSON_LIMIT || "1mb" }));
 
-// Swagger Docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Swagger Docs (load from file to avoid stale cache)
+app.get("/api-docs/swagger.json", (_req, res, next) => {
+  try {
+    const doc = JSON.parse(fs.readFileSync(swaggerPath, "utf8"));
+    res.setHeader("Cache-Control", "no-store");
+    res.json(doc);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(null, { swaggerOptions: { url: "/api-docs/swagger.json" } })
+);
 
 // Prometheus metrics
 app.get("/metrics", (_req, res) => {

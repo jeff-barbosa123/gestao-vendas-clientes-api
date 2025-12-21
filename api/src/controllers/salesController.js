@@ -49,4 +49,12 @@ async function summary(_req, res, next) {
   }
 }
 
-module.exports = { list, getById, create, update, cancel, summary };
+async function audit(req, res, next) {
+  try {
+    res.json(salesService.getAudit(req.params.id));
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports = { list, getById, create, update, cancel, summary, audit };

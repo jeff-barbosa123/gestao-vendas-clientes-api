@@ -12,7 +12,8 @@ const {
 function summarize(sales, granularity = 'total') {
   if (granularity === 'total') {
     const total = sales.reduce((s, v) => s + (v.total || 0), 0);
-    return { total: Number(total.toFixed(2)) };
+    const totalRounded = Number(total.toFixed(2));
+    return { total: totalRounded, totalFaturamento: totalRounded, quantidadeVendas: sales.length };
   }
   const buckets = {};
   for (const s of sales) {
@@ -27,17 +28,36 @@ function summarize(sales, granularity = 'total') {
     } else if (granularity === 'year') {
       key = String(d.getUTCFullYear());
     }
-    buckets[key] = (buckets[key] || 0) + (s.total || 0);
+    buckets[key] = buckets[key] || { total: 0, count: 0 };
+    buckets[key].total += s.total || 0;
+    buckets[key].count += 1;
   }
   return Object.entries(buckets)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([period, total]) => ({ period, total: Number(total.toFixed(2)) }));
+    .map(([period, data]) => ({
+      period,
+      total: Number(data.total.toFixed(2)),
+      quantidadeVendas: data.count,
+    }));
 }
 
-function getRevenue({ start, end, day, week, month, year, breakdown }) {
+function resolveUserId(requestedUserId, user) {
+  if (!user || !user.id) {
+    const err = buildError('Token invalido ou ausente', 401);
+    throw err;
+  }
+  if (requestedUserId && requestedUserId !== user.id) {
+    const err = buildError('Acesso negado', 403);
+    throw err;
+  }
+  return user.id;
+}
+
+function getRevenue({ start, end, day, week, month, year, breakdown, userId, user }) {
   const normalizedBreakdown = validateBreakdown(breakdown || 'total');
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
-  const sales = revenueBetween(startDate, endDate);
+  const ownerId = resolveUserId(userId, user);
+  const sales = revenueBetween(startDate, endDate, ownerId);
   if (normalizedBreakdown === 'total') return summarize(sales, 'total');
   if (!['day', 'week', 'month', 'year'].includes(normalizedBreakdown)) {
     const err = new Error('Parametro breakdown invalido');
@@ -47,8 +67,8 @@ function getRevenue({ start, end, day, week, month, year, breakdown }) {
   return summarize(sales, normalizedBreakdown);
 }
 
-function exportRevenue({ start, end, day, week, month, year, format = 'csv', breakdown = 'day' }) {
-  const data = getRevenue({ start, end, day, week, month, year, breakdown });
+function exportRevenue({ start, end, day, week, month, year, format = 'csv', breakdown = 'day', userId, user }) {
+  const data = getRevenue({ start, end, day, week, month, year, breakdown, userId, user });
   const normalizedFormat = format.toLowerCase();
 
   if (normalizedFormat === 'csv' || normalizedFormat === 'excel') {
@@ -83,10 +103,11 @@ function exportRevenue({ start, end, day, week, month, year, format = 'csv', bre
   throw err;
 }
 
-function getFinancialPerformance({ start, end, day, week, month, year, breakdown }) {
+function getFinancialPerformance({ start, end, day, week, month, year, breakdown, userId, user }) {
   const normalizedBreakdown = validateBreakdown(breakdown || 'total');
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
-  const sales = revenueBetween(startDate, endDate);
+  const ownerId = resolveUserId(userId, user);
+  const sales = revenueBetween(startDate, endDate, ownerId);
   const total = sales.reduce(
     (acc, sale) => {
       const revenue = sale.total || 0;

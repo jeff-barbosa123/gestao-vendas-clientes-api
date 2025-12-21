@@ -1,4 +1,5 @@
 # SGVC ? Sistema de Gest?o de Vendas e Clientes (API)
+[![CI](https://github.com/jeff-barbosa123/gestao-vendas-clientes-api/actions/workflows/ci.yml/badge.svg)](https://github.com/jeff-barbosa123/gestao-vendas-clientes-api/actions/workflows/ci.yml)
 
 ## ?? Vis?o Geral
 O SGVC ? uma API REST desenvolvida para microempreendedores (confeiteiros, boleiras e cozinheiros),

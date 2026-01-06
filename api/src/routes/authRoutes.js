@@ -7,7 +7,7 @@ const rateLimitLogin = require("../middleware/rateLimitLogin");
 const { authenticate } = require("../middleware/authMiddleware");
 
 const methodNotAllowed = (req, res) =>
-  res.status(405).json({ error: "Metodo nao permitido" });
+  res.status(405).json({ error: "M\u00e9todo n\u00e3o permitido" });
 
 router
   .route("/login")
@@ -27,11 +27,27 @@ router
 router
   .route("/me")
   .get(authenticate, authController.me)
+  .put(authenticate, authController.updateProfile)
   .all(methodNotAllowed);
 
 router
   .route("/validate")
   .get(authenticate, authController.validate)
+  .all(methodNotAllowed);
+
+router
+  .route("/forgot")
+  .post(authController.forgot)
+  .all(methodNotAllowed);
+
+router
+  .route("/reset")
+  .post(authController.reset)
+  .all(methodNotAllowed);
+
+router
+  .route("/change-password")
+  .post(authenticate, authController.changePassword)
   .all(methodNotAllowed);
 
 router.post("/register", authController.register);

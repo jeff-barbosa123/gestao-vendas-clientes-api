@@ -1,6 +1,5 @@
 const { failedAttempts } = require('../models/db');
 
-const BLOCK_DURATION_MS = Number(process.env.LOGIN_BLOCK_MS || 15 * 60 * 1000);
 const MESSAGE = 'Acesso temporariamente bloqueado';
 
 module.exports = (req, res, next) => {
@@ -10,7 +9,7 @@ module.exports = (req, res, next) => {
 
   const entry = failedAttempts.get(email);
   if (entry && entry.blockedUntil && Date.now() < entry.blockedUntil) {
-    return res.status(423).json({ error: MESSAGE });
+    return res.status(423).json({ message: MESSAGE, error: true });
   }
 
   next();

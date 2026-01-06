@@ -1,22 +1,23 @@
-﻿const { db, createProduct } = require('../models/db');
+const repo = require("../db/repository");
 
-const VALID_STATUS = ['ATIVO', 'INATIVO'];
+const VALID_STATUS = ["ATIVO", "INATIVO"];
+const VALID_PRODUCT_TYPES = ["PRODUCED", "RESALE"];
 
 function hasSqlInjectionRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   const riskKeywords = /(select|insert|update|delete|drop|truncate|alter)\s+/i;
   return /(--|;)/.test(value) || riskKeywords.test(value);
 }
 
 function hasXssRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   return /<\s*script[\s>]/i.test(value);
 }
 
 function ensureSafeText(value, fieldName) {
   if (value == null) return;
   if (hasSqlInjectionRisk(value) || hasXssRisk(value)) {
-    const err = new Error(`${fieldName || 'Campo'} invalido`);
+    const err = new Error(`${fieldName || "Campo"} contém conteúdo inválido`);
     err.status = 400;
     throw err;
   }
@@ -26,158 +27,22 @@ function normalizeStatusProduto(value) {
   if (value == null) return null;
   const status = String(value).trim().toUpperCase();
   if (!VALID_STATUS.includes(status)) {
-    const err = new Error('statusProduto invalido');
+    const err = new Error("Status do produto inválido");
     err.status = 422;
     throw err;
   }
   return status;
 }
 
-function filterByOwner(list, user) {
-  if (!user || !user.id) return list;
-  return list.filter((item) => !item.ownerId || item.ownerId === user.id);
-}
-
-function getAll(user) {
-  return filterByOwner(db.products, user);
-}
-
-function getById(id, user) {
-  const product = db.products.find((p) => p.id === id);
-  if (!product) {
-    const err = new Error('Produto não encontrado');
-    err.status = 404;
-    throw err;
-  }
-  if (product.ownerId && user && product.ownerId !== user.id) {
-    const err = new Error('Acesso negado');
-    err.status = 403;
-    throw err;
-  }
-  return product;
-}
-
-function create(data, user) {
-  if (!data.name || data.price == null) {
-    const err = new Error('Campos obrigatórios ausentes');
+function normalizeProductType(value) {
+  if (value == null) return null;
+  const type = String(value).trim().toUpperCase();
+  if (!VALID_PRODUCT_TYPES.includes(type)) {
+    const err = new Error("Tipo de produto inválido");
     err.status = 422;
     throw err;
   }
-
-  const description = data.description ?? data.descricao ?? null;
-  ensureSafeText(description, 'descricao');
-  const statusProduto = normalizeStatusProduto(data.statusProduto) || 'ATIVO';
-
-  const price = Number(data.price);
-  if (Number.isNaN(price) || price < 0) {
-    const err = new Error('Preço inválido');
-    err.status = 422;
-    throw err;
-  }
-
-  if (data.purchase_price == null) {
-    const err = new Error('purchase_price é obrigatório');
-    err.status = 422;
-    throw err;
-  }
-
-  const purchase_price = Number(data.purchase_price);
-  if (Number.isNaN(purchase_price) || purchase_price < 0) {
-    const err = new Error('purchase_price inválido');
-    err.status = 422;
-    throw err;
-  }
-
-  return createProduct({
-    ...data,
-    description,
-    price,
-    purchase_price,
-    statusProduto,
-    ownerId: user ? user.id : null,
-    fichaTecnicaId: data.fichaTecnicaId || null,
-  });
-}
-
-function update(id, data, user) {
-  const index = db.products.findIndex((p) => p.id === id);
-  if (index === -1) {
-    const err = new Error('Produto não encontrado');
-    err.status = 404;
-    throw err;
-  }
-
-  const current = db.products[index];
-  if (current.ownerId && user && current.ownerId !== user.id) {
-    const err = new Error('Acesso negado');
-    err.status = 403;
-    throw err;
-  }
-
-  if (data.purchase_price != null) {
-    const hasLinkedRecipe = db.recipes.some((r) => r.linkProductId === id) || current.fichaTecnicaId;
-    if (hasLinkedRecipe) {
-      const err = new Error(
-        'purchase_price controlado por ficha tecnica vinculada; atualize a receita para recalcular o CMV'
-      );
-      err.status = 400;
-      throw err;
-    }
-  }
-
-  if (data.price != null) {
-    const p = Number(data.price);
-    if (Number.isNaN(p) || p < 0) {
-      const err = new Error('Preço inválido');
-      err.status = 400;
-      throw err;
-    }
-    data.price = p;
-  }
-
-  if (data.description != null || data.descricao != null) {
-    data.description = data.description ?? data.descricao ?? null;
-    ensureSafeText(data.description, 'descricao');
-  }
-
-  if (data.statusProduto != null) {
-    data.statusProduto = normalizeStatusProduto(data.statusProduto);
-  }
-
-  if (data.purchase_price != null) {
-    const pp = Number(data.purchase_price);
-    if (Number.isNaN(pp) || pp < 0) {
-      const err = new Error('purchase_price inválido');
-      err.status = 400;
-      throw err;
-    }
-    data.purchase_price = pp;
-  }
-
-  db.products[index] = {
-    ...current,
-    ...data,
-    id,
-    updatedAt: new Date().toISOString(),
-    dataAtualizacao: new Date().toISOString(),
-  };
-
-  return db.products[index];
-}
-
-function remove(id, user) {
-  const index = db.products.findIndex((p) => p.id === id);
-  if (index === -1) {
-    const err = new Error('Produto não encontrado');
-    err.status = 404;
-    throw err;
-  }
-  if (db.products[index].ownerId && user && db.products[index].ownerId !== user.id) {
-    const err = new Error('Acesso negado');
-    err.status = 403;
-    throw err;
-  }
-  return db.products.splice(index, 1)[0];
+  return type;
 }
 
 function calcularCmvPrevisto(product) {
@@ -188,123 +53,354 @@ function calcularCmvPrevisto(product) {
   return Number(ratio.toFixed(2));
 }
 
-function linkFichaTecnica(productId, fichaTecnicaId, user) {
-  ensureSafeText(String(productId), 'produto');
-  ensureSafeText(String(fichaTecnicaId), 'fichaTecnicaId');
-  if (!productId || !fichaTecnicaId) {
-    const err = new Error('Campos obrigatórios ausentes');
-    err.status = 400;
-    throw err;
-  }
+async function getAll(user) {
+  return repo.listProducts(user ? user.id : null);
+}
 
-  const product = getById(productId, user);
-  if (product.fichaTecnicaId) {
-    const err = new Error('O produto já possui ficha técnica vinculada');
-    err.status = 409;
-    throw err;
-  }
-
-  const recipe = db.recipes.find((r) => r.id === fichaTecnicaId && r.status !== 'INACTIVE');
-  if (!recipe) {
-    const err = new Error('Ficha técnica não encontrada');
+async function getById(id, user) {
+  const product = await repo.getProductById(id);
+  if (!product) {
+    const err = new Error("Produto não encontrado");
     err.status = 404;
     throw err;
   }
-  if (recipe.ownerId && user && recipe.ownerId !== user.id) {
-    const err = new Error('Você não tem permissão para usar esta ficha técnica');
+  if (product.owner_id && user && product.owner_id !== user.id) {
+    const err = new Error("Acesso negado ao produto solicitado");
     err.status = 403;
     throw err;
   }
-  if (recipe.yield <= 0) {
-    const err = new Error('É proibido vincular ficha técnica com rendimento igual a zero');
+  return product;
+}
+
+async function create(data, user) {
+  if (!data.name || data.price == null) {
+    const err = new Error("Nome e preço do produto são obrigatórios");
+    err.status = 422;
+    throw err;
+  }
+
+  const description = data.description ?? data.descricao ?? null;
+  ensureSafeText(description, "Descrição");
+
+  const statusProduto = normalizeStatusProduto(data.statusProduto) || "ATIVO";
+  const inferredType = data.fichaTecnicaId || data.ficha_tecnica_id ? "PRODUCED" : "RESALE";
+  const productType =
+    normalizeProductType(data.productType || data.product_type || inferredType) || inferredType;
+
+  const price = Number(data.price);
+  if (Number.isNaN(price) || price < 0) {
+    const err = new Error("Preço informado é inválido");
+    err.status = 422;
+    throw err;
+  }
+
+  if (data.purchase_price == null) {
+    const err = new Error("O custo de compra é obrigatório");
+    err.status = 422;
+    throw err;
+  }
+
+  const purchase_price = Number(data.purchase_price);
+  if (Number.isNaN(purchase_price) || purchase_price < 0) {
+    const err = new Error("Custo de compra inválido");
+    err.status = 422;
+    throw err;
+  }
+
+  if (productType === "PRODUCED" && !data.fichaTecnicaId && !data.ficha_tecnica_id) {
+    const err = new Error("Produtos produzidos devem possuir ficha técnica vinculada");
+    err.status = 422;
+    throw err;
+  }
+
+  if (productType === "RESALE" && (data.fichaTecnicaId || data.ficha_tecnica_id)) {
+    const err = new Error("Produtos de revenda não podem possuir ficha técnica");
+    err.status = 422;
+    throw err;
+  }
+
+  return repo.createProduct({
+    ...data,
+    description,
+    price,
+    purchase_price,
+    statusProduto,
+    productType,
+    ownerId: user ? user.id : null,
+    fichaTecnicaId: data.fichaTecnicaId || null,
+  });
+}
+
+async function update(id, data, user) {
+  const current = await repo.getProductById(id);
+  if (!current) {
+    const err = new Error("Produto não encontrado");
+    err.status = 404;
+    throw err;
+  }
+
+  if (current.owner_id && user && current.owner_id !== user.id) {
+    const err = new Error("Acesso negado ao produto solicitado");
+    err.status = 403;
+    throw err;
+  }
+
+  if (data.purchase_price != null) {
+    const recipes = await repo.listRecipes(user ? user.id : null, true);
+    const hasLinkedRecipe =
+      recipes.some((r) => r.link_product_id === id) || current.ficha_tecnica_id;
+
+    if (hasLinkedRecipe) {
+      const err = new Error(
+        "O custo do produto é controlado pela ficha técnica vinculada. Atualize a ficha técnica para recalcular o CMV."
+      );
+      err.status = 400;
+      throw err;
+    }
+  }
+
+  if (data.price != null) {
+    const p = Number(data.price);
+    if (Number.isNaN(p) || p < 0) {
+      const err = new Error("Preço informado é inválido");
+      err.status = 400;
+      throw err;
+    }
+    data.price = p;
+  }
+
+  if (data.description != null || data.descricao != null) {
+    data.description = data.description ?? data.descricao ?? null;
+    ensureSafeText(data.description, "Descrição");
+  }
+
+  if (data.productType != null || data.product_type != null) {
+    data.productType = normalizeProductType(data.productType || data.product_type);
+  }
+
+  if (data.statusProduto != null) {
+    data.statusProduto = normalizeStatusProduto(data.statusProduto);
+  }
+
+  if (data.purchase_price != null) {
+    const pp = Number(data.purchase_price);
+    if (Number.isNaN(pp) || pp < 0) {
+      const err = new Error("Custo de compra inválido");
+      err.status = 400;
+      throw err;
+    }
+    data.purchase_price = pp;
+  }
+
+  const nextType = data.productType || data.product_type || current.product_type || "PRODUCED";
+  const nextFicha =
+    data.fichaTecnicaId ??
+    data.ficha_tecnica_id ??
+    current.ficha_tecnica_id ??
+    null;
+
+  if (nextType === "PRODUCED" && !nextFicha) {
+    const err = new Error("Produtos produzidos devem possuir ficha técnica vinculada");
+    err.status = 422;
+    throw err;
+  }
+
+  if (nextType === "RESALE" && nextFicha) {
+    const err = new Error("Produtos de revenda não podem possuir ficha técnica");
+    err.status = 422;
+    throw err;
+  }
+
+  const payload = {
+    ...data,
+    updatedAt: new Date().toISOString(),
+    dataAtualizacao: new Date().toISOString(),
+  };
+
+  return repo.updateProduct(id, payload);
+}
+
+async function remove(id, user) {
+  const product = await repo.getProductById(id);
+  if (!product) {
+    const err = new Error("Produto não encontrado");
+    err.status = 404;
+    throw err;
+  }
+  if (product.owner_id && user && product.owner_id !== user.id) {
+    const err = new Error("Acesso negado ao produto solicitado");
+    err.status = 403;
+    throw err;
+  }
+  return repo.deleteProduct(id);
+}
+
+async function linkFichaTecnica(productId, fichaTecnicaId, user) {
+  ensureSafeText(String(productId), "Produto");
+  ensureSafeText(String(fichaTecnicaId), "Ficha técnica");
+
+  if (!productId || !fichaTecnicaId) {
+    const err = new Error("Produto e ficha técnica são obrigatórios");
     err.status = 400;
     throw err;
   }
-  if (recipe.linkProductId && recipe.linkProductId !== productId) {
-    const err = new Error('O produto já possui ficha técnica vinculada');
+
+  const product = await getById(productId, user);
+  if (product.ficha_tecnica_id) {
+    const err = new Error("Este produto já possui uma ficha técnica vinculada");
     err.status = 409;
     throw err;
   }
 
-  const recipeIndex = db.recipes.findIndex((r) => r.id === recipe.id);
-  if (recipeIndex !== -1) {
-    db.recipes[recipeIndex] = { ...recipe, linkProductId: productId, updatedAt: new Date().toISOString() };
+  const recipe = await repo.getRecipeById(fichaTecnicaId);
+  if (!recipe || recipe.status === "INACTIVE") {
+    const err = new Error("Ficha técnica não encontrada ou inativa");
+    err.status = 404;
+    throw err;
+  }
+
+  if (recipe.owner_id && user && recipe.owner_id !== user.id) {
+    const err = new Error("Você não tem permissão para utilizar esta ficha técnica");
+    err.status = 403;
+    throw err;
+  }
+
+  if (recipe.yield <= 0) {
+    const err = new Error("Não é permitido vincular ficha técnica com rendimento igual ou inferior a zero");
+    err.status = 400;
+    throw err;
+  }
+
+  if (recipe.link_product_id && recipe.link_product_id != productId) {
+    const err = new Error("Esta ficha técnica já está vinculada a outro produto");
+    err.status = 409;
+    throw err;
   }
 
   const now = new Date().toISOString();
-  product.fichaTecnicaId = recipe.id;
-  product.purchase_price = recipe.costPerUnit;
-  product.custo_por_unidade = recipe.costPerUnit;
-  product.preco_minimo = recipe.priceMinimum;
-  product.preco_minimo_sugerido = recipe.priceSuggested ?? recipe.priceMinimum;
-  product.cmv_previsto = calcularCmvPrevisto(product);
-  product.cmv_futuro = product.cmv_previsto;
-  product.data_vinculo = now;
 
-  const index = db.products.findIndex((p) => p.id === productId);
-  db.products[index] = product;
-  return product;
+  const updated = await repo.updateProduct(productId, {
+    ficha_tecnica_id: recipe.id,
+    product_type: "PRODUCED",
+    purchase_price: recipe.cost_per_unit,
+    custo_por_unidade: recipe.cost_per_unit,
+    preco_minimo: recipe.price_minimum,
+    preco_minimo_sugerido: recipe.price_suggested ?? recipe.price_minimum,
+    cmv_previsto: calcularCmvPrevisto({
+      price: product.price,
+      purchase_price: recipe.cost_per_unit,
+    }),
+    cmv_futuro: calcularCmvPrevisto({
+      price: product.price,
+      purchase_price: recipe.cost_per_unit,
+    }),
+    data_vinculo: now,
+  });
+
+  await repo.updateRecipe(
+    recipe.id,
+    { ...recipe, linkProductId: productId },
+    recipe.ingredients || [],
+    recipe.overheadItems || []
+  );
+
+  return updated;
 }
 
-function removerFichaTecnica(productId, user) {
-  const product = getById(productId, user);
-  const hasSales = db.sales.some((sale) => sale.status === 'ACTIVE' && Array.isArray(sale.items) && sale.items.some((item) => item.productId === productId));
+async function removerFichaTecnica(productId, user) {
+  const product = await getById(productId, user);
+  const sales = await repo.listSales(user ? user.id : null);
+
+  const hasSales = sales.some(
+    (sale) =>
+      sale.status === "ACTIVE" &&
+      Array.isArray(sale.items) &&
+      sale.items.some((item) => item.productId === productId)
+  );
+
   if (hasSales) {
-    const err = new Error('Produto possui vendas registradas');
+    const err = new Error("Não é possível remover a ficha técnica de um produto com vendas registradas");
     err.status = 409;
     throw err;
   }
-  product.fichaTecnicaId = null;
-  product.custo_por_unidade = null;
-  product.preco_minimo = null;
-  product.preco_minimo_sugerido = null;
-  product.cmv_previsto = null;
-  product.cmv_futuro = null;
-  product.data_vinculo = null;
 
-  const index = db.products.findIndex((p) => p.id === productId);
-  db.products[index] = product;
+  const updated = await repo.updateProduct(productId, {
+    ficha_tecnica_id: null,
+    product_type: "RESALE",
+    custo_por_unidade: null,
+    preco_minimo: null,
+    preco_minimo_sugerido: null,
+    cmv_previsto: null,
+    cmv_futuro: null,
+    data_vinculo: null,
+  });
 
-  db.recipes = db.recipes.map((r) => (r.linkProductId === productId ? { ...r, linkProductId: null } : r));
+  const recipes = await repo.listRecipes(user ? user.id : null, true);
+  const linked = recipes.find((r) => r.link_product_id === productId);
 
-  return product;
+  if (linked) {
+    await repo.updateRecipe(
+      linked.id,
+      { ...linked, linkProductId: null },
+      linked.ingredients || [],
+      linked.overheadItems || []
+    );
+  }
+
+  return updated;
 }
 
-function obterFichaTecnica(productId, user) {
-  const product = getById(productId, user);
-  if (!product.fichaTecnicaId) {
-    const err = new Error('Ficha técnica não encontrada');
+async function obterFichaTecnica(productId, user) {
+  const product = await getById(productId, user);
+
+  if (!product.ficha_tecnica_id) {
+    const err = new Error("Este produto não possui ficha técnica vinculada");
     err.status = 404;
     throw err;
   }
-  const recipe = db.recipes.find((r) => r.id === product.fichaTecnicaId && r.status !== 'INACTIVE');
-  if (!recipe) {
-    const err = new Error('Ficha técnica não encontrada');
+
+  const recipe = await repo.getRecipeById(product.ficha_tecnica_id);
+  if (!recipe || recipe.status === "INACTIVE") {
+    const err = new Error("Ficha técnica não encontrada ou inativa");
     err.status = 404;
     throw err;
   }
-  if (recipe.ownerId && user && recipe.ownerId !== user.id) {
-    const err = new Error('Você não tem permissão para usar esta ficha técnica');
+
+  if (recipe.owner_id && user && recipe.owner_id !== user.id) {
+    const err = new Error("Você não tem permissão para acessar esta ficha técnica");
     err.status = 403;
     throw err;
   }
+
   return recipe;
 }
 
-function syncProductFromRecipe(recipe) {
+async function syncProductFromRecipe(recipe) {
   if (!recipe || !recipe.id) return null;
-  const product = db.products.find((p) => p.fichaTecnicaId === recipe.id || p.id === recipe.linkProductId);
-  if (!product) {
-    return null;
-  }
-  product.fichaTecnicaId = recipe.id;
-  product.purchase_price = recipe.costPerUnit;
-  product.custo_por_unidade = recipe.costPerUnit;
-  product.preco_minimo = recipe.priceMinimum;
-  product.preco_minimo_sugerido = recipe.priceSuggested ?? recipe.priceMinimum;
-  product.cmv_previsto = calcularCmvPrevisto(product);
-  product.cmv_futuro = product.cmv_previsto;
-  return product;
+
+  const products = await repo.listProducts();
+  const product = products.find(
+    (p) => p.ficha_tecnica_id === recipe.id || p.id === recipe.link_product_id
+  );
+
+  if (!product) return null;
+
+  return repo.updateProduct(product.id, {
+    ficha_tecnica_id: recipe.id,
+    product_type: "PRODUCED",
+    purchase_price: recipe.cost_per_unit,
+    custo_por_unidade: recipe.cost_per_unit,
+    preco_minimo: recipe.price_minimum,
+    preco_minimo_sugerido: recipe.price_suggested ?? recipe.price_minimum,
+    cmv_previsto: calcularCmvPrevisto({
+      price: product.price,
+      purchase_price: recipe.cost_per_unit,
+    }),
+    cmv_futuro: calcularCmvPrevisto({
+      price: product.price,
+      purchase_price: recipe.cost_per_unit,
+    }),
+  });
 }
 
 module.exports = {

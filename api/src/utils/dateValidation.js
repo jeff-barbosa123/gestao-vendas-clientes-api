@@ -49,7 +49,7 @@ function parseIsoMonth(value) {
   if (!match) throw buildError('month deve estar no formato YYYY-MM');
   const year = Number(match[1]);
   const month = Number(match[2]);
-  if (month < 1 || month > 12) throw buildError('month invalido');
+  if (month < 1 || month > 12) throw buildError('m\u00eas inv\u00e1lido');
   const startDate = new Date(Date.UTC(year, month - 1, 1));
   const endDate = new Date(Date.UTC(year, month, 0));
   return { startDate, endDate };
@@ -100,7 +100,7 @@ function validateBreakdown(breakdown) {
   if (!breakdown) return 'day';
   const allowed = ['day', 'week', 'month', 'year', 'total'];
   if (!allowed.includes(breakdown)) {
-    throw buildError('Parametro breakdown invalido');
+    throw buildError('Par\u00e2metro breakdown inv\u00e1lido');
   }
   return breakdown;
 }
@@ -108,7 +108,7 @@ function validateBreakdown(breakdown) {
 function validateTimezone(value) {
   if (!value) return;
   if (typeof value !== 'string' || !TIMEZONE_RE.test(value)) {
-    throw buildError('timezone invalido');
+    throw buildError('timezone inv\u00e1lido');
   }
 }
 

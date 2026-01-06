@@ -1,5 +1,5 @@
-const PDFDocument = require('pdfkit');
-const { revenueBetween } = require('../models/db');
+const PDFDocument = require("pdfkit");
+const repo = require("../db/repository");
 const {
   resolveTemporalRange,
   validateBreakdown,
@@ -7,10 +7,10 @@ const {
   toWeekKeyUTC,
   toMonthKeyUTC,
   buildError,
-} = require('../utils/dateValidation');
+} = require("../utils/dateValidation");
 
-function summarize(sales, granularity = 'total') {
-  if (granularity === 'total') {
+function summarize(sales, granularity = "total") {
+  if (granularity === "total") {
     const total = sales.reduce((s, v) => s + (v.total || 0), 0);
     const totalRounded = Number(total.toFixed(2));
     return { total: totalRounded, totalFaturamento: totalRounded, quantidadeVendas: sales.length };
@@ -18,14 +18,14 @@ function summarize(sales, granularity = 'total') {
   const buckets = {};
   for (const s of sales) {
     const d = new Date(s.date);
-    let key = '';
-    if (granularity === 'day') {
+    let key = "";
+    if (granularity === "day") {
       key = toIsoDay(d);
-    } else if (granularity === 'week') {
+    } else if (granularity === "week") {
       key = toWeekKeyUTC(d);
-    } else if (granularity === 'month') {
+    } else if (granularity === "month") {
       key = toMonthKeyUTC(d);
-    } else if (granularity === 'year') {
+    } else if (granularity === "year") {
       key = String(d.getUTCFullYear());
     }
     buckets[key] = buckets[key] || { total: 0, count: 0 };
@@ -43,71 +43,77 @@ function summarize(sales, granularity = 'total') {
 
 function resolveUserId(requestedUserId, user) {
   if (!user || !user.id) {
-    const err = buildError('Token invalido ou ausente', 401);
+    const err = buildError("Token inválido ou ausente", 401);
     throw err;
   }
   if (requestedUserId && requestedUserId !== user.id) {
-    const err = buildError('Acesso negado', 403);
+    const err = buildError("Acesso negado", 403);
     throw err;
   }
   return user.id;
 }
 
-function getRevenue({ start, end, day, week, month, year, breakdown, userId, user }) {
-  const normalizedBreakdown = validateBreakdown(breakdown || 'total');
+async function getRevenue({ start, end, day, week, month, year, breakdown, userId, user }) {
+  const normalizedBreakdown = validateBreakdown(breakdown || "total");
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
   const ownerId = resolveUserId(userId, user);
-  const sales = revenueBetween(startDate, endDate, ownerId);
-  if (normalizedBreakdown === 'total') return summarize(sales, 'total');
-  if (!['day', 'week', 'month', 'year'].includes(normalizedBreakdown)) {
-    const err = new Error('Parametro breakdown invalido');
+  const salesAll = await repo.listSales(ownerId);
+  const sales = salesAll.filter((s) => {
+    const dx = new Date(s.date);
+    return dx >= startDate && dx <= endDate;
+  });
+  if (normalizedBreakdown === "total") return summarize(sales, "total");
+  if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
+    const err = new Error("Parâmetro breakdown inválido");
     err.status = 400;
     throw err;
   }
   return summarize(sales, normalizedBreakdown);
 }
 
-function exportRevenue({ start, end, day, week, month, year, format = 'csv', breakdown = 'day', userId, user }) {
-  const data = getRevenue({ start, end, day, week, month, year, breakdown, userId, user });
+async function exportRevenue({ start, end, day, week, month, year, format = "csv", breakdown = "day", userId, user }) {
+  const data = await getRevenue({ start, end, day, week, month, year, breakdown, userId, user });
   const normalizedFormat = format.toLowerCase();
 
-  if (normalizedFormat === 'csv' || normalizedFormat === 'excel') {
-    const rows = Array.isArray(data) ? data : [{ period: 'total', total: data.total }];
-    const header = 'period,total';
-    const lines = rows.map(r => `${r.period},${r.total}`);
-    const body = [header, ...lines].join('\n');
-    const contentType = normalizedFormat === 'excel'
-      ? 'application/vnd.ms-excel'
-      : 'text/csv';
-    const filename = normalizedFormat === 'excel' ? 'relatorio.xlsx' : 'relatorio.csv';
+  if (normalizedFormat === "csv" || normalizedFormat === "excel") {
+    const rows = Array.isArray(data) ? data : [{ period: "total", total: data.total }];
+    const header = "period,total";
+    const lines = rows.map((r) => `${r.period},${r.total}`);
+    const body = [header, ...lines].join("\n");
+    const contentType = normalizedFormat === "excel" ? "application/vnd.ms-excel" : "text/csv";
+    const filename = normalizedFormat === "excel" ? "relatorio.xlsx" : "relatorio.csv";
     return { contentType, body, filename };
   }
 
-  if (normalizedFormat === 'pdf') {
-    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+  if (normalizedFormat === "pdf") {
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
     const chunks = [];
-    doc.on('data', c => chunks.push(c));
-    doc.fontSize(18).text('Relatorio de Faturamento', { align: 'center' });
+    doc.on("data", (c) => chunks.push(c));
+    doc.fontSize(18).text("Relatório de Faturamento", { align: "center" });
     doc.moveDown();
-    const rows = Array.isArray(data) ? data : [{ period: 'total', total: data.total }];
+    const rows = Array.isArray(data) ? data : [{ period: "total", total: data.total }];
     doc.fontSize(12);
-    rows.forEach(r => doc.text(`${r.period}: R$ ${r.total.toFixed(2)}`));
+    rows.forEach((r) => doc.text(`${r.period}: R$ ${r.total.toFixed(2)}`));
     doc.end();
-    return new Promise(resolve => {
-      doc.on('end', () => {
-        resolve({ contentType: 'application/pdf', body: Buffer.concat(chunks), filename: 'relatorio.pdf' });
+    return new Promise((resolve) => {
+      doc.on("end", () => {
+        resolve({ contentType: "application/pdf", body: Buffer.concat(chunks), filename: "relatorio.pdf" });
       });
     });
   }
-  const err = buildError('Formato invalido');
+  const err = buildError("Formato inválido");
   throw err;
 }
 
-function getFinancialPerformance({ start, end, day, week, month, year, breakdown, userId, user }) {
-  const normalizedBreakdown = validateBreakdown(breakdown || 'total');
+async function getFinancialPerformance({ start, end, day, week, month, year, breakdown, userId, user }) {
+  const normalizedBreakdown = validateBreakdown(breakdown || "total");
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
   const ownerId = resolveUserId(userId, user);
-  const sales = revenueBetween(startDate, endDate, ownerId);
+  const salesAll = await repo.listSales(ownerId);
+  const sales = salesAll.filter((s) => {
+    const dx = new Date(s.date);
+    return dx >= startDate && dx <= endDate;
+  });
   const total = sales.reduce(
     (acc, sale) => {
       const revenue = sale.total || 0;
@@ -130,9 +136,9 @@ function getFinancialPerformance({ start, end, day, week, month, year, breakdown
     salesCount: total.count,
   };
 
-  if (normalizedBreakdown === 'total') return baseMetrics;
-  if (!['day', 'week', 'month', 'year'].includes(normalizedBreakdown)) {
-    const err = new Error('Parametro breakdown invalido');
+  if (normalizedBreakdown === "total") return baseMetrics;
+  if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
+    const err = new Error("Parâmetro breakdown inválido");
     err.status = 400;
     throw err;
   }
@@ -141,10 +147,10 @@ function getFinancialPerformance({ start, end, day, week, month, year, breakdown
 
   sales.forEach((sale) => {
     const d = new Date(sale.date);
-    let key = '';
-    if (normalizedBreakdown === 'day') key = toIsoDay(d);
-    else if (normalizedBreakdown === 'week') key = toWeekKeyUTC(d);
-    else if (normalizedBreakdown === 'month') key = toMonthKeyUTC(d);
+    let key = "";
+    if (normalizedBreakdown === "day") key = toIsoDay(d);
+    else if (normalizedBreakdown === "week") key = toWeekKeyUTC(d);
+    else if (normalizedBreakdown === "month") key = toMonthKeyUTC(d);
     else key = String(d.getUTCFullYear());
 
     buckets[key] = buckets[key] || [];

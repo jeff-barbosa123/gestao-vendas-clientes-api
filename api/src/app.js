@@ -1,4 +1,4 @@
-﻿require("dotenv").config(); // carrega as variaveis do arquivo .env
+require("dotenv").config(); // carrega as variaveis do arquivo .env
 
 const fs = require("fs");
 const path = require("path");
@@ -17,22 +17,13 @@ const app = express();
 
 const swaggerPath = path.resolve(__dirname, "../resources/swagger.json");
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
-  .split(",")
-  .map((o) => o.trim())
-  .filter(Boolean);
+// const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+//   .split(",")
+//   .map((o) => o.trim())
+//   .filter(Boolean);
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.length === 0) return callback(null, true);
-    try {
-      const normalized = new URL(origin).origin;
-      if (allowedOrigins.includes(normalized)) return callback(null, true);
-      return callback(new Error("Origin not allowed"));
-    } catch (err) {
-      return callback(new Error("Origin not allowed"));
-    }
-  },
+  origin: '*',
   credentials: true,
 };
 
@@ -41,6 +32,7 @@ app.use(securityHeaders);
 app.use(requestLogger);
 app.use(metricsMiddleware);
 app.use(auditLogger);
+
 app.use(express.json({ limit: process.env.JSON_LIMIT || "1mb" }));
 
 // Swagger Docs (load from file to avoid stale cache)
@@ -64,6 +56,27 @@ app.use(
 app.get("/metrics", (_req, res) => {
   res.setHeader("Content-Type", "text/plain; version=0.0.4");
   res.send(renderPrometheus());
+});
+
+// Health check endpoint for production readiness (no auth, no sensitive data)
+app.get("/health", (_req, res) => {
+  const payload = {
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  };
+
+  // // Optional: extend this handler to validate PostgreSQL connectivity
+  // // const dbCheck = await pool.query("SELECT 1");
+  // // payload.database = dbCheck.rowCount === 1 ? "ok" : "unhealthy";
+
+  // // Optional: expose lightweight memory stats for quick diagnostics
+  // // const memoryUsage = process.memoryUsage();
+  // // payload.memory = {
+  // //   heapUsed: memoryUsage.heapUsed,
+  // //   rss: memoryUsage.rss,
+  // // };
+
+  res.status(200).json(payload);
 });
 
 // Rotas da API

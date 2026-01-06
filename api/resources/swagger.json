@@ -1252,8 +1252,8 @@
         "required": ["items"],
         "properties": {
           "customerId": { "type": "string" },
-          "customerName": { "type": "string", "description": "Opcional quando customerId nao for informado." },
-          "clienteNome": { "type": "string", "description": "Opcional quando customerId nao for informado." },
+          "customerName": { "type": "string", "description": "Opcional quando customerId não for informado." },
+          "clienteNome": { "type": "string", "description": "Opcional quando customerId não for informado." },
           "items": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SaleItem" }

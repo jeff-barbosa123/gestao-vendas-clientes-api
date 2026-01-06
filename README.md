@@ -25,9 +25,69 @@ O sistema foi projetado com abordagem **API-first**, garantindo seguran?a, escal
 - Node.js
 - Express
 - JWT
-- Banco em mem?ria (mock)
+- PostgreSQL (Docker) + fallback in-memory
 - API RESTful
 - Testes automatizados com SuperTest + Chai
+
+---
+
+## Database (PostgreSQL)
+
+This project now supports PostgreSQL with Docker.
+
+1) Start the database:
+
+   docker compose up -d
+
+2) Configure the API:
+
+   - Update `api/.env` with `DATABASE_URL=postgres://sgvc:sgvc123@localhost:5432/sgvc`
+
+3) Start the API:
+
+   npm start
+
+Notes:
+- When `DATABASE_URL` is set, the API persists all data to PostgreSQL.
+- If `DATABASE_URL` is not set, the API uses in-memory storage.
+
+---
+
+## Data migration (export/import)
+
+Export the current PostgreSQL data to JSON:
+
+```
+cd api
+npm run db:export
+```
+
+Import a JSON dump into PostgreSQL:
+
+```
+cd api
+npm run db:import
+```
+
+Force-import (clears current data first):
+
+```
+cd api
+npm run db:import:force
+```
+
+The default dump location is `api/backup/sgvc-export.json`.
+
+---
+
+## Optional recipe seed (fixtures)
+
+If you have a dump of recipes, place it at `api/fixtures/recipes.json` (or set
+`RECIPES_FIXTURE_PATH`), and the API will seed recipes on first run when the
+recipes table is empty. Supported formats:
+
+- `[{...}]` (array of recipes)
+- `{ "recipes": [ ... ] }` (export payload)
 
 ---
 

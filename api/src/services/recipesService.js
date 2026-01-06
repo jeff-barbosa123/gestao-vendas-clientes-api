@@ -1,22 +1,73 @@
-const { v4: uuidv4 } = require('uuid');
-const PDFDocument = require('pdfkit');
-const { db } = require('../models/db');
+﻿const { v4: uuidv4 } = require("uuid");
+const PDFDocument = require("pdfkit");
+const repo = require("../db/repository");
+
+const ALLOWED_UNITS = new Set(["g", "kg", "ml", "l", "un"]);
+const UNIT_GROUPS = {
+  g: "weight",
+  kg: "weight",
+  ml: "volume",
+  l: "volume",
+  un: "unit",
+};
 
 function hasSqlInjectionRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   const riskKeywords = /(select|insert|update|delete|drop|truncate|alter)\s+/i;
   return /(--|;)/.test(value) || riskKeywords.test(value);
 }
 
 function hasXssRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   return /<\s*script[\s>]/i.test(value);
 }
 
 function ensureSafeText(value, fieldName) {
   if (value == null) return;
   if (hasSqlInjectionRisk(value) || hasXssRisk(value)) {
-    const err = new Error(`${fieldName || 'Campo'} invalido`);
+    const err = new Error(`${fieldName || "Campo"} inválido`);
+    err.status = 400;
+    throw err;
+  }
+}
+
+function normalizeUnit(value) {
+  if (value == null) return null;
+  const unit = String(value).trim().toLowerCase();
+  if (!unit) return null;
+  if (!ALLOWED_UNITS.has(unit)) {
+    const err = new Error("Unidade inválida");
+    err.status = 400;
+    throw err;
+  }
+  return unit;
+}
+
+function normalizeQuantity(value, unit) {
+  const parsed = ensureNumber(value, "quantity");
+  if (!Number.isFinite(parsed)) return parsed;
+  switch (unit) {
+    case "kg":
+      return parsed * 1000;
+    case "g":
+      return parsed;
+    case "l":
+      return parsed * 1000;
+    case "ml":
+      return parsed;
+    case "un":
+      return parsed;
+    default:
+      return parsed;
+  }
+}
+
+function assertCompatibleUnits(unit, packUnit) {
+  if (!unit || !packUnit) return;
+  const unitGroup = UNIT_GROUPS[unit];
+  const packGroup = UNIT_GROUPS[packUnit];
+  if (unitGroup && packGroup && unitGroup !== packGroup) {
+    const err = new Error("Unidades incompatíveis para cálculo");
     err.status = 400;
     throw err;
   }
@@ -25,7 +76,7 @@ function ensureSafeText(value, fieldName) {
 function ensureNumber(value, fieldName) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
-    const err = new Error(`${fieldName || 'Valor'} invalido`);
+    const err = new Error(`${fieldName || "Valor"} inválido`);
     err.status = 400;
     throw err;
   }
@@ -35,7 +86,7 @@ function ensureNumber(value, fieldName) {
 function ensureNonNegative(value, fieldName) {
   const parsed = ensureNumber(value, fieldName);
   if (parsed < 0) {
-    const err = new Error(`${fieldName || 'Valor'} nao pode ser negativo`);
+    const err = new Error(`${fieldName || "Valor"} não pode ser negativo`);
     err.status = 400;
     throw err;
   }
@@ -45,7 +96,7 @@ function ensureNonNegative(value, fieldName) {
 function ensureGreaterThanZero(value, fieldName) {
   const parsed = ensureNumber(value, fieldName);
   if (parsed <= 0) {
-    const err = new Error(`${fieldName || 'Valor'} deve ser maior que zero`);
+    const err = new Error(`${fieldName || "Valor"} deve ser maior que zero`);
     err.status = 400;
     throw err;
   }
@@ -65,6 +116,8 @@ function normalizeRecipePayload(payload = {}) {
       quantity: item.quantidade ?? item.quantity,
       cost: item.custoUnitario ?? item.cost ?? item.custo,
       packageQuantity: item.packageQuantity ?? item.quantidadeEmbalagem ?? 1,
+      unit: item.unidade ?? item.unit ?? null,
+      packUnit: item.packUnit ?? item.pack_unit ?? item.unidadePacote ?? null,
     }));
   }
 
@@ -84,41 +137,56 @@ function round2(value) {
 
 function computeLaborCost(payload) {
   if (payload.laborMinutes != null || payload.laborHourlyRate != null) {
-    const minutes = ensureNonNegative(payload.laborMinutes ?? 0, 'laborMinutes');
-    const hourlyRate = ensureNonNegative(payload.laborHourlyRate ?? 0, 'laborHourlyRate');
+    const minutes = ensureNonNegative(payload.laborMinutes ?? 0, "laborMinutes");
+    const hourlyRate = ensureNonNegative(payload.laborHourlyRate ?? 0, "laborHourlyRate");
     return round2((hourlyRate / 60) * minutes);
   }
-  return round2(ensureNonNegative(payload.labor ?? 0, 'labor'));
+  return round2(ensureNonNegative(payload.labor ?? 0, "labor"));
 }
 
 function normalizeIngredients(list) {
   if (!Array.isArray(list) || list.length === 0) {
-    const err = new Error('ingredients sao obrigatorios');
+    const err = new Error("ingredients sao obrigatórios");
     err.status = 400;
     throw err;
   }
 
   return list.map((item, index) => {
-    const name = String(item.name || '').trim();
-    ensureSafeText(name, 'Ingrediente');
+    const name = String(item.name || "").trim();
+    ensureSafeText(name, "Ingrediente");
     if (!name) {
-      const err = new Error(`Ingrediente na posicao ${index} esta invalido`);
+      const err = new Error(`Ingrediente na posição ${index} está inválido`);
       err.status = 400;
       throw err;
     }
 
-    const quantity = ensureGreaterThanZero(item.quantity ?? 1, 'quantity');
-    const packageQuantity = ensureGreaterThanZero(item.packageQuantity ?? 1, 'packageQuantity');
-    const packageCost = ensureNonNegative(item.cost ?? 0, 'cost');
+    const quantity = ensureGreaterThanZero(item.quantity ?? 1, "quantity");
+    const packageQuantity = ensureGreaterThanZero(item.packageQuantity ?? 1, "packageQuantity");
+    const packageCost = ensureNonNegative(item.cost ?? 0, "cost");
+    const unit = normalizeUnit(item.unit ?? item.unidade);
+    const packUnit = normalizeUnit(item.packUnit ?? item.pack_unit ?? item.unidadePacote) || unit;
+    assertCompatibleUnits(unit, packUnit);
+    const component =
+      item.component != null && String(item.component || "").trim()
+        ? String(item.component || "").trim()
+        : null;
+    if (component) {
+      ensureSafeText(component, "Componente");
+    }
 
-    const unitCost = round2(packageCost / packageQuantity);
-    const totalCost = round2(unitCost * quantity);
+    const quantityBase = normalizeQuantity(quantity, unit);
+    const packageBase = normalizeQuantity(packageQuantity, packUnit);
+    const unitCost = round2(packageCost / packageBase);
+    const totalCost = round2(unitCost * quantityBase);
 
     return {
       name,
       quantity,
       cost: round2(packageCost),
       packageQuantity,
+      unit,
+      packUnit,
+      component,
       unitCost,
       totalCost,
     };
@@ -126,17 +194,17 @@ function normalizeIngredients(list) {
 }
 
 function normalizeOverhead(overhead, overheadItems) {
-  const numberValue = ensureNonNegative(overhead ?? 0, 'overhead');
+  const numberValue = ensureNonNegative(overhead ?? 0, "overhead");
   const extras = Array.isArray(overheadItems)
     ? overheadItems
         .filter((item) => item && item.name)
         .map((item) => ({
           name: String(item.name).trim(),
-          cost: round2(ensureNonNegative(item.cost ?? 0, 'overhead cost')),
+          cost: round2(ensureNonNegative(item.cost ?? 0, "overhead cost")),
         }))
     : [];
 
-  extras.forEach((item) => ensureSafeText(item.name, 'Overhead'));
+  extras.forEach((item) => ensureSafeText(item.name, "Overhead"));
   const extrasTotal = extras.reduce((sum, item) => sum + item.cost, 0);
 
   return {
@@ -147,10 +215,7 @@ function normalizeOverhead(overhead, overheadItems) {
 
 function calculateFinancials(payload = {}) {
   const ingredients = normalizeIngredients(payload.ingredients);
-  const ingredientCost = ingredients.reduce(
-    (sum, item) => sum + item.totalCost,
-    0
-  );
+  const ingredientCost = ingredients.reduce((sum, item) => sum + item.totalCost, 0);
 
   const { total: overheadCost, items: overheadItems } = normalizeOverhead(
     payload.overhead,
@@ -158,14 +223,14 @@ function calculateFinancials(payload = {}) {
   );
 
   const laborCost = computeLaborCost(payload);
-  const yieldQty = ensureGreaterThanZero(payload.yield ?? 1, 'yield');
+  const yieldQty = ensureGreaterThanZero(payload.yield ?? 1, "yield");
 
   const totalCost = round2(ingredientCost + overheadCost + laborCost);
   const costPerUnit = round2(totalCost / yieldQty);
 
-  const marginRaw = ensureNonNegative(payload.margin ?? 0, 'margin');
+  const marginRaw = ensureNonNegative(payload.margin ?? 0, "margin");
   let priceSuggested = costPerUnit;
-  let marginLabel = '0%';
+  let marginLabel = "0%";
 
   if (marginRaw > 0) {
     if (marginRaw >= 1) {
@@ -196,38 +261,44 @@ function calculateFinancials(payload = {}) {
 }
 
 function ensureOwnership(recipe, user) {
-  if (recipe.ownerId && user && recipe.ownerId !== user.id) {
-    const err = new Error('Acesso negado');
+  if (recipe.owner_id && user && recipe.owner_id !== user.id) {
+    const err = new Error("Acesso negado");
     err.status = 403;
     throw err;
   }
 }
 
-function list(user) {
-  return db.recipes.filter(r =>
-    r.status !== 'INACTIVE' && (r.ownerId ? (user && r.ownerId === user.id) : true)
-  );
+async function list(user) {
+  const rows = await repo.listRecipes(user ? user.id : null, false);
+  return rows.map((row) => ({
+    ...row,
+    ownerId: row.owner_id,
+    linkProductId: row.link_product_id,
+  }));
 }
 
-function getById(id, user) {
-  const recipe = db.recipes.find((item) => item.id === id);
-  if (!recipe || recipe.status === 'INACTIVE') {
-    const err = new Error('Receita nao encontrada');
+async function getById(id, user) {
+  const recipe = await repo.getRecipeById(id);
+  if (!recipe || recipe.status === "INACTIVE") {
+    const err = new Error("Receita não encontrada");
     err.status = 404;
     throw err;
   }
   ensureOwnership(recipe, user);
-  return recipe;
+  return {
+    ...recipe,
+    ownerId: recipe.owner_id,
+    linkProductId: recipe.link_product_id,
+  };
 }
 
-function assertUniqueName(name, userId, currentId) {
-  const exists = db.recipes.find(r =>
-    r.name.toLowerCase() === name.toLowerCase() &&
-    r.ownerId === userId &&
-    r.id !== currentId
+async function assertUniqueName(name, userId, currentId) {
+  const rows = await repo.listRecipes(userId, true);
+  const exists = rows.find(
+    (r) => r.name.toLowerCase() === name.toLowerCase() && r.owner_id === userId && r.id !== currentId
   );
   if (exists) {
-    const err = new Error('Receita ja cadastrada');
+    const err = new Error("Receita já cadastrada");
     err.status = 409;
     throw err;
   }
@@ -235,24 +306,24 @@ function assertUniqueName(name, userId, currentId) {
 
 function buildRecipePayload(payload, base = {}) {
   const normalized = normalizeRecipePayload(payload);
-  const name = String(normalized.name || base.name || '').trim();
-  ensureSafeText(name, 'name');
+  const name = String(normalized.name || base.name || "").trim();
+  ensureSafeText(name, "name");
   if (!name) {
-    const err = new Error('Dados incompletos para criacao da ficha tecnica');
+    const err = new Error("Dados incompletos para criação da ficha técnica");
     err.status = 400;
     throw err;
   }
 
   const description = normalized.description || base.description || null;
-  ensureSafeText(description, 'description');
-  const yieldValue = ensureGreaterThanZero(normalized.yield ?? base.yield ?? 1, 'yield');
+  ensureSafeText(description, "description");
+  const yieldValue = ensureGreaterThanZero(normalized.yield ?? base.yield ?? 1, "yield");
   const yieldType = normalized.yieldType || base.yieldType;
   if (!yieldType) {
-    const err = new Error('yieldType e obrigatorio');
+    const err = new Error("yieldType e obrigatório");
     err.status = 400;
     throw err;
   }
-  ensureSafeText(String(yieldType), 'yieldType');
+  ensureSafeText(String(yieldType), "yieldType");
 
   const calculations = calculateFinancials({
     ...base,
@@ -279,41 +350,44 @@ function buildRecipePayload(payload, base = {}) {
   };
 }
 
-function syncProductCost(productId, mapped, recipeId) {
+async function syncProductCost(productId, mapped, recipeId) {
   if (!productId) return null;
-  const product = db.products.find((p) => p.id === productId);
+  const product = await repo.getProductById(productId);
   if (!product) {
-    const err = new Error('Produto vinculado nao encontrado');
+    const err = new Error("Produto vinculado não encontrado");
     err.status = 404;
     throw err;
   }
-  if (recipeId) {
-    product.fichaTecnicaId = recipeId;
-  }
+
   const costPerUnit = mapped?.costPerUnit ?? mapped?.custo_por_unidade ?? null;
   const priceMinimum = mapped?.priceMinimum ?? mapped?.preco_minimo ?? costPerUnit ?? null;
-  if (costPerUnit != null) {
-    product.purchase_price = costPerUnit;
-    product.custo_por_unidade = costPerUnit;
-    product.preco_minimo = priceMinimum;
-    product.preco_minimo_sugerido = mapped?.priceSuggested ?? mapped?.preco_minimo_sugerido ?? priceMinimum;
-    product.data_vinculo = new Date().toISOString();
-    if (product.price) {
-      product.cmv_previsto = Number((product.purchase_price / product.price).toFixed(2));
-      product.cmv_futuro = product.cmv_previsto;
-    }
+
+  const payload = {
+    ficha_tecnica_id: recipeId || product.ficha_tecnica_id,
+    custo_por_unidade: costPerUnit,
+    preco_minimo: priceMinimum,
+    preco_minimo_sugerido: mapped?.priceSuggested ?? mapped?.preco_minimo_sugerido ?? priceMinimum,
+    data_vinculo: new Date().toISOString(),
+  };
+
+  if (product.price && costPerUnit != null) {
+    const cmv_previsto = Number((costPerUnit / product.price).toFixed(2));
+    payload.cmv_previsto = cmv_previsto;
+    payload.cmv_futuro = cmv_previsto;
   }
-  return product;
+
+  return repo.updateProduct(productId, payload);
 }
 
-function create(payload = {}, user) {
+async function create(payload = {}, user) {
   if (!user || !user.id) {
-    const err = new Error('Token invalido ou ausente');
+    const err = new Error("Token inválido ou ausente");
     err.status = 401;
     throw err;
   }
   const mapped = buildRecipePayload(payload);
-  assertUniqueName(mapped.name, user.id);
+  await assertUniqueName(mapped.name, user.id);
+
   const recipe = {
     id: uuidv4(),
     ownerId: user.id,
@@ -321,84 +395,73 @@ function create(payload = {}, user) {
     margin: payload.margin || null,
     overheadExtra: payload.overhead || 0,
     labor: mapped.labor,
-    status: 'ACTIVE',
+    status: "ACTIVE",
     createdAt: new Date().toISOString(),
     updatedAt: null,
     ...mapped,
   };
 
-  db.recipes.push(recipe);
+  await repo.createRecipe(recipe, mapped.ingredients, mapped.overheadItems);
 
   if (payload.linkProductId) {
-    syncProductCost(payload.linkProductId, mapped, recipe.id);
+    await syncProductCost(payload.linkProductId, mapped, recipe.id);
   }
 
   return recipe;
 }
 
-function update(id, payload = {}, user) {
-  const index = db.recipes.findIndex((item) => item.id === id);
-  if (index === -1) {
-    const err = new Error('Receita nao encontrada');
+async function update(id, payload = {}, user) {
+  const current = await repo.getRecipeById(id);
+  if (!current) {
+    const err = new Error("Receita não encontrada");
     err.status = 404;
     throw err;
   }
 
-  const current = db.recipes[index];
   ensureOwnership(current, user);
   const mapped = buildRecipePayload(payload, current);
-  assertUniqueName(mapped.name, current.ownerId, current.id);
+  await assertUniqueName(mapped.name, current.owner_id, current.id);
 
   const updated = {
     ...current,
     ...mapped,
-    linkProductId: payload.linkProductId ?? current.linkProductId,
-    status: payload.status || current.status || 'ACTIVE',
+    linkProductId: payload.linkProductId ?? current.link_product_id,
+    status: payload.status || current.status || "ACTIVE",
     updatedAt: new Date().toISOString(),
   };
 
-  db.recipes[index] = updated;
+  await repo.updateRecipe(id, updated, mapped.ingredients, mapped.overheadItems);
 
   if (updated.linkProductId) {
-    syncProductCost(updated.linkProductId, mapped, updated.id);
+    await syncProductCost(updated.linkProductId, mapped, updated.id);
   }
 
   return updated;
 }
 
-function remove(id, user) {
-  const index = db.recipes.findIndex((item) => item.id === id);
-  if (index === -1) {
-    const err = new Error('Receita nao encontrada');
+async function remove(id, user) {
+  const current = await repo.getRecipeById(id);
+  if (!current) {
+    const err = new Error("Receita não encontrada");
     err.status = 404;
     throw err;
   }
-  const current = db.recipes[index];
   ensureOwnership(current, user);
 
-  // limpa vinculo no produto, se houver
-  db.products = db.products.map((p) =>
-    p.fichaTecnicaId === current.id
-      ? {
-          ...p,
-          fichaTecnicaId: null,
-          custo_por_unidade: null,
-          preco_minimo: null,
-          cmv_previsto: null,
-        }
-      : p
-  );
+  if (current.link_product_id) {
+    await repo.updateProduct(current.link_product_id, {
+      ficha_tecnica_id: null,
+      custo_por_unidade: null,
+      preco_minimo: null,
+      cmv_previsto: null,
+    });
+  }
 
-  const updated = {
-    ...current,
-    status: 'INACTIVE',
-    updatedAt: new Date().toISOString(),
-  };
-  db.recipes[index] = updated;
+  const updated = await repo.softDeleteRecipe(id);
   return updated;
 }
 
-function calculate(payload = {}) {
+async function calculate(payload = {}) {
   const mapped = buildRecipePayload(payload);
   return {
     name: mapped.name,
@@ -417,75 +480,177 @@ function calculate(payload = {}) {
   };
 }
 
-async function exportRecipe(id, format = 'csv', user) {
-  const recipe = getById(id, user);
+async function exportRecipe(id, format = "csv", user) {
+  const recipe = await getById(id, user);
 
-  if (format === 'csv' || format === 'excel') {
-    const header =
-      'name,yield,yieldType,totalCost,costPerUnit,priceMinimum,priceSuggested,margin,estimatedProfit';
-    const details = [
-      recipe.name,
-      recipe.yield,
-      recipe.yieldType,
-      recipe.totalCost,
-      recipe.costPerUnit,
-      recipe.priceMinimum,
-      recipe.priceSuggested,
-      recipe.marginLabel,
-      recipe.estimatedProfit,
-    ].join(',');
-
-    const ingredientHeader = 'ingredient,quantity,unitCost,totalCost';
-    const ingredientLines = (recipe.ingredients || []).map((ing) =>
-      [
-        ing.name,
-        ing.quantity,
-        ing.unitCost,
-        ing.totalCost,
-      ].join(',')
-    );
-
-    const body = [header, details, '', ingredientHeader, ...ingredientLines].join('\n');
-    const contentType = format === 'excel' ? 'application/vnd.ms-excel' : 'text/csv';
+  if (format === "csv" || format === "excel") {
+    const csvEscape = (value) => {
+      if (value === null || value === undefined) return "";
+      const text = String(value);
+      if (/[;"\n\r]/.test(text)) {
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+      return text;
+    };
+    const formatNumber = (value) => {
+      if (!Number.isFinite(value)) return "";
+      return value.toFixed(2).replace(".", ",");
+    };
+    const priceTotal = Number.isFinite(recipe.priceSuggested) && Number.isFinite(recipe.yield)
+      ? recipe.priceSuggested * recipe.yield
+      : null;
+    const lines = [
+      "Campo;Valor",
+      `Nome;${csvEscape(recipe.name)}`,
+      `Rendimento;${csvEscape(recipe.yield)}`,
+      `Unidade;${csvEscape(recipe.yieldType)}`,
+      `Custo total;${formatNumber(recipe.totalCost)}`,
+      `Custo unitário;${formatNumber(recipe.costPerUnit)}`,
+      `Preço mínimo;${formatNumber(recipe.priceMinimum)}`,
+      `Preço sugerido;${formatNumber(recipe.priceSuggested)}`,
+      `Preço total da receita;${formatNumber(priceTotal)}`,
+      `Margem;${csvEscape(recipe.marginLabel)}`,
+      `Lucro estimado;${formatNumber(recipe.estimatedProfit)}`,
+      "",
+      "Ingredientes",
+      "Ingrediente;Quantidade;Unidade;Custo unitário;Custo total",
+      ...(recipe.ingredients || []).map((ing) =>
+        [
+          csvEscape(ing.name),
+          csvEscape(ing.quantity),
+          csvEscape(ing.unit || ""),
+          formatNumber(ing.unitCost),
+          formatNumber(ing.totalCost),
+        ].join(";")
+      ),
+    ];
+    const body = lines.join("\n");
+    const contentType = format === "excel" ? "application/vnd.ms-excel" : "text/csv";
     return { contentType, body };
   }
 
-  if (format === 'pdf') {
-    const doc = new PDFDocument({ size: 'A4', margin: 50 });
-    const chunks = [];
-    doc.on('data', (c) => chunks.push(c));
+  if (format === "pdf") {
+    const formatNumber = (value) => {
+      if (!Number.isFinite(value)) return "0,00";
+      return value.toFixed(2).replace(".", ",");
+    };
+    const priceTotal = Number.isFinite(recipe.priceSuggested) && Number.isFinite(recipe.yield)
+      ? recipe.priceSuggested * recipe.yield
+      : 0;
+    const costIngredients = Number.isFinite(recipe.costIngredients) ? recipe.costIngredients : 0;
+    const overheadTotal = Number.isFinite(recipe.overhead) ? recipe.overhead : 0;
+    const laborTotal = Number.isFinite(recipe.labor) ? recipe.labor : 0;
+    const generatedAt = new Date().toLocaleString("pt-BR");
 
-    doc.fontSize(18).text('Ficha Tecnica', { align: 'center' });
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+    const chunks = [];
+    doc.on("data", (c) => chunks.push(c));
+
+    doc.fontSize(18).text("Ficha Técnica", { align: "center" });
+    doc.moveDown(0.5);
+    doc.fontSize(10).text(`Gerado em: ${generatedAt}`, { align: "right" });
     doc.moveDown();
     doc.fontSize(12);
     doc.text(`Nome: ${recipe.name}`);
     doc.text(`Rendimento: ${recipe.yield} (${recipe.yieldType})`);
-    doc.text(`Custo total: R$ ${recipe.totalCost.toFixed(2)}`);
-    doc.text(`Custo unitario: R$ ${recipe.costPerUnit.toFixed(2)}`);
-    doc.text(`Preco minimo: R$ ${recipe.priceMinimum.toFixed(2)}`);
-    doc.text(`Preco sugerido: R$ ${recipe.priceSuggested.toFixed(2)} (${recipe.marginLabel})`);
-    doc.text(`Lucro estimado: R$ ${recipe.estimatedProfit.toFixed(2)}`);
+    doc.text(`Custo ingredientes: R$ ${formatNumber(costIngredients)}`);
+    doc.text(`Custos indiretos: R$ ${formatNumber(overheadTotal)}`);
+    doc.text(`Mão de obra: R$ ${formatNumber(laborTotal)}`);
+    doc.text(`Custo total: R$ ${formatNumber(recipe.totalCost)}`);
+    doc.text(`Custo unitário: R$ ${formatNumber(recipe.costPerUnit)}`);
+    doc.text(`Preço mínimo: R$ ${formatNumber(recipe.priceMinimum)}`);
+    doc.font("Helvetica-Bold").text(
+      `Preço sugerido: R$ ${formatNumber(recipe.priceSuggested)} (${recipe.marginLabel})`
+    );
+    doc.font("Helvetica");
+    doc.text(`Preço total da receita: R$ ${formatNumber(priceTotal)}`);
+    doc.text(`Lucro estimado: R$ ${formatNumber(recipe.estimatedProfit)}`);
 
     doc.moveDown();
-    doc.fontSize(14).text('Ingredientes');
-    doc.fontSize(12);
+    doc.fontSize(14).text("Ingredientes");
+    doc.moveDown(0.5);
+    doc.fontSize(10);
+
+    const tableX = doc.x;
+    const tableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    const rowHeight = 20;
+    const colWidths = [
+      tableWidth * 0.50,
+      tableWidth * 0.12,
+      tableWidth * 0.08,
+      tableWidth * 0.14,
+      tableWidth * 0.16,
+    ];
+    const colAlign = ["left", "right", "center", "right", "right"];
+    const colX = [
+      tableX,
+      tableX + colWidths[0],
+      tableX + colWidths[0] + colWidths[1],
+      tableX + colWidths[0] + colWidths[1] + colWidths[2],
+      tableX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3],
+    ];
+
+    const drawHeader = () => {
+      if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage();
+      }
+      const y = doc.y;
+      doc.save();
+      doc.fillOpacity(1);
+      doc.rect(tableX, y - 2, tableWidth, rowHeight).fill("#e6e6e6");
+      doc.restore();
+      doc.font("Helvetica-Bold").fillColor("#000");
+      const headers = ["Ingrediente", "Qtd", "Un", "Custo un.", "Custo total"];
+      headers.forEach((text, idx) => {
+        doc.text(text, colX[idx], y, {
+          width: colWidths[idx],
+          align: colAlign[idx],
+          lineBreak: false,
+        });
+      });
+      doc.moveDown(1);
+    };
+
+    const drawRow = (values) => {
+      if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage();
+        drawHeader();
+      }
+      const y = doc.y;
+      doc.font("Helvetica").fillColor("#000");
+      values.forEach((text, idx) => {
+        doc.text(text, colX[idx], y, {
+          width: colWidths[idx],
+          align: colAlign[idx],
+          lineBreak: false,
+        });
+      });
+      doc.moveDown(0.9);
+    };
+
+    drawHeader();
+
     (recipe.ingredients || []).forEach((ing) => {
-      doc.text(
-        `${ing.name} - Qtde: ${ing.quantity} | Custo unit: R$ ${ing.unitCost.toFixed(
-          2
-        )} | Total: R$ ${ing.totalCost.toFixed(2)}`
-      );
+      drawRow([
+        String(ing.name || ""),
+        formatNumber(ing.quantity),
+        String(ing.unit || ""),
+        `R$ ${formatNumber(ing.unitCost)}`,
+        `R$ ${formatNumber(ing.totalCost)}`,
+      ]);
     });
+
+    doc.font("Helvetica");
     doc.end();
 
     return new Promise((resolve) => {
-      doc.on('end', () => {
-        resolve({ contentType: 'application/pdf', body: Buffer.concat(chunks) });
+      doc.on("end", () => {
+        resolve({ contentType: "application/pdf", body: Buffer.concat(chunks) });
       });
     });
   }
 
-  const err = new Error('Formato de exportacao invalido');
+  const err = new Error("Formato de exportação inválido");
   err.status = 400;
   throw err;
 }
@@ -499,3 +664,4 @@ module.exports = {
   calculate,
   exportRecipe,
 };
+

@@ -1,29 +1,29 @@
-const { db, createSale } = require('../models/db');
-const { parseIsoDate } = require('../utils/dateValidation');
+﻿const { v4: uuidv4 } = require("uuid");
+const repo = require("../db/repository");
+const { parseIsoDate } = require("../utils/dateValidation");
 
 const auditLog = new Map();
-const allowedPaymentMethods = ['PIX', 'CREDIT_CARD', 'CASH'];
+const allowedPaymentMethods = ["PIX", "CREDIT_CARD", "CASH"];
 
 function shouldTrackStock(product) {
-  // Só controla estoque para produtos com estoque explícito e pequeno (até 5 unidades)
   return product && Number.isFinite(product.stock) && product.stock <= 5;
 }
 
 function hasSqlInjectionRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   const riskKeywords = /(select|insert|update|delete|drop|truncate|alter)\s+/i;
   return /(--|;)/.test(value) || riskKeywords.test(value);
 }
 
 function hasXssRisk(value) {
-  if (typeof value !== 'string') return false;
+  if (typeof value !== "string") return false;
   return /<\s*script[\s>]/i.test(value);
 }
 
 function toCents(value, field) {
   const num = Number(value);
   if (!Number.isFinite(num) || num < 0) {
-    const err = new Error(`${field || 'Valor'} invalido`);
+    const err = new Error(`${field || "Valor"} inválido`);
     err.status = 422;
     throw err;
   }
@@ -34,119 +34,120 @@ function fromCents(cents) {
   return Number((cents / 100).toFixed(2));
 }
 
-function validateSaleInput(data, user) {
-  const rawCustomerName = data.customerName ?? data.clienteNome ?? data.cliente_nome ?? null;
-  const customerName = typeof rawCustomerName === 'string' ? rawCustomerName.trim() : rawCustomerName;
-  if (!data.customerId && !customerName) {
-    const err = new Error('customerId é obrigatório');
-    err.status = 422;
-    throw err;
-  }
+async function loadProductsByIds(ids) {
+  const products = await repo.listProducts();
+  const map = new Map();
+  products.forEach((p) => map.set(p.id, p));
+  return map;
+}
 
+async function validateSaleInput(data, user, productMap) {
+  const rawCustomerName = data.customerName ?? data.clienteNome ?? data.cliente_nome ?? null;
+  const customerName = typeof rawCustomerName === "string" ? rawCustomerName.trim() : rawCustomerName;
   if (!Array.isArray(data.items) || data.items.length === 0) {
-    const err = new Error('items ? obrigat?rio');
+    const err = new Error("items é obrigatório");
     err.status = 422;
     throw err;
   }
 
   if (data.items.length > 1000) {
-    const err = new Error('Payload muito grande');
+    const err = new Error("Payload muito grande");
     err.status = 413;
     throw err;
   }
 
   if (data.customerId) {
-    const customer = db.customers.find(c => c.id === data.customerId);
+    const customer = await repo.getCustomerById(data.customerId);
     if (!customer) {
-      const err = new Error('Cliente n?o encontrado');
+      const err = new Error("Cliente não encontrado");
       err.status = 422;
       throw err;
     }
   }
 
   if (data.date != null) {
-    parseIsoDate(data.date, 'date');
+    parseIsoDate(data.date, "date");
   }
 
   for (const it of data.items) {
-    const product = db.products.find(p => p.id === it.productId);
+    const product = productMap.get(it.productId);
 
     if (!product) {
-      const err = new Error(`Produto ${it.productId} n?o encontrado`);
+      const err = new Error(`Produto ${it.productId} não encontrado`);
       err.status = 422;
       throw err;
     }
-    if (product.ownerId && user && product.ownerId !== user.id) {
-      const err = new Error('Acesso negado');
+    if (product.owner_id && user && product.owner_id !== user.id) {
+      const err = new Error("Acesso negado");
       err.status = 403;
       throw err;
     }
-    if (product.statusProduto && product.statusProduto !== 'ATIVO') {
-      const err = new Error('Produto inativo');
+    if (product.status_produto && product.status_produto !== "ATIVO") {
+      const err = new Error("Produto inativo");
       err.status = 422;
       throw err;
     }
 
     const unitPriceRaw = it.unitPrice != null ? Number(it.unitPrice) : Number(product.price);
     if (Number.isNaN(unitPriceRaw) || unitPriceRaw < 0) {
-      const err = new Error('Pre?o unit?rio inv?lido');
+      const err = new Error("Preço unitário inválido");
       err.status = 422;
       throw err;
     }
 
     const quantityRaw = Number(it.quantity || 1);
     if (!Number.isFinite(quantityRaw) || quantityRaw <= 0) {
-      const err = new Error('Quantidade inv?lida');
+      const err = new Error("Quantidade inválida");
       err.status = 422;
       throw err;
     }
 
     if (quantityRaw > 1000000) {
-      const err = new Error('Quantidade acima do limite permitido');
+      const err = new Error("Quantidade acima do limite permitido");
       err.status = 422;
       throw err;
     }
 
     if (shouldTrackStock(product) && product.stock < quantityRaw) {
-      const err = new Error('Estoque insuficiente');
+      const err = new Error("Estoque insuficiente");
       err.status = 422;
       throw err;
     }
   }
 
   if (data.paymentMethod && !allowedPaymentMethods.includes(data.paymentMethod)) {
-    const err = new Error('Forma de pagamento inv?lida');
+    const err = new Error("Forma de pagamento inválida");
     err.status = 422;
     throw err;
   }
 
   if (hasSqlInjectionRisk(data.paymentMethod) || hasXssRisk(data.paymentMethod)) {
-    const err = new Error('Forma de pagamento inv?lida');
+    const err = new Error("Forma de pagamento inválida");
     err.status = 422;
     throw err;
   }
 }
 
-function normalizeItemsWithCosts(items, previousItems = []) {
-  const normalized = items.map(it => {
-    const product = db.products.find(p => p.id === it.productId);
+function normalizeItemsWithCosts(items, productMap, previousItems = []) {
+  const normalized = items.map((it) => {
+    const product = productMap.get(it.productId);
 
     if (!product || product.purchase_price == null) {
-      const err = new Error(`Produto ${it.productId} n?o possui purchase_price definido.`);
+      const err = new Error(`Produto ${it.productId} não possui purchase_price definido.`);
       err.status = 422;
       throw err;
     }
 
-    const previous = previousItems.find(oldIt => oldIt.productId === it.productId);
+    const previous = previousItems.find((oldIt) => oldIt.productId === it.productId);
     const quantity = Number(it.quantity != null ? it.quantity : previous ? previous.quantity : 1);
     if (!Number.isFinite(quantity) || quantity <= 0) {
-      const err = new Error('Quantidade inv?lida');
+      const err = new Error("Quantidade inválida");
       err.status = 422;
       throw err;
     }
 
     if (quantity > 1000000) {
-      const err = new Error('Quantidade acima do limite permitido');
+      const err = new Error("Quantidade acima do limite permitido");
       err.status = 422;
       throw err;
     }
@@ -158,8 +159,8 @@ function normalizeItemsWithCosts(items, previousItems = []) {
         ? previous.unitPrice
         : product.price;
 
-    const unitPriceCents = toCents(unitPriceRaw, 'Pre?o unit?rio');
-    const purchaseCents = toCents(product.purchase_price, 'purchase_price');
+    const unitPriceCents = toCents(unitPriceRaw, "Preço unitário");
+    const purchaseCents = toCents(product.purchase_price, "purchase_price");
 
     const itemTotalCents = Math.round(unitPriceCents * quantity);
     const cmvCents = Math.round(purchaseCents * quantity);
@@ -192,13 +193,13 @@ function normalizeItemsWithCosts(items, previousItems = []) {
   };
 }
 
-function reserveStock(items) {
+async function reserveStock(items, productMap) {
   const updates = [];
   for (const it of items) {
-    const product = db.products.find(p => p.id === it.productId);
+    const product = productMap.get(it.productId);
     if (shouldTrackStock(product)) {
       if (product.stock < it.quantity) {
-        const err = new Error('Estoque insuficiente');
+        const err = new Error("Estoque insuficiente");
         err.status = 422;
         throw err;
       }
@@ -206,14 +207,14 @@ function reserveStock(items) {
     }
   }
 
-  updates.forEach(({ product, quantity }) => {
-    product.stock -= quantity;
-  });
+  for (const { product, quantity } of updates) {
+    await repo.updateProduct(product.id, { stock: Number(product.stock) - quantity });
+  }
 
-  return () => {
-    updates.forEach(({ product, quantity }) => {
-      product.stock += quantity;
-    });
+  return async () => {
+    for (const { product, quantity } of updates) {
+      await repo.updateProduct(product.id, { stock: Number(product.stock) + quantity });
+    }
   };
 }
 
@@ -231,104 +232,104 @@ function logAudit(saleId, action, userId) {
   });
 }
 
-function getAudit(saleId) {
-  const sale = db.sales.find(s => s.id === saleId);
+async function getAudit(saleId) {
+  const sale = await repo.getSaleById(saleId);
   if (!sale) {
-    const err = new Error('Venda n?o encontrada');
+    const err = new Error("Venda não encontrada");
     err.status = 404;
     throw err;
   }
   return auditLog.get(saleId) || {
     saleId,
-    lastAction: 'CREATED',
+    lastAction: "CREATED",
     performedBy: null,
     performedAt: sale.date,
     history: [],
   };
 }
 
-function getAll(user) {
-  return db.sales
-    .filter(s => !s.ownerId || !user || s.ownerId === user.id)
-    .map(s => ({
-      ...s,
-      statusVenda: s.statusVenda || (s.status === 'CANCELED' ? 'cancelada' : 'ativa'),
-    }));
+async function getAll(user) {
+  const sales = await repo.listSales(user ? user.id : null);
+  return sales.map((s) => ({
+    ...s,
+    statusVenda: s.status_venda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
+  }));
 }
 
-function getById(id, user) {
-  const sale = db.sales.find(s => s.id === id);
+async function getById(id, user) {
+  const sale = await repo.getSaleById(id);
   if (!sale) {
-    const err = new Error('Venda n?o encontrada');
+    const err = new Error("Venda não encontrada");
     err.status = 404;
     throw err;
   }
-  if (sale.ownerId && user && sale.ownerId !== user.id) {
-    const err = new Error('Acesso negado');
+  if (sale.owner_id && user && sale.owner_id !== user.id) {
+    const err = new Error("Acesso negado");
     err.status = 403;
     throw err;
   }
   return {
     ...sale,
-    statusVenda: sale.statusVenda || (sale.status === 'CANCELED' ? 'cancelada' : 'ativa'),
+    statusVenda: sale.status_venda || (sale.status === "CANCELED" ? "cancelada" : "ativa"),
   };
 }
 
-function create(data, user) {
-  validateSaleInput(data, user);
+async function create(data, user) {
+  const productMap = await loadProductsByIds(data.items.map((it) => it.productId));
+  await validateSaleInput(data, user, productMap);
 
-  const { items, total, cmv } = normalizeItemsWithCosts(data.items);
-  const saleDate = data.date ? parseIsoDate(data.date, 'date') : new Date();
+  const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap);
+  const saleDate = data.date ? parseIsoDate(data.date, "date") : new Date();
   const customerName =
-    typeof data.customerName === 'string'
+    typeof data.customerName === "string"
       ? data.customerName.trim()
-      : typeof data.clienteNome === 'string'
+      : typeof data.clienteNome === "string"
       ? data.clienteNome.trim()
-      : typeof data.cliente_nome === 'string'
+      : typeof data.cliente_nome === "string"
       ? data.cliente_nome.trim()
       : data.customerName ?? data.clienteNome ?? data.cliente_nome ?? null;
 
-  const rollbackStock = reserveStock(items);
+  const rollbackStock = await reserveStock(items, productMap);
 
   try {
-    const sale = createSale({
-      ...data,
+    const sale = {
+      id: uuidv4(),
+      customerId: data.customerId,
       customerName,
       items,
       cmv,
       total,
-      status: 'ACTIVE',
-      statusVenda: 'ativa',
+      status: "ACTIVE",
+      statusVenda: "ativa",
       ownerId: user ? user.id : null,
       date: saleDate.toISOString(),
-    });
-    logAudit(sale.id, 'CREATED', user ? user.id : null);
+    };
+    await repo.createSale(sale, items);
+    logAudit(sale.id, "CREATED", user ? user.id : null);
     return sale;
   } catch (err) {
-    rollbackStock();
+    await rollbackStock();
     throw err;
   }
 }
 
-function update(id, data, user) {
-  const index = db.sales.findIndex(s => s.id === id);
+async function update(id, data, user) {
+  const oldSale = await repo.getSaleById(id);
 
-  if (index === -1) {
-    const err = new Error('Venda n?o encontrada');
+  if (!oldSale) {
+    const err = new Error("Venda não encontrada");
     err.status = 404;
     throw err;
   }
 
-  const oldSale = db.sales[index];
-
-  if (oldSale.ownerId && user && oldSale.ownerId !== user.id) {
-    const err = new Error('Acesso negado');
+  if (oldSale.owner_id && user && oldSale.owner_id !== user.id) {
+    const err = new Error("Acesso negado");
     err.status = 403;
     throw err;
   }
 
-  if (oldSale.status === 'CANCELED') {
-    const err = new Error('Venda cancelada n?o pode ser editada');
+  if (oldSale.status === "CANCELED") {
+    const err = new Error("Venda cancelada não pode ser editada");
     err.status = 422;
     throw err;
   }
@@ -336,31 +337,43 @@ function update(id, data, user) {
   const validationPayload = {
     ...oldSale,
     ...data,
-    date: data.date ?? null, // evita validar ISO anterior
-    items: (data.items || oldSale.items).map(it => ({ ...it })),
+    date: data.date ?? null,
+    items: (data.items || oldSale.items).map((it) => ({ ...it })),
   };
 
-  validateSaleInput(validationPayload, user);
+  const productMap = await loadProductsByIds(validationPayload.items.map((it) => it.productId));
+  await validateSaleInput(validationPayload, user, productMap);
 
   const hasNewItems = Array.isArray(data.items);
 
   if (!hasNewItems) {
-    const updatedDate = data.date ? parseIsoDate(data.date, 'date').toISOString() : oldSale.date;
-    db.sales[index] = {
+    const updatedDate = data.date ? parseIsoDate(data.date, "date").toISOString() : oldSale.date;
+    const updated = await repo.updateSale(id, {
       ...oldSale,
       ...data,
+      date: updatedDate,
+    });
+    return {
+      ...updated,
       items: oldSale.items,
       total: oldSale.total,
       cmv: oldSale.cmv,
-      date: updatedDate,
     };
-    return db.sales[index];
   }
 
-  const { items, total, cmv } = normalizeItemsWithCosts(data.items, oldSale.items);
-  const updatedDate = data.date ? parseIsoDate(data.date, 'date').toISOString() : oldSale.date;
+  const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap, oldSale.items);
+  const updatedDate = data.date ? parseIsoDate(data.date, "date").toISOString() : oldSale.date;
 
-  db.sales[index] = {
+  await repo.updateSale(id, {
+    ...oldSale,
+    ...data,
+    total,
+    cmv,
+    date: updatedDate,
+  }, items);
+  logAudit(id, "UPDATED", user ? user.id : null);
+
+  return {
     ...oldSale,
     ...data,
     items,
@@ -368,36 +381,37 @@ function update(id, data, user) {
     cmv,
     date: updatedDate,
   };
-  logAudit(id, 'UPDATED', user ? user.id : null);
-
-  return db.sales[index];
 }
 
-function cancel(id, user) {
-  const index = db.sales.findIndex(s => s.id === id);
+async function cancel(id, user) {
+  const sale = await repo.getSaleById(id);
 
-  if (index === -1) {
-    const err = new Error('Venda n?o encontrada');
+  if (!sale) {
+    const err = new Error("Venda não encontrada");
     err.status = 404;
     throw err;
   }
 
-  if (db.sales[index].ownerId && user && db.sales[index].ownerId !== user.id) {
-    const err = new Error('Acesso negado');
+  if (sale.owner_id && user && sale.owner_id !== user.id) {
+    const err = new Error("Acesso negado");
     err.status = 403;
     throw err;
   }
 
-  db.sales[index].status = 'CANCELED';
-  db.sales[index].statusVenda = 'cancelada';
-  db.sales[index].canceledAt = new Date().toISOString();
-  logAudit(id, 'CANCELED', user ? user.id : null);
-  return db.sales[index];
+  await repo.updateSale(id, {
+    status: "CANCELED",
+    statusVenda: "cancelada",
+    canceledAt: new Date().toISOString(),
+  });
+
+  logAudit(id, "CANCELED", user ? user.id : null);
+  return repo.getSaleById(id);
 }
 
-function summary() {
-  const total = db.sales
-    .filter(s => s.status !== 'CANCELED')
+async function summary() {
+  const sales = await repo.listSales();
+  const total = sales
+    .filter((s) => s.status !== "CANCELED")
     .reduce((sum, s) => sum + (s.total || 0), 0);
   return { total: Number(total.toFixed(2)) };
 }
@@ -411,3 +425,4 @@ module.exports = {
   summary,
   getAudit,
 };
+

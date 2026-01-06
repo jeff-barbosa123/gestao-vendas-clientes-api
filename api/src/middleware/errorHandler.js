@@ -31,11 +31,12 @@ function errorHandler(err, req, res, next) {
 
   const details = Array.isArray(err.details) ? err.details : err.details ? [err.details] : [];
 
+  const errorValue = err.error === true ? true : message;
   const payload = {
     success: false,
     code,
     message,
-    error: message, // compatibilidade com clientes que já esperam "error"
+    error: errorValue,
     errors: details,
   };
 

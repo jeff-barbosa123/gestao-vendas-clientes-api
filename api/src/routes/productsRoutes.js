@@ -17,8 +17,8 @@ router.post('/', productsController.create);
 router.get('/:id', productsController.getById);
 router.put('/:id', productsController.update);
 router.delete('/:id', productsController.remove);
-router.post('/:id/vincular-ficha', linkRateLimit, productsController.linkRecipe);
-router.delete('/:id/remover-ficha', linkRateLimit, productsController.unlinkRecipe);
-router.get('/:id/ficha-tecnica', linkRateLimit, productsController.getRecipe);
+router.post('/:id/vincular-ficha', linkRateLimit, productsController.linkFichaTecnica);
+router.delete('/:id/remover-ficha', linkRateLimit, productsController.removerFichaTecnica);
+router.get('/:id/ficha-tecnica', linkRateLimit, productsController.obterFichaTecnica);
 
 module.exports = router;

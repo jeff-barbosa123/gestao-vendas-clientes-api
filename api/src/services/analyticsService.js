@@ -1,11 +1,11 @@
-const { revenueBetween, db } = require('../models/db');
+const repo = require("../db/repository");
 const {
   resolveTemporalRange,
   validateBreakdown,
   toIsoDay,
   toWeekKeyUTC,
   toMonthKeyUTC,
-} = require('../utils/dateValidation');
+} = require("../utils/dateValidation");
 
 function buildFinancialAggregates(sales) {
   const salesCount = sales.length;
@@ -25,45 +25,67 @@ function buildFinancialAggregates(sales) {
   };
 }
 
-function getOverview() {
-  const sales = revenueBetween();
+function filterByOwner(list, user) {
+  if (!user || !user.id) return list;
+  return list.filter((item) => !item.owner_id || item.owner_id === user.id);
+}
+
+function filterSalesByDate(sales, startDate, endDate) {
+  return sales.filter((s) => {
+    const dx = new Date(s.date);
+    return dx >= startDate && dx <= endDate;
+  });
+}
+
+async function getOverview(filters = {}, user) {
+  const { startDate, endDate } = resolveTemporalRange(filters);
+  const salesAll = await repo.listSales(user ? user.id : null);
+  const sales = filterSalesByDate(salesAll, startDate, endDate);
   const aggregates = buildFinancialAggregates(sales);
+  const customers = filterByOwner(await repo.listCustomers(user ? user.id : null), user);
+  const products = filterByOwner(await repo.listProducts(user ? user.id : null), user);
+  const recipes = filterByOwner(await repo.listRecipes(user ? user.id : null, false), user).filter(
+    (r) => r.status !== "INACTIVE"
+  );
 
   return {
     ...aggregates,
-    customers: db.customers.length,
-    products: db.products.length,
+    customers: customers.length,
+    products: products.length,
+    recipes: recipes.length,
+    linkedProducts: products.filter((p) => p.ficha_tecnica_id).length,
     lastSaleAt: sales.length ? sales[sales.length - 1].date : null,
   };
 }
 
-function buildTimeseries(breakdown = 'day', filters = {}) {
+async function buildTimeseries(breakdown = "day", filters = {}) {
   const normalizedBreakdown = validateBreakdown(breakdown);
   const { startDate, endDate } = resolveTemporalRange(filters);
 
-  const sales = revenueBetween(startDate, endDate);
+  const salesAll = await repo.listSales();
+  const sales = filterSalesByDate(salesAll, startDate, endDate);
   const buckets = {};
 
   sales.forEach((sale) => {
     const d = new Date(sale.date);
-    let key = '';
-    if (normalizedBreakdown === 'day') {
+    let key = "";
+    if (normalizedBreakdown === "day") {
       key = toIsoDay(d);
-    } else if (normalizedBreakdown === 'week') {
+    } else if (normalizedBreakdown === "week") {
       key = toWeekKeyUTC(d);
-    } else if (normalizedBreakdown === 'month') {
+    } else if (normalizedBreakdown === "month") {
       key = toMonthKeyUTC(d);
-    } else if (normalizedBreakdown === 'year') {
+    } else if (normalizedBreakdown === "year") {
       key = String(d.getUTCFullYear());
     }
     buckets[key] = buckets[key] || [];
     buckets[key].push(sale);
   });
 
-  if (normalizedBreakdown === 'total') {
+  if (normalizedBreakdown === "total") {
     return [
       {
-        period: 'total',
+        period: "total",
         ...buildFinancialAggregates(sales),
       },
     ];

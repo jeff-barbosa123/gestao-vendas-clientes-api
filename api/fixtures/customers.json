@@ -14508,5 +14508,277 @@
     "phone": "11999990000",
     "ownerId": "u1",
     "createdAt": "2025-12-20T12:57:49.862Z"
+  },
+  {
+    "id": "10eb4920-bd6b-4325-a6dc-f533924f9a47",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766281729934+d6f9ab196ab71@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:49.937Z"
+  },
+  {
+    "id": "8e90c53f-d65e-4416-9f28-319c32965ac1",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766281729945+9bcdcd5b4545a@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:49.949Z"
+  },
+  {
+    "id": "1f954b28-402d-49e9-ae29-462f6f9e6571",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766281729963+a8068d4e1df@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:49.966Z"
+  },
+  {
+    "id": "b8eae43e-ea5b-46c9-a6c7-432fa2389f0b",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766281729973+db7f17cf7876f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:49.979Z"
+  },
+  {
+    "id": "e9bfd15f-041e-4f9f-bf1c-514cbf7c745d",
+    "name": "Cliente Atualizado",
+    "email": "update+1766281729994+58138056d446b@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:49.997Z"
+  },
+  {
+    "id": "48b295d4-631c-4987-8c05-e2c7c74677e1",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766281730069+4dd9a79f06aad@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.073Z"
+  },
+  {
+    "id": "ca33a3cc-e7f1-467d-bab9-d2f8ab92ffc7",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766281730131+a92b60db23cd9@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.135Z"
+  },
+  {
+    "id": "7d03c97a-8b65-481f-8fb4-a1dae3c668a3",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766281730157+d8b11408110fc@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.164Z"
+  },
+  {
+    "id": "7b572258-4deb-48a4-837a-abb3bf0019e9",
+    "name": "Cliente Venda Extra",
+    "email": "sale-extra+1766281730379@teste.com",
+    "phone": null,
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.381Z"
+  },
+  {
+    "id": "805bdfaa-708a-4c70-838c-d02b4b611eae",
+    "name": "Cliente Venda",
+    "email": "sale+1766281730424@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.428Z"
+  },
+  {
+    "id": "f3d98e02-a82c-4c13-bc12-6e74bc19db7e",
+    "name": "Cliente Receita",
+    "email": "revenue+1766281730832@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:50.835Z"
+  },
+  {
+    "id": "4a5f7eaa-7292-429f-905f-c972bc9f2130",
+    "name": "Cliente-1766281732776-05b4b7d8fad69",
+    "email": "cliente+1766281732776@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T01:48:52.779Z"
+  },
+  {
+    "id": "ed0725b4-9b91-4180-b82b-1f14cc2fb079",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766284020858+aadc303c84ded@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:00.866Z"
+  },
+  {
+    "id": "609515d3-8330-4783-a4cc-b0578cb964bd",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766284020875+d2e55f0a3111f@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:00.882Z"
+  },
+  {
+    "id": "90823a5c-037e-4785-8a28-734fe6a1a97f",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766284020900+4c8de10a91044@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:00.905Z"
+  },
+  {
+    "id": "5a9e8ce2-4c12-4b99-a109-5525aad80c62",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766284020917+97b3a5803c6f1@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:00.923Z"
+  },
+  {
+    "id": "0efd4090-b25a-4b9b-92da-4f03385f794b",
+    "name": "Cliente Atualizado",
+    "email": "update+1766284020944+c47b643e8a9a1@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:00.954Z"
+  },
+  {
+    "id": "9ea10e4f-6c05-4e0d-8670-4cafd308f6ba",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766284021067+fe3bb67ca49dd@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:01.074Z"
+  },
+  {
+    "id": "a6963b9a-aa19-4cfe-bf21-cc7d8803d609",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766284021168+58789ab4fb289@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:01.174Z"
+  },
+  {
+    "id": "e4745fc1-cb61-42e5-9abd-a5ed12125061",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766284021210+a4f0542d509f@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:01.218Z"
+  },
+  {
+    "id": "f32ed377-9455-45ec-98be-8ff02afacbfd",
+    "name": "Cliente Venda Extra",
+    "email": "sale-extra+1766284021591@teste.com",
+    "phone": null,
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:01.596Z"
+  },
+  {
+    "id": "7f84df39-32d2-4adb-b7ce-301ee9ab6c7a",
+    "name": "Cliente Venda",
+    "email": "sale+1766284021660@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:01.669Z"
+  },
+  {
+    "id": "f43e0ac0-9b5f-46cb-8d0f-a7a774a1ed7b",
+    "name": "Cliente Receita",
+    "email": "revenue+1766284022237@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:02.241Z"
+  },
+  {
+    "id": "a1bcd322-c6ba-4876-8a21-a3bb83883c3b",
+    "name": "Cliente-1766284025238-60a13a3023b25",
+    "email": "cliente+1766284025238@teste.com",
+    "phone": "11999990000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T02:27:05.241Z"
+  },
+  {
+    "id": "ff344c51-38ce-415e-addf-18e70fe7abf9",
+    "name": "Evaldo",
+    "email": "evaldo@gmail.com",
+    "phone": "11111111111123eefdffrefrerefe",
+    "ownerId": "u1",
+    "createdAt": "2025-12-21T18:38:38.081Z"
+  },
+  {
+    "id": "34b4e741-033a-4e75-9d35-5b095c1a1d40",
+    "name": "Cliente Teste",
+    "email": "trim-email+1766424149368+a31915e26ff9c@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.373Z"
+  },
+  {
+    "id": "0a25b907-ca1e-48f6-9e28-fcb2d1ca0e10",
+    "name": "Cliente Teste",
+    "email": "trim-name+1766424149380+6c93b3f3c8f08@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.386Z"
+  },
+  {
+    "id": "50f6f19f-5c70-4882-a6f1-c577f2e47fff",
+    "name": "Cliente Teste UTF8",
+    "email": "utf8name+1766424149406+d0ce680ed461d@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.411Z"
+  },
+  {
+    "id": "fd77ed1e-a7e8-4d27-9b64-13cc74c7fdbd",
+    "name": "Cliente Duplicado",
+    "email": "duplicate+1766424149420+75dfaa3c4cee2@teste.com",
+    "phone": "11999999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.426Z"
+  },
+  {
+    "id": "bdb62a21-6900-4a32-8bff-dd661c98273e",
+    "name": "Cliente Atualizado",
+    "email": "update+1766424149443+4c7c4bd2dbb6e@teste.com",
+    "phone": "11988888888",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.448Z"
+  },
+  {
+    "id": "c6631888-f5f1-49c1-b5cd-8e8eb6392ff3",
+    "name": "Cliente Para Buscar",
+    "email": "findbyid+1766424149526+21babbda62475@teste.com",
+    "phone": "11955555555",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.530Z"
+  },
+  {
+    "id": "d4f7b84c-776a-4473-83cb-235c8edd7f24",
+    "name": "Cliente IDOR",
+    "email": "idor-update+1766424149591+e7c2e632869fd@teste.com",
+    "phone": "11900000000",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.596Z"
+  },
+  {
+    "id": "eef428e9-a577-4b4b-a68c-bf2262883865",
+    "name": "Cliente IDOR Delete",
+    "email": "idor-delete+1766424149618+25ad4fdabbb2@teste.com",
+    "phone": "11899999999",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T17:22:29.625Z"
+  },
+  {
+    "id": "348cfdac-4139-43e5-8a33-68262335800a",
+    "name": "Carlos",
+    "email": "carlossilva@gmail.com",
+    "phone": "(81) 98765-4323",
+    "ownerId": "u1",
+    "createdAt": "2025-12-22T19:31:34.424Z"
   }
 ]

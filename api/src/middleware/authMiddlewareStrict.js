@@ -1,10 +1,10 @@
-﻿const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { tokenStore } = require('../models/db');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 const JWT_PREVIOUS_SECRET = process.env.JWT_PREVIOUS_SECRET;
 
-const MSG_TOKEN_MISSING = 'Token inválido ou ausente';
+const MSG_TOKEN_MISSING = 'Token inv\u00e1lido ou ausente';
 
 function verifyWithRotation(token) {
   try {

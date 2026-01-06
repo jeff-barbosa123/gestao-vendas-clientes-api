@@ -10,6 +10,10 @@ const docsRoutes = require('./docsRoutes');
 const recipesRoutes = require('./recipesRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
 const priceSimulationRoutes = require('./priceSimulationRoutes');
+const cepRoutes = require('./cepRoutes');
+const cnpjRoutes = require('./cnpjRoutes');
+const holidayRoutes = require('./holidayRoutes');
+const barcodeRoutes = require('./barcodeRoutes');
 
 router.use('/auth', authRoutes);
 router.use('/customers', customersRoutes);
@@ -20,5 +24,9 @@ router.use('/docs', docsRoutes);
 router.use('/recipes', recipesRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/simulacao', priceSimulationRoutes);
+router.use('/cep', cepRoutes);
+router.use('/cnpj', cnpjRoutes);
+router.use('/holidays', holidayRoutes);
+router.use('/barcodes', barcodeRoutes);
 
 module.exports = router;

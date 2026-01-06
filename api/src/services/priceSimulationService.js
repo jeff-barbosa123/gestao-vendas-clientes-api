@@ -1,4 +1,4 @@
-﻿const recipesService = require('./recipesService');
+const recipesService = require('./recipesService');
 
 function buildError(message, status) {
   const err = new Error(message);
@@ -20,7 +20,7 @@ function hasXssRisk(value) {
 function ensureSafeText(value, fieldName) {
   if (value == null) return;
   if (hasSqlInjectionRisk(value) || hasXssRisk(value)) {
-    throw buildError(`${fieldName || 'Campo'} invalido`, 400);
+    throw buildError(`${fieldName || 'Campo'} inválido`, 400);
   }
 }
 
@@ -29,10 +29,12 @@ function round2(value) {
 }
 
 function parseMarginPercent(margin) {
-  if (margin == null) throw buildError('Dados incompletos para simulacao de preco', 400);
+  if (margin == null) {
+    throw buildError('Dados incompletos para simulação de preço', 400);
+  }
   const m = Number(margin);
   if (!Number.isFinite(m) || m < 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
   return m;
 }
@@ -41,7 +43,7 @@ function parseTaxaEntrega(value) {
   if (value == null) return 0;
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
   return parsed;
 }
@@ -90,20 +92,20 @@ function sumNumberObject(obj) {
 function validateOverheadsObject(overheads) {
   if (overheads == null) return;
   if (typeof overheads !== 'object' || Array.isArray(overheads)) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
   for (const [key, value] of Object.entries(overheads)) {
     const num = Number(value);
     if (!Number.isFinite(num) || num < 0) {
-      throw buildError('Dados incompletos para simulacao de preco', 400);
+      throw buildError('Dados incompletos para simulação de preço', 400);
     }
-    ensureSafeText(key, 'overhead');
+    ensureSafeText(key, 'Overhead');
   }
 }
 
 function parseQuickIngredients(list) {
   if (!Array.isArray(list) || list.length === 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
 
   return list.map((item) => {
@@ -113,10 +115,10 @@ function parseQuickIngredients(list) {
 
     ensureSafeText(name, 'Ingrediente');
     if (!name || !Number.isFinite(quantity) || !Number.isFinite(unitCost)) {
-      throw buildError('Dados incompletos para simulacao de preco', 400);
+      throw buildError('Dados incompletos para simulação de preço', 400);
     }
     if (quantity <= 0 || unitCost < 0) {
-      throw buildError('Dados incompletos para simulacao de preco', 400);
+      throw buildError('Dados incompletos para simulação de preço', 400);
     }
 
     return {
@@ -134,7 +136,7 @@ function simulateQuickFromPayload(payload) {
   const rendimento = payload.rendimento ?? payload.yield ?? payload.rendimentoTotal;
   const yieldQty = Number(rendimento);
   if (!Number.isFinite(yieldQty) || yieldQty <= 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
 
   const ingredients = parseQuickIngredients(payload.ingredientes ?? payload.ingredients);
@@ -143,7 +145,7 @@ function simulateQuickFromPayload(payload) {
   const overheadNumber = payload.overhead ?? 0;
   const overheadParsed = Number(overheadNumber);
   if (!Number.isFinite(overheadParsed) || overheadParsed < 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
 
   validateOverheadsObject(payload.overheads);
@@ -152,7 +154,7 @@ function simulateQuickFromPayload(payload) {
 
   const maoDeObra = Number(payload.maoDeObra ?? payload.labor ?? 0);
   if (!Number.isFinite(maoDeObra) || maoDeObra < 0) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
 
   const taxaEntrega = parseTaxaEntrega(payload.taxaEntrega ?? payload.deliveryFee);
@@ -163,26 +165,32 @@ function simulateQuickFromPayload(payload) {
   return buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega);
 }
 
-function simulateById({ receitaId, margem, taxaEntrega }, user) {
+async function simulateById({ receitaId, margem, taxaEntrega }, user) {
   if (!receitaId || margem == null) {
-    throw buildError('Dados incompletos para simulacao de preco', 400);
+    throw buildError('Dados incompletos para simulação de preço', 400);
   }
   const marginPercent = parseMarginPercent(margem);
   const deliveryFee = parseTaxaEntrega(taxaEntrega);
   ensureSafeText(String(receitaId), 'receitaId');
 
   try {
-    const recipe = recipesService.getById(String(receitaId), user);
+    const recipe = await recipesService.getById(String(receitaId), user);
     return simulateFromRecipe(recipe, marginPercent, deliveryFee);
   } catch (err) {
-    if (err && err.status === 404) throw buildError('Receita nao encontrada', 404);
-    if (err && err.status === 403) throw buildError('Acesso nao autorizado a receita', 403);
+    if (err && err.status === 404) {
+      throw buildError('Receita não encontrada', 404);
+    }
+    if (err && err.status === 403) {
+      throw buildError('Acesso não autorizado à receita', 403);
+    }
     throw err;
   }
 }
 
 function simulateQuick(payload = {}, user) {
-  if (!user || !user.id) throw buildError('Token invalido ou ausente', 401);
+  if (!user || !user.id) {
+    throw buildError('Token inválido ou ausente', 401);
+  }
   return simulateQuickFromPayload(payload);
 }
 

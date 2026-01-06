@@ -1,8 +1,8 @@
-const salesService = require('../services/salesService');
+const salesService = require("../services/salesService");
 
 async function list(req, res, next) {
   try {
-    res.json(salesService.getAll(req.user));
+    res.json(await salesService.getAll(req.user));
   } catch (e) {
     next(e);
   }
@@ -10,7 +10,7 @@ async function list(req, res, next) {
 
 async function getById(req, res, next) {
   try {
-    res.json(salesService.getById(req.params.id, req.user));
+    res.json(await salesService.getById(req.params.id, req.user));
   } catch (e) {
     next(e);
   }
@@ -18,8 +18,7 @@ async function getById(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const sale = salesService.create(req.body, req.user);
-    res.status(201).json(sale);
+    res.status(201).json(await salesService.create(req.body, req.user));
   } catch (e) {
     next(e);
   }
@@ -27,7 +26,7 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    res.json(salesService.update(req.params.id, req.body, req.user));
+    res.json(await salesService.update(req.params.id, req.body, req.user));
   } catch (e) {
     next(e);
   }
@@ -35,15 +34,15 @@ async function update(req, res, next) {
 
 async function cancel(req, res, next) {
   try {
-    res.json(salesService.cancel(req.params.id, req.user));
+    res.json(await salesService.cancel(req.params.id, req.user));
   } catch (e) {
     next(e);
   }
 }
 
-async function summary(_req, res, next) {
+async function summary(req, res, next) {
   try {
-    res.json(salesService.summary());
+    res.json(await salesService.summary(req.user));
   } catch (e) {
     next(e);
   }
@@ -51,7 +50,7 @@ async function summary(_req, res, next) {
 
 async function audit(req, res, next) {
   try {
-    res.json(salesService.getAudit(req.params.id));
+    res.json(await salesService.getAudit(req.params.id));
   } catch (e) {
     next(e);
   }

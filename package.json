@@ -8,6 +8,8 @@
     "start": "npm --workspace api start",
     "dev": "npm --workspace api run dev",
     "test": "npm --workspace api test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "us001": "npm --workspace api run test:us001",
     "us002": "npm --workspace api run test:us002",
     "us003": "npm --workspace api run test:us003",
@@ -17,6 +19,15 @@
     "us007": "npm --workspace api run test:us007"
   },
   "dependencies": {
+    "axios": "^1.13.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "axe-core": "^4.11.0",
+    "cypress": "^15.8.1",
+    "cypress-axe": "^1.7.0",
+    "cypress-mochawesome-reporter": "^4.0.2",
+    "cypress-real-events": "^1.15.0",
     "mochawesome": "^7.1.4"
   }
 }

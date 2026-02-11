@@ -1,0 +1,70 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "close": "Fechar"
+  },
+  "error": {
+    "invalid_email": "E-mail inválido. Verifique os números informados",
+    "email_required": "E-mail é obrigatório",
+    "email_already_exists": "Este e-mail já está cadastrado. Use outro e-mail ou recupere sua senha",
+    "password_required": "Senha é obrigatória",
+    "password_short": "Senha muito curta. Use pelo menos 8 caracteres",
+    "password_long": "Senha muito longa. Use no máximo 128 caracteres",
+    "password_weak": "Senha muito fraca. Use pelo menos 8 caracteres incluindo letra maiúscula, minúscula, número e caractere especial",
+    "database_error": "Erro ao conectar com o banco de dados. Verifique se o PostgreSQL está rodando e o DATABASE_URL está configurado corretamente no arquivo .env.local",
+    "invalid_credentials": "E-mail ou senha incorretos. Verifique suas credenciais",
+    "session_expired": "Sua sessão expirou por inatividade. Faça login novamente",
+    "forbidden": "Você não tem permissão para realizar esta ação",
+    "not_found": "Item não encontrado",
+    "internal_error": "Ops! Ocorreu um erro inesperado. Tente novamente em alguns instantes",
+    "bad_request": "Dados inválidos. Verifique as informações e tente novamente",
+    "conflict": "Este item já está cadastrado no sistema",
+    "client_not_found": "Cliente não encontrado",
+    "product_not_found": "Produto não encontrado",
+    "sale_not_found": "Venda não encontrada",
+    "cep_invalid": "CEP inválido. Digite 8 dígitos",
+    "cep_not_found": "CEP não encontrado",
+    "cnpj_invalid": "CNPJ inválido. Verifique os números informados",
+    "cpf_invalid": "CPF inválido. Verifique os números informados"
+  },
+  "success": {
+    "customer_created": "Cliente criado com sucesso",
+    "customer_updated": "Cliente atualizado com sucesso",
+    "customer_deleted": "Cliente excluído com sucesso",
+    "product_created": "Produto criado com sucesso",
+    "product_updated": "Produto atualizado com sucesso",
+    "sale_created": "Venda criada com sucesso"
+  },
+  "validation": {
+    "required": "Campo obrigatório",
+    "min_length": "Mínimo de {min} caracteres",
+    "max_length": "Máximo de {max} caracteres",
+    "invalid_format": "Formato inválido"
+  },
+  "dashboard": {
+    "title": "Visão Geral",
+    "customers": "Clientes",
+    "products": "Produtos",
+    "sales": "Vendas",
+    "revenue": "Faturamento"
+  },
+  "pagination": {
+    "page": "Página",
+    "of": "de",
+    "showing": "Mostrando",
+    "to": "até",
+    "of_total": "de {total}",
+    "items": "itens",
+    "no_results": "Nenhum resultado encontrado"
+  }
+}

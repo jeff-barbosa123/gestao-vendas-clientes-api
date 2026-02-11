@@ -51,11 +51,13 @@ module.exports = (req, res, next) => {
     return res.status(400).json({ error: MESSAGES.invalidEmail });
   }
 
-  if (cleanPass.length < 3) {
-    return res.status(400).json({ error: MESSAGES.passwordShort });
+  // Para LOGIN, validamos apenas que a senha não está vazia e tem tamanho razoável
+  // NÃO validamos força da senha no login - isso é feito apenas no registro/recuperação
+  if (cleanPass.length === 0) {
+    return res.status(400).json({ error: MESSAGES.passwordRequired });
   }
 
-  if (cleanPass.length > 30) {
+  if (cleanPass.length > 128) {
     return res.status(400).json({ error: MESSAGES.passwordLong });
   }
 

@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  postgres-local:
+    image: postgres:15
+    container_name: sgvc-postgres-local
+    environment:
+      POSTGRES_DB: sgvc_local
+      POSTGRES_USER: sgvc
+      POSTGRES_PASSWORD: sgvc123
+    ports:
+      - "5432:5432"
+    volumes:
+      - sgvc_postgres_local_data:/var/lib/postgresql/data
+    networks:
+      - sgvc-local-network
+
+volumes:
+  sgvc_postgres_local_data:
+
+networks:
+  sgvc-local-network:
+    driver: bridge

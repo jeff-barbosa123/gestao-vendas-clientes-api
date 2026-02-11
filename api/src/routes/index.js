@@ -14,6 +14,8 @@ const cepRoutes = require('./cepRoutes');
 const cnpjRoutes = require('./cnpjRoutes');
 const holidayRoutes = require('./holidayRoutes');
 const barcodeRoutes = require('./barcodeRoutes');
+const exportRoutes = require('./exportRoutes');
+const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
 
 router.use('/auth', authRoutes);
 router.use('/customers', customersRoutes);
@@ -28,5 +30,7 @@ router.use('/cep', cepRoutes);
 router.use('/cnpj', cnpjRoutes);
 router.use('/holidays', holidayRoutes);
 router.use('/barcodes', barcodeRoutes);
+router.use('/export', exportRoutes);
+router.use('/errors/analytics', errorAnalyticsRoutes);
 
 module.exports = router;

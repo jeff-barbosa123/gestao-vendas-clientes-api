@@ -6,21 +6,25 @@ const router = express.Router();
 
 router.use(authenticate);
 
-const CEP_GENERIC_ERROR = 'Erro ao consultar CEP';
 const respondSuccess = (res, data, message = 'CEP encontrado') =>
   res.status(200).json({ message, error: false, data });
-const respondError = (res, status, message) => res.status(status).json({ message, error: true });
 
-router.get('/:cep', async (req, res) => {
+router.get('/:cep', async (req, res, next) => {
   const raw = String(req.params.cep || '').replace(/\D/g, '');
   if (raw.length !== 8) {
-    return respondError(res, 400, 'CEP invalido. Digite 8 digitos.');
+    const err = new Error('CEP inválido. Informe 8 dígitos');
+    err.status = 400;
+    err.code = 'CEP_INVALID';
+    return next(err);
   }
 
   try {
     const result = await lookupCep(raw);
     if (result.notFound) {
-      return respondError(res, 404, 'CEP nao encontrado.');
+      const err = new Error('CEP não encontrado. Verifique o número informado');
+      err.status = 404;
+      err.code = 'CEP_NOT_FOUND';
+      return next(err);
     }
     return respondSuccess(res, {
       logradouro: result.data.logradouro || '',
@@ -29,7 +33,16 @@ router.get('/:cep', async (req, res) => {
       uf: result.data.uf || '',
     });
   } catch (err) {
-    return respondError(res, 502, CEP_GENERIC_ERROR);
+    // Se já tem status e code, passa adiante
+    if (err.status && err.code) {
+      return next(err);
+    }
+    // Caso contrário, cria erro amigável
+    const apiErr = new Error('Erro ao consultar CEP. Tente novamente ou preencha manualmente');
+    apiErr.status = 502;
+    apiErr.code = 'CEP_API_ERROR';
+    apiErr.originalError = err;
+    return next(apiErr);
   }
 });
 

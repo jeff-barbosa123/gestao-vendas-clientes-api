@@ -1,0 +1,147 @@
+================================================================================
+  🚀 BEM-VINDO AO SGVC - Sistema de Gestão de Vendas e Clientes
+================================================================================
+
+📋 INSTALAÇÃO RÁPIDA - 3 PASSOS SIMPLES
+================================================================================
+
+PASSO 1: INSTALAR NODE.JS
+--------------------------
+Opção A - Automática (Recomendado):
+  1. Execute o arquivo: INSTALAR-TUDO.bat
+  2. Quando solicitar permissões de administrador, clique em "Sim"
+  3. Aguarde a instalação completar
+
+Opção B - Manual:
+  1. Acesse: https://nodejs.org/
+  2. Baixe a versão LTS (Long Term Support)
+  3. Execute o instalador (.msi)
+  4. ⚠️ IMPORTANTE: Marque "Add to PATH" durante a instalação
+  5. Complete a instalação normalmente
+
+PASSO 2: VERIFICAR INSTALAÇÃO
+------------------------------
+Feche e reabra o terminal/PowerShell e execute:
+
+  node --version
+  npm --version
+
+Se mostrar as versões (ex: v20.11.0 e 10.2.4), está funcionando! ✅
+
+PASSO 3: INSTALAR DEPENDÊNCIAS
+-------------------------------
+Execute um destes arquivos:
+
+  • INSTALAR-TUDO.bat (mais completo)
+  • EXECUTAR-ESTE-PRIMEIRO.bat (passo a passo)
+
+Ou manualmente:
+
+  1. Navegue para o projeto no terminal:
+     cd "C:\Projetos\gestao-vendas-clientes-api\gestao-vendas-clientes-api"
+
+  2. Instale dependências da raiz:
+     npm install
+
+  3. Instale dependências da API:
+     cd api
+     npm install
+     cd ..
+
+  4. Configure ambiente LOCAL:
+     cd api
+     copy env.local.example .env.local
+     cd ..
+
+
+================================================================================
+🎯 INICIAR A APLICAÇÃO
+================================================================================
+
+Para iniciar em modo desenvolvimento (LOCAL):
+
+  1. Terminal 1 - API:
+     npm run dev:local
+
+  2. Terminal 2 - Frontend:
+     cd web
+     npm start
+
+  3. Acesse: http://localhost:4000
+
+
+================================================================================
+📚 DOCUMENTAÇÃO COMPLETA
+================================================================================
+
+Guias disponíveis:
+
+  • COMECE-AQUI.md - Guia completo de início
+  • INSTALACAO_NODEJS.md - Instalação detalhada do Node.js
+  • GUIA-RAPIDO-INSTALACAO.md - Guia rápido passo a passo
+  • CONFIGURACAO_AMBIENTES.md - Configuração de 3 ambientes (Local, HMG, Prod)
+  • TROUBLESHOOTING.md - Solução de problemas comuns
+  • EXECUTAR_TESTES.md - Como executar testes Cypress
+
+
+================================================================================
+⚠️ PROBLEMAS COMUNS
+================================================================================
+
+"npm não é reconhecido"
+  → Node.js não está instalado ou não está no PATH
+  → Solução: Instale Node.js e marque "Add to PATH" durante instalação
+  → Depois, feche e reabra o terminal
+
+"Cannot connect to localhost:3000"
+  → API não está rodando
+  → Solução: Execute "npm run dev:local" na raiz do projeto
+
+"Cannot connect to localhost:4000"
+  → Frontend não está rodando
+  → Solução: Execute "npm start" na pasta web/
+
+"Database connection error"
+  → PostgreSQL não está rodando (se usar banco)
+  → Solução: Use banco em memória (remova DATABASE_URL do .env.local)
+  → Ou inicie PostgreSQL: docker-compose -f docker-compose.local.yml up -d
+
+
+================================================================================
+✅ CHECKLIST FINAL
+================================================================================
+
+Após seguir todos os passos, verifique:
+
+  [ ] Node.js instalado (node --version funciona)
+  [ ] npm instalado (npm --version funciona)
+  [ ] Dependências instaladas (node_modules existe na raiz e em api/)
+  [ ] Arquivo .env.local criado em api/
+  [ ] API inicia sem erros (npm run dev:local)
+  [ ] Frontend inicia sem erros (cd web && npm start)
+  [ ] Acessa aplicação em http://localhost:4000
+
+
+================================================================================
+🎉 TUDO PRONTO!
+================================================================================
+
+Se tudo está funcionando, você está pronto para desenvolver!
+
+Consulte a documentação completa para mais detalhes sobre:
+  • Configuração de ambientes (Local, HMG, Produção)
+  • Execução de testes automatizados
+  • Estrutura do projeto
+  • Segurança e boas práticas
+
+
+================================================================================
+📞 PRECISA DE AJUDA?
+================================================================================
+
+Consulte os arquivos de documentação:
+  • TROUBLESHOOTING.md - Solução de problemas
+  • INSTALACAO_NODEJS.md - Instalação detalhada
+  • CONFIGURACAO_AMBIENTES.md - Configuração de ambientes
+
+================================================================================

@@ -162,7 +162,98 @@ async function markPasswordResetUsed(id) {
   return result.rows[0] || null;
 }
 
-async function listCustomers(ownerId) {
+async function listCustomers(ownerId, pagination = null, filters = {}) {
+  const hasPagination = pagination && typeof pagination.limit === 'number' && typeof pagination.offset === 'number';
+  
+  // Construir condições de filtro
+  const filterConditions = [];
+  const filterParams = [];
+  let paramIndex = ownerId ? 1 : 0;
+
+  // Filtro por tipo (all, birthdays, loyal, new, old)
+  if (filters.type) {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+    const next30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    if (filters.type === 'birthdays') {
+      // Aniversários nos próximos 30 dias
+      filterConditions.push(`
+        EXTRACT(MONTH FROM c.birth_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(DAY FROM c.birth_date) >= EXTRACT(DAY FROM CURRENT_DATE)
+        AND EXTRACT(DAY FROM c.birth_date) <= EXTRACT(DAY FROM CURRENT_DATE + INTERVAL '30 days')
+      `);
+    } else if (filters.type === 'new') {
+      // Clientes criados nos últimos 30 dias
+      filterConditions.push(`c.created_at >= $${++paramIndex}`);
+      filterParams.push(thirtyDaysAgo.toISOString());
+    } else if (filters.type === 'old') {
+      // Clientes criados há mais de 1 ano
+      filterConditions.push(`c.created_at < $${++paramIndex}`);
+      filterParams.push(oneYearAgo.toISOString());
+    } else if (filters.type === 'loyal') {
+      // Clientes fiéis (com muitas compras ou alto valor total)
+      filterConditions.push(`(
+        (SELECT COUNT(*) FROM sales s2 WHERE s2.customer_id = c.id AND (s2.status IS NULL OR s2.status = 'ACTIVE')) >= 5
+        OR (SELECT COALESCE(SUM(s3.total), 0) FROM sales s3 WHERE s3.customer_id = c.id AND (s3.status IS NULL OR s3.status = 'ACTIVE')) >= 1000
+      )`);
+    }
+  }
+
+  // Filtro por busca (nome, email, telefone)
+  if (filters.search) {
+    const searchTerm = `%${filters.search.toLowerCase()}%`;
+    paramIndex++;
+    filterConditions.push(`(
+      LOWER(c.name) LIKE $${paramIndex}
+      OR LOWER(c.email) LIKE $${paramIndex}
+      OR LOWER(c.phone) LIKE $${paramIndex}
+    )`);
+    filterParams.push(searchTerm);
+  }
+
+  // Filtro por data de criação
+  if (filters.createdFrom) {
+    filterConditions.push(`c.created_at >= $${++paramIndex}`);
+    filterParams.push(filters.createdFrom);
+  }
+  if (filters.createdTo) {
+    filterConditions.push(`c.created_at <= $${++paramIndex}`);
+    filterParams.push(filters.createdTo);
+  }
+
+  // Construir WHERE clause
+  const whereClause = [];
+  if (ownerId) {
+    whereClause.push(`c.owner_id = $1`);
+  }
+  if (filterConditions.length > 0) {
+    whereClause.push(...filterConditions);
+  }
+  const whereSql = whereClause.length > 0 ? `WHERE ${whereClause.join(' AND ')}` : '';
+
+  // Query para contar total (com filtros)
+  const countSql = `
+    SELECT COUNT(DISTINCT c.id) AS total
+      FROM customers c
+     ${whereSql}
+  `;
+  const countParams = ownerId ? [ownerId, ...filterParams] : filterParams;
+  const countResult = await query(countSql, countParams);
+  const total = parseInt(countResult.rows[0]?.total || '0', 10);
+
+  // Query principal com paginação e filtros
+  const orderBy = filters.sortBy === 'spent' 
+    ? 'total_spent DESC, c.name ASC'
+    : filters.sortBy === 'name_desc'
+    ? 'c.name DESC'
+    : 'c.name ASC';
+
+  // Calcular índices finais para LIMIT e OFFSET
+  const limitIndex = paramIndex + 1;
+  const offsetIndex = paramIndex + 2;
+
   const sql = `
     SELECT c.*,
            COALESCE(SUM(s.total), 0) AS total_spent,
@@ -173,11 +264,29 @@ async function listCustomers(ownerId) {
       LEFT JOIN sales s
         ON s.customer_id = c.id
        AND (s.status IS NULL OR s.status = 'ACTIVE')
-     ${ownerId ? "WHERE c.owner_id = $1" : ""}
+     ${whereSql}
      GROUP BY c.id
-     ORDER BY c.name ASC
+     ORDER BY ${orderBy}
+     ${hasPagination ? `LIMIT $${limitIndex} OFFSET $${offsetIndex}` : ''}
   `;
-  const result = ownerId ? await query(sql, [ownerId]) : await query(sql, []);
+  
+  const params = ownerId 
+    ? (hasPagination 
+        ? [ownerId, ...filterParams, pagination.limit, pagination.offset]
+        : [ownerId, ...filterParams])
+    : (hasPagination 
+        ? [...filterParams, pagination.limit, pagination.offset]
+        : filterParams);
+    
+  const result = await query(sql, params);
+  
+  if (hasPagination) {
+    return {
+      rows: result.rows,
+      total,
+    };
+  }
+  
   return result.rows;
 }
 
@@ -299,10 +408,35 @@ async function deleteCustomer(id) {
   return result.rows[0] || null;
 }
 
-async function listProducts(ownerId) {
-  const result = ownerId
-    ? await query("SELECT * FROM products WHERE owner_id = $1", [ownerId])
-    : await query("SELECT * FROM products", []);
+async function listProducts(ownerId, pagination = null) {
+  const hasPagination = pagination && typeof pagination.limit === 'number' && typeof pagination.offset === 'number';
+  
+  // Query para contar total
+  const countSql = ownerId
+    ? "SELECT COUNT(*) AS total FROM products WHERE owner_id = $1"
+    : "SELECT COUNT(*) AS total FROM products";
+  const countParams = ownerId ? [ownerId] : [];
+  const countResult = await query(countSql, countParams);
+  const total = parseInt(countResult.rows[0]?.total || '0', 10);
+
+  // Query principal com paginação
+  const sql = ownerId
+    ? `SELECT * FROM products WHERE owner_id = $1 ORDER BY name ASC ${hasPagination ? 'LIMIT $2 OFFSET $3' : ''}`
+    : `SELECT * FROM products ORDER BY name ASC ${hasPagination ? 'LIMIT $1 OFFSET $2' : ''}`;
+  
+  const params = ownerId
+    ? (hasPagination ? [ownerId, pagination.limit, pagination.offset] : [ownerId])
+    : (hasPagination ? [pagination.limit, pagination.offset] : []);
+    
+  const result = await query(sql, params);
+  
+  if (hasPagination) {
+    return {
+      rows: result.rows.map(normalizeProduct),
+      total,
+    };
+  }
+  
   return result.rows.map(normalizeProduct);
 }
 
@@ -623,12 +757,33 @@ async function softDeleteRecipe(id) {
   return result.rows[0] || null;
 }
 
-async function listSales(ownerId) {
-  const result = ownerId
-    ? await query("SELECT * FROM sales WHERE owner_id = $1", [ownerId])
-    : await query("SELECT * FROM sales", []);
+async function listSales(ownerId, pagination = null) {
+  const hasPagination = pagination && typeof pagination.limit === 'number' && typeof pagination.offset === 'number';
+  
+  // Query para contar total
+  const countSql = ownerId
+    ? "SELECT COUNT(*) AS total FROM sales WHERE owner_id = $1"
+    : "SELECT COUNT(*) AS total FROM sales";
+  const countParams = ownerId ? [ownerId] : [];
+  const countResult = await query(countSql, countParams);
+  const total = parseInt(countResult.rows[0]?.total || '0', 10);
+
+  // Query principal com paginação
+  const sql = ownerId
+    ? `SELECT * FROM sales WHERE owner_id = $1 ORDER BY date DESC, id DESC ${hasPagination ? 'LIMIT $2 OFFSET $3' : ''}`
+    : `SELECT * FROM sales ORDER BY date DESC, id DESC ${hasPagination ? 'LIMIT $1 OFFSET $2' : ''}`;
+  
+  const params = ownerId
+    ? (hasPagination ? [ownerId, pagination.limit, pagination.offset] : [ownerId])
+    : (hasPagination ? [pagination.limit, pagination.offset] : []);
+    
+  const result = await query(sql, params);
   const sales = result.rows.map(normalizeSale);
-  if (sales.length === 0) return [];
+  
+  if (sales.length === 0) {
+    return hasPagination ? { rows: [], total } : [];
+  }
+  
   const ids = sales.map((row) => row.id);
   const items = await query("SELECT * FROM sale_items WHERE sale_id = ANY($1)", [ids]);
   const itemsBySale = new Map();
@@ -637,7 +792,8 @@ async function listSales(ownerId) {
     list.push(row);
     itemsBySale.set(row.sale_id, list);
   });
-  return sales.map((sale) => ({
+  
+  const salesWithItems = sales.map((sale) => ({
     ...sale,
     items: (itemsBySale.get(sale.id) || []).map((row) => ({
       id: row.id,
@@ -647,6 +803,15 @@ async function listSales(ownerId) {
       cmv: row.cmv == null ? null : Number(row.cmv),
     })),
   }));
+  
+  if (hasPagination) {
+    return {
+      rows: salesWithItems,
+      total,
+    };
+  }
+  
+  return salesWithItems;
 }
 
 async function getSaleById(id) {

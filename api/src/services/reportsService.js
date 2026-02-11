@@ -60,7 +60,9 @@ async function getRevenue({ start, end, day, week, month, year, breakdown, userI
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
     const dx = new Date(s.date);
-    return dx >= startDate && dx <= endDate;
+    // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
+    const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
+    return dx >= startDate && dx <= endOfDay;
   });
   if (normalizedBreakdown === "total") return summarize(sales, "total");
   if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
@@ -105,6 +107,86 @@ async function exportRevenue({ start, end, day, week, month, year, format = "csv
   throw err;
 }
 
+/**
+ * Valida consistência entre dados de revenue e financial
+ * Loga avisos se houver divergência, mas não quebra a resposta
+ * @param {object} revenueData - Dados do endpoint revenue
+ * @param {object} financialData - Dados do endpoint financial
+ * @param {object} params - Parâmetros da requisição (para contexto no log)
+ */
+function validateDataConsistency(revenueData, financialData, params = {}) {
+  try {
+    // Só valida se ambos são objetos (não arrays)
+    if (!revenueData || !financialData || Array.isArray(revenueData) || Array.isArray(financialData)) {
+      return; // Não valida breakdowns agrupados
+    }
+
+    const revenueTotal = Number(revenueData.total || 0);
+    const revenueCount = Number(revenueData.quantidadeVendas || 0);
+    const financialRevenue = Number(financialData.revenue || 0);
+    const financialCount = Number(financialData.salesCount || 0);
+
+    // Tolerância de 0.01 para arredondamentos de ponto flutuante
+    const tolerance = 0.01;
+
+    // Validação 1: Revenue total deve ser igual a financial revenue
+    if (Math.abs(revenueTotal - financialRevenue) > tolerance) {
+      console.warn('[REPORTS] ⚠️ Divergência detectada entre revenue.total e financial.revenue', {
+        revenueTotal,
+        financialRevenue,
+        difference: Math.abs(revenueTotal - financialRevenue),
+        params,
+      });
+    }
+
+    // Validação 2: Quantidade de vendas deve ser igual
+    if (revenueCount !== financialCount) {
+      console.warn('[REPORTS] ⚠️ Divergência detectada entre revenue.quantidadeVendas e financial.salesCount', {
+        revenueCount,
+        financialCount,
+        params,
+      });
+    }
+
+    // Validação 3: Cálculos financeiros (fail-safe, não bloqueia)
+    const expectedProfit = financialRevenue - (financialData.cmv || 0);
+    const actualProfit = financialData.profit || 0;
+    if (Math.abs(expectedProfit - actualProfit) > tolerance) {
+      console.warn('[REPORTS] ⚠️ Divergência detectada no cálculo de lucro', {
+        expectedProfit,
+        actualProfit,
+        difference: Math.abs(expectedProfit - actualProfit),
+        params,
+      });
+    }
+
+    const expectedMargin = financialRevenue > 0 ? expectedProfit / financialRevenue : 0;
+    const actualMargin = financialData.margin || 0;
+    if (Math.abs(expectedMargin - actualMargin) > tolerance) {
+      console.warn('[REPORTS] ⚠️ Divergência detectada no cálculo de margem', {
+        expectedMargin,
+        actualMargin,
+        difference: Math.abs(expectedMargin - actualMargin),
+        params,
+      });
+    }
+
+    const expectedAvgTicket = financialCount > 0 ? financialRevenue / financialCount : 0;
+    const actualAvgTicket = financialData.avgTicket || 0;
+    if (Math.abs(expectedAvgTicket - actualAvgTicket) > tolerance) {
+      console.warn('[REPORTS] ⚠️ Divergência detectada no cálculo de ticket médio', {
+        expectedAvgTicket,
+        actualAvgTicket,
+        difference: Math.abs(expectedAvgTicket - actualAvgTicket),
+        params,
+      });
+    }
+  } catch (err) {
+    // Se a validação falhar, não quebra o fluxo
+    console.error('[REPORTS] Erro na validação de consistência (não crítico):', err.message);
+  }
+}
+
 async function getFinancialPerformance({ start, end, day, week, month, year, breakdown, userId, user }) {
   const normalizedBreakdown = validateBreakdown(breakdown || "total");
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
@@ -112,7 +194,9 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
     const dx = new Date(s.date);
-    return dx >= startDate && dx <= endDate;
+    // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
+    const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
+    return dx >= startDate && dx <= endOfDay;
   });
   const total = sales.reduce(
     (acc, sale) => {
@@ -136,7 +220,17 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
     salesCount: total.count,
   };
 
-  if (normalizedBreakdown === "total") return baseMetrics;
+  if (normalizedBreakdown === "total") {
+    // Validação de consistência (apenas para breakdown "total")
+    try {
+      const revenueData = await getRevenue({ start, end, day, week, month, year, breakdown: "total", userId, user });
+      validateDataConsistency(revenueData, baseMetrics, { start, end, day, week, month, year, breakdown, userId: ownerId });
+    } catch (err) {
+      // Se a validação falhar, não quebra a resposta
+      console.error('[REPORTS] Erro ao validar consistência (não crítico):', err.message);
+    }
+    return baseMetrics;
+  }
   if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
     const err = new Error("Parâmetro breakdown inválido");
     err.status = 400;

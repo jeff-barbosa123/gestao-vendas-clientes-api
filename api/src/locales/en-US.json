@@ -1,0 +1,69 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "close": "Close"
+  },
+  "error": {
+    "invalid_email": "Invalid email. Check the numbers entered",
+    "email_required": "Email is required",
+    "email_already_exists": "This email is already registered. Use another email or recover your password",
+    "password_required": "Password is required",
+    "password_short": "Password too short. Use at least 8 characters",
+    "password_long": "Password too long. Use at most 128 characters",
+    "password_weak": "Password too weak. Use at least 8 characters including uppercase, lowercase, number and special character",
+    "invalid_credentials": "Incorrect email or password. Check your credentials",
+    "session_expired": "Your session has expired due to inactivity. Please log in again",
+    "forbidden": "You do not have permission to perform this action",
+    "not_found": "Item not found",
+    "internal_error": "Oops! An unexpected error occurred. Please try again in a few moments",
+    "bad_request": "Invalid data. Check the information and try again",
+    "conflict": "This item is already registered in the system",
+    "client_not_found": "Customer not found",
+    "product_not_found": "Product not found",
+    "sale_not_found": "Sale not found",
+    "cep_invalid": "Invalid postal code. Enter 8 digits",
+    "cep_not_found": "Postal code not found",
+    "cnpj_invalid": "Invalid CNPJ. Check the numbers entered",
+    "cpf_invalid": "Invalid CPF. Check the numbers entered"
+  },
+  "success": {
+    "customer_created": "Customer created successfully",
+    "customer_updated": "Customer updated successfully",
+    "customer_deleted": "Customer deleted successfully",
+    "product_created": "Product created successfully",
+    "product_updated": "Product updated successfully",
+    "sale_created": "Sale created successfully"
+  },
+  "validation": {
+    "required": "Required field",
+    "min_length": "Minimum of {min} characters",
+    "max_length": "Maximum of {max} characters",
+    "invalid_format": "Invalid format"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "customers": "Customers",
+    "products": "Products",
+    "sales": "Sales",
+    "revenue": "Revenue"
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "of_total": "of {total}",
+    "items": "items",
+    "no_results": "No results found"
+  }
+}

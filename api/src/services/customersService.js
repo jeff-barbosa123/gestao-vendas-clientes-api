@@ -105,10 +105,10 @@ function getCustomerTypeFromNotes(value) {
   return String(parsed.metadata.type || "").trim().toUpperCase();
 }
 
-function throwCnpjError(message = "CNPJ inválido") {
+function throwCnpjError(message = "CNPJ inválido. Verifique os números informados") {
   const err = new Error(message);
   err.status = 422;
-  err.code = "INVALID_CNPJ";
+  err.code = "CNPJ_INVALID";
   err.error = true;
   throw err;
 }
@@ -208,8 +208,30 @@ function validateBirthDate(value) {
   return !Number.isNaN(parsed.getTime());
 }
 
-async function list(user) {
-  const customers = await repo.listCustomers(user ? user.id : null);
+async function list(user, pagination = null, filters = {}) {
+  const result = await repo.listCustomers(user ? user.id : null, pagination, filters);
+  
+  // Se tem paginação, retorna formato paginado
+  if (pagination && result.total !== undefined) {
+    const customers = result.rows.map((customer) =>
+      normalizeCustomerOutput({
+        ...customer,
+        ownerId: customer.owner_id,
+        totalSpent: Number(customer.total_spent || 0),
+        purchases: Number(customer.purchases || 0),
+        firstPurchase: customer.first_purchase,
+        lastPurchase: customer.last_purchase,
+        isNew: isCustomerNew(customer.created_at || customer.createdAt),
+        isBirthdaySoon: isBirthdaySoon(customer.birth_date || customer.birthDate),
+      })
+    );
+    
+    const { createPaginatedResponse } = require('../utils/pagination');
+    return createPaginatedResponse(customers, result.total, pagination.page, pagination.limit);
+  }
+  
+  // Sem paginação (backward compatibility)
+  const customers = Array.isArray(result) ? result : result.rows || [];
   return customers.map((customer) =>
     normalizeCustomerOutput({
       ...customer,
@@ -227,15 +249,15 @@ async function list(user) {
 async function getById(id, user) {
   const customer = await repo.getCustomerById(id);
   if (!customer) {
-    const err = new Error("Cliente n\u00e3o encontrado");
+    const err = new Error("Cliente não encontrado");
     err.status = 404;
-    err.code = "NOT_FOUND";
+    err.code = "CLIENT_NOT_FOUND";
     throw err;
   }
   if (customer.owner_id && user && customer.owner_id !== user.id) {
-    const err = new Error("Acesso negado");
+    const err = new Error("Você não tem permissão para acessar este cliente");
     err.status = 403;
-    err.code = "ACCESS_DENIED";
+    err.code = "FORBIDDEN";
     throw err;
   }
   return normalizeCustomerOutput({
@@ -250,35 +272,35 @@ async function create(data, user) {
   ensureCnpjForPJ(customerType, payload.cnpj);
 
   if (!payload.name || !payload.email) {
-    const err = new Error("Campos obrigat\u00f3rios ausentes");
+    const err = new Error("Campos obrigatórios não preenchidos");
     err.status = 422;
     err.code = "REQUIRED_FIELDS";
     throw err;
   }
 
   if (!validateNameLength(payload.name)) {
-    const err = new Error("Nome excede o tamanho permitido");
+    const err = new Error("Nome muito longo. O nome deve ter no máximo 255 caracteres");
     err.status = 422;
     err.code = "NAME_TOO_LONG";
     throw err;
   }
 
   if (hasSqlInjectionRisk(payload.name) || hasXssRisk(payload.name)) {
-    const err = new Error("Nome inv\u00e1lido");
+    const err = new Error("Nome contém caracteres inválidos");
     err.status = 422;
     err.code = "INVALID_NAME";
     throw err;
   }
 
   if (!validateEmailFormat(payload.email)) {
-    const err = new Error("Formato de e-mail inv\u00e1lido");
+    const err = new Error("Digite um e-mail válido");
     err.status = 422;
-    err.code = "INVALID_EMAIL";
+    err.code = "EMAIL_INVALID";
     throw err;
   }
 
   if (hasSqlInjectionRisk(payload.phone) || hasXssRisk(payload.phone)) {
-    const err = new Error("Telefone inv\u00e1lido");
+    const err = new Error("Telefone contém caracteres inválidos");
     err.status = 422;
     err.code = "INVALID_PHONE";
     throw err;
@@ -289,16 +311,16 @@ async function create(data, user) {
   }
 
   if (payload.cpf && !validateCpf(payload.cpf)) {
-    const err = new Error("CPF inv\u00e1lido");
+    const err = new Error("CPF inválido. Verifique os números informados");
     err.status = 422;
-    err.code = "INVALID_CPF";
+    err.code = "CPF_INVALID";
     throw err;
   }
 
   if (!validateBirthDate(payload.birthDate)) {
-    const err = new Error("Data de nascimento invalida");
+    const err = new Error("Data de nascimento inválida");
     err.status = 422;
-    err.code = "INVALID_BIRTH_DATE";
+    err.code = "BIRTH_DATE_INVALID";
     throw err;
   }
 
@@ -311,7 +333,7 @@ async function create(data, user) {
     payload.notes,
   ];
   if (addressFields.some((value) => hasSqlInjectionRisk(value) || hasXssRisk(value))) {
-    const err = new Error("Endere\u00e7o inv\u00e1lido");
+    const err = new Error("Endereço contém caracteres inválidos");
     err.status = 422;
     err.code = "INVALID_ADDRESS";
     throw err;
@@ -319,18 +341,18 @@ async function create(data, user) {
 
   const exists = await repo.customerEmailExists(payload.email);
   if (exists) {
-    const err = new Error("E-mail ja cadastrado");
+    const err = new Error("Este e-mail já está cadastrado para outro cliente");
     err.status = 409;
-    err.code = "EMAIL_ALREADY_EXISTS";
+    err.code = "CLIENT_EMAIL_EXISTS";
     throw err;
   }
 
   if (payload.cpf) {
     const cpfExists = await repo.customerCpfExists(payload.cpf);
     if (cpfExists) {
-      const err = new Error("CPF ja cadastrado");
+      const err = new Error("Este CPF já está cadastrado para outro cliente");
       err.status = 422;
-      err.code = "CPF_ALREADY_EXISTS";
+      err.code = "CLIENT_CPF_EXISTS";
       throw err;
     }
   }
@@ -338,9 +360,9 @@ async function create(data, user) {
   if (payload.cnpj) {
     const cnpjExists = await repo.customerCnpjExists(payload.cnpj);
     if (cnpjExists) {
-      const err = new Error("CNPJ ja cadastrado");
+      const err = new Error("Este CNPJ já está cadastrado para outro cliente");
       err.status = 422;
-      err.code = "CNPJ_ALREADY_EXISTS";
+      err.code = "CLIENT_CNPJ_EXISTS";
       throw err;
     }
   }
@@ -358,15 +380,15 @@ async function create(data, user) {
 async function update(id, data, user) {
   const current = await repo.getCustomerById(id);
   if (!current) {
-    const err = new Error("Cliente n\u00e3o encontrado");
+    const err = new Error("Cliente não encontrado");
     err.status = 404;
-    err.code = "NOT_FOUND";
+    err.code = "CLIENT_NOT_FOUND";
     throw err;
   }
   if (current.owner_id && user && current.owner_id !== user.id) {
-    const err = new Error("Acesso negado");
+    const err = new Error("Você não tem permissão para editar este cliente");
     err.status = 403;
-    err.code = "ACCESS_DENIED";
+    err.code = "FORBIDDEN";
     throw err;
   }
 
@@ -375,30 +397,30 @@ async function update(id, data, user) {
   ensureCnpjForPJ(customerType, payload.cnpj);
 
   if (payload.name && !validateNameLength(payload.name)) {
-    const err = new Error("Nome excede o tamanho permitido");
+    const err = new Error("Nome muito longo. O nome deve ter no máximo 255 caracteres");
     err.status = 422;
     err.code = "NAME_TOO_LONG";
     throw err;
   }
 
   if (payload.name && (hasSqlInjectionRisk(payload.name) || hasXssRisk(payload.name))) {
-    const err = new Error("Nome inv\u00e1lido");
+    const err = new Error("Nome contém caracteres inválidos");
     err.status = 422;
     err.code = "INVALID_NAME";
     throw err;
   }
 
   if (payload.phone && (hasSqlInjectionRisk(payload.phone) || hasXssRisk(payload.phone))) {
-    const err = new Error("Telefone inv\u00e1lido");
+    const err = new Error("Telefone contém caracteres inválidos");
     err.status = 422;
     err.code = "INVALID_PHONE";
     throw err;
   }
 
   if (payload.cpf && !validateCpf(payload.cpf)) {
-    const err = new Error("CPF inv\u00e1lido");
+    const err = new Error("CPF inválido. Verifique os números informados");
     err.status = 422;
-    err.code = "INVALID_CPF";
+    err.code = "CPF_INVALID";
     throw err;
   }
 

@@ -1,0 +1,69 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "close": "Cerrar"
+  },
+  "error": {
+    "invalid_email": "Correo electrónico inválido. Verifique los números ingresados",
+    "email_required": "El correo electrónico es obligatorio",
+    "email_already_exists": "Este correo electrónico ya está registrado. Use otro correo o recupere su contraseña",
+    "password_required": "La contraseña es obligatoria",
+    "password_short": "Contraseña muy corta. Use al menos 8 caracteres",
+    "password_long": "Contraseña muy larga. Use como máximo 128 caracteres",
+    "password_weak": "Contraseña muy débil. Use al menos 8 caracteres incluyendo mayúscula, minúscula, número y carácter especial",
+    "invalid_credentials": "Correo electrónico o contraseña incorrectos. Verifique sus credenciales",
+    "session_expired": "Su sesión ha expirado por inactividad. Por favor, inicie sesión nuevamente",
+    "forbidden": "No tiene permiso para realizar esta acción",
+    "not_found": "Elemento no encontrado",
+    "internal_error": "¡Ups! Ocurrió un error inesperado. Intente nuevamente en unos momentos",
+    "bad_request": "Datos inválidos. Verifique la información e intente nuevamente",
+    "conflict": "Este elemento ya está registrado en el sistema",
+    "client_not_found": "Cliente no encontrado",
+    "product_not_found": "Producto no encontrado",
+    "sale_not_found": "Venta no encontrada",
+    "cep_invalid": "Código postal inválido. Ingrese 8 dígitos",
+    "cep_not_found": "Código postal no encontrado",
+    "cnpj_invalid": "CNPJ inválido. Verifique los números ingresados",
+    "cpf_invalid": "CPF inválido. Verifique los números ingresados"
+  },
+  "success": {
+    "customer_created": "Cliente creado con éxito",
+    "customer_updated": "Cliente actualizado con éxito",
+    "customer_deleted": "Cliente eliminado con éxito",
+    "product_created": "Producto creado con éxito",
+    "product_updated": "Producto actualizado con éxito",
+    "sale_created": "Venta creada con éxito"
+  },
+  "validation": {
+    "required": "Campo obligatorio",
+    "min_length": "Mínimo de {min} caracteres",
+    "max_length": "Máximo de {max} caracteres",
+    "invalid_format": "Formato inválido"
+  },
+  "dashboard": {
+    "title": "Resumen",
+    "customers": "Clientes",
+    "products": "Productos",
+    "sales": "Ventas",
+    "revenue": "Ingresos"
+  },
+  "pagination": {
+    "page": "Página",
+    "of": "de",
+    "showing": "Mostrando",
+    "to": "hasta",
+    "of_total": "de {total}",
+    "items": "elementos",
+    "no_results": "No se encontraron resultados"
+  }
+}

@@ -1,6 +1,33 @@
 const { logAudit } = require("../utils/logger");
 
-const SENSITIVE_KEYS = ["password", "senha", "token", "refreshToken"];
+const SENSITIVE_KEYS = [
+  "password",
+  "senha",
+  "token",
+  "refreshToken",
+  "currentPassword",
+  "newPassword",
+  "confirmPassword",
+  "accessToken",
+  "authorization",
+  "jwt",
+  "secret",
+  "apiKey",
+  "apikey",
+  "api_key",
+  "access_token",
+  "refresh_token",
+  "secretKey",
+  "privateKey",
+  "creditCard",
+  "creditcard",
+  "credit_card",
+  "cvv",
+  "cvc",
+  "ssn",
+  "cpf",
+  "cnpj",
+];
 
 function scrubBody(body) {
   if (!body || typeof body !== "object") return undefined;

@@ -1,8 +1,24 @@
 const salesService = require("../services/salesService");
+const { parsePagination, validatePagination } = require("../utils/pagination");
 
 async function list(req, res, next) {
   try {
-    res.json(await salesService.getAll(req.user));
+    // Valida parâmetros de paginação
+    const validationError = validatePagination(req.query);
+    if (validationError) {
+      const err = new Error(validationError.message);
+      err.status = validationError.status;
+      err.code = validationError.code;
+      return next(err);
+    }
+
+    // Parse paginação (opcional)
+    const pagination = req.query.page || req.query.limit
+      ? parsePagination(req.query, { defaultLimit: 20, maxLimit: 100 })
+      : null;
+
+    const result = await salesService.getAll(req.user, pagination);
+    res.json(result);
   } catch (e) {
     next(e);
   }

@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  postgres-hmg:
+    image: postgres:15
+    container_name: sgvc-postgres-hmg
+    environment:
+      POSTGRES_DB: sgvc_hmg
+      POSTGRES_USER: sgvc_hmg
+      POSTGRES_PASSWORD: CHANGE_HMG_PASSWORD
+    ports:
+      - "5433:5432"  # Porta diferente para não conflitar com local
+    volumes:
+      - sgvc_postgres_hmg_data:/var/lib/postgresql/data
+    networks:
+      - sgvc-hmg-network
+
+volumes:
+  sgvc_postgres_hmg_data:
+
+networks:
+  sgvc-hmg-network:
+    driver: bridge

@@ -53,8 +53,17 @@ function calcularCmvPrevisto(product) {
   return Number(ratio.toFixed(2));
 }
 
-async function getAll(user) {
-  return repo.listProducts(user ? user.id : null);
+async function getAll(user, pagination = null) {
+  const result = await repo.listProducts(user ? user.id : null, pagination);
+  
+  // Se tem paginação, retorna formato paginado
+  if (pagination && result.total !== undefined) {
+    const { createPaginatedResponse } = require('../utils/pagination');
+    return createPaginatedResponse(result.rows, result.total, pagination.page, pagination.limit);
+  }
+  
+  // Sem paginação (backward compatibility)
+  return Array.isArray(result) ? result : result.rows || [];
 }
 
 async function getById(id, user) {

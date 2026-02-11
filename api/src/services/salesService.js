@@ -248,8 +248,22 @@ async function getAudit(saleId) {
   };
 }
 
-async function getAll(user) {
-  const sales = await repo.listSales(user ? user.id : null);
+async function getAll(user, pagination = null) {
+  const result = await repo.listSales(user ? user.id : null, pagination);
+  
+  // Se tem paginação, retorna formato paginado
+  if (pagination && result.total !== undefined) {
+    const sales = result.rows.map((s) => ({
+      ...s,
+      statusVenda: s.status_venda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
+    }));
+    
+    const { createPaginatedResponse } = require('../utils/pagination');
+    return createPaginatedResponse(sales, result.total, pagination.page, pagination.limit);
+  }
+  
+  // Sem paginação (backward compatibility)
+  const sales = Array.isArray(result) ? result : result.rows || [];
   return sales.map((s) => ({
     ...s,
     statusVenda: s.status_venda || (s.status === "CANCELED" ? "cancelada" : "ativa"),

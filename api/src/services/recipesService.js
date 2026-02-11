@@ -73,6 +73,61 @@ function assertCompatibleUnits(unit, packUnit) {
   }
 }
 
+/**
+ * Normaliza e converte a unidade do pacote para corresponder à unidade usada
+ * Regra: unidade do item = unidade do pacote (g com g, kg com kg, ml com ml, l com l)
+ */
+function normalizePackUnitToMatch(quantityUnit, packUnit, packValue) {
+  if (!quantityUnit || !packUnit || !Number.isFinite(packValue)) {
+    return { packValue, packUnit };
+  }
+
+  const qtyUnit = String(quantityUnit).toLowerCase();
+  const pUnit = String(packUnit).toLowerCase();
+
+  // Se as unidades já são compatíveis, não precisa converter
+  if (qtyUnit === pUnit) {
+    return { packValue, packUnit };
+  }
+
+  // Conversões possíveis: kg ↔ g, l ↔ ml
+  // Caso 1: Quantidade em g, pacote em kg → converter kg para g
+  if (qtyUnit === 'g' && pUnit === 'kg') {
+    return {
+      packValue: packValue * 1000,
+      packUnit: 'g',
+    };
+  }
+
+  // Caso 2: Quantidade em kg, pacote em g → converter g para kg
+  if (qtyUnit === 'kg' && pUnit === 'g') {
+    return {
+      packValue: packValue / 1000,
+      packUnit: 'kg',
+    };
+  }
+
+  // Caso 3: Quantidade em ml, pacote em l → converter l para ml
+  if (qtyUnit === 'ml' && pUnit === 'l') {
+    return {
+      packValue: packValue * 1000,
+      packUnit: 'ml',
+    };
+  }
+
+  // Caso 4: Quantidade em l, pacote em ml → converter ml para l
+  if (qtyUnit === 'l' && pUnit === 'ml') {
+    return {
+      packValue: packValue / 1000,
+      packUnit: 'l',
+    };
+  }
+
+  // Unidades incompatíveis (ex: g com ml, un com g) - retorna sem converter
+  // O assertCompatibleUnits vai detectar e lançar erro
+  return { packValue, packUnit };
+}
+
 function ensureNumber(value, fieldName) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
@@ -164,8 +219,17 @@ function normalizeIngredients(list) {
     const packageQuantity = ensureGreaterThanZero(item.packageQuantity ?? 1, "packageQuantity");
     const packageCost = ensureNonNegative(item.cost ?? 0, "cost");
     const unit = normalizeUnit(item.unit ?? item.unidade);
-    const packUnit = normalizeUnit(item.packUnit ?? item.pack_unit ?? item.unidadePacote) || unit;
-    assertCompatibleUnits(unit, packUnit);
+    let packUnit = normalizeUnit(item.packUnit ?? item.pack_unit ?? item.unidadePacote) || unit;
+    
+    // Normalizar unidade do pacote para corresponder à unidade usada
+    // Esta é a regra de ouro: unidade do item = unidade do pacote
+    const normalizedPack = normalizePackUnitToMatch(unit, packUnit, packageQuantity);
+    const finalPackQuantity = normalizedPack.packValue;
+    const finalPackUnit = normalizedPack.packUnit;
+    
+    // Validar que as unidades são compatíveis (mesmo grupo: peso, volume, unidade)
+    assertCompatibleUnits(unit, finalPackUnit);
+    
     const component =
       item.component != null && String(item.component || "").trim()
         ? String(item.component || "").trim()
@@ -174,18 +238,21 @@ function normalizeIngredients(list) {
       ensureSafeText(component, "Componente");
     }
 
+    // Agora ambas as quantidades já estão na mesma unidade, então normalizamos para a base
     const quantityBase = normalizeQuantity(quantity, unit);
-    const packageBase = normalizeQuantity(packageQuantity, packUnit);
-    const unitCost = round2(packageCost / packageBase);
+    const packageBase = normalizeQuantity(finalPackQuantity, finalPackUnit);
+    
+    // Calcular custo unitário e total
+    const unitCost = packageBase > 0 ? round2(packageCost / packageBase) : 0;
     const totalCost = round2(unitCost * quantityBase);
 
     return {
       name,
       quantity,
       cost: round2(packageCost),
-      packageQuantity,
+      packageQuantity: finalPackQuantity, // Usar o valor normalizado
       unit,
-      packUnit,
+      packUnit: finalPackUnit, // Usar a unidade normalizada
       component,
       unitCost,
       totalCost,
@@ -482,6 +549,26 @@ async function calculate(payload = {}) {
 
 async function exportRecipe(id, format = "csv", user) {
   const recipe = await getById(id, user);
+  
+  // Recalcular os ingredientes para garantir que os custos estão corretos
+  // (importante para receitas antigas que foram salvas com unidades mistas)
+  let recalculatedIngredients = [];
+  if (recipe.ingredients && recipe.ingredients.length > 0) {
+    try {
+      recalculatedIngredients = normalizeIngredients(recipe.ingredients.map(ing => ({
+        name: ing.name,
+        quantity: ing.quantity,
+        unit: ing.unit,
+        packageQuantity: ing.packageQuantity,
+        packUnit: ing.packUnit,
+        cost: ing.cost,
+        component: ing.component,
+      })));
+    } catch (err) {
+      // Se houver erro no recálculo, usar os valores originais
+      recalculatedIngredients = recipe.ingredients;
+    }
+  }
 
   if (format === "csv" || format === "excel") {
     const csvEscape = (value) => {
@@ -514,7 +601,7 @@ async function exportRecipe(id, format = "csv", user) {
       "",
       "Ingredientes",
       "Ingrediente;Quantidade;Unidade;Custo unitário;Custo total",
-      ...(recipe.ingredients || []).map((ing) =>
+      ...(recalculatedIngredients.length > 0 ? recalculatedIngredients : (recipe.ingredients || [])).map((ing) =>
         [
           csvEscape(ing.name),
           csvEscape(ing.quantity),
@@ -570,6 +657,11 @@ async function exportRecipe(id, format = "csv", user) {
     doc.fontSize(14).text("Ingredientes");
     doc.moveDown(0.5);
     doc.fontSize(10);
+
+    // Usar ingredientes recalculados se disponíveis
+    const ingredientsForPDF = recalculatedIngredients.length > 0 
+      ? recalculatedIngredients 
+      : (recipe.ingredients || []);
 
     const tableX = doc.x;
     const tableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
@@ -630,7 +722,7 @@ async function exportRecipe(id, format = "csv", user) {
 
     drawHeader();
 
-    (recipe.ingredients || []).forEach((ing) => {
+    ingredientsForPDF.forEach((ing) => {
       drawRow([
         String(ing.name || ""),
         formatNumber(ing.quantity),

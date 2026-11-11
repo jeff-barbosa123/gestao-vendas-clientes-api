@@ -33,6 +33,7 @@ const MAX_PASSWORD_LENGTH = Number(process.env.LOGIN_MAX_PASSWORD_LENGTH || 128)
 const RESET_TOKEN_TTL_MINUTES = Number(process.env.RESET_TOKEN_TTL_MINUTES || 30);
 const RESET_TOKEN_SECRET = process.env.RESET_TOKEN_SECRET || JWT_SECRET;
 const WEB_BASE_URL = process.env.WEB_BASE_URL || "http://localhost:4000";
+const EMAIL_VERIFY_TOKEN_SECRET = process.env.EMAIL_VERIFY_TOKEN_SECRET || JWT_SECRET;
 
 const MESSAGES = {
   invalidCredentials: "Credenciais inv\u00e1lidas",
@@ -257,6 +258,13 @@ function hashResetToken(token) {
     .digest("hex");
 }
 
+function hashEmailVerificationToken(token) {
+  return crypto
+    .createHash("sha256")
+    .update(`${token}.${EMAIL_VERIFY_TOKEN_SECRET}`)
+    .digest("hex");
+}
+
 function buildResetLink(token) {
   const base = WEB_BASE_URL.endsWith("/") ? WEB_BASE_URL.slice(0, -1) : WEB_BASE_URL;
   return `${base}/reset-password.html?token=${encodeURIComponent(token)}`;
@@ -352,6 +360,21 @@ function issueTokens(user) {
   }
 }
 
+// Registra a tentativa inválida e devolve o erro adequado (401 ou 423 se bloqueou).
+// Antes o "throw" ficava dentro do try e o catch trocava o 423 por 401.
+async function buildFailedLoginError(email) {
+  let blocked = false;
+  try {
+    const attempt = await recordFailedAttempt(email);
+    blocked = Boolean(attempt.blockedUntil && Date.now() < attempt.blockedUntil);
+  } catch (_attemptError) {
+    // Falha ao registrar tentativa (ex.: banco indisponível): responde como credencial inválida
+  }
+  const err = new Error(blocked ? MESSAGES.accessBlocked : MESSAGES.invalidCredentials);
+  err.status = blocked ? 423 : 401;
+  return err;
+}
+
 async function login(rawEmail, rawPassword) {
   const { email, password } = validateCredentials(rawEmail, rawPassword);
 
@@ -385,18 +408,7 @@ async function login(rawEmail, rawPassword) {
   }
 
   if (!user) {
-    try {
-      const attempt = await recordFailedAttempt(email);
-      const blocked = attempt.blockedUntil && Date.now() < attempt.blockedUntil;
-      const err = new Error(blocked ? MESSAGES.accessBlocked : MESSAGES.invalidCredentials);
-      err.status = blocked ? 423 : 401;
-      throw err;
-    } catch (attemptError) {
-      // Se falhar ao registrar tentativa (ex: banco não disponível), retorna erro de credenciais
-      const err = new Error(MESSAGES.invalidCredentials);
-      err.status = 401;
-      throw err;
-    }
+    throw await buildFailedLoginError(email);
   }
 
   // Check if password is already hashed
@@ -431,18 +443,7 @@ async function login(rawEmail, rawPassword) {
   }
   
   if (!passwordMatches) {
-    try {
-      const attempt = await recordFailedAttempt(email);
-      const blocked = attempt.blockedUntil && Date.now() < attempt.blockedUntil;
-      const err = new Error(blocked ? MESSAGES.accessBlocked : MESSAGES.invalidCredentials);
-      err.status = blocked ? 423 : 401;
-      throw err;
-    } catch (attemptError) {
-      // Se falhar ao registrar tentativa (ex: banco não disponível), retorna erro de credenciais
-      const err = new Error(MESSAGES.invalidCredentials);
-      err.status = 401;
-      throw err;
-    }
+    throw await buildFailedLoginError(email);
   }
 
   try {
@@ -549,6 +550,7 @@ async function registerUser(data) {
   if (existingUser) {
     const err = new Error("Usu\u00e1rio j\u00e1 existe");
     err.status = 409;
+    err.code = "EMAIL_ALREADY_EXISTS";
     throw err;
   }
   
@@ -557,10 +559,48 @@ async function registerUser(data) {
     email: validatedEmail,
     password: hashedPassword,
     name,
+    emailVerified: false,
+    emailVerificationToken: null,
     statusUsuario: "ATIVO",
     dataUltimoLogin: null,
     tentativasFalha: 0,
   });
+
+  // Gera token de confirmação e salva hash no banco
+  const verifyToken = crypto.randomBytes(32).toString("hex");
+  const verifyTokenHash = hashEmailVerificationToken(verifyToken);
+  try {
+    await repo.setEmailVerificationToken(newUser.id, verifyTokenHash);
+  } catch (err) {
+    console.warn('[AUTH] ⚠️ Não foi possível salvar token de verificação:', err.message);
+  }
+
+  // Emails: boas-vindas + confirmação (assíncrono, não bloqueia resposta)
+  try {
+    const fireAndForget = () => {
+      Promise.allSettled([
+        emailService.sendWelcomeEmail(newUser),
+        emailService.sendEmailConfirmation(newUser, verifyToken),
+      ]).then((results) => {
+        const nomes = ['sendWelcomeEmail', 'sendEmailConfirmation'];
+        results.forEach((r, i) => {
+          if (r.status === 'fulfilled') {
+            console.log(`[AUTH] ✅ ${nomes[i]} resultado:`, JSON.stringify(r.value));
+          } else {
+            console.error(`[AUTH] ❌ ${nomes[i]} falhou:`, r.reason);
+          }
+        });
+      });
+    };
+    if (typeof setImmediate === 'function') {
+      setImmediate(fireAndForget);
+    } else {
+      setTimeout(fireAndForget, 0);
+    }
+  } catch (err) {                                                        // ← estava faltando isso
+    console.warn('[AUTH] ⚠️ Falha ao agendar envio de emails:', err.message);
+  }
+
   return {
     ...newUser,
     statusUsuario: newUser.status_usuario,
@@ -583,65 +623,26 @@ async function forgotPassword(rawEmail) {
   await repo.createPasswordReset(user.id, tokenHash, expiresAt);
 
   const resetLink = buildResetLink(token);
-  const subject = "Redefinicao de senha - SGVC";
-  const text = [
-    `Ola ${user.name || "cliente"},`,
-    "",
-    "Recebemos uma solicitacao para redefinir sua senha.",
-    "Clique no link abaixo para criar uma nova senha:",
-    resetLink,
-    "",
-    `Este link expira em ${RESET_TOKEN_TTL_MINUTES} minutos.`,
-    "Se voc\u00ea n\u00e3o solicitou, ignore este e-mail.",
-  ].join("\n");
-
-  const html = `
-    <p>Ola ${user.name || "cliente"},</p>
-    <p>Recebemos uma solicitacao para redefinir sua senha.</p>
-    <p><a href="${resetLink}">Clique aqui para criar uma nova senha</a></p>
-    <p>Este link expira em ${RESET_TOKEN_TTL_MINUTES} minutos.</p>
-    <p>Se voc\u00ea n\u00e3o solicitou, ignore este e-mail.</p>
-  `;
-
-  console.log(`[AUTH] 📧 Tentando enviar email de recuperação para: ${user.email}`);
-  const result = await emailService.sendMail({
-    to: user.email,
-    subject,
-    text,
-    html,
-  });
-
-  // Se email foi enviado com sucesso (incluindo via Ethereal)
-  if (result && result.sent) {
-    if (result.previewUrl) {
-      console.log(`[AUTH] ✅ Email enviado via Ethereal. Preview: ${result.previewUrl}`);
-      // Retorna com previewUrl para desenvolvimento (Ethereal envia email de teste)
-      return { sent: true, resetLink, token: token, previewUrl: result.previewUrl };
+  try {
+    const result = await emailService.sendPasswordReset(user, token);
+    // Respeita o retorno do provedor de email
+    if (result && result.sent) {
+      return { sent: true };
     }
-    // Email enviado via SMTP configurado (produção)
-    console.log(`[AUTH] ✅ Email enviado com sucesso via SMTP para ${user.email}`);
-    return { sent: true };
+    // Se não enviado e estamos em dev, retorna link para facilitar testes
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[AUTH] ⚠️ Email não enviado via provedor. Retornando link em modo desenvolvimento.');
+      return { sent: false, resetLink, token };
+    }
+    return { sent: false };
+  } catch (err) {
+    console.warn('[AUTH] ⚠️ Falha ao enviar email de reset:', err.message);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[AUTH] 🔗 [DEV] Link de reset para ${user.email}: ${resetLink}`);
+      return { sent: false, resetLink, token: token };
+    }
+    return { sent: false };
   }
-  
-  // Email não foi enviado - log detalhado do erro
-  if (result && result.reason === 'SMTP_NOT_CONFIGURED') {
-    console.warn("[AUTH] ⚠️ SMTP não configurado e Ethereal não disponível. Não foi possível enviar email.");
-  } else if (result && result.reason === 'SEND_ERROR') {
-    console.error(`[AUTH] ❌ Falha ao enviar e-mail para ${user.email}:`, result.error || result.reason);
-  } else if (result) {
-    console.error(`[AUTH] ❌ Falha ao enviar e-mail para ${user.email}. Razão:`, result.reason || 'desconhecida');
-  } else {
-    console.error("[AUTH] ❌ Resultado do envio de email é inválido (result é null/undefined)");
-  }
-  
-  // Em modo desenvolvimento, sempre retorna o link para facilitar testes
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`[AUTH] 🔗 [DEV] Link de reset para ${user.email}: ${resetLink}`);
-    return { sent: false, resetLink, token: token };
-  }
-
-  console.warn(`[AUTH] ⚠️ Email não foi enviado para ${user.email}. Token gerado mas não foi possível enviar.`);
-  return { sent: false };
 }
 
 async function resetPassword(token, rawPassword) {
@@ -670,6 +671,12 @@ async function resetPassword(token, rawPassword) {
 
   await repo.updateUserPassword(record.user_id, hashedPassword);
   await repo.markPasswordResetUsed(record.id);
+  try {
+    const user = await getUserById(record.user_id);
+    if (user) await emailService.sendPasswordChanged(user);
+  } catch (err) {
+    console.warn('[AUTH] ⚠️ Falha ao enviar email de senha alterada (reset):', err.message);
+  }
   return { ok: true };
 }
 
@@ -714,6 +721,27 @@ async function changePassword(userId, rawCurrentPassword, rawNewPassword) {
   
   const hashedNewPassword = await hashPassword(newPassword);
   await repo.updateUserPassword(userId, hashedNewPassword);
+  try {
+    await emailService.sendPasswordChanged(user);
+  } catch (err) {
+    console.warn('[AUTH] ⚠️ Falha ao enviar email de senha alterada:', err.message);
+  }
+  return { ok: true };
+}
+
+async function verifyEmail(token) {
+  if (!token || typeof token !== 'string') {
+    const err = new Error('Token é obrigatório');
+    err.status = 400;
+    throw err;
+  }
+  const tokenHash = hashEmailVerificationToken(token);
+  const user = await repo.verifyEmailByTokenHash(tokenHash);
+  if (!user) {
+    const err = new Error('Token inválido ou expirado');
+    err.status = 400;
+    throw err;
+  }
   return { ok: true };
 }
 
@@ -754,6 +782,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
+  verifyEmail,
   updateProfile,
   MESSAGES,
 };

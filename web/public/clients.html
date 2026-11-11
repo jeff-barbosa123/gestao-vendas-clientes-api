@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Clientes</title>
+    <meta
+      name="description"
+      content="Cadastro e lista de clientes do SGVC com busca e paginacao."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/clients.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/skeleton-loading.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="clients-wrapper">
+          <header class="clients-header">
+            <div>
+              <h3 class="clients-title">Clientes</h3>
+              <p class="clients-subtitle">Gerencie sua base de clientes</p>
+            </div>
+            <div class="clients-actions">
+              <button class="button is-light is-small" id="back-dashboard" data-testid="back-dashboard-btn" tabindex="-1">
+                Voltar ao dashboard
+              </button>
+              <button class="button is-link is-small" id="refresh-list" data-testid="refresh-list-btn" tabindex="-1">
+                Atualizar lista
+              </button>
+            </div>
+          </header>
+
+          <div
+            class="clients-message toast-top"
+            id="clients-message"
+            role="status"
+            aria-live="polite"
+            tabindex="0"
+            hidden
+          ></div>
+
+          <section class="clients-grid">
+            <div class="panel-card">
+              <h4 class="clients-section-title">Cadastrar cliente</h4>
+              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+                Preencha os dados abaixo para criar o cliente.
+              </p>
+              <form id="create-form" class="clients-form" novalidate>
+                <div class="clients-step-block">
+                  <div class="clients-step-header">
+                    <span class="clients-step-index">1</span>
+                    <div>
+                      <p class="clients-step-title">Identifica&#231;&#227;o do cliente</p>
+                      <p class="clients-step-subtitle">Dados principais para contato.</p>
+                    </div>
+                  </div>
+                  <div class="field clients-type-field">
+                    <label class="label" for="create-type">Tipo de cliente (PF / PJ)</label>
+                    <div class="control">
+                      <div class="select is-fullwidth">
+                        <select 
+                          id="create-type" 
+                          name="type" 
+                          aria-describedby="create-type-hint"
+                          aria-label="Tipo de cliente: Pessoa Física ou Pessoa Jurídica"
+                        >
+                          <option value="">Sem sele&#231;&#227;o (comportamento atual)</option>
+                          <option value="PF">Pessoa F&#237;sica (CPF)</option>
+                          <option value="PJ">Pessoa Jur&#237;dica (CNPJ)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <p class="help clients-field-hint" id="create-type-hint">
+                      A escolha altera os campos exibidos sem impactar o comportamento atual quando n&#227;o selecionado.
+                    </p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-name"><span class="clients-name-label-text">Nome</span></label>
+                    <input
+                      class="input"
+                      id="create-name"
+                      name="name"
+                      type="text"
+                      autocomplete="name"
+                      maxlength="120"
+                      required
+                      aria-required="true"
+                      aria-describedby="create-name-error create-name-hint"
+                      aria-invalid="false"
+                    />
+                    <p class="help" id="create-name-hint" hidden>Nome completo do cliente</p>
+                    <p class="help is-danger" id="create-name-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-email">E-mail</label>
+                    <input
+                      class="input"
+                      id="create-email"
+                      name="email"
+                      type="email"
+                      autocomplete="email"
+                      maxlength="254"
+                      required
+                      aria-required="true"
+                      aria-describedby="create-email-error create-email-warning create-email-hint"
+                      aria-invalid="false"
+                    />
+                    <p class="help is-danger" id="create-email-error" aria-live="polite" role="alert" hidden></p>
+                    <p class="help clients-email-warning" id="create-email-warning" aria-live="polite" hidden></p>
+                    <div class="clients-email-suggest" id="create-email-suggest" hidden></div>
+                    <p class="help clients-field-hint" id="create-email-hint">Exemplo: nome@empresa.com</p>
+                  </div>
+                  <div class="field clients-conditional is-hidden" id="create-trade-name-field">
+                    <label class="label" for="create-trade-name">Nome fantasia (opcional)</label>
+                    <input
+                      class="input"
+                      id="create-trade-name"
+                      name="tradeName"
+                      type="text"
+                      maxlength="120"
+                      placeholder="Nome fantasia da empresa"
+                      aria-describedby="create-trade-name-hint"
+                      aria-invalid="false"
+                    />
+                    <p class="help clients-field-hint" id="create-trade-name-hint">Usado apenas para mostrar na visualiza&#231;&#227;o quando informado.</p>
+                  </div>
+                  <div class="field clients-conditional is-hidden" id="create-cpf-field">
+                    <label class="label" for="create-cpf">CPF</label>
+                    <input
+                      class="input"
+                      id="create-cpf"
+                      name="cpf"
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="14"
+                      placeholder="000.000.000-00"
+                      aria-describedby="create-cpf-hint create-cpf-error"
+                      aria-invalid="false"
+                      aria-label="CPF do cliente (apenas números)"
+                    />
+                    <p class="help clients-field-hint" id="create-cpf-hint">Informe apenas se for Pessoa F&#237;sica.</p>
+                    <p class="help is-danger" id="create-cpf-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field clients-conditional" id="create-cnpj-field">
+                    <label class="label" for="create-cnpj">CNPJ (opcional)</label>
+                    <input
+                      class="input"
+                      id="create-cnpj"
+                      name="cnpj"
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="18"
+                      placeholder="00.000.000/0000-00"
+                      aria-describedby="create-cnpj-hint create-cnpj-error create-cnpj-success"
+                      aria-invalid="false"
+                      aria-busy="false"
+                      aria-label="CNPJ da empresa (apenas números)"
+                    />
+                    <p class="help" id="create-cnpj-hint">
+                      Ao sair do campo CNPJ, buscamos dados da empresa automaticamente.
+                    </p>
+                    <p class="help is-danger" id="create-cnpj-error" aria-live="polite" role="alert" hidden></p>
+                    <p class="help clients-cnpj-success" id="create-cnpj-success" aria-live="polite" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-phone">Telefone</label>
+                    <input
+                      class="input"
+                      id="create-phone"
+                      name="phone"
+                      type="text"
+                      autocomplete="tel"
+                      maxlength="15"
+                      aria-describedby="create-phone-error create-phone-hint"
+                      aria-invalid="false"
+                      aria-label="Telefone do cliente com DDD"
+                    />
+                    <p class="help is-danger" id="create-phone-error" aria-live="polite" role="alert" hidden></p>
+                    <div class="clients-phone-actions">
+                      <a
+                        class="button is-light is-small is-disabled"
+                        id="create-phone-whatsapp"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-disabled="true"
+                        aria-label="Abrir telefone no WhatsApp"
+                      >
+                        Abrir no WhatsApp
+                      </a>
+                    </div>
+                    <p class="help clients-field-hint" id="create-phone-hint">DDD + número</p>
+                  </div>
+                </div>
+                <div class="clients-step-block">
+                  <div class="clients-step-header">
+                    <span class="clients-step-index">2</span>
+                    <div>
+                      <p class="clients-step-title">Dados pessoais</p>
+                      <p class="clients-step-subtitle">Usamos para avisos de anivers&#225;rio.</p>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-birth-date">Data de nascimento</label>
+                    <input 
+                      class="input" 
+                      id="create-birth-date" 
+                      name="birthDate" 
+                      type="date"
+                      aria-describedby="create-birth-date-hint create-birth-date-error create-birth-hint"
+                      aria-invalid="false"
+                    />
+                    <p class="help" id="create-birth-date-hint">Usamos para avisos de anivers&#225;rio. Formato: DD/MM/AAAA</p>
+                    <p class="help is-danger" id="create-birth-date-error" aria-live="polite" role="alert" hidden></p>
+                    <p class="help clients-birth-hint" id="create-birth-hint" aria-live="polite" hidden></p>
+                  </div>
+                </div>
+                <div class="clients-step-block">
+                  <div class="clients-step-header">
+                    <span class="clients-step-index">3</span>
+                    <div>
+                      <p class="clients-step-title">Endere&#231;o</p>
+                      <p class="clients-step-subtitle">Ajuda na entrega e organiza&#231;&#227;o.</p>
+                      <p class="clients-address-hint">Dica: selecione a UF para carregar a lista de cidades.</p>
+                    </div>
+                  </div>
+                  <div class="field">
+                  <label class="label" for="create-address-street">Rua</label>
+                  <input
+                    class="input"
+                    id="create-address-street"
+                    name="addressStreet"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Ex: Rua, Avenida, Travessa, Praça..."
+                    aria-describedby="create-address-street-error create-address-street-hint"
+                    aria-invalid="false"
+                    aria-label="Nome da rua ou logradouro"
+                  />
+                  <p class="help is-danger" id="create-address-street-error" aria-live="polite" role="alert" hidden></p>
+                  <p class="help clients-field-hint" id="create-address-street-hint">
+                    Informe o nome completo do logradouro (Rua, Av., Travessa, etc.)
+                  </p>
+                </div>
+                  <div class="field">
+                    <label class="label" for="create-address-number">Numero</label>
+                    <input
+                      class="input"
+                      id="create-address-number"
+                      name="addressNumber"
+                      type="text"
+                      maxlength="20"
+                      aria-describedby="create-address-number-error create-address-number-hint"
+                      aria-invalid="false"
+                      aria-label="Número do endereço (ou SN para sem número)"
+                    />
+                    <p class="help clients-field-hint" id="create-address-number-hint" hidden>Use "SN" para sem número</p>
+                    <p class="help is-danger" id="create-address-number-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-address-complement">Complemento</label>
+                    <input
+                      class="input"
+                      id="create-address-complement"
+                      name="addressComplement"
+                      type="text"
+                      maxlength="60"
+                      placeholder="Ex.: Apto 42, Sala 101, Bloco B"
+                      aria-describedby="create-address-complement-hint"
+                      aria-label="Complemento do endereço (opcional)"
+                    />
+                    <p class="help clients-field-hint" id="create-address-complement-hint">Ajudamos a manter o endere&#231;o completo para entrega.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-address-neighborhood">Bairro</label>
+                    <input
+                      class="input"
+                      id="create-address-neighborhood"
+                      name="addressNeighborhood"
+                      type="text"
+                      maxlength="80"
+                      aria-describedby="create-address-neighborhood-error"
+                      aria-invalid="false"
+                      aria-label="Bairro do endereço"
+                    />
+                    <p class="help is-danger" id="create-address-neighborhood-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-address-city">Cidade</label>
+                    <input
+                      class="input"
+                      id="create-address-city"
+                      name="addressCity"
+                      type="text"
+                      maxlength="80"
+                      list="city-list"
+                      aria-describedby="create-address-city-error create-address-city-hint"
+                      aria-invalid="false"
+                      aria-label="Cidade do endereço"
+                      aria-autocomplete="list"
+                    />
+                    <p class="help clients-field-hint" id="create-address-city-hint" hidden>Selecione a UF primeiro para carregar a lista de cidades</p>
+                    <p class="help is-danger" id="create-address-city-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-address-state">UF</label>
+                    <input
+                      class="input"
+                      id="create-address-state"
+                      name="addressState"
+                      type="text"
+                      maxlength="2"
+                      list="uf-list"
+                      aria-describedby="uf-status create-address-state-error create-address-state-hint"
+                      aria-invalid="false"
+                      aria-busy="false"
+                      aria-label="Estado (UF) - selecione para carregar cidades"
+                      aria-autocomplete="list"
+                    />
+                    <p
+                      class="help clients-field-hint clients-uf-status"
+                      id="uf-status"
+                      aria-live="polite"
+                    >
+                      Carregando unidades federativas…
+                    </p>
+                    <p class="help clients-field-hint" id="create-address-state-hint" hidden>Selecione a UF para carregar a lista de cidades disponíveis</p>
+                    <p class="help is-danger" id="create-address-state-error" aria-live="polite" role="alert" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-address-postal">CEP</label>
+                    <input
+                      class="input"
+                      id="create-address-postal"
+                      name="addressPostalCode"
+                      type="text"
+                      maxlength="9"
+                      placeholder="00000-000"
+                      inputmode="numeric"
+                      aria-describedby="cep-status create-address-postal-hint"
+                      aria-invalid="false"
+                      aria-label="CEP do endereço (8 dígitos)"
+                    />
+                    <p class="clients-address-hint" id="create-address-postal-hint">Ao sair do campo CEP, o endereco sera preenchido automaticamente.</p>
+                    <p class="help clients-field-hint" id="cep-status" aria-live="polite" hidden></p>
+                  </div>
+                </div>
+                <div class="clients-chip-row" id="location-chips" hidden>
+                  <span class="clients-chip" id="chip-uf"></span>
+                  <span class="clients-chip" id="chip-city"></span>
+                </div>
+                <datalist id="uf-list"></datalist>
+                <datalist id="city-list"></datalist>
+                <div class="clients-step-block">
+                  <div class="clients-step-header">
+                    <span class="clients-step-index">4</span>
+                    <div>
+                      <p class="clients-step-title">Observa&#231;&#245;es</p>
+                      <p class="clients-step-subtitle">Prefer&#234;ncias do cliente.</p>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="create-notes">Observa&#231;&#245;es / Prefer&#234;ncias</label>
+                    <textarea
+                      class="textarea"
+                      id="create-notes"
+                      name="notes"
+                      maxlength="500"
+                      rows="3"
+                      placeholder="Ex: prefere contato por WhatsApp, alergias, cor favorita"
+                      aria-describedby="create-notes-hint"
+                      aria-label="Observações e preferências do cliente (opcional)"
+                    ></textarea>
+                    <p class="help" id="create-notes-hint">Aparece apenas no detalhe do cliente.</p>
+                  </div>
+                </div>
+                <button
+                  class="button is-link"
+                  type="submit"
+                  id="create-submit"
+                  data-testid="create-client-btn"
+                  aria-label="Criar novo cliente"
+                  aria-busy="false"
+                >
+                  Criar cliente
+                </button>
+              </form>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <div class="clients-list-header">
+              <h4 class="clients-section-title">
+                Lista de clientes <span class="clients-total" id="clients-total"></span>
+              </h4>
+              <div class="field clients-search">
+                <label class="label" for="search-input">Buscar</label>
+                <input
+                  class="input"
+                  id="search-input"
+                  name="search"
+                  type="search"
+                  aria-label="Buscar clientes por nome, e-mail, telefone ou CNPJ"
+                  aria-describedby="search-input-hint"
+                  placeholder="Buscar por nome ou e-mail"
+                />
+                <p class="help" id="search-input-hint" hidden>Busque por nome, e-mail, telefone ou CNPJ</p>
+              </div>
+              <div class="clients-export-group" style="margin-top: 12px;">
+                <label class="label" for="clients-export-format">Exportar</label>
+                <div class="field has-addons">
+                  <div class="control">
+                    <div class="select">
+                      <select id="clients-export-format" aria-label="Formato de exportação">
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel (XLSX)</option>
+                        <option value="pdf">PDF</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <button class="button is-light is-small" id="clients-export-btn" type="button" aria-label="Baixar lista de clientes">
+                      <span>Baixar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clients-insight-row">
+              <p class="clients-insight" id="birthday-insight"></p>
+              <div class="clients-birthday-window">
+                <label class="label" for="birthday-window">Aviso de aniversario</label>
+                <div class="select">
+                <select 
+                  id="birthday-window" 
+                  name="birthdayWindow"
+                  aria-label="Período para avisar aniversários próximos"
+                  aria-describedby="birthday-window-hint"
+                >
+                    <option value="7">Proximos 7 dias</option>
+                    <option value="14">Proximos 14 dias</option>
+                    <option value="30">Proximos 30 dias</option>
+                  </select>
+                </div>
+                <p class="help" id="birthday-window-hint" hidden>Selecione quantos dias antes do aniversário deseja ser avisado</p>
+              </div>
+            </div>
+            <div class="clients-filters" role="group" aria-label="Filtros de clientes">
+              <button
+                class="button is-light is-small is-active"
+                type="button"
+                id="filter-all-btn"
+                data-filter="all"
+                aria-pressed="true"
+                title="Todos os clientes"
+                data-testid="filter-all-btn"
+              >
+                Todos
+              </button>
+              <button
+                class="button is-light is-small"
+                type="button"
+                id="filter-loyal-btn"
+                data-filter="loyal"
+                aria-pressed="false"
+                title="Clientes fiéis com 3 ou mais compras"
+                data-testid="filter-loyal-btn"
+              >
+                Fiéis
+              </button>
+              <button
+                class="button is-light is-small"
+                type="button"
+                id="filter-birthdays-btn"
+                data-filter="birthdays"
+                aria-pressed="false"
+                title="Clientes com aniversário nos próximos dias"
+                data-testid="filter-birthdays-btn"
+              >
+                Aniversariantes
+              </button>
+              <button
+                class="button is-light is-small"
+                type="button"
+                id="filter-new-btn"
+                data-filter="new"
+                aria-pressed="false"
+                title="Clientes cadastrados nos últimos 60 dias"
+                data-testid="filter-new-btn"
+              >
+                Novos
+              </button>
+              <button
+                class="button is-light is-small"
+                type="button"
+                id="filter-old-btn"
+                data-filter="old"
+                aria-pressed="false"
+                title="Clientes sem compras nos últimos 15 dias"
+                data-testid="filter-old-btn"
+              >
+                Antigos
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable clients-table" id="clients-table">
+                <thead>
+                  <tr>
+                    <th id="name-header" class="is-clickable" aria-sort="ascending">Nome A-Z</th>
+                    <th>E-mail</th>
+                    <th>Documento</th>
+                    <th class="has-text-right">Telefone</th>
+                    <th id="spent-header" class="has-text-right is-clickable" aria-sort="none">Total gasto</th>
+                    <th>Aniversario</th>
+                    <th>Cliente desde</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-body"></tbody>
+              </table>
+            </div>
+            <div class="clients-pagination" id="clients-pagination" hidden>
+              <button
+                class="button is-light is-small"
+                id="prev-page"
+                aria-label="Pagina anterior"
+                data-testid="pagination-prev-btn"
+              >
+                Anterior
+              </button>
+              <div class="clients-page-list" id="page-list"></div>
+              <span class="clients-page-info" id="page-info"></span>
+              <span class="clients-page-indicator" id="page-indicator" aria-live="polite"></span>
+              <div class="clients-page-jump">
+                <label class="label" for="page-jump-input">Ir para</label>
+                <div class="field has-addons">
+                  <div class="control">
+                    <input class="input is-small" id="page-jump-input" type="number" min="1" />
+                  </div>
+                  <div class="control">
+                    <button
+                      class="button is-light is-small"
+                      type="button"
+                      id="page-jump-btn"
+                      aria-label="Ir para pagina"
+                      data-testid="pagination-jump-btn"
+                    >
+                      Ir
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="button is-light is-small"
+                id="next-page"
+                aria-label="Pr&#243;xima p&#225;gina"
+                data-testid="pagination-next-btn"
+              >
+                Pr&#243;ximo
+              </button>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&#227;o 1.0.0
+    </footer>
+
+    <script src="/static/sgvc-utils.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.50/bundle/libphonenumber-js.min.js" defer></script>
+    <script src="/static/clients.js" defer></script>
+  </body>
+</html>
+

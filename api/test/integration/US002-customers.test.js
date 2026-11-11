@@ -6,14 +6,14 @@ const { loginAndGetToken } = require('../utils/authHelper');
 const CUSTOMERS_PATH = '/api/customers';
 
 const MESSAGES = {
-  required: 'Campos obrigat\u00f3rios ausentes',
-  invalidEmail: 'Formato de e-mail inv\u00e1lido',
-  nameTooLong: 'Nome excede o tamanho permitido',
-  nameInvalid: 'Nome inv\u00e1lido',
-  phoneInvalid: 'Telefone inv\u00e1lido',
-  conflictEmail: 'E-mail j\u00e1 cadastrado',
-  notFound: 'Cliente n\u00e3o encontrado',
-  accessDenied: 'Acesso negado',
+  required: 'Campos obrigatórios não preenchidos.',
+  invalidEmail: 'Digite um e-mail válido.',
+  nameTooLong: 'Nome muito longo. O nome deve ter no máximo 255 caracteres.',
+  nameInvalid: 'Nome contém caracteres inválidos.',
+  phoneInvalid: 'Telefone contém caracteres inválidos.',
+  conflictEmail: 'Este e-mail já está cadastrado para outro cliente.',
+  notFound: 'Cliente não encontrado.',
+  accessDenied: 'Você não tem permissão para realizar esta ação.',
 };
 
 const makeUniqueEmail = (prefix = 'user') =>

@@ -32,6 +32,8 @@ function filterByOwner(list, user) {
 
 function filterSalesByDate(sales, startDate, endDate) {
   return sales.filter((s) => {
+    // Venda cancelada não entra em faturamento/dashboard
+    if (s.status === "CANCELED" || s.status_venda === "cancelada") return false;
     const dx = new Date(s.date);
     return dx >= startDate && dx <= endDate;
   });
@@ -54,15 +56,17 @@ async function getOverview(filters = {}, user) {
     products: products.length,
     recipes: recipes.length,
     linkedProducts: products.filter((p) => p.ficha_tecnica_id).length,
-    lastSaleAt: sales.length ? sales[sales.length - 1].date : null,
+    // listSales ordena por data DESC: a venda mais recente é a primeira (antes pegava a mais antiga)
+    lastSaleAt: sales.length ? sales[0].date : null,
   };
 }
 
-async function buildTimeseries(breakdown = "day", filters = {}) {
+async function buildTimeseries(breakdown = "day", filters = {}, user) {
   const normalizedBreakdown = validateBreakdown(breakdown);
   const { startDate, endDate } = resolveTemporalRange(filters);
 
-  const salesAll = await repo.listSales();
+  // Somente vendas do usuário autenticado (antes listava vendas de todos os usuários)
+  const salesAll = await repo.listSales(user ? user.id : null);
   const sales = filterSalesByDate(salesAll, startDate, endDate);
   const buckets = {};
 

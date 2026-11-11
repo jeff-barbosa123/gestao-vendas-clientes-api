@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SGVC | Monitoramento de Erros</title>
+  <meta name="description" content="Dashboard de monitoramento de erros do SGVC" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="/static/base.css" />
+  <link rel="stylesheet" href="/static/error-monitoring.css" />
+  <script src="/config.js" defer></script>
+  <script src="/static/error-handler.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+<main id="main">
+  <section class="error-monitoring" role="region" aria-label="Monitoramento de erros">
+    <!-- HEADER -->
+    <header class="monitoring-header">
+      <div>
+        <h2 class="monitoring-title">Monitoramento de Erros</h2>
+        <p class="monitoring-subtitle">
+          Acompanhe erros frequentes, endpoints problemáticos e estatísticas de erros do sistema.
+        </p>
+      </div>
+
+      <div class="monitoring-header-right">
+        <div class="monitoring-filters">
+          <label for="period-select">Período:</label>
+          <select id="period-select">
+            <option value="24h">Últimas 24 horas</option>
+            <option value="7d" selected>Últimos 7 dias</option>
+            <option value="30d">Últimos 30 dias</option>
+            <option value="custom">Personalizado</option>
+          </select>
+          <button class="button is-light is-small" id="refresh-btn">Atualizar</button>
+        </div>
+
+        <nav class="monitoring-menu" aria-label="Menu de navegação">
+          <button class="button is-light is-small" id="dashboard-btn">Dashboard</button>
+          <button class="button is-light is-small" id="logout-btn">Sair</button>
+        </nav>
+      </div>
+    </header>
+
+    <div
+      id="monitoring-message"
+      class="monitoring-message is-hidden"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></div>
+
+    <!-- ESTATÍSTICAS GERAIS -->
+    <section class="monitoring-block">
+      <h3 class="monitoring-block-title">Estatísticas Gerais</h3>
+      <div class="monitoring-grid stats">
+        <div class="monitoring-card">
+          <p class="monitoring-value" id="stat-total-errors">--</p>
+          <p class="monitoring-label">Total de Erros</p>
+        </div>
+        <div class="monitoring-card">
+          <p class="monitoring-value" id="stat-unique-errors">--</p>
+          <p class="monitoring-label">Códigos de Erro Únicos</p>
+        </div>
+        <div class="monitoring-card">
+          <p class="monitoring-value" id="stat-affected-users">--</p>
+          <p class="monitoring-label">Usuários Afetados</p>
+        </div>
+        <div class="monitoring-card">
+          <p class="monitoring-value" id="stat-server-errors">--</p>
+          <p class="monitoring-label">Erros do Servidor (%)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ERROS MAIS FREQUENTES -->
+    <section class="monitoring-block">
+      <h3 class="monitoring-block-title">Erros Mais Frequentes</h3>
+      <div class="monitoring-table-container">
+        <table class="table is-fullwidth" aria-label="Erros mais frequentes">
+          <thead>
+            <tr>
+              <th>Código do Erro</th>
+              <th>Status HTTP</th>
+              <th>Quantidade</th>
+              <th>Usuários Afetados</th>
+              <th>Endpoints Afetados</th>
+              <th>Última Ocorrência</th>
+            </tr>
+          </thead>
+          <tbody id="frequent-errors-body">
+            <tr>
+              <td colspan="6" class="has-text-centered">Carregando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TIMELINE DE ERROS -->
+    <section class="monitoring-block">
+      <h3 class="monitoring-block-title">Timeline de Erros</h3>
+      <div class="monitoring-chart-container">
+        <canvas id="errors-timeline-chart" aria-label="Gráfico de timeline de erros"></canvas>
+      </div>
+    </section>
+
+    <!-- ENDPOINTS COM MAIS ERROS -->
+    <section class="monitoring-block">
+      <h3 class="monitoring-block-title">Endpoints com Mais Erros</h3>
+      <div class="monitoring-table-container">
+        <table class="table is-fullwidth" aria-label="Endpoints com mais erros">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Método</th>
+              <th>Quantidade de Erros</th>
+              <th>Códigos Únicos</th>
+              <th>Usuários Afetados</th>
+            </tr>
+          </thead>
+          <tbody id="endpoints-errors-body">
+            <tr>
+              <td colspan="5" class="has-text-centered">Carregando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ERROS RECENTES -->
+    <section class="monitoring-block">
+      <h3 class="monitoring-block-title">Erros Recentes</h3>
+      <div class="monitoring-recent-container">
+        <div id="recent-errors-list" class="recent-errors-list">
+          <p class="has-text-centered">Carregando...</p>
+        </div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <p>(c) 2025 SGVC - Versão 1.0.0</p>
+</footer>
+
+<script src="/static/error-monitoring.js" defer></script>
+</body>
+</html>

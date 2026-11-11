@@ -5,9 +5,9 @@ const { loginAndGetToken } = require('../utils/authHelper');
 const PRODUCTS_PATH = '/api/products';
 
 const MESSAGES = {
-  required: 'Campos obrigat\u00f3rios ausentes',
+  required: 'Nome e preço do produto são obrigatórios',
   notFound: 'Produto n\u00e3o encontrado',
-  invalidPrice: 'Pre\u00e7o inv\u00e1lido',
+  invalidPrice: 'Preço informado é inválido',
 };
 
 const uniqueName = (prefix = 'Produto') => `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;

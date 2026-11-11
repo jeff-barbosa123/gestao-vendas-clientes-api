@@ -1,0 +1,230 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SGVC | Dashboard</title>
+  <meta name="description" content="Dashboard do SGVC com indicadores do negócio" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="/static/base.css" />
+  <link rel="stylesheet" href="/static/dashboard.css" />
+  <script src="/config.js" defer></script>
+  <script src="/static/error-handler.js" defer></script>
+  <script src="/static/api-client.js" defer></script>
+  <script src="/static/skeleton-loading.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+<main id="main">
+  <section class="dashboard" role="region" aria-label="Visão geral do negócio">
+    <!-- HEADER -->
+    <header class="dashboard-header">
+      <div>
+        <h2 class="dashboard-title">Visão Geral</h2>
+        <p class="dashboard-subtitle">
+          Acompanhe vendas, faturamento e indicadores do negócio.
+        </p>
+
+        <form class="dashboard-period-form">
+          <label for="dashboard-period">Período:</label>
+          <select id="dashboard-period">
+            <option value="month">Este mês</option>
+            <option value="quarter">Trimestre</option>
+            <option value="year">Ano</option>
+          </select>
+        </form>
+
+        <p class="dashboard-period-note">
+          Todos os dados abaixo referem-se ao período selecionado.
+        </p>
+      </div>
+
+      <div class="dashboard-header-right">
+        <div class="dashboard-userbox">
+          <div class="dashboard-avatar" id="dashboard-avatar">U</div>
+          <span class="dashboard-user" id="dashboard-user">Usuário</span>
+        </div>
+
+        <nav class="dashboard-menu" aria-label="Menu do usuário">
+          <button class="button is-light is-small" id="reports-btn">Relatórios</button>
+          <button class="button is-light is-small" id="profile-btn">Perfil</button>
+          <button class="button is-light is-small" id="logout-btn">Sair</button>
+        </nav>
+      </div>
+    </header>
+
+    <div
+      id="dashboard-message"
+      class="dashboard-message is-hidden"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></div>
+
+    <!-- INDICADORES PRINCIPAIS -->
+    <section class="dashboard-block">
+      <h3 class="dashboard-block-title">Indicadores Principais</h3>
+
+      <div class="dashboard-grid primary">
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-customers">--</p>
+          <p class="dashboard-label">Clientes ativos</p>
+          <p class="kpi-empty is-hidden" data-empty="customers">Sem dados no período.</p>
+          <button class="button is-link is-small" id="clients-manage-action">
+            Ver clientes
+          </button>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-sales">--</p>
+          <p class="dashboard-label">Vendas no mês</p>
+          <p class="kpi-empty is-hidden" data-empty="sales">Sem dados no período.</p>
+          <button class="button is-light is-small" id="sales-manage-action">
+            Cadastrar venda
+          </button>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-revenue">R$ 0,00</p>
+          <p class="dashboard-label">Faturamento</p>
+          <p class="kpi-empty is-hidden" data-empty="revenue">Sem dados no período.</p>
+          <span class="kpi-spacer" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESUMO VISUAL -->
+    <section class="dashboard-block is-charts" data-chart-section hidden>
+      <h3 class="dashboard-block-title">Resumo visual</h3>
+
+      <div class="dashboard-grid charts">
+        <div class="dashboard-card chart-card">
+          <p class="dashboard-label">Vendas no período</p>
+          <div class="chart-wrap">
+            <canvas id="sales-chart" role="img" aria-label="Gráfico de vendas no período"></canvas>
+          </div>
+          <p class="kpi-empty is-hidden" data-empty="sales-chart">Sem dados no período.</p>
+        </div>
+
+        <div class="dashboard-card chart-card">
+          <p class="dashboard-label">Faturamento no período</p>
+          <div class="chart-wrap is-revenue">
+            <canvas id="revenue-chart" role="img" aria-label="Gráfico de faturamento no período"></canvas>
+          </div>
+          <p class="kpi-empty is-hidden" data-empty="revenue-chart">Sem dados no período.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- INDICADORES SECUNDÁRIOS -->
+    <section class="dashboard-block is-secondary">
+      <h3 class="dashboard-block-title">Indicadores Secundários</h3>
+
+      <div class="dashboard-grid secondary">
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-products">--</p>
+          <p class="dashboard-label">Produtos cadastrados</p>
+          <p class="kpi-empty is-hidden" data-empty="products">Sem dados no período.</p>
+          <button class="button is-link is-small" id="products-manage-action">Ver produtos</button>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-recipes">--</p>
+          <p class="dashboard-label">Fichas técnicas</p>
+          <p class="kpi-empty is-hidden" data-empty="recipes">Sem dados no período.</p>
+          <button class="button is-link is-small" id="recipes-manage-action">Ver fichas</button>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-linked">--</p>
+          <p class="dashboard-label">Produtos vinculados</p>
+          <p class="kpi-empty is-hidden" data-empty="linked">Sem dados no período.</p>
+          <button class="button is-link is-small" id="linked-manage-action">Ver vínculos</button>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-margin">0%</p>
+          <p class="dashboard-label">Margem média</p>
+          <p class="kpi-empty is-hidden" data-empty="margin">Sem dados no período.</p>
+          <button class="button is-light is-small" id="margin-manage-action">Simular preço</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTAS & INSIGHTS -->
+    <section class="dashboard-block is-alerts">
+      <h3 class="dashboard-block-title">Alertas & Insights do negócio</h3>
+      <div class="dashboard-alerts-grid">
+        <article class="dashboard-alert-card alert-yellow">
+          <header class="dashboard-alert-header">
+            <div>
+              <p class="dashboard-alert-label">Alertas inteligentes</p>
+              <p class="dashboard-alert-title">Clientes inativos</p>
+            </div>
+            <span class="dashboard-alert-badge" id="alert-clients-count"></span>
+          </header>
+          <p class="dashboard-alert-message" id="alert-clients-message">
+            Identificando clientes que não compram há mais de 30 dias...
+          </p>
+          <p class="dashboard-alert-hint" id="alert-clients-hint"></p>
+          <button class="button is-link is-small dashboard-alert-button" id="alert-clients-action">
+            Ver clientes
+          </button>
+        </article>
+
+        <article class="dashboard-alert-card alert-blue">
+          <header class="dashboard-alert-header">
+            <div>
+              <p class="dashboard-alert-label">Insights automáticos</p>
+              <p class="dashboard-alert-title">Faturamento e tendência</p>
+            </div>
+            <span class="dashboard-alert-badge" id="alert-revenue-count"></span>
+          </header>
+          <p class="dashboard-alert-message" id="alert-revenue-message">
+            Carregando análise financeira...
+          </p>
+          <p class="dashboard-alert-hint" id="alert-revenue-hint"></p>
+          <button class="button is-link is-small dashboard-alert-button" id="alert-revenue-action">
+            Ver vendas
+          </button>
+        </article>
+
+        <article class="dashboard-alert-card alert-red">
+          <header class="dashboard-alert-header">
+            <div>
+              <p class="dashboard-alert-label">Pendências do sistema</p>
+              <p class="dashboard-alert-title">Fichas técnicas</p>
+            </div>
+            <span class="dashboard-alert-badge" id="alert-products-count"></span>
+          </header>
+          <p class="dashboard-alert-message" id="alert-products-message">
+            Verificando produtos com ficha técnica pendente...
+          </p>
+          <p class="dashboard-alert-hint" id="alert-products-hint"></p>
+          <button class="button is-link is-small dashboard-alert-button" id="alert-products-action">
+            Resolver agora
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- AÇÕES RÁPIDAS -->
+    <section class="dashboard-actions-block">
+      <h3 class="dashboard-block-title">Ações rápidas</h3>
+
+      <div class="dashboard-actions">
+        <button class="button is-primary" id="quick-sale-action">+ Nova venda</button>
+        <button class="button is-light" id="quick-client-action">+ Novo cliente</button>
+        <button class="button is-light" id="quick-product-action">+ Novo produto</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <p>(c) 2025 SGVC - Versão 1.0.0</p>
+</footer>
+
+<script src="/dashboard.js" defer></script>
+</body>
+</html>

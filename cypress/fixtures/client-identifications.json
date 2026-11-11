@@ -1,0 +1,25 @@
+{
+  "pf": {
+    "name": "Thiago Martins",
+    "email": "thiago@exemplo.com",
+    "cpf": "98765432100",
+    "phone": "(11) 91111-2222",
+    "birthDate": "1985-05-15",
+    "notes": "Ativo no canal digital"
+  },
+  "pj": {
+    "name": "Atelie Aurora Ltda",
+    "email": "contato@aurora.com",
+    "cnpj": "76543210000100",
+    "phone": "(21) 98888-4444",
+    "birthDate": "1990-09-09",
+    "notes": "Pessoa juridica premium"
+  },
+  "duplicateEmail": "aline@lojaviva.com",
+  "invalidEmail": "thiago@exemplo",
+  "invalidCpf": "12345678",
+  "invalidCnpj": "11222333",
+  "duplicateCpf": "12345678909",
+  "duplicateCnpj": "11222333000112",
+  "invalidPhone": "12345"
+}

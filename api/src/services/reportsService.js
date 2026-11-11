@@ -53,12 +53,18 @@ function resolveUserId(requestedUserId, user) {
   return user.id;
 }
 
+// Venda cancelada não entra em faturamento/relatórios
+function isActiveSale(sale) {
+  return sale && sale.status !== "CANCELED" && sale.status_venda !== "cancelada";
+}
+
 async function getRevenue({ start, end, day, week, month, year, breakdown, userId, user }) {
   const normalizedBreakdown = validateBreakdown(breakdown || "total");
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
   const ownerId = resolveUserId(userId, user);
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
+    if (!isActiveSale(s)) return false;
     const dx = new Date(s.date);
     // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
     const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
@@ -193,6 +199,7 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
   const ownerId = resolveUserId(userId, user);
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
+    if (!isActiveSale(s)) return false;
     const dx = new Date(s.date);
     // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
     const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;

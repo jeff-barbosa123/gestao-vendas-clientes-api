@@ -1,5 +1,5 @@
 const { logError } = require("../utils/logger");
-const { translateError } = require("../utils/errorMessages");
+const { translateError, isTechnicalMessage } = require("../utils/errorMessages");
 const { t } = require("../utils/i18n");
 
 function errorHandler(err, req, res, next) {
@@ -10,6 +10,8 @@ function errorHandler(err, req, res, next) {
   // Mensagens claras e previsíveis (em produção, sempre amigáveis)
   let originalMessage = err.message || 'Erro interno do servidor';
   let code = err.code;
+  // Código explícito vindo do serviço (ex.: SESSION_EXPIRED) x código inferido pelo status
+  const hasExplicitCode = Boolean(err.code);
 
   // Tratamento de payload muito grande (DoS)
   if (!code && err.type === 'entity.too.large') {
@@ -73,6 +75,19 @@ function errorHandler(err, req, res, next) {
     } else {
       message = translateError(originalMessage, code, status);
     }
+  }
+
+  // Preserva mensagens de negócio já amigáveis lançadas pelos serviços
+  // (ex.: "Credenciais inválidas", "Senha muito curta"). Sem isso, qualquer erro 401
+  // virava "Sua sessão expirou" e qualquer 400 virava mensagem genérica.
+  if (
+    !hasExplicitCode &&
+    status < 500 &&
+    code !== 'DATABASE_ERROR' &&
+    err.message &&
+    !isTechnicalMessage(err.message)
+  ) {
+    message = err.message;
   }
 
   const details = Array.isArray(err.details) ? err.details : err.details ? [err.details] : [];

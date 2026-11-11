@@ -5,14 +5,14 @@
 **Big Picture**
 - **App entry:** `api/src/server.js` starts the HTTP server; `api/src/app.js` wires middleware, routes and Swagger (`/api-docs`).
 - **Routing:** All route modules live under `api/src/routes/` and are mounted by `api/src/routes/index.js` at `/api`.
-- **Layering:** Controllers (`api/src/controllers/*`) handle HTTP level (req/res), services (`api/src/services/*`) contain business logic, and `api/src/models/db.js` provides the in-memory data layer + simple persistence for `fixtures/customers.json`.
+- **Layering:** Controllers (`api/src/controllers/*`) handle HTTP level (req/res), services (`api/src/services/*`) contain business logic, and `api/src/db/repository.js` is the PostgreSQL data layer (schema in `api/src/db/schema.sql`, migrations in `api/migrations/`). `api/src/models/db.js` only keeps in-memory session state (tokens, failed logins).
 - **Auth:** JWT-based auth implemented in `api/src/services/authService.js` and used by `api/src/controllers/authController.js`. Tokens, revocation and failed-login blocking are stored in-memory (see `tokenStore` and `failedAttempts` in `db.js`).
 
 **How to run & test (concrete commands)**
-- **Install deps:** `cd api; npm install`
+- **Install deps:** `npm install` (root, npm workspaces)
 - **Start (prod):** `cd api; npm start` (launches `node src/server.js`)
 - **Start (dev):** `cd api; npm run dev` (uses `nodemon`)
-- **Run tests:** `cd api; npm test` (Mocha via `.mocharc.json`) — for HTML reports use `npm run test:report`.
+- **Run tests:** `npm test` (Mocha via `api/.mocharc.json`; needs PostgreSQL and `api/.env.test` — see `docs/TESTES.md`).
 
 **Important project-specific behaviors & gotchas**
 - **In-memory DB with partial persistence:** The app uses an in-memory `db` object (`api/src/models/db.js`). Creating a customer writes to `fixtures/customers.json` on disk — other entities are memory-only. Tests and local development can be stateful; reset fixtures if needed.

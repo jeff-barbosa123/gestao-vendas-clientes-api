@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Editar cliente</title>
+    <meta
+      name="description"
+      content="Edi&ccedil;&atilde;o de cliente no SGVC com valida&ccedil;&otilde;es e remo&ccedil;&atilde;o segura."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/clients.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="clients-wrapper">
+          <header class="clients-header">
+            <div>
+              <h3 class="clients-title">Editar cliente</h3>
+              <p class="clients-subtitle">Atualize as informa&ccedil;&otilde;es do cliente</p>
+            </div>
+            <div class="clients-actions">
+              <button class="button is-light is-small" type="button" id="back-list">Voltar para lista</button>
+            </div>
+          </header>
+
+          <div class="clients-message toast-top" id="edit-message" hidden></div>
+
+          <section class="panel-card">
+            <h4 class="clients-section-title">Detalhes do cliente</h4>
+            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+              Atualize as informa&ccedil;&otilde;es do cliente e salve as altera&ccedil;&otilde;es.
+            </p>
+            <form id="edit-form" class="clients-form" novalidate>
+              <div class="clients-step-block">
+                <div class="clients-step-header">
+                  <span class="clients-step-index">1</span>
+                  <div>
+                    <p class="clients-step-title">Identificacao do cliente</p>
+                    <p class="clients-step-subtitle">Dados principais para contato.</p>
+                  </div>
+                </div>
+                <div class="field clients-type-field">
+                  <label class="label" for="edit-type">Tipo de cliente (PF / PJ)</label>
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select id="edit-type" aria-describedby="edit-type-hint">
+                        <option value="">Sem sele&#231;&#227;o (comportamento atual)</option>
+                        <option value="PF">Pessoa F&#237;sica (CPF)</option>
+                        <option value="PJ">Pessoa Jur&#237;dica (CNPJ)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p class="help clients-field-hint" id="edit-type-hint">
+                    Ajusta os campos apresentados sem alterar as regras existentes.
+                  </p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-name"><span class="clients-name-label-text">Nome</span></label>
+                  <input class="input" id="edit-name" type="text" autocomplete="name" maxlength="120" />
+                  <p class="help">Nome completo do cliente.</p>
+                  <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-email">E-mail</label>
+                  <input class="input" id="edit-email" type="email" autocomplete="email" maxlength="254" />
+                  <p class="help">Usado para comunica&ccedil;&otilde;es importantes.</p>
+                  <p class="help is-danger" id="edit-email-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field clients-conditional is-hidden" id="edit-trade-name-field">
+                  <label class="label" for="edit-trade-name">Nome fantasia (opcional)</label>
+                  <input
+                    class="input"
+                    id="edit-trade-name"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Nome fantasia da empresa"
+                  />
+                  <p class="help clients-field-hint">Visivel apenas para pessoa jur&#237;dica.</p>
+                </div>
+                <div class="field clients-conditional is-hidden" id="edit-cpf-field">
+                  <label class="label" for="edit-cpf">CPF</label>
+                  <input
+                    class="input"
+                    id="edit-cpf"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="14"
+                    placeholder="000.000.000-00"
+                  />
+                  <p class="help clients-field-hint">Informe somente para PF.</p>
+                  <p class="help is-danger" id="edit-cpf-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field clients-conditional" id="edit-cnpj-field">
+                  <label class="label" for="edit-cnpj">CNPJ (opcional)</label>
+                  <input
+                    class="input"
+                    id="edit-cnpj"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="18"
+                    placeholder="00.000.000/0000-00"
+                  />
+                  <p class="help">Informe apenas se for empresa.</p>
+                  <p class="help is-danger" id="edit-cnpj-error" aria-live="polite" hidden></p>
+                  <p class="help clients-cnpj-success" id="edit-cnpj-success" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-phone">Telefone</label>
+                  <input class="input" id="edit-phone" type="text" autocomplete="tel" maxlength="15" />
+                  <p class="help">Formato com DDD (ex: 11 98888-8888).</p>
+                  <p class="help is-danger" id="edit-phone-error" aria-live="polite" hidden></p>
+                  <div class="clients-phone-actions">
+                    <a
+                      class="button is-light is-small"
+                      id="edit-phone-whatsapp"
+                      href="#"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-disabled="true"
+                    >
+                      Abrir no WhatsApp
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="clients-step-block">
+                <div class="clients-step-header">
+                  <span class="clients-step-index">2</span>
+                  <div>
+                    <p class="clients-step-title">Dados pessoais</p>
+                    <p class="clients-step-subtitle">Usamos para avisos de aniversario.</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-birth-date">Data de nascimento</label>
+                  <input class="input" id="edit-birth-date" type="date" />
+                  <p class="help">Usamos para avisos de aniversario.</p>
+                  <p class="help is-danger" id="edit-birth-date-error" aria-live="polite" hidden></p>
+                  <p class="help clients-birth-hint" id="edit-birth-hint" aria-live="polite" hidden></p>
+                </div>
+              </div>
+              <div class="clients-step-block">
+                <div class="clients-step-header">
+                  <span class="clients-step-index">3</span>
+                  <div>
+                    <p class="clients-step-title">Endereco</p>
+                    <p class="clients-step-subtitle">Ajuda na entrega e organizacao.</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-street">Rua</label>
+                  <input
+                    class="input"
+                    id="edit-address-street"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Ex: Rua, Avenida, Travessa, Praça..."
+                  />
+                  <p class="help is-danger" id="edit-address-street-error" aria-live="polite" hidden></p>
+                  <p class="help clients-field-hint">
+                    Informe o nome completo do logradouro (Rua, Av., Travessa, etc.)
+                  </p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-number">Numero</label>
+                  <input class="input" id="edit-address-number" type="text" maxlength="20" />
+                  <p class="help is-danger" id="edit-address-number-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-complement">Complemento</label>
+                  <input
+                    class="input"
+                    id="edit-address-complement"
+                    type="text"
+                    maxlength="60"
+                    placeholder="Ex.: Apto 42, Sala 101, Bloco B"
+                  />
+                  <p class="help clients-field-hint">Opcional: apto, sala, fundo, bloco...</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-neighborhood">Bairro</label>
+                  <input class="input" id="edit-address-neighborhood" type="text" maxlength="80" />
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-city">Cidade</label>
+                  <input class="input" id="edit-address-city" type="text" maxlength="80" />
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-address-postal">CEP</label>
+                  <input class="input" id="edit-address-postal" type="text" maxlength="9" placeholder="00000-000" />
+                </div>
+              </div>
+              <div class="clients-step-block">
+                <div class="clients-step-header">
+                  <span class="clients-step-index">4</span>
+                  <div>
+                    <p class="clients-step-title">Observa&ccedil;&otilde;es</p>
+                    <p class="clients-step-subtitle">Preferencias do cliente.</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-notes">Observa&ccedil;&otilde;es / Prefer&ecirc;ncias</label>
+                  <textarea class="textarea" id="edit-notes" maxlength="500" rows="3" placeholder="Ex: prefere contato por WhatsApp, alergias, cor favorita"></textarea>
+                  <p class="help">Aparece apenas no detalhe do cliente.</p>
+                  <div class="clients-chip-row" id="edit-trade-chip" hidden>
+                    <span class="clients-chip" id="edit-trade-chip-label"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="buttons">
+                <button class="button is-link" type="submit" id="save-btn">Salvar altera&ccedil;&otilde;es</button>
+                <button class="button is-light" type="button" id="cancel-edit">Cancelar edi&ccedil;&atilde;o</button>
+                <button class="button is-danger" type="button" id="delete-btn">Remover cliente</button>
+              </div>
+            </form>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <div class="modal" id="delete-modal" aria-hidden="true">
+      <div class="modal-background" id="delete-close"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+        <header class="modal-card-head">
+          <p class="modal-card-title" id="delete-title">
+            <span class="modal-alert-icon" aria-hidden="true">!</span>
+            Remover cliente
+          </p>
+          <button class="delete modal-close-btn" aria-label="Fechar" id="delete-close-btn"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Tem certeza de que deseja remover este cliente?</p>
+          <p class="help is-danger">Essa a&ccedil;&atilde;o n&atilde;o poder&aacute; ser desfeita.</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-light" type="button" id="delete-cancel">Cancelar</button>
+          <button class="button is-danger" type="button" id="delete-confirm">Confirmar exclusao</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/static/sgvc-utils.js" defer></script>
+    <script src="/static/sgvc-unsaved-changes.js" defer></script>
+    <script src="/static/client-edit.js" defer></script>
+  </body>
+</html>

@@ -8,39 +8,44 @@ const MESSAGES = {
   passwordLong: 'Senha muito longa',
 };
 
+// Mesmo formato de erro do errorHandler central (success/code/message/error)
+function errorBody(message, code = 'BAD_REQUEST') {
+  return { success: false, code, message, error: message };
+}
+
 module.exports = (req, res, next) => {
   if (!req.is('application/json')) {
-    return res.status(415).json({ error: 'Content-Type inv\u00e1lido' });
+    return res.status(415).json(errorBody('Content-Type inv\u00e1lido', 'INVALID_CONTENT_TYPE'));
   }
 
   const { email, password } = req.body || {};
 
   if (email === undefined && password === undefined) {
-    return res.status(400).json({ error: MESSAGES.emailPasswordRequired });
+    return res.status(400).json(errorBody(MESSAGES.emailPasswordRequired));
   }
 
   if (email === undefined) {
-    return res.status(400).json({ error: MESSAGES.emailRequired });
+    return res.status(400).json(errorBody(MESSAGES.emailRequired));
   }
 
   if (password === undefined) {
-    return res.status(400).json({ error: MESSAGES.passwordRequired });
+    return res.status(400).json(errorBody(MESSAGES.passwordRequired));
   }
 
   if (email === null || email === '') {
-    return res.status(400).json({ error: MESSAGES.emailRequired });
+    return res.status(400).json(errorBody(MESSAGES.emailRequired));
   }
 
   if (password === null || password === '') {
-    return res.status(400).json({ error: MESSAGES.passwordRequired });
+    return res.status(400).json(errorBody(MESSAGES.passwordRequired));
   }
 
   if (typeof email !== 'string') {
-    return res.status(400).json({ error: MESSAGES.invalidEmail });
+    return res.status(400).json(errorBody(MESSAGES.invalidEmail));
   }
 
   if (typeof password !== 'string') {
-    return res.status(400).json({ error: MESSAGES.invalidPasswordType });
+    return res.status(400).json(errorBody(MESSAGES.invalidPasswordType));
   }
 
   const cleanEmail = email.trim().toLowerCase();
@@ -48,17 +53,17 @@ module.exports = (req, res, next) => {
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(cleanEmail)) {
-    return res.status(400).json({ error: MESSAGES.invalidEmail });
+    return res.status(400).json(errorBody(MESSAGES.invalidEmail));
   }
 
   // Para LOGIN, validamos apenas que a senha não está vazia e tem tamanho razoável
   // NÃO validamos força da senha no login - isso é feito apenas no registro/recuperação
   if (cleanPass.length === 0) {
-    return res.status(400).json({ error: MESSAGES.passwordRequired });
+    return res.status(400).json(errorBody(MESSAGES.passwordRequired));
   }
 
   if (cleanPass.length > 128) {
-    return res.status(400).json({ error: MESSAGES.passwordLong });
+    return res.status(400).json(errorBody(MESSAGES.passwordLong));
   }
 
   req.body.email = cleanEmail;

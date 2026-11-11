@@ -1,6 +1,13 @@
 const { v4: uuidv4 } = require("uuid");
 const { query, withTransaction } = require("./index");
 
+// IDs são UUID no Postgres. Um id em formato inválido (ex.: "abc", "999") gerava
+// erro 22P02 no banco e a API respondia 500; agora é tratado como "não encontrado".
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function isUuid(value) {
+  return typeof value === "string" && UUID_RE.test(value);
+}
+
 function toNumber(value) {
   if (value == null) return null;
   const num = Number(value);
@@ -12,6 +19,7 @@ function normalizeProduct(row) {
   return {
     ...row,
     productType: row.product_type || row.productType || null,
+    fichaTecnicaId: row.ficha_tecnica_id ?? row.fichaTecnicaId ?? null,
     price: toNumber(row.price),
     purchase_price: toNumber(row.purchase_price),
     custo_por_unidade: toNumber(row.custo_por_unidade),
@@ -57,6 +65,7 @@ async function getUserByEmail(email) {
 }
 
 async function getUserById(id) {
+  if (!isUuid(id)) return null;
   const result = await query("SELECT * FROM users WHERE id = $1", [id]);
   return result.rows[0] || null;
 }
@@ -67,6 +76,8 @@ async function createUser(data) {
     email: data.email,
     password: data.password,
     name: data.name,
+    email_verified: data.emailVerified === true,
+    email_verification_token: data.emailVerificationToken || null,
     status_usuario: data.statusUsuario || "ATIVO",
     data_ultimo_login: data.dataUltimoLogin || null,
     tentativas_falha: data.tentativasFalha || 0,
@@ -74,14 +85,16 @@ async function createUser(data) {
   };
   const result = await query(
     `INSERT INTO users
-      (id, email, password, name, status_usuario, data_ultimo_login, tentativas_falha, blocked, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW())
+      (id, email, password, name, email_verified, email_verification_token, status_usuario, data_ultimo_login, tentativas_falha, blocked, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW())
      RETURNING *`,
     [
       payload.id,
       payload.email,
       payload.password,
       payload.name,
+      payload.email_verified,
+      payload.email_verification_token,
       payload.status_usuario,
       payload.data_ultimo_login,
       payload.tentativas_falha,
@@ -89,6 +102,31 @@ async function createUser(data) {
     ]
   );
   return result.rows[0];
+}
+
+async function setEmailVerificationToken(userId, tokenHash) {
+  const result = await query(
+    `UPDATE users
+       SET email_verification_token = $2,
+           updated_at = NOW()
+     WHERE id = $1
+     RETURNING *`,
+    [userId, tokenHash]
+  );
+  return result.rows[0] || null;
+}
+
+async function verifyEmailByTokenHash(tokenHash) {
+  const result = await query(
+    `UPDATE users
+       SET email_verified = TRUE,
+           email_verification_token = NULL,
+           updated_at = NOW()
+     WHERE email_verification_token = $1
+     RETURNING *`,
+    [tokenHash]
+  );
+  return result.rows[0] || null;
 }
 
 async function updateUserLogin(id, dataUltimoLogin, tentativasFalha, statusUsuario) {
@@ -291,6 +329,7 @@ async function listCustomers(ownerId, pagination = null, filters = {}) {
 }
 
 async function getCustomerById(id) {
+  if (!isUuid(id)) return null;
   const result = await query("SELECT * FROM customers WHERE id = $1", [id]);
   return result.rows[0] || null;
 }
@@ -441,6 +480,7 @@ async function listProducts(ownerId, pagination = null) {
 }
 
 async function getProductById(id) {
+  if (!isUuid(id)) return null;
   const result = await query("SELECT * FROM products WHERE id = $1", [id]);
   return normalizeProduct(result.rows[0] || null);
 }
@@ -494,6 +534,19 @@ async function createProduct(data) {
   return normalizeProduct(result.rows[0]);
 }
 
+const LINK_FIELDS = [
+  "ficha_tecnica_id",
+  "custo_por_unidade",
+  "preco_minimo",
+  "preco_minimo_sugerido",
+  "cmv_previsto",
+  "cmv_futuro",
+  "data_vinculo",
+];
+function isExplicitNull(payload, field) {
+  return Object.prototype.hasOwnProperty.call(payload, field) && payload[field] === null;
+}
+
 async function updateProduct(id, payload) {
   const result = await query(
     `UPDATE products
@@ -503,13 +556,13 @@ async function updateProduct(id, payload) {
            purchase_price = COALESCE($5, purchase_price),
            product_type = COALESCE($6, product_type),
            owner_id = COALESCE($7, owner_id),
-           ficha_tecnica_id = COALESCE($8, ficha_tecnica_id),
-           custo_por_unidade = COALESCE($9, custo_por_unidade),
-           preco_minimo = COALESCE($10, preco_minimo),
-           preco_minimo_sugerido = COALESCE($11, preco_minimo_sugerido),
-           cmv_previsto = COALESCE($12, cmv_previsto),
-           cmv_futuro = COALESCE($13, cmv_futuro),
-           data_vinculo = COALESCE($14, data_vinculo),
+           ficha_tecnica_id = CASE WHEN $17::boolean THEN NULL ELSE COALESCE($8, ficha_tecnica_id) END,
+           custo_por_unidade = CASE WHEN $18::boolean THEN NULL ELSE COALESCE($9, custo_por_unidade) END,
+           preco_minimo = CASE WHEN $19::boolean THEN NULL ELSE COALESCE($10, preco_minimo) END,
+           preco_minimo_sugerido = CASE WHEN $20::boolean THEN NULL ELSE COALESCE($11, preco_minimo_sugerido) END,
+           cmv_previsto = CASE WHEN $21::boolean THEN NULL ELSE COALESCE($12, cmv_previsto) END,
+           cmv_futuro = CASE WHEN $22::boolean THEN NULL ELSE COALESCE($13, cmv_futuro) END,
+           data_vinculo = CASE WHEN $23::boolean THEN NULL ELSE COALESCE($14, data_vinculo) END,
            status_produto = COALESCE($15, status_produto),
            stock = COALESCE($16, stock),
            updated_at = NOW()
@@ -532,6 +585,9 @@ async function updateProduct(id, payload) {
       payload.data_vinculo,
       payload.status_produto ?? payload.statusProduto,
       payload.stock,
+      // Flags de limpeza: null explícito no payload zera o campo (ex.: remover ficha técnica).
+      // Sem isso o COALESCE mantinha o valor antigo e o produto continuava vinculado.
+      ...LINK_FIELDS.map((field) => isExplicitNull(payload, field)),
     ]
   );
   return normalizeProduct(result.rows[0] || null);
@@ -542,14 +598,8 @@ async function deleteProduct(id) {
   return normalizeProduct(result.rows[0] || null);
 }
 
-async function listRecipes(ownerId, includeInactive = false) {
-  const result = await query(
-    `SELECT * FROM recipes
-      WHERE ($1::uuid IS NULL OR owner_id = $1)
-        AND ($2 = TRUE OR status <> 'INACTIVE')`,
-    [ownerId || null, includeInactive]
-  );
-  const recipes = result.rows.map(normalizeRecipe);
+// Anexa ingredientes e custos indiretos e expõe os campos em camelCase
+async function attachRecipeDetails(recipes) {
   if (recipes.length === 0) return [];
   const ids = recipes.map((r) => r.id);
   const ingRows = await query(
@@ -583,6 +633,8 @@ async function listRecipes(ownerId, includeInactive = false) {
     priceSuggested: recipe.price_suggested,
     marginLabel: recipe.margin_label,
     estimatedProfit: recipe.estimated_profit,
+    linkProductId: recipe.link_product_id ?? null,
+    ownerId: recipe.owner_id ?? null,
     overheadItems: (overheadByRecipe.get(recipe.id) || []).map((row) => ({
       id: row.id,
       name: row.name,
@@ -603,9 +655,22 @@ async function listRecipes(ownerId, includeInactive = false) {
   }));
 }
 
+async function listRecipes(ownerId, includeInactive = false) {
+  const result = await query(
+    `SELECT * FROM recipes
+      WHERE ($1::uuid IS NULL OR owner_id = $1)
+        AND ($2 = TRUE OR status <> 'INACTIVE')`,
+    [ownerId || null, includeInactive]
+  );
+  return attachRecipeDetails(result.rows.map(normalizeRecipe));
+}
+
 async function getRecipeById(id) {
-  const list = await listRecipes(null, true);
-  return list.find((item) => item.id === id) || null;
+  // Busca direta por id (antes carregava todas as receitas de todos os usuários)
+  if (!isUuid(id)) return null;
+  const result = await query("SELECT * FROM recipes WHERE id = $1", [id]);
+  const [recipe] = await attachRecipeDetails(result.rows.map(normalizeRecipe));
+  return recipe || null;
 }
 
 async function createRecipe(recipe, ingredients, overheadItems) {
@@ -757,6 +822,30 @@ async function softDeleteRecipe(id) {
   return result.rows[0] || null;
 }
 
+// Anexa os itens de cada venda
+async function attachSaleItems(sales) {
+  if (sales.length === 0) return [];
+  const ids = sales.map((row) => row.id);
+  const items = await query("SELECT * FROM sale_items WHERE sale_id = ANY($1)", [ids]);
+  const itemsBySale = new Map();
+  items.rows.forEach((row) => {
+    const list = itemsBySale.get(row.sale_id) || [];
+    list.push(row);
+    itemsBySale.set(row.sale_id, list);
+  });
+  
+  return sales.map((sale) => ({
+    ...sale,
+    items: (itemsBySale.get(sale.id) || []).map((row) => ({
+      id: row.id,
+      productId: row.product_id,
+      quantity: Number(row.quantity),
+      unitPrice: Number(row.unit_price),
+      cmv: row.cmv == null ? null : Number(row.cmv),
+    })),
+  }));
+}
+
 async function listSales(ownerId, pagination = null) {
   const hasPagination = pagination && typeof pagination.limit === 'number' && typeof pagination.offset === 'number';
   
@@ -784,25 +873,7 @@ async function listSales(ownerId, pagination = null) {
     return hasPagination ? { rows: [], total } : [];
   }
   
-  const ids = sales.map((row) => row.id);
-  const items = await query("SELECT * FROM sale_items WHERE sale_id = ANY($1)", [ids]);
-  const itemsBySale = new Map();
-  items.rows.forEach((row) => {
-    const list = itemsBySale.get(row.sale_id) || [];
-    list.push(row);
-    itemsBySale.set(row.sale_id, list);
-  });
-  
-  const salesWithItems = sales.map((sale) => ({
-    ...sale,
-    items: (itemsBySale.get(sale.id) || []).map((row) => ({
-      id: row.id,
-      productId: row.product_id,
-      quantity: Number(row.quantity),
-      unitPrice: Number(row.unit_price),
-      cmv: row.cmv == null ? null : Number(row.cmv),
-    })),
-  }));
+  const salesWithItems = await attachSaleItems(sales);
   
   if (hasPagination) {
     return {
@@ -815,8 +886,11 @@ async function listSales(ownerId, pagination = null) {
 }
 
 async function getSaleById(id) {
-  const list = await listSales();
-  return list.find((item) => item.id === id) || null;
+  // Busca direta por id (antes carregava todas as vendas de todos os usuários)
+  if (!isUuid(id)) return null;
+  const result = await query("SELECT * FROM sales WHERE id = $1", [id]);
+  const [sale] = await attachSaleItems(result.rows.map(normalizeSale));
+  return sale || null;
 }
 
 async function createSale(sale, items) {
@@ -916,6 +990,8 @@ module.exports = {
   getUserByEmail,
   getUserById,
   createUser,
+  setEmailVerificationToken,
+  verifyEmailByTokenHash,
   updateUserLogin,
   updateUserPassword,
   updateUserProfile,

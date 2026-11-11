@@ -1,0 +1,14 @@
+{
+  "name": "sgvc-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend do SGVC (Sistema de Gestão de Vendas e Clientes)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

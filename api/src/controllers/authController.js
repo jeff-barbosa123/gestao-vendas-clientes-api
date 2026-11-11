@@ -1,5 +1,34 @@
 const authService = require("../services/authService"); 
 
+function cookieOptions() {
+  const isProd = process.env.NODE_ENV === 'production';
+  // Com proxy (frontend e backend em localhost:4000), SameSite 'lax' funciona em dev.
+  const sameSite = 'lax';
+  const secure = isProd;
+  return {
+    httpOnly: true,
+    secure,
+    sameSite,
+    path: '/',
+  };
+}
+
+function setAuthCookies(res, token, refreshToken, exp) {
+  const opts = cookieOptions();
+  res.cookie('sgvc_token', token, { ...opts, maxAge: 15 * 60 * 1000 });
+  res.cookie('sgvc_refresh', refreshToken, { ...opts, maxAge: 24 * 60 * 60 * 1000 });
+  if (exp) {
+    res.cookie('sgvc_token_exp', String(exp), { ...opts, httpOnly: false, maxAge: 15 * 60 * 1000 });
+  }
+}
+
+function clearAuthCookies(res) {
+  const opts = cookieOptions();
+  res.clearCookie('sgvc_token', opts);
+  res.clearCookie('sgvc_refresh', opts);
+  res.clearCookie('sgvc_token_exp', { ...opts, httpOnly: false });
+}
+
 module.exports = {
   login: async (req, res, next) => {
     try {
@@ -7,6 +36,8 @@ module.exports = {
         req.body.email,
         req.body.password
       );
+      setAuthCookies(res, token, refreshToken, exp);
+      // token/refreshToken no corpo mantidos para clientes de API (Bearer); o frontend usa os cookies HttpOnly
       return res.status(200).json({ token, refreshToken, user, exp, jti, refreshJti });
     } catch (err) {
       // Passa erro para o errorHandler centralizado
@@ -16,9 +47,12 @@ module.exports = {
 
   refresh: async (req, res, next) => {
     try {
+      const refreshTokenFromCookie = req.cookies && req.cookies.sgvc_refresh ? req.cookies.sgvc_refresh : null;
       const { token, refreshToken, user, exp, jti, refreshJti } = await authService.refresh(
-        req.body.refreshToken
+        (req.body && req.body.refreshToken) || refreshTokenFromCookie
       );
+      setAuthCookies(res, token, refreshToken, exp);
+      // token/refreshToken no corpo mantidos para clientes de API (Bearer); o frontend usa os cookies HttpOnly
       return res.status(200).json({ token, refreshToken, user, exp, jti, refreshJti });
     } catch (err) {
       // Passa erro para o errorHandler centralizado
@@ -30,13 +64,20 @@ module.exports = {
     if (req.auth && req.auth.jti) {
       authService.logout(req.auth.jti);
     }
+    clearAuthCookies(res);
     return res.status(204).end();
   },
 
   register: async (req, res, next) => {
     try {
       const user = await authService.registerUser(req.body);
-      return res.status(201).json({ message: "Usuário criado com sucesso", user });
+      // Login automático após registro e retorno de cookies de sessão
+      const { token, refreshToken, user: loggedUser, exp, jti, refreshJti } = await authService.login(
+        req.body.email,
+        req.body.password
+      );
+      setAuthCookies(res, token, refreshToken, exp);
+      return res.status(201).json({ message: "Usuário criado com sucesso", user: loggedUser, exp, jti, refreshJti });
     } catch (err) {
       // Passa erro para o errorHandler centralizado
       return next(err);
@@ -94,15 +135,19 @@ module.exports = {
   forgot: async (req, res, next) => {
     try {
       const email = req.body?.email;
-      console.log('[AUTH] 📨 Solicitação de recuperação de senha para:', email);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH] 📨 Solicitação de recuperação de senha para:', email);
+      }
       
       const result = await authService.forgotPassword(email);
-      console.log('[AUTH] 📋 Resultado do forgotPassword:', {
-        sent: result?.sent,
-        hasResetLink: !!result?.resetLink,
-        hasPreviewUrl: !!result?.previewUrl,
-        hasToken: !!result?.token,
-      });
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH] 📋 Resultado do forgotPassword:', {
+          sent: result?.sent,
+          hasResetLink: !!result?.resetLink,
+          hasPreviewUrl: !!result?.previewUrl,
+          hasToken: !!result?.token,
+        });
+      }
       
       // Se usuário não existe, retorna mensagem genérica (segurança)
       if (!result || (result.sent === false && !result.resetLink && !result.previewUrl)) {
@@ -175,6 +220,16 @@ module.exports = {
       return res.status(200).json({ message: "Senha atualizada com sucesso." });
     } catch (err) {
       // Passa erro para o errorHandler centralizado
+      return next(err);
+    }
+  },
+
+  verifyEmail: async (req, res, next) => {
+    try {
+      const token = req.query ? req.query.token : null;
+      await authService.verifyEmail(token);
+      return res.status(200).json({ message: "E-mail confirmado com sucesso." });
+    } catch (err) {
       return next(err);
     }
   },

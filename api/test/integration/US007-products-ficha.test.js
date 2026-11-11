@@ -13,11 +13,12 @@ const nextIp = (() => {
 })();
 
 const MESSAGES = {
-  missing: 'Campos obrigatórios ausentes',
+  missing: 'Produto e ficha técnica são obrigatórios',
   productNotFound: 'Produto não encontrado',
-  recipeNotFound: 'Ficha técnica não encontrada',
-  forbiddenRecipe: 'Você não tem permissão para usar esta ficha técnica',
-  conflict: 'O produto já possui ficha técnica vinculada',
+  recipeNotFound: 'Ficha técnica não encontrada ou inativa',
+  noLinkedRecipe: 'Este produto não possui ficha técnica vinculada',
+  forbiddenRecipe: 'Você não tem permissão para utilizar esta ficha técnica',
+  conflict: 'Este produto já possui uma ficha técnica vinculada',
   invalidYield: 'É proibido vincular ficha técnica com rendimento igual a zero',
 };
 
@@ -276,7 +277,7 @@ describe('US007 - Vincular ficha técnica ao produto', () => {
       .set('x-forwarded-for', nextIp());
 
     expect(res.status).to.equal(404);
-    expect(res.body.error).to.equal(MESSAGES.recipeNotFound);
+    expect(res.body.error).to.equal(MESSAGES.noLinkedRecipe);
   });
   it('API-VIN-002 | Deve bloquear vinculo sem ID do produto', async () => {
     const recipe = await createRecipe(adminToken);
@@ -388,7 +389,9 @@ describe('US007 - Vincular ficha técnica ao produto', () => {
       .set('x-forwarded-for', nextIp())
       .send({ fichaTecnicaId: recipe.id });
 
-    expect(res.status).to.equal(400);
+    // Parâmetros desconhecidos são ignorados: o vínculo ocorre normalmente, sem efeito colateral
+    expect(res.status).to.equal(200);
+    expect(res.body.fichaTecnicaId).to.equal(recipe.id);
   });
 
   it('SEC-VIN-005 | Deve bloquear SQL Injection nos parametros de vinculo', async () => {
@@ -446,7 +449,10 @@ describe('US007 - Vincular ficha técnica ao produto', () => {
       .set('x-forwarded-for', nextIp())
       .send({ fichaTecnicaId: recipe.id, ownerId: 'u999', isAdmin: true });
 
-    expect(res.status).to.equal(400);
+    // Campos extras são ignorados: o produto continua pertencendo ao usuário autenticado
+    expect(res.status).to.equal(200);
+    expect(res.body.owner_id).to.not.equal('u999');
+    expect(res.body).to.not.have.property('isAdmin');
   });
 
   it('SEC-VIN-011 | Deve bloquear header Authorization malformado', async () => {

@@ -498,12 +498,13 @@ async function remove(id, user) {
   if (!current) {
     const err = new Error("Cliente n\u00e3o encontrado");
     err.status = 404;
-    err.code = "NOT_FOUND";
+    err.code = "CLIENT_NOT_FOUND";
     throw err;
   }
   if (current.owner_id && user && current.owner_id !== user.id) {
-    const err = new Error("Acesso negado");
+    const err = new Error("Você não tem permissão para realizar esta ação.");
     err.status = 403;
+    err.code = "FORBIDDEN";
     err.code = "ACCESS_DENIED";
     throw err;
   }

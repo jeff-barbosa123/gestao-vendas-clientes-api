@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   name TEXT NOT NULL,
+  email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+  email_verification_token TEXT,
   status_usuario TEXT NOT NULL DEFAULT 'ATIVO',
   data_ultimo_login TIMESTAMPTZ,
   tentativas_falha INTEGER NOT NULL DEFAULT 0,

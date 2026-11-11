@@ -10,6 +10,16 @@ const { rateLimit } = require("../middleware/rateLimit");
 const methodNotAllowed = (req, res) =>
   res.status(405).json({ error: "M\u00e9todo n\u00e3o permitido" });
 
+// CSRF: endpoint "safe" para garantir cookie e permitir que o frontend envie X-CSRF-Token
+router
+  .route("/csrf")
+  .get((req, res) => {
+    // Token é o mesmo valor do cookie (double-submit). Cookie é setado no middleware global.
+    res.setHeader("Cache-Control", "no-store");
+    res.json({ csrfToken: req.csrfToken || null });
+  })
+  .all(methodNotAllowed);
+
 // Rate limiting for sensitive endpoints
 // Em desenvolvimento, limites mais flexíveis para facilitar testes
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -33,6 +43,11 @@ const refreshRateLimit = rateLimit({
   max: 10, 
   message: "Muitas tentativas de refresh. Tente novamente em 1 minuto." 
 });
+const logoutRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: "Muitas tentativas de logout. Tente novamente em 1 minuto."
+});
 
 router
   .route("/login")
@@ -46,7 +61,7 @@ router
 
 router
   .route("/logout")
-  .post(authenticate, authController.logout)
+  .post(logoutRateLimit, authenticate, authController.logout)
   .all(methodNotAllowed);
 
 router
@@ -58,6 +73,11 @@ router
 router
   .route("/validate")
   .get(authenticate, authController.validate)
+  .all(methodNotAllowed);
+
+router
+  .route("/verify-email")
+  .get(authController.verifyEmail)
   .all(methodNotAllowed);
 
 router

@@ -431,6 +431,10 @@ async function syncProductCost(productId, mapped, recipeId) {
 
   const payload = {
     ficha_tecnica_id: recipeId || product.ficha_tecnica_id,
+    product_type: "PRODUCED",
+    // purchase_price é o custo usado no CMV das vendas: precisa acompanhar a ficha
+    // (antes só custo_por_unidade era atualizado e a venda saía com CMV desatualizado/zero)
+    purchase_price: costPerUnit,
     custo_por_unidade: costPerUnit,
     preco_minimo: priceMinimum,
     preco_minimo_sugerido: mapped?.priceSuggested ?? mapped?.preco_minimo_sugerido ?? priceMinimum,

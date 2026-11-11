@@ -9,7 +9,7 @@ const client = getClient();
 describe("US999 - Mensagens de Erro Amigáveis", () => {
   let authToken;
 
-  beforeAll(async () => {
+  before(async () => {
     // Criar usuário de teste ou usar credenciais existentes
     // Este teste assume que há um usuário de teste configurado
     const loginResponse = await client
@@ -25,7 +25,7 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
   });
 
   describe("Autenticação", () => {
-    test("Deve retornar mensagem amigável para credenciais inválidas", async () => {
+    it("Deve retornar mensagem amigável para credenciais inválidas", async () => {
       const response = await client
         .post("/api/auth/login")
         .send({
@@ -33,14 +33,14 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
           password: "wrongpassword",
         });
 
-      expect(response.status).toBe(401);
-      expect(response.body).toHaveProperty("code");
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).not.toMatch(/UNPROCESSABLE_ENTITY|BAD_REQUEST|INTERNAL_ERROR/i);
-      expect(response.body.message).toMatch(/E-mail ou senha incorretos|Credenciais inválidas/i);
+      expect(response.status).to.equal(401);
+      expect(response.body).to.have.property("code");
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).not.to.match(/UNPROCESSABLE_ENTITY|BAD_REQUEST|INTERNAL_ERROR/i);
+      expect(response.body.message).to.match(/E-mail ou senha incorretos|Credenciais inválidas/i);
     });
 
-    test("Deve retornar mensagem amigável para email inválido", async () => {
+    it("Deve retornar mensagem amigável para email inválido", async () => {
       const response = await client
         .post("/api/auth/login")
         .send({
@@ -48,14 +48,14 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
           password: "Test@1234",
         });
 
-      expect(response.status).toBeGreaterThanOrEqual(400);
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).not.toMatch(/UNPROCESSABLE_ENTITY|BAD_REQUEST/i);
+      expect(response.status).to.be.at.least(400);
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).not.to.match(/UNPROCESSABLE_ENTITY|BAD_REQUEST/i);
     });
   });
 
   describe("Clientes", () => {
-    test("Deve retornar mensagem amigável para cliente não encontrado", async () => {
+    it("Deve retornar mensagem amigável para cliente não encontrado", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -65,14 +65,14 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
         .get("/api/customers/99999")
         .set("Authorization", `Bearer ${authToken}`);
 
-      expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("code");
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).toMatch(/não encontrado|Cliente não encontrado/i);
-      expect(response.body.message).not.toMatch(/NOT_FOUND|404/i);
+      expect(response.status).to.equal(404);
+      expect(response.body).to.have.property("code");
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).to.match(/não encontrado|Cliente não encontrado/i);
+      expect(response.body.message).not.to.match(/NOT_FOUND|404/i);
     });
 
-    test("Deve retornar mensagem amigável para email duplicado", async () => {
+    it("Deve retornar mensagem amigável para email duplicado", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -97,17 +97,17 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
             email: createResponse.body.user?.email || createResponse.body.email,
           });
 
-        expect(duplicateResponse.status).toBe(409);
-        expect(duplicateResponse.body).toHaveProperty("code");
-        expect(duplicateResponse.body).toHaveProperty("message");
-        expect(duplicateResponse.body.message).toMatch(/já está cadastrado|e-mail já existe/i);
-        expect(duplicateResponse.body.message).not.toMatch(/CONFLICT|409/i);
+        expect(duplicateResponse.status).to.equal(409);
+        expect(duplicateResponse.body).to.have.property("code");
+        expect(duplicateResponse.body).to.have.property("message");
+        expect(duplicateResponse.body.message).to.match(/já está cadastrado|e-mail já existe/i);
+        expect(duplicateResponse.body.message).not.to.match(/CONFLICT|409/i);
       }
     });
   });
 
   describe("Validação de Campos", () => {
-    test("Deve retornar mensagem amigável para campos obrigatórios faltando", async () => {
+    it("Deve retornar mensagem amigável para campos obrigatórios faltando", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -120,15 +120,15 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
           // Campos obrigatórios faltando
         });
 
-      expect(response.status).toBeGreaterThanOrEqual(400);
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).not.toMatch(/UNPROCESSABLE_ENTITY|BAD_REQUEST/i);
-      expect(response.body.message).toMatch(/obrigatório|inválido|dados/i);
+      expect(response.status).to.be.at.least(400);
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).not.to.match(/UNPROCESSABLE_ENTITY|BAD_REQUEST/i);
+      expect(response.body.message).to.match(/obrigatório|inválido|dados/i);
     });
   });
 
   describe("CEP", () => {
-    test("Deve retornar mensagem amigável para CEP inválido", async () => {
+    it("Deve retornar mensagem amigável para CEP inválido", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -138,14 +138,14 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
         .get("/api/cep/123")
         .set("Authorization", `Bearer ${authToken}`);
 
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty("code");
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).toMatch(/CEP inválido|8 dígitos/i);
-      expect(response.body.message).not.toMatch(/BAD_REQUEST|400/i);
+      expect(response.status).to.equal(400);
+      expect(response.body).to.have.property("code");
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).to.match(/CEP inválido|8 dígitos/i);
+      expect(response.body.message).not.to.match(/BAD_REQUEST|400/i);
     });
 
-    test("Deve retornar mensagem amigável para CEP não encontrado", async () => {
+    it("Deve retornar mensagem amigável para CEP não encontrado", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -156,16 +156,16 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
         .set("Authorization", `Bearer ${authToken}`);
 
       if (response.status === 404) {
-        expect(response.body).toHaveProperty("code");
-        expect(response.body).toHaveProperty("message");
-        expect(response.body.message).toMatch(/CEP não encontrado|não encontrado/i);
-        expect(response.body.message).not.toMatch(/NOT_FOUND|404/i);
+        expect(response.body).to.have.property("code");
+        expect(response.body).to.have.property("message");
+        expect(response.body.message).to.match(/CEP não encontrado|não encontrado/i);
+        expect(response.body.message).not.to.match(/NOT_FOUND|404/i);
       }
     });
   });
 
   describe("Content-Type Validation", () => {
-    test("Deve retornar erro amigável para Content-Type inválido", async () => {
+    it("Deve retornar erro amigável para Content-Type inválido", async () => {
       if (!authToken) {
         console.warn("Token de autenticação não disponível, pulando teste");
         return;
@@ -177,9 +177,9 @@ describe("US999 - Mensagens de Erro Amigáveis", () => {
         .set("Content-Type", "text/plain")
         .send("invalid body");
 
-      expect(response.status).toBe(415);
-      expect(response.body).toHaveProperty("message");
-      expect(response.body.message).toMatch(/Content-Type|application\/json|formato/i);
+      expect(response.status).to.equal(415);
+      expect(response.body).to.have.property("message");
+      expect(response.body.message).to.match(/Content-Type|application\/json|formato/i);
     });
   });
 });

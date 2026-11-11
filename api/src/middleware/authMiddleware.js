@@ -32,7 +32,10 @@ function verifyWithRotation(token) {
 
 function authenticate(req, res, next) {
   const authHeader = req.headers["authorization"] || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  // Back-compat: Authorization header wins; fallback to HttpOnly cookie.
+  const token =
+    (authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null) ||
+    (req.cookies && req.cookies.sgvc_token ? req.cookies.sgvc_token : null);
   if (!token) {
     // Log only the event, not the token itself
     const { logError } = require("../utils/logger");
@@ -41,7 +44,7 @@ function authenticate(req, res, next) {
       path: req.originalUrl,
       method: req.method,
     });
-    return res.status(403).json({ success: false, message: MSG_FORBIDDEN, error: MSG_FORBIDDEN });
+    return res.status(401).json({ success: false, message: MSG_FORBIDDEN, error: MSG_FORBIDDEN });
   }
   try {
     const payload = verifyWithRotation(token);

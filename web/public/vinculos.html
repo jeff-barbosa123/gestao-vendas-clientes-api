@@ -1,0 +1,205 @@
+&#65279;<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Produtos vinculados</title>
+    <meta
+      name="description"
+      content="V&iacute;nculo de ficha t&eacute;cnica com produto."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/vinculos.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="links-wrapper">
+          <header class="links-header">
+            <div>
+              <h3 class="links-title">Produtos vinculados</h3>
+              <p class="links-subtitle">
+                Entenda qual ficha t&eacute;cnica est&aacute; ligada a cada produto e o impacto no custo.
+              </p>
+            </div>
+            <div class="links-actions">
+              <button class="button is-light is-small" id="back-dashboard">Voltar ao dashboard</button>
+              <button class="button is-link is-small" id="refresh-list">Atualizar</button>
+            </div>
+          </header>
+
+          <div class="links-message" id="links-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="links-summary">
+            <article class="summary-card">
+              <p class="summary-label">Produtos com ficha</p>
+              <p class="summary-value" id="summary-linked">0</p>
+              <p class="summary-help">V&iacute;nculos ativos e prontos.</p>
+            </article>
+            <article class="summary-card is-warning">
+              <p class="summary-label">Sem ficha</p>
+              <p class="summary-value" id="summary-missing">0</p>
+              <p class="summary-help">Precisa vincular para calcular custo.</p>
+            </article>
+            <article class="summary-card is-alert">
+              <p class="summary-label">Ficha incompleta</p>
+              <p class="summary-value" id="summary-incomplete">0</p>
+              <p class="summary-help">Revisar rendimento ou custos.</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Total de produtos</p>
+              <p class="summary-value" id="summary-total">0</p>
+              <p class="summary-help">Base de produtos cadastrados.</p>
+            </article>
+          </section>
+
+          <section class="links-insights" aria-label="Alertas r&aacute;pidos de v&iacute;nculo">
+            <article class="insight-card is-missing">
+              <div>
+                <p class="insight-label">Sem ficha</p>
+                <p class="insight-value" id="insight-missing-count">0</p>
+                <p class="insight-help">Produtos sem custo autom&aacute;tico.</p>
+              </div>
+              <button class="button is-light is-small" type="button" data-quick-filter="missing">
+                Ver somente
+              </button>
+            </article>
+            <article class="insight-card is-incomplete">
+              <div>
+                <p class="insight-label">Ficha incompleta</p>
+                <p class="insight-value" id="insight-incomplete-count">0</p>
+                <p class="insight-help">Revisar rendimento e custos.</p>
+              </div>
+              <button class="button is-light is-small" type="button" data-quick-filter="incomplete">
+                Ver somente
+              </button>
+            </article>
+            <article class="insight-card is-linked">
+              <div>
+                <p class="insight-label">V&iacute;nculo ok</p>
+                <p class="insight-value" id="insight-linked-count">0</p>
+                <p class="insight-help">Produtos prontos para precificar.</p>
+              </div>
+              <button class="button is-light is-small" type="button" data-quick-filter="linked">
+                Ver somente
+              </button>
+            </article>
+          </section>
+
+          <section class="panel-card">
+            <div class="links-form-header">
+              <div>
+                <h4 class="links-section-title">Vincular ficha</h4>
+                <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+                  Selecione o produto e a ficha t&#233;cnica para associar custos automaticamente.
+                </p>
+              </div>
+              <div class="link-preview" id="link-preview" aria-live="polite">
+                <p class="preview-title">Resumo do v&iacute;nculo</p>
+                <p class="preview-line" id="preview-product">Produto: -</p>
+                <p class="preview-line" id="preview-recipe">Ficha: -</p>
+                <span class="status-badge is-neutral" id="preview-status">Sem informa&ccedil;&atilde;o</span>
+              </div>
+            </div>
+            <div class="links-form">
+              <div class="field">
+                <label class="label" for="link-product">Produto</label>
+                <div class="select is-fullwidth">
+                  <select id="link-product"></select>
+                </div>
+                <p class="help" style="color:#64748b;">Escolha o item que voc&ecirc; vende.</p>
+              </div>
+              <div class="field">
+                <label class="label" for="link-recipe">Ficha t&#233;cnica</label>
+                <div class="select is-fullwidth">
+                  <select id="link-recipe"></select>
+                </div>
+                <p class="help" style="color:#64748b;">Escolha a ficha com os ingredientes e custos.</p>
+              </div>
+              <div class="field link-actions">
+                <button class="button is-link" id="link-btn" type="button">Vincular ficha</button>
+                <button class="button is-light" id="unlink-btn" type="button">Remover v&iacute;nculo</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <div class="links-list-header">
+              <div>
+                <h4 class="links-section-title">Produtos vinculados</h4>
+                <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+                  Veja o v&iacute;nculo, rendimento e custos por produto.
+                </p>
+              </div>
+              <div class="links-filters">
+                <div class="field">
+                  <label class="label is-small" for="links-search">Buscar</label>
+                  <input class="input is-small" id="links-search" type="search" placeholder="Produto ou ficha" />
+                </div>
+                <div class="field">
+                  <label class="label is-small" for="links-status-filter">Status</label>
+                  <div class="select is-small">
+                    <select id="links-status-filter">
+                      <option value="">Todos</option>
+                      <option value="linked">Vinculado</option>
+                      <option value="missing">Sem ficha</option>
+                      <option value="incomplete">Ficha incompleta</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label is-small" for="links-clear-filters">Limpar</label>
+                  <button class="button is-light is-small" type="button" id="links-clear-filters">
+                    Limpar filtros
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="links-legend">
+              <span class="legend-item"><span class="status-dot is-linked"></span> V&iacute;nculo ok</span>
+              <span class="legend-item"><span class="status-dot is-missing"></span> Sem ficha</span>
+              <span class="legend-item"><span class="status-dot is-incomplete"></span> Ficha incompleta</span>
+            </div>
+            <p class="links-filters-help">
+              Dica: use o status para focar em itens sem ficha ou com ficha incompleta.
+            </p>
+            <p class="links-count" id="links-count" aria-live="polite">0 produtos</p>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable links-table">
+                <caption class="sr-only">Lista de produtos e fichas t&eacute;cnicas vinculadas.</caption>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Ficha t&#233;cnica</th>
+                    <th class="has-text-right">Rendimento</th>
+                    <th class="has-text-right">Custo unit&aacute;rio</th>
+                    <th class="has-text-right">Pre&ccedil;o sugerido</th>
+                    <th>Status</th>
+                    <th class="has-text-right">A&ccedil;&otilde;es</th>
+                  </tr>
+                </thead>
+                <tbody id="links-body"></tbody>
+              </table>
+            </div>
+            <div class="links-empty" id="links-empty" hidden>
+              <p>Nenhum produto encontrado com os filtros atuais.</p>
+              <p class="help" style="color:#64748b;">Ajuste a busca ou limpe o filtro de status.</p>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <script src="/static/vinculos.js" defer></script>
+  </body>
+</html>
+

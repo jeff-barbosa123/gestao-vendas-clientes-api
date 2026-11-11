@@ -1,0 +1,32 @@
+[
+  {
+    "id": "product-1",
+    "name": "Bolo de Chocolate",
+    "description": "Bolo de chocolate caseiro",
+    "price": "29.99",
+    "purchase_price": "15.00",
+    "product_type": "PRODUCED",
+    "stock": 10,
+    "status_produto": "ATIVO"
+  },
+  {
+    "id": "product-2",
+    "name": "Pão de Açúcar",
+    "description": "Pão doce tradicional",
+    "price": "12.50",
+    "purchase_price": "5.00",
+    "product_type": "PRODUCED",
+    "stock": 25,
+    "status_produto": "ATIVO"
+  },
+  {
+    "id": "product-3",
+    "name": "Café Especial",
+    "description": "Café torrado e moído",
+    "price": "45.00",
+    "purchase_price": "30.00",
+    "product_type": "RESALE",
+    "stock": 5,
+    "status_produto": "ATIVO"
+  }
+]

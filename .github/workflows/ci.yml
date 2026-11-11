@@ -2,16 +2,41 @@ name: ci
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 jobs:
-  test:
+  api-tests:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: sgvc_test
+          POSTGRES_USER: sgvc
+          POSTGRES_PASSWORD: sgvc123
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sgvc"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
       NODE_ENV: test
       CI: true
+      DATABASE_URL: postgresql://sgvc:sgvc123@localhost:5432/sgvc_test
+      JWT_SECRET: ci-jwt-secret-0123456789abcdef0123456789
+      JWT_REFRESH_SECRET: ci-refresh-secret-0123456789abcdef0123456789
+      ALLOWED_ORIGINS: http://localhost:4000
+      ADMIN_EMAIL: admin@sgvc.local
+      ADMIN_PASSWORD: Admin@123!
+      OTHER_USER_EMAIL: user@sgvc.local
+      OTHER_USER_PASSWORD: User@123!
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,11 +44,27 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install deps
         run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
 
-      - name: Run tests
+      - name: Prepare database (schema + migrations + seed)
+        working-directory: api
+        run: |
+          node -e "require('./src/db').initDb().then(() => process.exit(0)).catch((e) => { console.error(e); process.exit(1); })"
+          node scripts/seed-users.js
+
+      - name: Run API tests
         run: npm test
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: api/mochawesome-report
+          if-no-files-found: ignore

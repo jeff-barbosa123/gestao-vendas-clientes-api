@@ -19,7 +19,10 @@ function verifyWithRotation(token) {
 
 function authenticateStrict(req, res, next) {
   const authHeader = req.headers['authorization'] || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  // Back-compat: Authorization header wins; fallback to HttpOnly cookie.
+  const token =
+    (authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null) ||
+    (req.cookies && req.cookies.sgvc_token ? req.cookies.sgvc_token : null);
   if (!token) {
     const err = new Error(MSG_TOKEN_MISSING);
     err.status = 401;

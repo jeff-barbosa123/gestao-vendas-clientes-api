@@ -248,15 +248,25 @@ async function getAudit(saleId) {
   };
 }
 
+// Formato único de resposta de venda: mantém os campos do banco e expõe aliases
+// em camelCase/pt-BR usados pelo frontend e pelos testes (clienteNome, customerName...)
+function formatSale(s) {
+  const customerName = s.customer_name ?? s.customerName ?? null;
+  return {
+    ...s,
+    customerId: s.customer_id ?? s.customerId ?? null,
+    customerName,
+    clienteNome: customerName,
+    statusVenda: s.status_venda || s.statusVenda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
+  };
+}
+
 async function getAll(user, pagination = null) {
   const result = await repo.listSales(user ? user.id : null, pagination);
   
   // Se tem paginação, retorna formato paginado
   if (pagination && result.total !== undefined) {
-    const sales = result.rows.map((s) => ({
-      ...s,
-      statusVenda: s.status_venda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
-    }));
+    const sales = result.rows.map(formatSale);
     
     const { createPaginatedResponse } = require('../utils/pagination');
     return createPaginatedResponse(sales, result.total, pagination.page, pagination.limit);
@@ -264,10 +274,7 @@ async function getAll(user, pagination = null) {
   
   // Sem paginação (backward compatibility)
   const sales = Array.isArray(result) ? result : result.rows || [];
-  return sales.map((s) => ({
-    ...s,
-    statusVenda: s.status_venda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
-  }));
+  return sales.map(formatSale);
 }
 
 async function getById(id, user) {
@@ -282,10 +289,7 @@ async function getById(id, user) {
     err.status = 403;
     throw err;
   }
-  return {
-    ...sale,
-    statusVenda: sale.status_venda || (sale.status === "CANCELED" ? "cancelada" : "ativa"),
-  };
+  return formatSale(sale);
 }
 
 async function create(data, user) {
@@ -310,6 +314,7 @@ async function create(data, user) {
       id: uuidv4(),
       customerId: data.customerId,
       customerName,
+      clienteNome: customerName,
       items,
       cmv,
       total,
@@ -422,10 +427,11 @@ async function cancel(id, user) {
   return repo.getSaleById(id);
 }
 
-async function summary() {
-  const sales = await repo.listSales();
+async function summary(user) {
+  // Somente vendas do usuário autenticado (antes somava vendas de todos os usuários)
+  const sales = await repo.listSales(user ? user.id : null);
   const total = sales
-    .filter((s) => s.status !== "CANCELED")
+    .filter((s) => s.status !== "CANCELED" && s.status_venda !== "cancelada")
     .reduce((sum, s) => sum + (s.total || 0), 0);
   return { total: Number(total.toFixed(2)) };
 }

@@ -14,6 +14,9 @@ if (process.env.ENV_FILE) {
   envFile = '.env.production';
 } else if (env === 'staging' || env === 'hmg') {
   envFile = '.env.hmg';
+} else if (env === 'test') {
+  // Testes usam banco próprio: nunca carregar o .env.local (banco de desenvolvimento)
+  envFile = '.env.test';
 } else {
   envFile = '.env.local';
 }
@@ -47,6 +50,21 @@ const { URL } = require("url");
 
 const app = express();
 
+// Confiança no proxy (necessário para obter IP real e HTTPS redirect)
+app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS || 1));
+
+// Rate limiting global
+try {
+  const { rateLimit } = require("./middleware/rateLimit");
+  // `rateLimit` é um factory que retorna o middleware.
+  // Se passarmos a função factory direto para o Express (sem invocar),
+  // a requisição entra mas nunca recebe resposta (não há `next()` nesse caminho).
+  // Limite global por IP. Precisa ser alto: cada tela do frontend faz várias chamadas.
+  // (O default do factory em produção é 5 req/min — pensado para rotas sensíveis, não para a API toda.)
+  app.use(rateLimit({ windowMs: 60_000, max: Number(process.env.GLOBAL_RATE_LIMIT_MAX) || 300 }));
+} catch (e) {
+  // Middleware opcional não bloqueia o boot se ausente em dev
+}
 const swaggerPath = path.resolve(__dirname, "../resources/swagger.json");
 
 // CORS configuration - only allow specific origins in production
@@ -59,6 +77,11 @@ const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, etc)
     if (!origin) {
+      callback(null, true);
+      return;
+    }
+    // Always allow frontend dev server
+    if (origin === "http://localhost:4000") {
       callback(null, true);
       return;
     }
@@ -92,7 +115,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-timezone"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-timezone", "X-CSRF-Token"],
   exposedHeaders: ["X-Request-ID"],
   maxAge: 86400, // 24 hours
 };
@@ -103,14 +126,14 @@ app.use(requestLogger);
 app.use(metricsMiddleware);
 app.use(auditLogger);
 
-// Cookie parser para i18n (detectar locale de cookie) - opcional
-try {
-  const cookieParser = require("cookie-parser");
-  app.use(cookieParser());
-} catch (e) {
-  // cookie-parser não está instalado - i18n funcionará sem ele
-  // Instale com: npm install cookie-parser
-}
+// Cookie parser é obrigatório para auth via cookie + CSRF double-submit
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
+// CSRF (double-submit cookie)
+const { ensureCsrfCookie, csrfProtect } = require("./middleware/csrf");
+app.use(ensureCsrfCookie);
+app.use(csrfProtect);
 
 // i18n middleware (deve vir antes das rotas)
 app.use(i18nMiddleware);
@@ -122,7 +145,11 @@ const { validateContentType } = require("./middleware/validateContentType");
 app.use(validateContentType);
 
 // Swagger Docs - apenas se habilitado (desabilitado em produção por padrão)
-const enableSwagger = process.env.ENABLE_SWAGGER_UI !== 'false';
+// Produção: default OFF; Não-produção: default ON.
+const enableSwagger =
+  process.env.NODE_ENV === 'production'
+    ? process.env.ENABLE_SWAGGER_UI === 'true'
+    : process.env.ENABLE_SWAGGER_UI !== 'false';
 if (enableSwagger) {
   app.get("/api-docs/swagger.json", (_req, res, next) => {
     try {
@@ -146,8 +173,15 @@ if (enableSwagger) {
   });
 }
 
-// Prometheus metrics
-app.get("/metrics", (_req, res) => {
+// Prometheus metrics (protegido em produção)
+app.get("/metrics", (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    const allowed = (process.env.METRICS_ALLOWED_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
+    const ip = (req.ip || '').replace('::ffff:', '');
+    if (allowed.length && !allowed.includes(ip)) {
+      return res.status(404).end();
+    }
+  }
   res.setHeader("Content-Type", "text/plain; version=0.0.4");
   res.send(renderPrometheus());
 });

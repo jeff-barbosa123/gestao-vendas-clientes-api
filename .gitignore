@@ -1,56 +1,39 @@
-# ==========================
-# GLOBAL BACKEND + QA IGNORE
-# ==========================
-
-# Node
+# Dependências
 node_modules/
 
-# Environment
+# Variáveis de ambiente (os modelos env.*.example são versionados)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+api/.env*
+!api/env.*.example
 
-# System
+# Sistema / IDE
 .DS_Store
-
-# IDE
+Thumbs.db
 .vscode/
 .idea/
+.cursor/
 
-# Build / Coverage
-dist/
-coverage/
-
-# Logs
+# Logs e temporários
 *.log
 logs/
-
-# Temp files
 Tmp/
-tmp_*.txt
 *.tmp
+*.bak
+~$*
 ~WRL*.tmp
-temp_tail_swagger.txt
+cookies.txt
 
-# Backups
-README.backup.MD
-
-# Test reports
-cypress/
-cypress/screenshots/
-cypress/videos/
-cypress/reports/
-
-# Backend artifacts generated during tests/backups
-api/backup/
-api/logs/
+# Relatórios e artefatos gerados por testes
+coverage/
+dist/
 api/mochawesome-report/
 api/reports/
+cypress/reports/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
 
-# Frontend, docs and orchestration files that do not belong in the production backend
-cypress.config.js
-web/
-Documenta*/
-!Documentacao/
-!Documentacao/**
-docker-compose.yml
+# Backups/exportações de dados locais
+api/backup/

@@ -19,7 +19,7 @@ const ENV = {
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 const MESSAGES = {
-  invalidCredentials: 'Credenciais inv\u00e1lidos',
+  invalidCredentials: 'Credenciais inválidas',
   invalidEmail: 'Formato de e-mail inv\u00e1lido',
   invalidPasswordType: 'Formato de senha inv\u00e1lido',
   emailRequired: 'E-mail \u00e9 obrigat\u00f3rio',
@@ -29,8 +29,8 @@ const MESSAGES = {
   passwordLong: 'Senha muito longa',
   blockedUser: 'Usu\u00e1rio bloqueado',
   accessBlocked: 'Acesso temporariamente bloqueado',
-  forbidden: 'Acesso negado',
-  sessionExpired: 'Sess\u00e3o expirada, fa\u00e7a login novamente',
+  forbidden: 'Você não tem permissão para realizar esta ação.',
+  sessionExpired: 'Sua sessão expirou por inatividade. Faça login novamente.',
 };
 
 describe('Login', () => {
@@ -157,20 +157,21 @@ describe('Login', () => {
     expect(resposta.body.error).to.equal(MESSAGES.invalidEmail);
   });
 
-  it("API-012 | Deve retornar 400 e a mensagem 'Senha muito curta' quando a senha tiver menos caracteres que o m\u00ednimo permitido", async () => {
+  // No login não se valida tamanho mínimo (não revela a política de senha): senha curta = credencial inválida
+  it("API-012 | Deve retornar 401 e 'Credenciais inválidas' quando a senha for menor que o mínimo permitido", async () => {
     const resposta = await postLogin({
       email: ENV.adminEmail,
       password: '12',
     });
 
-    expect(resposta.status).to.equal(400);
-    expect(resposta.body.error).to.equal(MESSAGES.passwordShort);
+    expect(resposta.status).to.equal(401);
+    expect(resposta.body.error).to.equal(MESSAGES.invalidCredentials);
   });
 
   it("API-013 | Deve retornar 400 e a mensagem 'Senha muito longa' quando a senha exceder o limite permitido", async () => {
     const resposta = await postLogin({
       email: ENV.adminEmail,
-      password: '1'.repeat(50),
+      password: '1'.repeat(129), // limite: 128 caracteres
     });
 
     expect(resposta.status).to.equal(400);
@@ -306,9 +307,9 @@ describe('Login', () => {
     expect(resposta.status).to.equal(415);
   });
 
-  it('API-028 | Deve retornar 403 quando acessar rota protegida sem token', async () => {
+  it('API-028 | Deve retornar 401 quando acessar rota protegida sem token', async () => {
     const resposta = await http.get('/api/customers');
-    expect(resposta.status).to.equal(403);
+    expect(resposta.status).to.equal(401);
     expect(resposta.body.error).to.equal(MESSAGES.forbidden);
   });
 
@@ -389,10 +390,10 @@ describe('Login', () => {
     expect(meResp.body.error).to.equal(MESSAGES.forbidden);
   });
 
-it('API-035 | Deve retornar 403 ao tentar realizar logout sem token', async () => {
+it('API-035 | Deve retornar 401 ao tentar realizar logout sem token', async () => {
   const resposta = await http.post('/api/auth/logout');
 
-  expect(resposta.status).to.equal(403);
+  expect(resposta.status).to.equal(401);
   expect(resposta.body.error).to.equal(MESSAGES.forbidden);
 });
 

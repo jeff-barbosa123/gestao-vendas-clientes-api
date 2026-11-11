@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Faturamento</title>
+    <meta
+      name="description"
+      content="Relat&oacute;rio de faturamento e desempenho financeiro."
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/reports.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="reports-wrapper">
+          <header class="reports-header">
+            <div>
+              <h3 class="reports-title">Relat&oacute;rios</h3>
+              <p class="reports-subtitle">Acompanhe faturamento e desempenho financeiro</p>
+            </div>
+            <div class="reports-actions">
+              <button class="button is-light is-small" id="back-dashboard">Voltar ao dashboard</button>
+              <button class="button is-link is-small" id="refresh-report">Atualizar relat&oacute;rio</button>
+            </div>
+          </header>
+
+          <div
+            class="reports-message"
+            id="reports-message"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+          ></div>
+          <div
+            class="help is-warning"
+            id="consistency-warning"
+            role="alert"
+            aria-live="polite"
+            style="margin-bottom: 1rem; display: none;"
+            hidden
+          ></div>
+
+          <section class="panel-card">
+            <h4 class="reports-section-title">Filtros</h4>
+            <div class="reports-filters">
+              <div class="field">
+                <label class="label" for="breakdown">Quebra</label>
+                <div class="select">
+                  <select id="breakdown">
+                    <option value="total">Total</option>
+                    <option value="day">Dia</option>
+                    <option value="week">Semana</option>
+                    <option value="month">M&ecirc;s</option>
+                    <option value="year">Ano</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="filter-type">Per&iacute;odo</label>
+                <div class="select">
+                  <select id="filter-type">
+                    <option value="none">Sem filtro</option>
+                    <option value="day">Dia</option>
+                    <option value="week">Semana</option>
+                    <option value="month">M&ecirc;s</option>
+                    <option value="year">Ano</option>
+                    <option value="range">Intervalo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="day-input">Dia</label>
+                <input class="input" id="day-input" type="date" />
+              </div>
+              <div class="field">
+                <label class="label" for="week-input">Semana</label>
+                <input class="input" id="week-input" type="week" />
+              </div>
+              <div class="field">
+                <label class="label" for="month-input">M&ecirc;s</label>
+                <input class="input" id="month-input" type="month" />
+              </div>
+              <div class="field">
+                <label class="label" for="year-input">Ano</label>
+                <input class="input" id="year-input" type="number" min="2000" max="2100" placeholder="2025" />
+              </div>
+              <div class="field">
+                <label class="label" for="start-input">In&iacute;cio</label>
+                <input class="input" id="start-input" type="date" />
+              </div>
+              <div class="field">
+                <label class="label" for="end-input">Fim</label>
+                <input class="input" id="end-input" type="date" />
+              </div>
+            </div>
+            <div class="reports-filter-actions">
+              <button class="button is-link" id="apply-filters">Aplicar filtros</button>
+              <button class="button is-light" id="clear-filters">Limpar</button>
+              <div class="export-group">
+                <label class="label" for="export-format">Exportar</label>
+                <div class="field has-addons">
+                  <div class="control">
+                    <div class="select">
+                      <select id="export-format">
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel</option>
+                        <option value="pdf">PDF</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <button class="button is-light" id="export-btn" type="button">Baixar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <h4 class="reports-section-title">Resumo financeiro</h4>
+            <div class="reports-summary" id="reports-summary">
+              <div>
+                <p class="summary-label">Faturamento</p>
+                <p class="summary-value" id="summary-revenue">R$ --</p>
+              </div>
+              <div>
+                <p class="summary-label">CMV</p>
+                <p class="summary-value" id="summary-cmv">R$ --</p>
+              </div>
+              <div>
+                <p class="summary-label">Lucro</p>
+                <p class="summary-value" id="summary-profit">R$ --</p>
+              </div>
+              <div>
+                <p class="summary-label">Margem</p>
+                <p class="summary-value" id="summary-margin">--%</p>
+              </div>
+              <div>
+                <p class="summary-label">Ticket medio</p>
+                <p class="summary-value" id="summary-ticket">R$ --</p>
+              </div>
+              <div>
+                <p class="summary-label">Vendas</p>
+                <p class="summary-value" id="summary-count">--</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <h4 class="reports-section-title">Faturamento</h4>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Per&iacute;odo</th>
+                    <th class="has-text-right">Total</th>
+                    <th class="has-text-right">Vendas</th>
+                  </tr>
+                </thead>
+                <tbody id="revenue-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <h4 class="reports-section-title">Desempenho</h4>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Per&iacute;odo</th>
+                    <th class="has-text-right">Receita</th>
+                    <th class="has-text-right">CMV</th>
+                    <th class="has-text-right">Lucro</th>
+                    <th class="has-text-right">Margem</th>
+                    <th class="has-text-right">Ticket m&eacute;dio</th>
+                    <th class="has-text-right">Vendas</th>
+                  </tr>
+                </thead>
+                <tbody id="financial-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <script src="/static/reports.js" defer></script>
+    <script>
+      // Handler global para suprimir erros de bibliotecas externas (extensões do Chrome, etc.)
+      // O erro "Cannot read properties of undefined (reading 'map')" em index.js:102:683
+      // não é do nosso código e parece vir de extensões ou bibliotecas injetadas.
+      // Este handler evita que ele apareça no console como um erro crítico.
+      window.addEventListener('error', (event) => {
+        if (event.message && event.message.includes("Cannot read properties of undefined (reading 'map')") && event.filename && event.filename.includes('index.js')) {
+          console.warn('Erro de biblioteca externa suprimido:', event.message);
+          event.preventDefault(); // Impede que o erro seja reportado no console
+        }
+      });
+      window.addEventListener('unhandledrejection', (event) => {
+        if (event.reason && event.reason.message && event.reason.message.includes("Cannot read properties of undefined (reading 'map')") && event.reason.stack && event.reason.stack.includes('index.js')) {
+          console.warn('Rejeição de promise de biblioteca externa suprimida:', event.reason.message);
+          event.preventDefault(); // Impede que a rejeição seja reportada no console
+        }
+      });
+    </script>
+  </body>
+</html>

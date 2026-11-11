@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Painel Web</title>
+    <meta
+      name="description"
+      content="Painel web do SGVC para login, cadastro e acompanhamento de vendas, clientes e indicadores do neg&oacute;cio."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/base.css" />
+    <link rel="stylesheet" href="/login.css" />
+    <style>
+    .pwd-rule.is-ok .pwd-icon {
+      color: #16a34a !important;
+    }
+    .pwd-rule .pwd-icon {
+      color: #ef4444 !important;
+    }
+    </style>
+    <script src="/config.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script>
+      // Handler global PRECOCE para suprimir erros de bibliotecas externas
+      // Deve ser executado ANTES de qualquer outro script para capturar erros assíncronos
+      (function() {
+        // Intercepta console.error de forma mais agressiva para filtrar erros de extensões
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+          const message = String(args.join(' '));
+          const fullStack = args.map(a => String(a)).join('\n');
+          
+          // Suprime erros de .map() que vêm de extensões ou bibliotecas externas
+          if (message.includes("Cannot read properties of undefined (reading 'map')") ||
+              message.includes("reading 'map'") ||
+              message.includes("TypeError") && message.includes("map")) {
+            // Verifica se é de extensão (tactiq, chrome-extension, etc.) ou biblioteca externa
+            if (fullStack.includes('index.js') || 
+                fullStack.includes('extension://') || 
+                fullStack.includes('chrome-extension://') ||
+                fullStack.includes('tactiq-extension') ||
+                fullStack.includes('content.js') ||
+                fullStack.includes('executor.js') ||
+                (!fullStack.includes('/static/') && !fullStack.includes('/public/') && fullStack.length > 0)) {
+              return; // Não loga no console - erro de extensão externa
+            }
+          }
+          originalConsoleError.apply(console, args);
+        };
+        
+        // Handler para promises não capturadas (CRÍTICO - executa imediatamente)
+        // Intercepta ANTES do Chrome logar no console
+        const rejectionHandler = function(event) {
+          try {
+            const reason = event.reason || {};
+            const errorMessage = reason.message || reason.toString() || String(reason || '');
+            const stack = reason.stack || String(reason || '');
+            
+            // Suprime erros de .map() em bibliotecas externas (index.js, extensões, etc.)
+            if (errorMessage.includes("Cannot read properties of undefined (reading 'map')") || 
+                errorMessage.includes("reading 'map'")) {
+              // Se o stack trace aponta para index.js (biblioteca externa/minificada)
+              if (stack.includes('index.js') || 
+                  stack.includes('extension://') || 
+                  stack.includes('chrome-extension://') ||
+                  (!stack.includes('/static/') && !stack.includes('/public/'))) {
+                // Silencia a promise - evita que o Chrome logue
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                return false;
+              }
+            }
+          } catch (e) {
+            // Ignora erros no handler
+          }
+          return false;
+        };
+        
+        // Registra o handler o mais cedo possível
+        window.addEventListener('unhandledrejection', rejectionHandler, true);
+        // Fallback: também tenta sem capture phase
+        if (window.addEventListener.length > 2) {
+          window.addEventListener('unhandledrejection', rejectionHandler);
+        }
+        
+        // Handler para erros síncronos
+        window.addEventListener('error', function(event) {
+          if (event.message && event.message.includes("Cannot read properties of undefined (reading 'map')")) {
+            if (!event.filename || event.filename.includes('index.js') || 
+                event.filename.includes('extension://') || 
+                event.filename.includes('chrome-extension://')) {
+              event.preventDefault();
+              event.stopPropagation();
+              return true;
+            }
+          }
+          return false;
+        }, true);
+      })();
+    </script>
+    <style>
+    .pwd-rule .pwd-icon { color: #ef4444 !important; font-weight: bold; }
+    .pwd-rule.is-ok .pwd-icon { color: #16a34a !important; }
+    .pwd-rule.is-ok { color: #16a34a !important; }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Pular para o conteudo</a>
+
+    <main id="main">
+      <div class="background">
+        <div class="login-wrapper">
+          <div
+            id="app-alert"
+            class="notification is-danger is-light"
+            role="alert"
+            aria-live="assertive"
+            tabindex="-1"
+            hidden
+          ></div>
+
+          <div
+            id="app-success"
+            class="notification is-success is-light"
+            role="status"
+            aria-live="polite"
+            tabindex="-1"
+            hidden
+          ></div>
+
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 48 48" role="img" focusable="false">
+                <circle cx="24" cy="24" r="22" class="brand-ring"></circle>
+                <path
+                  class="brand-wave"
+                  d="M10 28c6-6 12-4 18-10 4-4 8-6 10-4v10c-2-2-6 0-10 4-6 6-12 4-18 10z"
+                ></path>
+              </svg>
+            </div>
+            <h1>SGVC</h1>
+            <span>Gestao de Vendas e Clientes</span>
+          </div>
+
+
+          <div class="login-card">
+            <h2 class="login-title">Login</h2>
+            <p class="login-subtitle">Acesse sua conta</p>
+            <p class="login-user" id="login-user" hidden aria-live="polite"></p>
+
+            <form id="login-form" novalidate>
+              <div id="login-error" class="login-error" role="alert" aria-live="assertive" hidden>
+                <span class="login-error-icon" aria-hidden="true">!</span>
+                <span id="login-error-text"></span>
+              </div>
+              <div id="login-success" class="login-success" role="status" aria-live="polite" hidden>
+                <span class="login-success-icon" aria-hidden="true">OK</span>
+                <span id="login-success-text"></span>
+              </div>
+              <div class="field">
+                <label class="label" for="email">E-mail</label>
+                <input
+                  class="input"
+                  type="email"
+                  id="email"
+                  name="email"
+                  autocomplete="username"
+                  required
+                  aria-required="true"
+                  aria-describedby="email-help"
+                />
+                <p class="help" id="email-help">Digite o e-mail usado no seu cadastro.</p>
+                <p class="help is-danger" id="email-error" aria-live="polite" hidden></p>
+              </div>
+
+              <div class="field">
+                <label class="label" for="password">Senha</label>
+                <div class="password-wrapper">
+                  <input
+                    class="input"
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    data-form-type="other"
+                    required
+                    aria-required="true"
+                    aria-describedby="password-help password-capslock"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    id="toggle-password"
+                    aria-label="Mostrar senha"
+                    aria-pressed="false"
+                  >
+                    <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 5c5.05 0 9.27 3.12 11 7-1.73 3.88-5.95 7-11 7S2.73 15.88 1 12c1.73-3.88 5.95-7 11-7zm0 2c-3.86 0-7.2 2.2-8.82 5 1.62 2.8 4.96 5 8.82 5s7.2-2.2 8.82-5C19.2 9.2 15.86 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"></path>
+                    </svg>
+                    <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M4.27 3 3 4.27l3.03 3.03C3.9 8.59 2.2 10.2 1 12c1.73 3.88 5.95 7 11 7 2.05 0 4-.52 5.73-1.43L19.73 21 21 19.73 4.27 3zM12 17c-3.86 0-7.2-2.2-8.82-5a11.3 11.3 0 0 1 4.25-4.2l2.02 2.02a2.5 2.5 0 0 0 3.53 3.53l2.37 2.37A9.2 9.2 0 0 1 12 17zm0-10c1.1 0 2.1.36 2.9.96l-1.58 1.58a2.5 2.5 0 0 0-3.48 3.48l-1.56 1.56A9.2 9.2 0 0 1 12 7zm9.7 5c-.7 1.58-1.86 3-3.33 4.09l-1.45-1.45A11.2 11.2 0 0 0 20.82 12a11.2 11.2 0 0 0-5.18-5.47l-1.56 1.56a2.5 2.5 0 0 0-3.48 3.48l-1.4 1.4-1.42-1.42a11.3 11.3 0 0 1 4.22-2.56l-1.28-1.28c1.35-.46 2.77-.71 4.28-.71 5.05 0 9.27 3.12 11 7z"></path>
+                    </svg>
+                    <span class="toggle-password-text">Mostrar senha</span>
+                  </button>
+                  <span class="capslock-warning" id="password-capslock" style="display:none;">Caps Lock ativado</span>
+                </div>
+                <p class="help" id="password-help">Sua senha de acesso ao sistema.</p>
+                <p class="help is-danger" id="password-error" aria-live="polite" hidden></p>
+              </div>
+
+              <div class="options">
+                <label class="checkbox">
+                  <input type="checkbox" id="remember-me" />
+                  Lembrar-me
+                </label>
+              </div>
+
+              <button class="btn-login" type="submit" id="login-btn">Entrar</button>
+            </form>
+            <p class="register-link">
+              N&#227;o tem conta?
+              <button type="button" class="link-button" id="open-register">Criar conta</button>
+            </p>
+            <p class="security-note" aria-live="polite">
+              Seus dados s&atilde;o protegidos e n&atilde;o s&atilde;o compartilhados.
+            </p>
+          </div>
+        </div>
+
+        <section class="api-panel" hidden></section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <div class="modal" id="register-modal" aria-hidden="true">
+      <div class="modal-background" id="register-close"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="register-title">
+        <header class="modal-card-head">
+          <div class="modal-title-block">
+            <div class="modal-title-icon" id="register-avatar" aria-hidden="true">U</div>
+            <div>
+              <p class="modal-card-title" id="register-title">Criar conta</p>
+              <p class="modal-card-subtitle">Leva menos de 1 minuto</p>
+            </div>
+          </div>
+          <button class="delete modal-close-btn" aria-label="Fechar" id="register-close-btn"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label" for="register-name">Nome</label>
+            <input class="input" id="register-name" type="text" autocomplete="name" />
+            <span class="field-status" id="register-name-status" aria-hidden="true" hidden></span>
+            <p class="help is-danger" id="register-name-error" aria-live="polite" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="register-email">E-mail</label>
+            <input class="input" id="register-email" type="email" autocomplete="email" />
+            <span class="field-status" id="register-email-status" aria-hidden="true" hidden></span>
+            <p class="help is-danger" id="register-email-error" aria-live="polite" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="register-password"><span aria-hidden="true">🔒</span> Senha</label>
+            <div class="password-wrapper">
+              <input class="input" id="register-password" type="password" autocomplete="new-password" placeholder="Mín. 8, com maiúscula, minúscula, número e símbolo" title="Sua senha deve ter: mínimo 8 caracteres, pelo menos 1 maiúscula, 1 minúscula, 1 número e 1 caractere especial (!@#$%^&*)" />
+              <button
+                type="button"
+                class="toggle-password"
+                id="toggle-register-password"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5c5.05 0 9.27 3.12 11 7-1.73 3.88-5.95 7-11 7S2.73 15.88 1 12c1.73-3.88 5.95-7 11-7zm0 2c-3.86 0-7.2 2.2-8.82 5 1.62 2.8 4.96 5 8.82 5s7.2-2.2 8.82-5C19.2 9.2 15.86 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"></path>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M4.27 3 3 4.27l3.03 3.03C3.9 8.59 2.2 10.2 1 12c1.73 3.88 5.95 7 11 7 2.05 0 4-.52 5.73-1.43L19.73 21 21 19.73 4.27 3zM12 17c-3.86 0-7.2-2.2-8.82-5a11.3 11.3 0 0 1 4.25-4.2l2.02 2.02a2.5 2.5 0 0 0 3.53 3.53l2.37 2.37A9.2 9.2 0 0 1 12 17zm0-10c1.1 0 2.1.36 2.9.96l-1.58 1.58a2.5 2.5 0 0 0-3.48 3.48l-1.56 1.56A9.2 9.2 0 0 1 12 7zm9.7 5c-.7 1.58-1.86 3-3.33 4.09l-1.45-1.45A11.2 11.2 0 0 0 20.82 12a11.2 11.2 0 0 0-5.18-5.47l-1.56 1.56a2.5 2.5 0 0 0-3.48 3.48l-1.4 1.4-1.42-1.42a11.3 11.3 0 0 1 4.22-2.56l-1.28-1.28c1.35-.46 2.77-.71 4.28-.71 5.05 0 9.27 3.12 11 7z"></path>
+                </svg>
+                <span class="toggle-password-text">Mostrar senha</span>
+              </button>
+            </div>
+            <p class="help">Use pelo menos 8 caracteres.</p>
+            <p class="help password-strength" id="password-strength" aria-live="polite"></p>
+            <div class="pwd-rules" id="register-password-rules" aria-live="polite">
+              <div class="pwd-rule" data-rule="len"><span class="pwd-icon" aria-hidden="true">✗</span> Mínimo 8 caracteres</div>
+              <div class="pwd-rule" data-rule="upper"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 letra maiúscula</div>
+              <div class="pwd-rule" data-rule="lower"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 letra minúscula</div>
+              <div class="pwd-rule" data-rule="num"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 número</div>
+              <div class="pwd-rule" data-rule="sym"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 caractere especial (!@#$%^&*)</div>
+            </div>
+            <div class="pwd-meter" aria-hidden="true">
+              <div class="pwd-meter-bar" id="register-password-meter"></div>
+            </div>
+            <span class="field-status" id="register-password-status" aria-hidden="true" hidden></span>
+            <p class="help is-danger" id="register-password-error" aria-live="polite" hidden></p>
+          </div>
+          <div class="field">
+            <label class="label" for="register-password-confirm">Confirmar senha</label>
+            <div class="password-wrapper">
+              <input class="input" id="register-password-confirm" type="password" autocomplete="new-password" placeholder="Repita a mesma senha" />
+              <button
+                type="button"
+                class="toggle-password"
+                id="toggle-register-confirm"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+              >
+                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 5c5.05 0 9.27 3.12 11 7-1.73 3.88-5.95 7-11 7S2.73 15.88 1 12c1.73-3.88 5.95-7 11-7zm0 2c-3.86 0-7.2 2.2-8.82 5 1.62 2.8 4.96 5 8.82 5s7.2-2.2 8.82-5C19.2 9.2 15.86 7 12 7zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"></path>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M4.27 3 3 4.27l3.03 3.03C3.9 8.59 2.2 10.2 1 12c1.73 3.88 5.95 7 11 7 2.05 0 4-.52 5.73-1.43L19.73 21 21 19.73 4.27 3zM12 17c-3.86 0-7.2-2.2-8.82-5a11.3 11.3 0 0 1 4.25-4.2l2.02 2.02a2.5 2.5 0 0 0 3.53 3.53l2.37 2.37A9.2 9.2 0 0 1 12 17zm0-10c1.1 0 2.1.36 2.9.96l-1.58 1.58a2.5 2.5 0 0 0-3.48 3.48l-1.56 1.56A9.2 9.2 0 0 1 12 7zm9.7 5c-.7 1.58-1.86 3-3.33 4.09l-1.45-1.45A11.2 11.2 0 0 0 20.82 12a11.2 11.2 0 0 0-5.18-5.47l-1.56 1.56a2.5 2.5 0 0 0-3.48 3.48l-1.4 1.4-1.42-1.42a11.3 11.3 0 0 1 4.22-2.56l-1.28-1.28c1.35-.46 2.77-.71 4.28-.71 5.05 0 9.27 3.12 11 7z"></path>
+                </svg>
+                <span class="toggle-password-text">Mostrar senha</span>
+              </button>
+            </div>
+            <p class="help is-danger" id="register-confirm-error" aria-live="polite" hidden></p>
+          </div>
+          <p class="help is-danger" id="register-error" aria-live="polite" hidden></p>
+          <p class="help is-success" id="register-success" aria-live="polite" hidden></p>
+          <p class="help register-security">
+            Seus dados s&atilde;o protegidos. Voc&ecirc; pode excluir sua conta quando quiser.
+          </p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-link" id="register-submit">Criar conta e acessar</button>
+          <button
+            class="button is-light"
+            id="register-cancel"
+            title="Voltar para o login"
+            aria-label="Voltar para o login"
+          >
+            Cancelar
+          </button>
+        </footer>
+        <div style="padding: 10px 16px 16px;">
+          <p class="help" style="text-align:center;color:#475569;">
+            Ao criar sua conta você concorda com os
+            <a href="#" style="color:#3b82f6;text-decoration:none;">Termos de Uso</a>
+            e
+            <a href="#" style="color:#3b82f6;text-decoration:none;">Política de Privacidade</a>.
+          </p>
+          <p class="help" style="text-align:center;margin-top:8px;">
+            Já tem uma conta?
+            <a href="/index.html" style="color:#3b82f6;text-decoration:none;">Fazer login</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+    <script>
+    (function() {
+      function tryBind() {
+        var pwd = document.getElementById('register-password');
+        if (!pwd) return false;
+        if (pwd._bound) return true;
+        pwd._bound = true;
+        pwd.addEventListener('input', function() {
+          var v = this.value;
+          var ok = {
+            len: v.length >= 8,
+            upper: /[A-Z]/.test(v),
+            lower: /[a-z]/.test(v),
+            num: /[0-9]/.test(v),
+            sym: /[^a-zA-Z0-9]/.test(v)
+          };
+          var els = document.querySelectorAll('#register-password-rules .pwd-rule');
+          els.forEach(function(el) {
+            var key = el.getAttribute('data-rule');
+            var icon = el.querySelector('.pwd-icon');
+            if (ok[key]) {
+              el.classList.add('is-ok');
+              if (icon) { icon.textContent = '\u2713'; icon.style.color = '#16a34a'; }
+            } else {
+              el.classList.remove('is-ok');
+              if (icon) { icon.textContent = '\u2717'; icon.style.color = '#ef4444'; }
+            }
+          });
+        });
+        return true;
+      }
+      setInterval(tryBind, 200);
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('#toggle-register-confirm');
+        if (btn) {
+          var input = document.getElementById('register-password-confirm');
+          if (input) input.type = input.type === 'password' ? 'text' : 'password';
+        }
+      });
+    })();
+    </script>
+  </body>
+</html>

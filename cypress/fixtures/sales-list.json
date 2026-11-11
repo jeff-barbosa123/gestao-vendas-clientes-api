@@ -1,0 +1,40 @@
+[
+  {
+    "id": "sale-1",
+    "customer_id": "customer-1",
+    "customer_name": "Cliente Teste",
+    "total": "99.99",
+    "cmv": "50.00",
+    "date": "2025-01-27T10:00:00Z",
+    "status": "ACTIVE",
+    "status_venda": "ativa",
+    "items": [
+      {
+        "id": "item-1",
+        "product_id": "product-1",
+        "quantity": 2,
+        "unit_price": "29.99",
+        "cmv": "15.00"
+      }
+    ]
+  },
+  {
+    "id": "sale-2",
+    "customer_id": "customer-2",
+    "customer_name": "Outro Cliente",
+    "total": "150.00",
+    "cmv": "75.00",
+    "date": "2025-01-26T15:30:00Z",
+    "status": "ACTIVE",
+    "status_venda": "ativa",
+    "items": [
+      {
+        "id": "item-2",
+        "product_id": "product-2",
+        "quantity": 5,
+        "unit_price": "12.50",
+        "cmv": "5.00"
+      }
+    ]
+  }
+]

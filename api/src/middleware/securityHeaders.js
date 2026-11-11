@@ -16,14 +16,20 @@ function securityHeaders(req, res, next) {
   
   // Content Security Policy
   const isProduction = process.env.NODE_ENV === 'production';
-  if (isProduction) {
+  {
     const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
     const defaultSrc = ["'self'"];
-    const scriptSrc = ["'self'", "'unsafe-inline'"]; // TODO: Remove unsafe-inline after refactoring
-    const styleSrc = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"];
+    const scriptSrc = ["'self'"];
+    const styleSrc = ["'self'", "https://fonts.googleapis.com"];
     const fontSrc = ["'self'", "https://fonts.gstatic.com"];
     const connectSrc = ["'self'", ...allowedOrigins];
     const imgSrc = ["'self'", "data:", "https:"];
+
+    // Em dev/staging, permitir eval/inline apenas para facilitar tooling (HMR, sourcemaps etc.)
+    if (!isProduction) {
+      scriptSrc.push("'unsafe-eval'", "'unsafe-inline'");
+      styleSrc.push("'unsafe-inline'");
+    }
     
     res.setHeader(
       'Content-Security-Policy',
@@ -50,6 +56,13 @@ function securityHeaders(req, res, next) {
     // HSTS (HTTP Strict Transport Security) - 1 year
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
+
+  // Basic hardening headers (safe defaults)
+  res.setHeader('X-DNS-Prefetch-Control', 'off');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  // Avoid enabling COEP by default (can break loading cross-origin assets)
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   
   next();
 }

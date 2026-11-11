@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Editar ficha de custo</title>
+    <meta name="description" content="Edicao de ficha de custo no SGVC." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/recipes.css" />
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.8" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js" defer></script>
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="recipes-wrapper">
+          <header class="recipes-header">
+            <div>
+              <h3 class="recipes-title">Editar ficha de custo</h3>
+              <p class="recipes-subtitle">Atualize os dados para recalcular o custo e o pre&ccedil;o de venda.</p>
+            </div>
+            <div class="recipes-actions">
+              <button class="button is-light is-small" id="back-list">Voltar para lista</button>
+            </div>
+          </header>
+
+          <div class="recipes-message" id="edit-message" hidden></div>
+
+          <section class="panel-card">
+            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+              Atualize os dados para recalcular o custo e o pre&ccedil;o sugerido.
+            </p>
+            <form id="edit-form" class="recipes-form" novalidate>
+              <div class="recipes-step-block">
+                <div class="recipes-step-header">
+                  <span class="recipes-step-index">1</span>
+                  <div>
+                    <p class="recipes-step-title">Identifica&ccedil;&atilde;o do produto</p>
+                    <p class="recipes-step-subtitle">Use um nome simples para identificar depois.</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-name">Nome do produto (obrigat&oacute;rio)</label>
+                  <input
+                    class="input"
+                    id="edit-name"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Ex: Bolo de Chocolate 1kg"
+                    aria-describedby="edit-name-help"
+                    required
+                  />
+                    <p class="help" id="edit-name-help" style="color:#64748b;">Use um nome f&aacute;cil de reconhecer.</p>
+                  <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-description">Descri&ccedil;&atilde;o (opcional)</label>
+                  <input
+                    class="input"
+                    id="edit-description"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Ex: bolo simples com recheio"
+                  />
+                  <p class="help" style="color:#64748b;">Apenas para organiza&ccedil;&atilde;o interna. O cliente n&atilde;o v&ecirc; isso.</p>
+                </div>
+              </div>
+
+              <div class="recipes-step-block">
+                <div class="recipes-step-header">
+                  <span class="recipes-step-index">2</span>
+                  <div>
+                    <p class="recipes-step-title">Producao / rendimento</p>
+                      <p class="recipes-step-subtitle">Quantas unidades esse preparo gera no total.</p>
+                  </div>
+                </div>
+                <div class="field grouped">
+                  <div>
+                    <label class="label" for="edit-yield">
+                      Quantas unidades esse preparo gera?
+                      <span class="info-tip" data-tooltip="Total produzido por este produto." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
+                    </label>
+                    <input
+                      class="input"
+                      id="edit-yield"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      placeholder="Ex: 10"
+                      aria-describedby="edit-yield-help"
+                      required
+                    />
+                    <p class="help" id="edit-yield-help" style="color:#64748b;">Use este campo para dizer quantas unidades o preparo gera.</p>
+                    <p class="help is-danger" id="edit-yield-error" aria-live="polite" hidden></p>
+                  </div>
+                  <div>
+                    <label class="label" for="edit-yield-type">Tipo</label>
+                    <div class="select">
+                      <select id="edit-yield-type">
+                        <option value="UN">UN</option>
+                        <option value="KG">KG</option>
+                        <option value="L">L</option>
+                      </select>
+                    </div>
+                    <p class="help" style="color:#64748b;">UN = unidades, KG = quilos, L = litros.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="recipes-step-block">
+                <div class="recipes-step-header">
+                  <span class="recipes-step-index">3</span>
+                  <div>
+                    <p class="recipes-step-title">Custos gerais e lucro</p>
+                    <p class="recipes-step-subtitle">Inclua custos extras e escolha como ganhar.</p>
+                  </div>
+                </div>
+                <div class="field grouped">
+                  <div>
+                    <label class="label" for="edit-overhead">
+                      Gastos do dia a dia (g&aacute;s, luz, embalagem) (%)
+                      <span class="info-tip" data-tooltip="Percentual sobre o custo dos itens." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
+                    </label>
+                    <input
+                      class="input"
+                      id="edit-overhead"
+                      type="text"
+                      inputmode="decimal"
+                      min="0"
+                      max="15"
+                      step="0.01"
+                      placeholder="Ex: 5"
+                      aria-describedby="edit-overhead-help edit-overhead-limit edit-overhead-warning"
+                    />
+                    <p class="help" id="edit-overhead-help" style="color:#64748b;">Use para gastos como g&aacute;s, energia, &aacute;gua, embalagem ou taxa de app.</p>
+                    <p class="help" id="edit-overhead-limit" style="color:#64748b;">O m&aacute;ximo permitido &eacute; 15%.</p>
+                    <p class="help is-warning" id="edit-overhead-warning" aria-live="polite" hidden></p>
+                    <div class="quick-suggestions" id="edit-overhead-suggestions">
+                      <span class="quick-suggestions-label">Sugest&otilde;es r&aacute;pidas:</span>
+                      <button class="button is-light is-small" type="button" data-target="edit-overhead" data-value="5" aria-label="Aplicar 5% nos gastos do dia a dia">+5%</button>
+                      <button class="button is-light is-small" type="button" data-target="edit-overhead" data-value="8" aria-label="Aplicar 8% nos gastos do dia a dia">+8%</button>
+                      <button class="button is-light is-small" type="button" data-target="edit-overhead" data-value="10" aria-label="Aplicar 10% nos gastos do dia a dia">+10%</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Adicionar gasto extra (opcional)</label>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input class="input" id="edit-overhead-item-name" type="text" placeholder="Ex: Embalagem" aria-label="Descri&ccedil;&atilde;o do gasto extra" />
+                    </div>
+                    <div class="control">
+                      <input class="input" id="edit-overhead-item-value" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 2,50" aria-label="Valor do gasto extra" aria-describedby="edit-overhead-error" />
+                    </div>
+                    <div class="control">
+                      <button class="button is-light" type="button" id="edit-overhead-add">Adicionar</button>
+                    </div>
+                  </div>
+                  <p class="help" style="color:#64748b;">Esses valores somam ao custo final, al&eacute;m do percentual.</p>
+                  <p class="help is-danger" id="edit-overhead-error" aria-live="polite" hidden></p>
+                  <table class="table is-fullwidth" style="margin-top:8px;">
+                    <thead>
+                      <tr>
+                        <th>Descricao</th>
+                        <th class="has-text-right">Valor</th>
+                        <th class="has-text-right">A&ccedil;&otilde;es</th>
+                      </tr>
+                    </thead>
+                    <tbody id="edit-overhead-body"></tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Total</th>
+                        <th class="has-text-right" id="edit-overhead-total">R$ 0,00</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div class="field">
+                  <label class="label">Como voc&ecirc; prefere ganhar dinheiro com esse produto?</label>
+                  <div class="control">
+                    <label class="radio">
+                      <input type="radio" name="edit-profit-type" id="edit-profit-type-fixed" value="fixed" checked />
+                      Valor fixo (R$)
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="edit-profit-type" id="edit-profit-type-percent" value="percent" />
+                      Percentual (%)
+                    </label>
+                  </div>
+                  <p class="help" style="color:#64748b;">Escolha apenas uma op&ccedil;&atilde;o.</p>
+                </div>
+                <div class="field grouped" id="edit-profit-fixed-section">
+                  <div>
+                    <label class="label" for="edit-profit-fixed">Quanto voc&ecirc; quer ganhar no total (R$)?</label>
+                    <input
+                      class="input"
+                      id="edit-profit-fixed"
+                      type="text"
+                      inputmode="decimal"
+                      min="0"
+                      step="0.01"
+                      placeholder="Ex: 10,00"
+                      aria-describedby="edit-profit-fixed-help"
+                    />
+                    <p class="help" id="edit-profit-fixed-help" style="color:#64748b;">Esse valor soma ao custo final.</p>
+                  </div>
+                </div>
+                <div class="field grouped" id="edit-profit-percent-section" hidden>
+                  <div>
+                    <label class="label" for="edit-margin">
+                      Percentual de lucro (%)
+                      <span class="info-tip" data-tooltip="Ex: 30 = 30% de lucro sobre o custo." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
+                    </label>
+                    <input class="input" id="edit-margin" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 20" aria-describedby="edit-margin-help" />
+                    <p class="help" id="edit-margin-help" style="color:#64748b;">Ex: 20 = 20% sobre o custo.</p>
+                    <div class="quick-suggestions" id="edit-margin-suggestions">
+                      <span class="quick-suggestions-label">Sugest&otilde;es r&aacute;pidas:</span>
+                      <button class="button is-light is-small" type="button" data-target="edit-margin" data-value="20" aria-label="Aplicar 20% de lucro">+20%</button>
+                      <button class="button is-light is-small" type="button" data-target="edit-margin" data-value="30" aria-label="Aplicar 30% de lucro">+30%</button>
+                      <button class="button is-light is-small" type="button" data-target="edit-margin" data-value="40" aria-label="Aplicar 40% de lucro">+40%</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="recipes-step-block">
+                <div class="recipes-step-header">
+                  <span class="recipes-step-index">4</span>
+                  <div>
+                    <p class="recipes-step-title">Partes do produto</p>
+                    <p class="recipes-step-subtitle">Separe por partes para controlar melhor o custo.</p>
+                  </div>
+                </div>
+                <div class="component-toolbar">
+                  <div class="field has-addons component-add">
+                    <div class="control is-expanded">
+                      <input class="input" id="component-name" type="text" placeholder="Ex: Massa, Cobertura, Embalagem" aria-label="Nome da parte do produto" />
+                    </div>
+                    <div class="control">
+                      <button class="button is-light" type="button" id="component-add">Adicionar parte</button>
+                    </div>
+                  </div>
+                  <div class="component-quick">
+                    <span class="component-quick-label">Atalhos:</span>
+                    <button class="button is-light is-small" type="button" id="component-add-massa">Massa</button>
+                    <button class="button is-light is-small" type="button" id="component-add-cobertura">Cobertura</button>
+                    <button class="button is-light is-small" type="button" id="component-add-embalagem">Embalagem</button>
+                    <button class="button is-light is-small" type="button" id="component-add-mao-obra">M&atilde;o de obra</button>
+                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Aviamentos</button>
+                    <button class="button is-light is-small" type="button" id="component-add-materia-prima">Mat&eacute;ria-prima</button>
+                    <button class="button is-light is-small" type="button" id="component-add-acabamento">Acabamento</button>
+                  </div>
+                </div>
+                <div class="field component-select">
+                  <label class="label" for="component-select">Parte ativa</label>
+                  <div class="select">
+                    <select id="component-select"></select>
+                  </div>
+                  <p class="help" style="color:#64748b;">Escolha a parte e adicione os itens.</p>
+                  <p class="help" style="color:#64748b;">Ingredientes principais s&atilde;o obrigat&oacute;rios.</p>
+                </div>
+                <div class="field has-addons component-rename">
+                  <div class="control is-expanded">
+                    <input class="input" id="component-rename" type="text" placeholder="Renomear parte ativa" />
+                  </div>
+                  <div class="control">
+                    <button class="button is-light" type="button" id="component-rename-btn" title="Renomear parte ativa">Renomear</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-danger" type="button" id="component-remove-btn" title="Selecione uma parte diferente de Ingredientes principais para remover">Remover</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-light" type="button" id="component-duplicate-btn">Duplicar</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-light" type="button" id="component-move-up-btn">Subir</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-light" type="button" id="component-move-down-btn">Descer</button>
+                  </div>
+                </div>
+                <div class="components-summary" id="components-summary"></div>
+                <div class="field">
+                  <label class="label">
+                    Itens da parte
+                    <span class="info-tip" data-tooltip="Informe quanto usou e quanto vem no pacote que voc&ecirc; compra." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
+                  </label>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input class="input" id="edit-ingredient-name" type="text" placeholder="Ex: Farinha de trigo" list="edit-ingredient-suggestions" aria-label="Nome do item" aria-describedby="edit-ingredient-error edit-ingredient-unit-warning edit-ingredient-unit-help" />
+                    </div>
+                    <div class="control">
+                      <input class="input" id="edit-ingredient-qty" type="text" inputmode="decimal" min="0.01" step="0.01" placeholder="Quantidade usada" aria-label="Quantidade usada" />
+                    </div>
+                    <div class="control">
+                      <span class="unit-label">Unidade</span>
+                      <div class="select small-select">
+                        <select id="edit-ingredient-unit">
+                          <option value="g">gramas (g)</option>
+                          <option value="kg">quilos (kg)</option>
+                          <option value="l">litros (l)</option>
+                          <option value="ml">mililitros (ml)</option>
+                          <option value="un">unidades (un)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="control">
+                      <button class="button is-light" type="button" id="edit-add-ingredient">Adicionar</button>
+                    </div>
+                  </div>
+                  <datalist id="edit-ingredient-suggestions"></datalist>
+                  <button
+                    class="button is-text ingredient-advanced-toggle"
+                    type="button"
+                    id="edit-ingredient-advanced-toggle"
+                    aria-expanded="false"
+                  >
+                    Informar pre&ccedil;o do item (opcional)
+                  </button>
+                  <div class="ingredient-advanced" id="edit-ingredient-advanced" aria-hidden="true">
+                    <div class="ingredient-details-grid">
+                      <div>
+                        <label class="label" for="edit-ingredient-pack">Quanto vem no pacote?</label>
+                        <div class="field has-addons">
+                          <div class="control is-expanded">
+                            <input class="input" id="edit-ingredient-pack" type="text" inputmode="decimal" min="0.01" step="0.01" placeholder="Ex: 1000" aria-label="Quantidade do pacote" />
+                          </div>
+                          <div class="control">
+                            <div class="select">
+                              <select id="edit-ingredient-pack-unit" aria-label="Unidade do pacote">
+                                <option value="g">g</option>
+                                <option value="kg">kg</option>
+                                <option value="ml">ml</option>
+                                <option value="l">l</option>
+                                <option value="un">un</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="label" for="edit-ingredient-cost">Preco do pacote</label>
+                        <input class="input" id="edit-ingredient-cost" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 6,00" aria-label="Preco do pacote" />
+                      </div>
+                    </div>
+                  </div>
+                  <p class="help" style="color:#64748b;">O sistema calcula o custo automaticamente. Use a mesma unidade da embalagem.</p>
+                  <p class="help" style="color:#64748b;">Se n&atilde;o informar o pre&ccedil;o, o custo do item ser&aacute; R$ 0,00.</p>
+                  <p class="help" style="color:#64748b;">Regra: se compra por unidade (lata/garrafa/caixa), use unidade=un e pacote=1. Se compra por peso/volume, use g/kg/ml/l e informe o tamanho real do pacote.</p>
+                  <p class="help" id="edit-ingredient-unit-help" style="color:#64748b;"></p>
+                  <p class="help is-warning" id="edit-ingredient-unit-warning" aria-live="polite" hidden></p>
+                  <p class="help is-danger" id="edit-ingredient-error" aria-live="polite" hidden></p>
+                  <p class="help is-success" id="edit-ingredient-success" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <table class="table is-fullwidth">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th class="has-text-right">Qtd usada</th>
+                        <th class="has-text-right">Custo calculado</th>
+                        <th class="has-text-right">A&ccedil;&otilde;es</th>
+                      </tr>
+                    </thead>
+                    <tbody id="edit-ingredients-body"></tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="2">Subtotal da parte</th>
+                        <th class="has-text-right" id="component-subtotal">R$ 0,00</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <p class="components-total" id="components-total">Custo total das partes: R$ 0,00</p>
+              </div>
+
+              <div class="recipes-step-block">
+                <div class="recipes-step-header">
+                  <span class="recipes-step-index">5</span>
+                  <div>
+                    <p class="recipes-step-title">Resultado final</p>
+                    <p class="recipes-step-subtitle">Veja o custo e o pre&ccedil;o de venda sugerido.</p>
+                  </div>
+                </div>
+                <div class="calc-status" id="edit-calc-status" role="status" aria-live="polite"></div>
+                <div class="cost-summary">
+                  <div class="cost-summary-header">
+                    <p class="cost-summary-title">Resumo do custo e venda</p>
+                    <p class="cost-summary-subtitle">Valores calculados automaticamente.</p>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Como voc&ecirc; ganha</span>
+                    <span class="cost-summary-value" id="summary-profit-type">-</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Custo total para produzir</span>
+                    <span class="cost-summary-value" id="summary-total">R$ 0,00</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label" id="summary-overhead-label">Gastos extras</span>
+                    <span class="cost-summary-value" id="summary-overhead">R$ 0,00</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Rendimento</span>
+                    <span class="cost-summary-value" id="summary-yield">-</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Custo por unidade</span>
+                    <span class="cost-summary-value" id="summary-unit">-</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Preco sugerido para venda</span>
+                    <span class="cost-summary-value" id="summary-suggested">-</span>
+                  </div>
+                  <div class="cost-summary-item">
+                    <span class="cost-summary-label">Lucro por unidade</span>
+                    <span class="cost-summary-value" id="summary-profit">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="buttons">
+                <button class="button is-link" type="submit" id="save-btn" disabled>Salvar altera&ccedil;&otilde;es da ficha</button>
+                <button class="button is-danger" type="button" id="delete-btn">Remover ficha de custo</button>
+              </div>
+            </form>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <div class="modal" id="delete-modal" aria-hidden="true">
+      <div class="modal-background" id="delete-close"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+        <header class="modal-card-head">
+          <p class="modal-card-title" id="delete-title">Remover ficha de custo</p>
+          <button class="delete modal-close-btn" aria-label="Fechar" id="delete-close-btn"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Tem certeza de que deseja remover esta ficha de custo?</p>
+          <p class="help is-danger">Essa a&ccedil;&atilde;o n&atilde;o poder&aacute; ser desfeita.</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-light" id="delete-cancel">Cancelar</button>
+          <button class="button is-danger" id="delete-confirm">Confirmar exclusao</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/static/recipe-edit.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,269 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Simula&ccedil;&atilde;o de pre&ccedil;o</title>
+    <meta
+      name="description"
+      content="Simula&ccedil;&atilde;o de pre&ccedil;o ideal por ficha t&eacute;cnica ou simula&ccedil;&atilde;o r&aacute;pida."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/simulacao.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="sim-wrapper">
+          <header class="sim-header">
+            <div>
+              <h3 class="sim-title">Simula&ccedil;&atilde;o de pre&ccedil;o</h3>
+              <p class="sim-subtitle">Calcule o pre&ccedil;o ideal com base em custos</p>
+            </div>
+            <div class="sim-actions">
+              <a class="button is-light is-small" id="back-dashboard" href="/dashboard.html">Voltar ao dashboard</a>
+            </div>
+          </header>
+
+          <div class="sim-caption">
+            <p>Escolha: use uma ficha técnica pronta ou preencha seus custos para ver o preço ideal.</p>
+          </div>
+
+          <div class="sim-message" id="sim-message" hidden></div>
+
+          <section class="sim-grid">
+            <div class="panel-card">
+              <h4 class="sim-section-title">Usar ficha t&eacute;cnica</h4>
+              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+                Opcional. Use uma ficha j&aacute; cadastrada para calcular o pre&ccedil;o automaticamente.
+              </p>
+              <form id="by-id-form" novalidate>
+                <div class="field">
+                  <label class="label" for="recipe-id">Ficha t&eacute;cnica</label>
+                  <div class="select is-fullwidth">
+                    <select id="recipe-id" required aria-describedby="recipe-id-error">
+                      <option value="">Selecione uma ficha t&eacute;cnica</option>
+                    </select>
+                  </div>
+                  <p class="help" id="recipe-id-empty" style="color:#64748b;" hidden></p>
+                  <p class="help is-danger" id="recipe-id-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field grouped">
+                  <div>
+                    <label class="label" for="recipe-margin">
+                      Quanto você quer ganhar (%)?
+                      <span class="hint" title="Margem é o quanto sobra depois de pagar todos os custos.">?</span>
+                    </label>
+                    <input
+                      class="input"
+                      id="recipe-margin"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="Ex: 20"
+                      required
+                      aria-describedby="recipe-margin-error"
+                    />
+                    <p class="help" style="color:#64748b;">Ex: 30 significa 30% de margem sobre o custo total.</p>
+                    <p class="help is-danger" id="recipe-margin-error" aria-live="polite" hidden></p>
+                  </div>
+                  <div>
+                    <label class="label" for="recipe-fee">Entrega por pedido (R$)</label>
+                    <input class="input" id="recipe-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
+                    <p class="help" style="color:#64748b;">Digite o custo médio da entrega. Se não houver, use 0.</p>
+                  </div>
+                </div>
+                <button class="button is-link" type="submit" id="by-id-submit">Simular</button>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <h4 class="sim-section-title">Simula&ccedil;&atilde;o r&aacute;pida</h4>
+              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+                Calcule sem ficha t&eacute;cnica informando custos e ingredientes.
+              </p>
+              <p class="help" style="margin-top:-4px;margin-bottom:18px;color:#0f172a;font-weight:500;">
+                Os dados inseridos nesta simulação não serão salvos.
+              </p>
+              <form id="quick-form" novalidate>
+                <div class="field grouped">
+                  <div>
+                    <label class="label" for="quick-yield">Quantas unidades essa receita rende?</label>
+                    <input
+                      class="input"
+                      id="quick-yield"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      placeholder="Ex: 1"
+                      required
+                      aria-describedby="quick-yield-error"
+                    />
+                    <p class="help" style="color:#64748b;">Total de porções ou pedidos que você entrega com essa receita.</p>
+                    <p class="help is-danger" id="quick-yield-error" aria-live="polite" hidden></p>
+                  </div>
+                  <div>
+                    <label class="label" for="quick-margin">
+                      Quanto você quer ganhar (%)?
+                      <span class="hint" title="Margem é o quanto sobra depois de pagar todos os custos.">?</span>
+                    </label>
+                    <input
+                      class="input"
+                      id="quick-margin"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="Ex: 20"
+                      required
+                      aria-describedby="quick-margin-error"
+                    />
+                    <p class="help" style="color:#64748b;">Ex: 35 significa 35% de margem sobre o custo final.</p>
+                    <p class="help is-danger" id="quick-margin-error" aria-live="polite" hidden></p>
+                  </div>
+                  <div>
+                    <label class="label" for="quick-fee">Entrega por pedido (R$)</label>
+                    <input class="input" id="quick-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
+                    <p class="help" style="color:#64748b;">Digite o custo médio da entrega. Se não houver, use 0.</p>
+                  </div>
+                </div>
+                <div class="field grouped">
+                  <div>
+                    <label class="label" for="quick-overhead">Custos fixos e indiretos (R$)</label>
+                    <input class="input" id="quick-overhead" type="text" placeholder="Ex: 0,00" />
+                    <p class="help" style="color:#64748b;">G&aacute;s, energia, &aacute;gua, embalagem e outras despesas do dia a dia.</p>
+                  </div>
+                  <div>
+                    <label class="label" for="quick-labor">Seu tempo de trabalho (R$)</label>
+                    <input class="input" id="quick-labor" type="text" placeholder="Ex: 0,00" />
+                    <p class="help" style="color:#64748b;">Quanto você quer receber pelo tempo investido nessa receita.</p>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="quick-segment">Tipo do seu negócio (opcional)</label>
+                  <div class="select is-fullwidth">
+                    <select id="quick-segment">
+                      <option value="">Prefiro definir minha margem</option>
+                      <option value="alimentacao">Alimentação (30% sugerido)</option>
+                      <option value="confeitaria">Confeitaria artesanal (35% sugerido)</option>
+                      <option value="revenda">Revenda (20% sugerido)</option>
+                    </select>
+                  </div>
+                  <p class="help" style="color:#64748b;">Selecione para receber uma margem padrão do seu setor.</p>
+                </div>
+                <div class="field">
+                  <label class="label">Ingredientes e custos</label>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input class="input" id="ingredient-name" type="text" placeholder="Ex: Farinha de trigo" />
+                    </div>
+                    <div class="control">
+                      <input class="input" id="ingredient-qty" type="text" inputmode="decimal" placeholder="Ex: 1" />
+                    </div>
+                    <div class="control">
+                      <input class="input" id="ingredient-cost" type="text" inputmode="decimal" placeholder="Ex: 2,50" />
+                    </div>
+                    <div class="control">
+                      <button class="button is-light" type="button" id="add-ingredient">Adicionar</button>
+                    </div>
+                  </div>
+                  <p class="help" style="color:#64748b;">Informe nome, quantidade e custo estimado de cada ingrediente.</p>
+                  <p class="help is-danger" id="ingredient-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <table class="table is-fullwidth sim-table">
+                    <thead>
+                      <tr>
+                        <th>Ingrediente</th>
+                        <th class="has-text-right">Qtd</th>
+                        <th class="has-text-right">Custo</th>
+                        <th class="has-text-right">A&ccedil;&otilde;es</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ingredients-body"></tbody>
+                  </table>
+                </div>
+                <div class="sim-tip-grid">
+                  <article class="tip-card">
+                    <p class="tip-title">O que é margem?</p>
+                    <p class="tip-copy">Margem mostra quanto sobra depois de pagar ingredientes, entrega e custos fixos.</p>
+                  </article>
+                  <article class="tip-card">
+                    <p class="tip-title">Custo x lucro</p>
+                    <p class="tip-copy">Custo é o que você gasta; lucro é o que sobra para você e seu negócio.</p>
+                  </article>
+                  <article class="tip-card">
+                    <p class="tip-title">Considere a mão de obra</p>
+                    <p class="tip-copy">Inclua seu tempo para não terminar trabalhando de graça.</p>
+                  </article>
+                </div>
+                <button class="button is-link" type="button" id="quick-submit">Simular r&aacute;pido</button>
+              </form>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <h4 class="sim-section-title">Resultado</h4>
+            <div class="sim-result">
+              <div>
+                <p class="result-label">Pre&ccedil;o final</p>
+                <p class="result-value" id="result-price">R$ --</p>
+              </div>
+              <div>
+                <p class="result-label">Custo por unidade</p>
+                <p class="result-value" id="result-cost">R$ --</p>
+              </div>
+              <div>
+                <p class="result-label">Lucro estimado</p>
+                <p class="result-value" id="result-profit">R$ --</p>
+              </div>
+              <div>
+                <p class="result-label">Margem</p>
+                <p class="result-value" id="result-margin">--%</p>
+              </div>
+            </div>
+            <div class="margin-feedback">
+              <div class="margin-strength">
+                <span class="margin-pill is-empty" id="margin-health">Informe uma margem para ver o resultado.</span>
+              </div>
+              <p class="margin-context" id="margin-context">Informe os dados para visualizar o resultado.</p>
+            </div>
+            <div class="result-details" id="result-details">
+              <article class="detail-card">
+                <p class="detail-label">Custo total</p>
+                <p class="detail-value" id="result-total-cost">R$ --</p>
+                <p class="detail-note">Inclui ingredientes, entrega, custos fixos e sua m&atilde;o de obra.</p>
+              </article>
+              <article class="detail-card">
+                <p class="detail-label">Pre&ccedil;o m&iacute;nimo</p>
+                <p class="detail-value" id="result-min-price">R$ --</p>
+                <p class="detail-note">Menor valor que cobre todos os custos.</p>
+              </article>
+              <article class="detail-card">
+                <p class="detail-label">Pre&ccedil;o ideal</p>
+                <p class="detail-value" id="result-ideal-price">R$ --</p>
+                <p class="detail-note">Pre&ccedil;o sugerido aplicando a margem informada.</p>
+              </article>
+              <article class="detail-card">
+                <p class="detail-label">Lucro estimado</p>
+                <p class="detail-value" id="result-profit-detail">R$ --</p>
+                <p class="detail-note">Valor que sobra depois de pagar todos os custos.</p>
+              </article>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <script src="/static/simulacao.js" defer></script>
+  </body>
+</html>
+

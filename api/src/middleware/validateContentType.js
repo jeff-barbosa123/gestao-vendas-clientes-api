@@ -12,6 +12,14 @@ function validateContentType(req, res, next) {
     return next();
   }
 
+  // Requisições sem corpo (ex.: POST /auth/logout, PATCH /sales/:id/cancel) não
+  // precisam de Content-Type. Antes, eram rejeitadas com 415.
+  const contentLength = Number(req.get('content-length') || 0);
+  const hasBody = contentLength > 0 || Boolean(req.get('transfer-encoding'));
+  if (!hasBody) {
+    return next();
+  }
+
   // Content-Type esperado
   const contentType = req.get('content-type') || '';
   const expectedContentType = 'application/json';

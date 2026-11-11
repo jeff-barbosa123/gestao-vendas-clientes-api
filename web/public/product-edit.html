@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Editar produto</title>
+    <meta
+      name="description"
+      content="Edi&ccedil;&atilde;o de produto no SGVC com valida&ccedil;&otilde;es e remo&ccedil;&atilde;o segura."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/products.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="products-wrapper">
+          <header class="products-header">
+            <div>
+              <h3 class="products-title">Editar produto</h3>
+              <p class="products-subtitle">Atualize as informa&ccedil;&otilde;es do produto</p>
+            </div>
+            <div class="products-actions">
+              <button class="button is-light is-small" id="back-list">Voltar para lista</button>
+            </div>
+          </header>
+
+          <div class="products-message toast-top" id="edit-message" hidden></div>
+
+          <section class="panel-card">
+            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+              Atualize os dados do item que voc&ecirc; vende.
+            </p>
+            <p class="help products-required-note">Campos com <span class="required">*</span> s&atilde;o obrigat&oacute;rios.</p>
+            <form id="edit-form" class="products-form" novalidate>
+              <p class="products-step">1. Identificacao</p>
+              <div class="field">
+                <label class="label" for="edit-name">Nome <span class="required">*</span></label>
+                <input
+                  class="input"
+                  id="edit-name"
+                  type="text"
+                  maxlength="120"
+                  autocomplete="off"
+                  placeholder="Ex: Bolo de Chocolate 1kg / Camisa Polo Azul M"
+                  aria-required="true"
+                  aria-describedby="edit-name-error"
+                />
+                <p class="help" id="edit-name-help" style="color:#64748b;">
+                  Informe um nome objetivo para identifica&ccedil;&atilde;o r&aacute;pida.
+                </p>
+                <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
+              </div>
+              <div class="field">
+                <label class="label" for="edit-description">Descricao</label>
+                <input
+                  class="input"
+                  id="edit-description"
+                  type="text"
+                  maxlength="200"
+                  autocomplete="off"
+                  placeholder="Ex: sabor, tamanho, modelo ou detalhes importantes"
+                />
+                <p class="help" id="edit-description-help" style="color:#64748b;">
+                  Detalhes curtos ajudam na confer&ecirc;ncia e no PDV.
+                </p>
+              </div>
+              <p class="products-step">2. Tipo do produto</p>
+              <div class="field">
+                <label class="label">Como voc&ecirc; vende este produto</label>
+                <div class="product-type-cards">
+                  <label class="product-type-card">
+                    <input type="radio" name="edit-product-type" id="edit-product-type-produced" value="produced" />
+                    <div>
+                      <strong>Produzido por voc&ecirc;</strong>
+                      <span>Usa ficha t&eacute;cnica para calcular custo.</span>
+                    </div>
+                  </label>
+                  <label class="product-type-card">
+                    <input type="radio" name="edit-product-type" id="edit-product-type-resale" value="resale" />
+                    <div>
+                      <strong>Comprado para revenda</strong>
+                      <span>Voc&ecirc; informa o pre&ccedil;o direto.</span>
+                    </div>
+                  </label>
+                </div>
+                <p class="help" style="color:#64748b;">Isso define como o custo e o pre&ccedil;o ser&atilde;o calculados.</p>
+                <p class="products-hint" id="edit-flow-hint"></p>
+              </div>
+              <div class="product-type-section" id="edit-produced-section">
+                <p class="products-step">3. Ficha t&eacute;cnica</p>
+                <div class="products-alert" id="edit-produced-alert" role="status">
+                  Ficha t&eacute;cnica obrigat&oacute;ria para produto produzido.
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-recipe-search">Buscar ficha t&eacute;cnica</label>
+                  <input
+                    class="input"
+                    id="edit-recipe-search"
+                    type="text"
+                    maxlength="120"
+                    autocomplete="off"
+                    placeholder="Digite parte do nome ou ingrediente"
+                    aria-describedby="edit-recipe-search-help"
+                  />
+                  <p class="help" id="edit-recipe-search-help" style="color:#64748b;">
+                    Ex: bolo, massa, artesanal.
+                  </p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-recipe-id">Receita / ficha de custo <span class="required">*</span></label>
+                  <div class="select is-fullwidth">
+                    <select id="edit-recipe-id" aria-required="true" aria-describedby="edit-recipe-error">
+                      <option value="">Selecione uma ficha t&eacute;cnica</option>
+                    </select>
+                  </div>
+                  <p class="help is-danger" id="edit-recipe-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field grouped">
+                  <div>
+                    <label class="label">Custo unitario</label>
+                    <p class="product-readonly" id="edit-cost-unit">-</p>
+                  </div>
+                  <div>
+                    <label class="label">Preco sugerido</label>
+                    <p class="product-readonly" id="edit-price-suggested">-</p>
+                  </div>
+                </div>
+                <p class="help" id="edit-price-suggested-help" style="color:#64748b;"></p>
+                <div class="field">
+                  <label class="label" for="edit-final-price">Preco final (opcional)</label>
+                  <input
+                    class="input"
+                    id="edit-final-price"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="Ex: 2,60"
+                  />
+                  <p class="help" id="edit-final-price-hint" style="color:#64748b;">
+                    Se deixar vazio, o sistema usa o pre&ccedil;o sugerido.
+                  </p>
+                </div>
+                <div class="field">
+                  <div class="field has-addons">
+                    <div class="control">
+                      <button class="button is-link" type="button" id="edit-link-recipe-btn">Vincular ficha</button>
+                    </div>
+                    <div class="control">
+                      <button class="button is-light" type="button" id="edit-unlink-recipe-btn">Remover v&iacute;nculo</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="product-type-section" id="edit-resale-section" hidden>
+                <p class="products-step">3. Custos e venda</p>
+                <div class="field">
+                  <label class="label" for="edit-purchase-price">Preco de compra <span class="required">*</span></label>
+                  <input
+                    class="input"
+                    id="edit-purchase-price"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                    aria-required="true"
+                    aria-describedby="edit-purchase-price-help edit-purchase-price-error"
+                  />
+                  <p class="help" id="edit-purchase-price-help" style="color:#64748b;">Quanto este produto custa para voc&ecirc;.</p>
+                  <p class="help is-danger" id="edit-purchase-price-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-price">Preco de venda <span class="required">*</span></label>
+                  <input
+                    class="input"
+                    id="edit-price"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                    aria-required="true"
+                    aria-describedby="edit-price-help edit-price-error"
+                  />
+                  <p class="help" id="edit-price-help" style="color:#64748b;">Preco final cobrado do cliente.</p>
+                  <p class="help" id="edit-price-suggestion" style="color:#64748b;"></p>
+                  <p class="help is-danger" id="edit-price-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label">C&aacute;lculo do pre&ccedil;o de venda</label>
+                  <div class="product-type-cards product-calc-cards">
+                    <label class="product-type-card">
+                      <input type="radio" name="edit-resale-calc-mode" id="edit-resale-calc-margin" value="margin" checked />
+                      <div>
+                        <strong>Margem desejada</strong>
+                        <span>Percentual sobre o pre&ccedil;o de venda.</span>
+                      </div>
+                    </label>
+                    <label class="product-type-card">
+                      <input type="radio" name="edit-resale-calc-mode" id="edit-resale-calc-markup" value="markup" />
+                      <div>
+                        <strong>Markup</strong>
+                        <span>Percentual sobre o custo de compra.</span>
+                      </div>
+                    </label>
+                  </div>
+                  <p class="help" style="color:#64748b;">Escolha a regra para sugerir o pre&ccedil;o automaticamente.</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="edit-resale-percent">Percentual</label>
+                  <input class="input" id="edit-resale-percent" type="text" inputmode="decimal" placeholder="Ex: 30" />
+                  <p class="help" id="edit-resale-percent-help" style="color:#64748b;">
+                    Margem sobre o pre&ccedil;o de venda.
+                  </p>
+                  <p class="help" id="edit-resale-percent-hint" style="color:#64748b;">
+                    Refer&ecirc;ncia: 30% costuma ser um bom ponto de partida.
+                  </p>
+                </div>
+                <div class="field">
+                  <label class="label">Lucro</label>
+                  <p class="product-readonly" id="edit-profit">-</p>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="edit-status">Status</label>
+                <div class="select">
+                  <select id="edit-status">
+                    <option value="ATIVO">Ativo</option>
+                    <option value="INATIVO">Inativo</option>
+                  </select>
+                </div>
+                <p class="help" style="color:#64748b;">Ativo = disponivel para venda.</p>
+              </div>
+              <div class="buttons">
+                <button class="button is-link" type="submit" id="save-btn">Salvar altera&ccedil;&otilde;es</button>
+                <button class="button is-danger" type="button" id="delete-btn">Remover produto</button>
+              </div>
+            </form>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <div class="modal" id="delete-modal" aria-hidden="true">
+      <div class="modal-background"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+        <header class="modal-card-head">
+          <p class="modal-card-title" id="delete-title">
+            <span class="modal-alert-icon" aria-hidden="true">!</span>
+            Remover produto
+          </p>
+          <button class="delete modal-close-btn" aria-label="Fechar" id="delete-close-btn"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Tem certeza de que deseja remover este produto?</p>
+          <p class="help is-danger">Essa a&ccedil;&atilde;o n&atilde;o poder&aacute; ser desfeita.</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-light" id="delete-cancel">Cancelar</button>
+          <button class="button is-danger" id="delete-confirm">Confirmar exclusao</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/vendor/fuse.min.js" defer></script>
+    <script src="/static/product-edit.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "recipe-1",
+    "name": "Bolo de Fubá",
+    "yield": 10,
+    "yieldType": "UN",
+    "costPerUnit": 1.5,
+    "priceSuggested": 3.0,
+    "status": "ACTIVE"
+  }
+]

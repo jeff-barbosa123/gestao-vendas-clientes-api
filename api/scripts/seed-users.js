@@ -1,4 +1,5 @@
 const { pool } = require("../src/db");
+const { hashPassword } = require("../src/utils/passwordHash");
 
 async function seedUsers() {
   const adminEmail = process.env.ADMIN_EMAIL || "admin@negocio.com";
@@ -42,12 +43,14 @@ async function seedUsers() {
   ];
 
   for (const user of users) {
+    // Senhas sempre gravadas com bcrypt (antes iam em texto puro)
+    const passwordHash = await hashPassword(user.password);
     await pool.query(
       `INSERT INTO users
         (id, email, password, name, status_usuario, data_ultimo_login, tentativas_falha, blocked, created_at)
        VALUES ($1,$2,$3,$4,$5,NULL,0,$6,NOW())
        ON CONFLICT (id) DO NOTHING`,
-      [user.id, user.email, user.password, user.name, user.status, user.blocked]
+      [user.id, user.email, passwordHash, user.name, user.status, user.blocked]
     );
   }
 }

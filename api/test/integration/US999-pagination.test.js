@@ -16,14 +16,14 @@ describe('US999 - Paginação em Listagens', () => {
   let authToken;
   let userId;
 
-  beforeAll(async () => {
+  before(async () => {
     // Criar usuário de teste
     const email = `test-pagination-${Date.now()}@example.com`;
     const password = 'Test@123456';
     const hashedPassword = await require('bcrypt').hash(password, 12);
 
     const userResult = await pool.query(
-      'INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) RETURNING id, email',
+      'INSERT INTO users (id, email, password, name) VALUES (gen_random_uuid(), $1, $2, $3) RETURNING id, email',
       [email, hashedPassword, 'Test User Pagination']
     );
     userId = userResult.rows[0].id;
@@ -47,26 +47,27 @@ describe('US999 - Paginação em Listagens', () => {
 
     // Criar dados de teste
     await pool.query(
-      `INSERT INTO customers (owner_id, name, email, phone) 
-       SELECT $1, 'Cliente ' || generate_series, 'cliente' || generate_series || '@test.com', '11999999999'
+      `INSERT INTO customers (id, owner_id, name, email, phone) 
+       SELECT gen_random_uuid(), $1, 'Cliente ' || generate_series, 'cliente' || generate_series || '@test.com', '11999999999'
        FROM generate_series(1, 25)`,
       [userId]
     );
 
     await pool.query(
-      `INSERT INTO products (owner_id, name, purchase_price, sale_price) 
-       SELECT $1, 'Produto ' || generate_series, 10.0, 20.0
+      `INSERT INTO products (id, owner_id, name, purchase_price, price, product_type) 
+       SELECT gen_random_uuid(), $1, 'Produto ' || generate_series, 10.0, 20.0, 'RESALE'
        FROM generate_series(1, 30)`,
       [userId]
     );
   });
 
-  afterAll(async () => {
+  after(async () => {
     // Limpar dados de teste
+    await pool.query('DELETE FROM sales WHERE owner_id = $1', [userId]);
     await pool.query('DELETE FROM customers WHERE owner_id = $1', [userId]);
     await pool.query('DELETE FROM products WHERE owner_id = $1', [userId]);
     await pool.query('DELETE FROM users WHERE id = $1', [userId]);
-    await pool.end();
+    // pool compartilhado com os demais testes: não encerrar aqui (mocha roda com --exit)
   });
 
   describe('GET /api/customers - Paginação', () => {
@@ -76,16 +77,16 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(response.body).toHaveProperty('pagination');
-      expect(response.body.pagination).toHaveProperty('page', 1);
-      expect(response.body.pagination).toHaveProperty('limit', 10);
-      expect(response.body.pagination).toHaveProperty('total');
-      expect(response.body.pagination).toHaveProperty('totalPages');
-      expect(response.body.pagination).toHaveProperty('hasNextPage');
-      expect(response.body.pagination).toHaveProperty('hasPreviousPage');
-      expect(Array.isArray(response.body.items)).toBe(true);
-      expect(response.body.items.length).toBeLessThanOrEqual(10);
+      expect(response.body).to.have.property('items');
+      expect(response.body).to.have.property('pagination');
+      expect(response.body.pagination).to.have.property('page', 1);
+      expect(response.body.pagination).to.have.property('limit', 10);
+      expect(response.body.pagination).to.have.property('total');
+      expect(response.body.pagination).to.have.property('totalPages');
+      expect(response.body.pagination).to.have.property('hasNextPage');
+      expect(response.body.pagination).to.have.property('hasPreviousPage');
+      expect(Array.isArray(response.body.items)).to.equal(true);
+      expect(response.body.items.length).to.be.at.most(10);
     });
 
     it('deve retornar segunda página corretamente', async () => {
@@ -94,9 +95,9 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(response.body.pagination.page).toBe(2);
-      expect(response.body.pagination.hasPreviousPage).toBe(true);
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body.pagination.page).to.equal(2);
+      expect(response.body.pagination.hasPreviousPage).to.equal(true);
+      expect(Array.isArray(response.body.items)).to.equal(true);
     });
 
     it('deve validar parâmetros de paginação inválidos', async () => {
@@ -105,8 +106,8 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(400);
 
-      expect(response.body).toHaveProperty('success', false);
-      expect(response.body).toHaveProperty('code');
+      expect(response.body).to.have.property('success', false);
+      expect(response.body).to.have.property('code');
     });
 
     it('deve limitar máximo de itens por página', async () => {
@@ -115,8 +116,8 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(400);
 
-      expect(response.body).toHaveProperty('success', false);
-      expect(response.body.code).toBe('INVALID_LIMIT');
+      expect(response.body).to.have.property('success', false);
+      expect(response.body.code).to.equal('INVALID_LIMIT');
     });
 
     it('deve funcionar sem parâmetros de paginação (backward compatibility)', async () => {
@@ -126,7 +127,7 @@ describe('US999 - Paginação em Listagens', () => {
         .expect(200);
 
       // Pode retornar array direto ou formato paginado
-      expect(Array.isArray(response.body) || response.body.items).toBeTruthy();
+      expect(Array.isArray(response.body) || response.body.items).to.be.ok;
     });
   });
 
@@ -137,11 +138,11 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(response.body).toHaveProperty('pagination');
-      expect(response.body.pagination.page).toBe(1);
-      expect(response.body.pagination.limit).toBe(15);
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).to.have.property('items');
+      expect(response.body).to.have.property('pagination');
+      expect(response.body.pagination.page).to.equal(1);
+      expect(response.body.pagination.limit).to.equal(15);
+      expect(Array.isArray(response.body.items)).to.equal(true);
     });
   });
 
@@ -164,8 +165,8 @@ describe('US999 - Paginação em Listagens', () => {
         // Criar 5 vendas
         for (let i = 0; i < 5; i++) {
           await pool.query(
-            `INSERT INTO sales (owner_id, customer_id, date, total, status)
-             VALUES ($1, $2, NOW(), 100.0, 'ACTIVE') RETURNING id`,
+            `INSERT INTO sales (id, owner_id, customer_id, date, total, status)
+             VALUES (gen_random_uuid(), $1, $2, NOW(), 100.0, 'ACTIVE') RETURNING id`,
             [userId, customerId]
           );
         }
@@ -175,9 +176,9 @@ describe('US999 - Paginação em Listagens', () => {
           .set('Authorization', `Bearer ${authToken}`)
           .expect(200);
 
-        expect(response.body).toHaveProperty('items');
-        expect(response.body).toHaveProperty('pagination');
-        expect(response.body.items.length).toBeLessThanOrEqual(3);
+        expect(response.body).to.have.property('items');
+        expect(response.body).to.have.property('pagination');
+        expect(response.body.items.length).to.be.at.most(3);
       }
     });
   });
@@ -189,10 +190,10 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(400);
 
-      expect(response.body).toHaveProperty('message');
-      expect(response.body.message).not.toMatch(/INVALID_PAGE|invalid/i);
-      expect(typeof response.body.message).toBe('string');
-      expect(response.body.message.length).toBeGreaterThan(0);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).not.to.match(/INVALID_PAGE|invalid/i);
+      expect(typeof response.body.message).to.equal('string');
+      expect(response.body.message.length).to.be.above(0);
     });
 
     it('deve retornar mensagem amigável para limite inválido', async () => {
@@ -201,9 +202,9 @@ describe('US999 - Paginação em Listagens', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(400);
 
-      expect(response.body).toHaveProperty('message');
-      expect(response.body.message).not.toMatch(/INVALID_LIMIT|invalid/i);
-      expect(typeof response.body.message).toBe('string');
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).not.to.match(/INVALID_LIMIT|invalid/i);
+      expect(typeof response.body.message).to.equal('string');
     });
   });
 });

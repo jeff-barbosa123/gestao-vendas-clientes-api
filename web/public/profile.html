@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Perfil</title>
+    <meta
+      name="description"
+      content="Visualize seus dados e atualize a senha do perfil SGVC."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/profile.css" />
+    <script src="/config.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="profile">
+          <header class="profile-header">
+            <div>
+              <h3 class="profile-title">Perfil</h3>
+              <p class="profile-subtitle">
+                Consulte seus dados e atualize sua senha de acesso.
+              </p>
+            </div>
+            <nav class="profile-actions" aria-label="Ações do perfil">
+              <button class="button is-light is-small" id="profile-back-dashboard" type="button">Voltar ao dashboard</button>
+              <button class="button is-light is-small" id="profile-logout" type="button">Sair</button>
+            </nav>
+          </header>
+
+          <div class="profile-message" id="profile-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="profile-grid">
+            <div class="panel-card">
+              <h4 class="panel-title">Seus dados</h4>
+              <form id="profile-form" novalidate>
+                <div class="field">
+                  <label class="label" for="profile-name-input">Nome</label>
+                  <input class="input" id="profile-name-input" type="text" required />
+                  <p class="help is-danger" id="profile-name-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="profile-email-input">E-mail</label>
+                  <input class="input" id="profile-email-input" type="email" required />
+                  <p class="help is-danger" id="profile-email-error" aria-live="polite" hidden></p>
+                </div>
+
+                <div class="profile-message is-inline" id="profile-form-message" role="status" aria-live="polite" hidden></div>
+
+                <button class="button is-link" type="submit" id="profile-submit">Salvar altera&ccedil;&otilde;es</button>
+              </form>
+
+              <div class="profile-list">
+                <div class="profile-item">
+                  <span class="profile-label">Status</span>
+                  <span class="profile-value" id="profile-status">-</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">&Uacute;ltimo login</span>
+                  <span class="profile-value" id="profile-last-login">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <h4 class="panel-title">Trocar senha</h4>
+              <form id="password-form" novalidate>
+                <div class="field">
+                  <label class="label" for="current-password">Senha atual</label>
+                  <input
+                    class="input"
+                    type="password"
+                    id="current-password"
+                    autocomplete="current-password"
+                    required
+                    aria-describedby="current-password-error"
+                  />
+                  <p class="help is-danger" id="current-password-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="new-password">Nova senha</label>
+                  <input
+                    class="input"
+                    type="password"
+                    id="new-password"
+                    autocomplete="new-password"
+                    required
+                    aria-describedby="new-password-error"
+                  />
+                  <p class="help">Use pelo menos 8 caracteres.</p>
+                  <div class="pwd-rules" id="profile-password-rules" aria-live="polite">
+                    <div class="pwd-rule" data-rule="len"><span class="pwd-icon" aria-hidden="true">✗</span> Mínimo 8 caracteres</div>
+                    <div class="pwd-rule" data-rule="upper"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 letra maiúscula</div>
+                    <div class="pwd-rule" data-rule="lower"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 letra minúscula</div>
+                    <div class="pwd-rule" data-rule="num"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 número</div>
+                    <div class="pwd-rule" data-rule="sym"><span class="pwd-icon" aria-hidden="true">✗</span> Pelo menos 1 caractere especial (!@#$%^&*)</div>
+                  </div>
+                  <div class="pwd-meter" aria-hidden="true">
+                    <div class="pwd-meter-bar" id="profile-password-meter"></div>
+                  </div>
+                  <p class="help is-danger" id="new-password-error" aria-live="polite" hidden></p>
+                </div>
+                <div class="field">
+                  <label class="label" for="confirm-password">Confirmar nova senha</label>
+                  <input
+                    class="input"
+                    type="password"
+                    id="confirm-password"
+                    autocomplete="new-password"
+                    required
+                    aria-describedby="confirm-password-error"
+                  />
+                  <p class="help is-danger" id="confirm-password-error" aria-live="polite" hidden></p>
+                </div>
+
+                <div class="profile-message is-inline" id="password-message" role="status" aria-live="polite" hidden></div>
+
+                <button class="button is-link" type="submit" id="password-submit">Atualizar senha</button>
+              </form>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+    </footer>
+
+    <script src="/static/profile.js" defer></script>
+  </body>
+</html>

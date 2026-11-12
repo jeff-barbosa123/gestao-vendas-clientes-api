@@ -44,6 +44,7 @@ function normalizeRecipe(row) {
     price_minimum: toNumber(row.price_minimum),
     price_suggested: toNumber(row.price_suggested),
     estimated_profit: toNumber(row.estimated_profit),
+    margin: row.margin == null ? null : Number(row.margin),
   };
 }
 
@@ -656,6 +657,7 @@ async function attachRecipeDetails(recipes) {
       cost: Number(row.cost),
       unitCost: Number(row.unit_cost),
       totalCost: Number(row.total_cost),
+      ingredientId: row.ingredient_id || null,
     })),
   }));
 }
@@ -684,8 +686,8 @@ async function createRecipe(recipe, ingredients, overheadItems) {
       `INSERT INTO recipes
         (id, owner_id, name, description, yield_qty, yield_type, overhead, labor,
          cost_ingredients, total_cost, cost_per_unit, price_minimum, price_suggested,
-         margin_label, estimated_profit, status, link_product_id, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,NOW())`,
+         margin_label, estimated_profit, status, link_product_id, margin, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,NOW())`,
       [
         recipe.id,
         recipe.ownerId,
@@ -704,14 +706,15 @@ async function createRecipe(recipe, ingredients, overheadItems) {
         recipe.estimatedProfit,
         recipe.status || "ACTIVE",
         recipe.linkProductId,
+        recipe.margin ?? null,
       ]
     );
 
     for (const ing of ingredients || []) {
       await client.query(
         `INSERT INTO recipe_ingredients
-          (id, recipe_id, name, quantity, unit, component, package_quantity, pack_unit, cost, unit_cost, total_cost)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+          (id, recipe_id, name, quantity, unit, component, package_quantity, pack_unit, cost, unit_cost, total_cost, ingredient_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
         [
           ing.id || uuidv4(),
           recipe.id,
@@ -724,6 +727,7 @@ async function createRecipe(recipe, ingredients, overheadItems) {
           ing.cost,
           ing.unitCost,
           ing.totalCost,
+          ing.ingredientId || null,
         ]
       );
     }
@@ -760,6 +764,7 @@ async function updateRecipe(id, recipe, ingredients, overheadItems) {
              estimated_profit = $14,
              status = $15,
              link_product_id = $16,
+             margin = COALESCE($17, margin),
              updated_at = NOW()
        WHERE id = $1`,
       [
@@ -779,6 +784,7 @@ async function updateRecipe(id, recipe, ingredients, overheadItems) {
         recipe.estimatedProfit,
         recipe.status || "ACTIVE",
         recipe.linkProductId,
+        recipe.margin ?? null,
       ]
     );
 
@@ -788,8 +794,8 @@ async function updateRecipe(id, recipe, ingredients, overheadItems) {
     for (const ing of ingredients || []) {
       await client.query(
         `INSERT INTO recipe_ingredients
-          (id, recipe_id, name, quantity, unit, component, package_quantity, pack_unit, cost, unit_cost, total_cost)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+          (id, recipe_id, name, quantity, unit, component, package_quantity, pack_unit, cost, unit_cost, total_cost, ingredient_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
         [
           ing.id || uuidv4(),
           id,
@@ -802,6 +808,7 @@ async function updateRecipe(id, recipe, ingredients, overheadItems) {
           ing.cost,
           ing.unitCost,
           ing.totalCost,
+          ing.ingredientId || null,
         ]
       );
     }
@@ -991,7 +998,126 @@ async function updateSale(id, sale, items) {
   });
 }
 
+
+// ===================== Insumos (cadastro único de ingredientes) =====================
+function normalizeIngredientRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    ownerId: row.owner_id,
+    name: row.name,
+    packageQuantity: Number(row.package_quantity),
+    packageUnit: row.package_unit,
+    packageCost: Number(row.package_cost),
+    usedInRecipes: row.used_in_recipes == null ? undefined : Number(row.used_in_recipes),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+async function listIngredients(ownerId) {
+  const result = await query(
+    `SELECT i.*,
+            (SELECT COUNT(DISTINCT ri.recipe_id) FROM recipe_ingredients ri
+              JOIN recipes r ON r.id = ri.recipe_id AND r.status <> 'INACTIVE'
+             WHERE ri.ingredient_id = i.id) AS used_in_recipes
+       FROM ingredients i
+      WHERE ($1::uuid IS NULL OR i.owner_id = $1)
+      ORDER BY lower(i.name)`,
+    [ownerId || null]
+  );
+  return result.rows.map(normalizeIngredientRow);
+}
+
+async function getIngredientById(id) {
+  if (!isUuid(id)) return null;
+  const result = await query("SELECT * FROM ingredients WHERE id = $1", [id]);
+  return normalizeIngredientRow(result.rows[0]);
+}
+
+async function ingredientNameExists(ownerId, name, excludeId) {
+  const result = await query(
+    `SELECT 1 FROM ingredients
+      WHERE ($1::uuid IS NULL OR owner_id = $1) AND lower(name) = lower($2)
+        AND ($3::uuid IS NULL OR id <> $3)
+      LIMIT 1`,
+    [ownerId || null, name, excludeId || null]
+  );
+  return result.rows.length > 0;
+}
+
+async function createIngredient(data) {
+  const id = uuidv4();
+  const result = await query(
+    `INSERT INTO ingredients (id, owner_id, name, package_quantity, package_unit, package_cost, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,NOW()) RETURNING *`,
+    [id, data.ownerId || null, data.name, data.packageQuantity, data.packageUnit, data.packageCost]
+  );
+  await query(
+    `INSERT INTO ingredient_price_history (id, ingredient_id, package_quantity, package_unit, package_cost)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [uuidv4(), id, data.packageQuantity, data.packageUnit, data.packageCost]
+  );
+  return normalizeIngredientRow(result.rows[0]);
+}
+
+async function updateIngredient(id, data) {
+  const result = await query(
+    `UPDATE ingredients
+        SET name = $2, package_quantity = $3, package_unit = $4, package_cost = $5, updated_at = NOW()
+      WHERE id = $1 RETURNING *`,
+    [id, data.name, data.packageQuantity, data.packageUnit, data.packageCost]
+  );
+  return normalizeIngredientRow(result.rows[0]);
+}
+
+async function addIngredientPriceHistory(ingredient) {
+  await query(
+    `INSERT INTO ingredient_price_history (id, ingredient_id, package_quantity, package_unit, package_cost)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [uuidv4(), ingredient.id, ingredient.packageQuantity, ingredient.packageUnit, ingredient.packageCost]
+  );
+}
+
+async function listIngredientPriceHistory(ingredientId, limit = 20) {
+  const result = await query(
+    `SELECT package_quantity, package_unit, package_cost, changed_at
+       FROM ingredient_price_history WHERE ingredient_id = $1
+      ORDER BY changed_at DESC LIMIT $2`,
+    [ingredientId, limit]
+  );
+  return result.rows.map((r) => ({
+    packageQuantity: Number(r.package_quantity),
+    packageUnit: r.package_unit,
+    packageCost: Number(r.package_cost),
+    changedAt: r.changed_at,
+  }));
+}
+
+async function deleteIngredient(id) {
+  await query("DELETE FROM ingredients WHERE id = $1", [id]);
+}
+
+async function listRecipeIdsByIngredient(ingredientId) {
+  const result = await query(
+    `SELECT DISTINCT ri.recipe_id FROM recipe_ingredients ri
+       JOIN recipes r ON r.id = ri.recipe_id AND r.status <> 'INACTIVE'
+      WHERE ri.ingredient_id = $1`,
+    [ingredientId]
+  );
+  return result.rows.map((r) => r.recipe_id);
+}
+
 module.exports = {
+  listIngredients,
+  getIngredientById,
+  ingredientNameExists,
+  createIngredient,
+  updateIngredient,
+  addIngredientPriceHistory,
+  listIngredientPriceHistory,
+  deleteIngredient,
+  listRecipeIdsByIngredient,
   getUserByEmail,
   getUserById,
   createUser,

@@ -13,6 +13,7 @@ Ficam em `api/test/integration/`, um arquivo por user story:
 | `US005-recipes.test.js` | Ficha técnica |
 | `US006-price-simulation.test.js` | Simulação de preço |
 | `US007-products-ficha.test.js` | Vínculo ficha técnica ↔ produto |
+| `US008-ingredients.test.js` | Cadastro de insumos, recálculo automático, precisão de custo, margem |
 | `US998-regressoes.test.js` | Regressões de bugs corrigidos (isolamento entre usuários, CSRF, dashboard...) |
 | `US999-*.test.js` | Mensagens de erro e paginação |
 | `docs-swagger.test.js` | Swagger |
@@ -43,7 +44,7 @@ npm test                 # suíte completa + relatório HTML em api/mochawesome-
 npm run us001            # só uma user story (us001 ... us007)
 ```
 
-Situação em 12/11/2026: **270 testes passando, 0 falhando, 35 pendentes** (`it.skip` — testes de
+Situação em 12/11/2026: **288 testes passando, 0 falhando, 35 pendentes** (`it.skip` — testes de
 performance e cenários ainda não implementados).
 
 ### CI

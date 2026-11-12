@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Insumos</title>
+    <meta name="description" content="Cadastro único de insumos: preço em um só lugar e fichas técnicas recalculadas automaticamente." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/ingredients.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="ing-wrapper">
+          <header class="ing-header">
+            <div>
+              <h1 class="ing-title">Insumos</h1>
+              <p class="ing-subtitle">
+                Cadastre o preço de cada ingrediente ou embalagem uma vez. Quando o preço mudar, todas as
+                fichas técnicas e o custo dos produtos são recalculados sozinhos.
+              </p>
+            </div>
+          </header>
+
+          <div class="notification is-light ing-message" id="ing-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="panel-card">
+            <h2 class="ing-section-title" id="form-title">Novo insumo</h2>
+            <form id="ing-form" novalidate>
+              <input type="hidden" id="ing-id" />
+              <div class="ing-form-grid">
+                <div class="field">
+                  <label class="label" for="ing-name">Nome</label>
+                  <input class="input" id="ing-name" type="text" maxlength="120" placeholder="Ex.: Leite condensado" required />
+                </div>
+                <div class="field">
+                  <label class="label" for="ing-qty">Tamanho da embalagem</label>
+                  <input class="input" id="ing-qty" type="text" inputmode="decimal" placeholder="Ex.: 395" required />
+                </div>
+                <div class="field">
+                  <label class="label" for="ing-unit">Unidade</label>
+                  <div class="select is-fullwidth">
+                    <select id="ing-unit" required>
+                      <option value="g">g (gramas)</option>
+                      <option value="kg">kg (quilos)</option>
+                      <option value="ml">ml (mililitros)</option>
+                      <option value="l">l (litros)</option>
+                      <option value="un">un (unidades)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="ing-cost">Preço pago (R$)</label>
+                  <input class="input" id="ing-cost" type="text" inputmode="decimal" placeholder="Ex.: 7,50" required />
+                </div>
+              </div>
+              <p class="help is-danger" id="ing-error" aria-live="polite" hidden></p>
+              <p class="help ing-hint">
+                Exemplo: lata de leite condensado de <strong>395 g</strong> por <strong>R$ 7,50</strong>.
+                Nas fichas, informe só quanto usa (ex.: 200 g) e o custo é calculado.
+              </p>
+              <div class="ing-form-actions">
+                <button class="button is-link" type="submit" id="ing-save">Salvar insumo</button>
+                <button class="button is-light" type="button" id="ing-cancel" hidden>Cancelar edição</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <div class="ing-list-header">
+              <h2 class="ing-section-title">Insumos cadastrados <span id="ing-count"></span></h2>
+              <div class="field ing-search">
+                <label class="label" for="ing-search">Buscar</label>
+                <input class="input" id="ing-search" type="search" placeholder="Nome do insumo" />
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth is-hoverable">
+                <thead>
+                  <tr>
+                    <th>Insumo</th>
+                    <th>Embalagem</th>
+                    <th class="has-text-right">Preço</th>
+                    <th class="has-text-right">Custo por unidade</th>
+                    <th class="has-text-right">Usado em</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="ing-tbody">
+                  <tr><td colspan="6">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/static/ingredients.js" defer></script>
+  </body>
+</html>

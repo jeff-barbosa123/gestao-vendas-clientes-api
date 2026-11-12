@@ -36,6 +36,7 @@ jobs:
       ADMIN_PASSWORD: Admin@123!
       OTHER_USER_EMAIL: user@sgvc.local
       OTHER_USER_PASSWORD: User@123!
+      GLOBAL_RATE_LIMIT_MAX: 5000
 
     steps:
       - name: Checkout

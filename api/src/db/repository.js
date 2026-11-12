@@ -1,6 +1,12 @@
 const { v4: uuidv4 } = require("uuid");
 const { query, withTransaction } = require("./index");
 
+// Executa dentro da transação do chamador (client) ou abre uma própria.
+// Permite que venda + estoque compartilhem a mesma transação (tudo ou nada).
+function runInTx(client, handler) {
+  return client ? handler(client) : withTransaction(handler);
+}
+
 // IDs são UUID no Postgres. Um id em formato inválido (ex.: "abc", "999") gerava
 // erro 22P02 no banco e a API respondia 500; agora é tratado como "não encontrado".
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -905,8 +911,8 @@ async function getSaleById(id) {
   return sale || null;
 }
 
-async function createSale(sale, items) {
-  return withTransaction(async (client) => {
+async function createSale(sale, items, externalClient = null) {
+  return runInTx(externalClient, async (client) => {
     await client.query(
       `INSERT INTO sales
         (id, customer_id, customer_name, owner_id, total, cmv, date, status, status_venda, canceled_at, payment_method, created_at)
@@ -947,8 +953,8 @@ async function createSale(sale, items) {
   });
 }
 
-async function updateSale(id, sale, items) {
-  return withTransaction(async (client) => {
+async function updateSale(id, sale, items, externalClient = null) {
+  return runInTx(externalClient, async (client) => {
     await client.query(
       `UPDATE sales
          SET customer_id = COALESCE($2, customer_id),
@@ -1154,9 +1160,14 @@ async function getRecipeConsumptionRows(recipeIds) {
  * onlyTracked = true: não mexe em insumo sem controle de estoque (stock_quantity NULL).
  * Retorna o insumo atualizado, ou null se não foi movimentado.
  */
-async function moveIngredientStock(ingredientId, delta, movement = {}, { onlyTracked = false } = {}) {
+async function moveIngredientStock(
+  ingredientId,
+  delta,
+  movement = {},
+  { onlyTracked = false, client: externalClient = null } = {}
+) {
   if (!isUuid(ingredientId)) return null;
-  return withTransaction(async (client) => {
+  return runInTx(externalClient, async (client) => {
     const updated = await client.query(
       `UPDATE ingredients
           SET stock_quantity = COALESCE(stock_quantity, 0) + $2, updated_at = NOW()
@@ -1225,10 +1236,29 @@ async function listStockMovements(ingredientId, limit = 30) {
   return result.rows.map(normalizeMovementRow);
 }
 
+/**
+ * Soma `delta` (negativo = baixa) ao estoque do produto numa única instrução atômica,
+ * sem ler antes (evita corrida entre vendas simultâneas). Baixa só passa se houver saldo.
+ * Retorna o novo estoque, ou null se não havia saldo suficiente / produto não encontrado.
+ */
+async function adjustProductStock(productId, delta, client) {
+  if (!isUuid(productId)) return null;
+  const run = client ? client.query.bind(client) : query;
+  const result = await run(
+    `UPDATE products
+        SET stock = stock + $2, updated_at = NOW()
+      WHERE id = $1 AND stock IS NOT NULL AND stock + $2 >= 0
+      RETURNING stock`,
+    [productId, delta]
+  );
+  return result.rows[0] ? Number(result.rows[0].stock) : null;
+}
+
 // Saldo líquido que uma venda ainda tem em cada insumo (SALE negativo + SALE_CANCEL positivo)
-async function getSaleStockBalance(saleId) {
+async function getSaleStockBalance(saleId, client = null) {
   if (!isUuid(saleId)) return [];
-  const result = await query(
+  const run = client ? client.query.bind(client) : query;
+  const result = await run(
     `SELECT ingredient_id, SUM(quantity) AS net
        FROM ingredient_stock_movements
       WHERE sale_id = $1 AND type IN ('SALE', 'SALE_CANCEL')
@@ -1280,6 +1310,7 @@ module.exports = {
   disableIngredientStock,
   listStockMovements,
   getSaleStockBalance,
+  adjustProductStock,
   listLowStockIngredients,
   getUserByEmail,
   getUserById,

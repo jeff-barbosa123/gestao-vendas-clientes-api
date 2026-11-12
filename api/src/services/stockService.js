@@ -170,15 +170,17 @@ async function computeConsumption(items, productMap) {
 }
 
 /** Desconta os insumos de uma venda. Retorna os insumos que ficaram no mínimo ou abaixo. */
-async function applySale(saleId, items, productMap, user) {
+async function applySale(saleId, items, productMap, user, client = null) {
   const consumption = await computeConsumption(items, productMap);
   const low = [];
-  for (const [ingredientId, used] of consumption) {
+  // Ordem fixa por id: vendas simultâneas travam as linhas na mesma ordem (evita deadlock)
+  const ordered = [...consumption].sort(([a], [b]) => String(a).localeCompare(String(b)));
+  for (const [ingredientId, used] of ordered) {
     const updated = await repo.moveIngredientStock(
       ingredientId,
       -Number(used.toFixed(3)),
       { type: "SALE", saleId, ownerId: user ? user.id : null },
-      { onlyTracked: true }
+      { onlyTracked: true, client }
     );
     if (updated && updated.lowStock) low.push({ id: updated.id, name: updated.name, stockQuantity: updated.stockQuantity, stockUnit: updated.stockUnit });
   }
@@ -186,14 +188,16 @@ async function applySale(saleId, items, productMap, user) {
 }
 
 /** Devolve ao estoque tudo o que a venda ainda tem descontado (cancelamento ou edição). */
-async function reverseSale(saleId, user) {
-  const balances = await repo.getSaleStockBalance(saleId);
+async function reverseSale(saleId, user, client = null) {
+  const balances = (await repo.getSaleStockBalance(saleId, client)).sort((a, b) =>
+    String(a.ingredientId).localeCompare(String(b.ingredientId))
+  );
   for (const { ingredientId, net } of balances) {
     await repo.moveIngredientStock(
       ingredientId,
       -net,
       { type: "SALE_CANCEL", saleId, ownerId: user ? user.id : null },
-      { onlyTracked: true }
+      { onlyTracked: true, client }
     );
   }
   return balances.length;

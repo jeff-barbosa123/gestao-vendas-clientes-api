@@ -3,11 +3,21 @@ const repo = require("../db/repository");
 const stockService = require("./stockService");
 const { logError } = require("../utils/logger");
 
-// Estoque de insumos não pode derrubar a venda: se falhar, registra e segue
-async function safeStock(label, fn) {
+const { withTransaction } = require("../db");
+
+// Estoque de insumos não derruba a venda, mas também não deixa baixa pela metade:
+// roda num SAVEPOINT; se falhar, desfaz só essa parte, registra e a venda segue.
+// (Sem o savepoint, um erro de SQL marcaria a transação inteira como abortada.)
+let savepointSeq = 0;
+async function safeStock(label, client, fn) {
+  const sp = `sp_stock_${++savepointSeq}`;
+  await client.query(`SAVEPOINT ${sp}`);
   try {
-    return await fn();
+    const result = await fn();
+    await client.query(`RELEASE SAVEPOINT ${sp}`);
+    return result;
   } catch (err) {
+    await client.query(`ROLLBACK TO SAVEPOINT ${sp}`);
     logError({ event: "STOCK_UPDATE_FAILED", message: `${label}: ${err.message}` });
     return null;
   }
@@ -228,29 +238,28 @@ function normalizeItemsWithCosts(items, productMap, previousItems = []) {
   };
 }
 
-async function reserveStock(items, productMap) {
-  const updates = [];
+// Baixa o estoque dos produtos DENTRO da transação da venda. Cada baixa é um UPDATE atômico
+// condicionado ao saldo (sem ler-e-gravar), então vendas simultâneas não vendem o mesmo estoque
+// duas vezes. Se faltar saldo, lança 422 e a transação inteira é desfeita (rollback).
+async function reserveStock(items, productMap, client) {
+  const wanted = new Map(); // productId -> quantidade total (mesmo produto em 2 itens soma)
   for (const it of items) {
     const product = productMap.get(it.productId);
     if (shouldTrackStock(product)) {
-      if (product.stock < it.quantity) {
-        const err = new Error("Estoque insuficiente");
-        err.status = 422;
-        throw err;
-      }
-      updates.push({ product, quantity: it.quantity });
+      wanted.set(product.id, (wanted.get(product.id) || 0) + Number(it.quantity));
     }
   }
 
-  for (const { product, quantity } of updates) {
-    await repo.updateProduct(product.id, { stock: Number(product.stock) - quantity });
-  }
-
-  return async () => {
-    for (const { product, quantity } of updates) {
-      await repo.updateProduct(product.id, { stock: Number(product.stock) + quantity });
+  // Ordem fixa por id evita deadlock entre vendas simultâneas
+  const ordered = [...wanted].sort(([a], [b]) => String(a).localeCompare(String(b)));
+  for (const [productId, quantity] of ordered) {
+    const left = await repo.adjustProductStock(productId, -quantity, client);
+    if (left === null) {
+      const err = new Error("Estoque insuficiente");
+      err.status = 422;
+      throw err;
     }
-  };
+  }
 }
 
 function logAudit(saleId, action, userId) {
@@ -343,31 +352,33 @@ async function create(data, user) {
       ? data.cliente_nome.trim()
       : data.customerName ?? data.clienteNome ?? data.cliente_nome ?? null;
 
-  const rollbackStock = await reserveStock(items, productMap);
+  const sale = {
+    id: uuidv4(),
+    customerId: data.customerId,
+    customerName,
+    clienteNome: customerName,
+    paymentMethod: normalizePaymentMethod(data.paymentMethod),
+    items,
+    cmv,
+    total,
+    status: "ACTIVE",
+    statusVenda: "ativa",
+    ownerId: user ? user.id : null,
+    date: saleDate.toISOString(),
+  };
 
-  try {
-    const sale = {
-      id: uuidv4(),
-      customerId: data.customerId,
-      customerName,
-      clienteNome: customerName,
-      paymentMethod: normalizePaymentMethod(data.paymentMethod),
-      items,
-      cmv,
-      total,
-      status: "ACTIVE",
-      statusVenda: "ativa",
-      ownerId: user ? user.id : null,
-      date: saleDate.toISOString(),
-    };
-    await repo.createSale(sale, items);
-    logAudit(sale.id, "CREATED", user ? user.id : null);
-    const lowStock = await safeStock("venda", () => stockService.applySale(sale.id, items, productMap, user));
-    return lowStock && lowStock.length ? { ...sale, lowStockIngredients: lowStock } : sale;
-  } catch (err) {
-    await rollbackStock();
-    throw err;
-  }
+  // Tudo ou nada: baixa de produtos + venda + baixa de insumos na mesma transação.
+  // Qualquer erro (ex.: estoque insuficiente) desfaz tudo automaticamente.
+  const lowStock = await withTransaction(async (client) => {
+    await reserveStock(items, productMap, client);
+    await repo.createSale(sale, items, client);
+    return safeStock("venda", client, () =>
+      stockService.applySale(sale.id, items, productMap, user, client)
+    );
+  });
+
+  logAudit(sale.id, "CREATED", user ? user.id : null);
+  return lowStock && lowStock.length ? { ...sale, lowStockIngredients: lowStock } : sale;
 }
 
 async function update(id, data, user) {
@@ -422,20 +433,22 @@ async function update(id, data, user) {
   const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap, oldSale.items);
   const updatedDate = data.date ? parseIsoDate(data.date, "date").toISOString() : oldSale.date;
 
-  await repo.updateSale(id, {
-    ...oldSale,
-    ...data,
-    paymentMethod: normalizePaymentMethod(data.paymentMethod) ?? oldSale.payment_method ?? null,
-    total,
-    cmv,
-    date: updatedDate,
-  }, items);
-  logAudit(id, "UPDATED", user ? user.id : null);
-  // Itens mudaram: devolve o que a venda tinha descontado e desconta de novo pelos itens atuais
-  await safeStock("edição de venda", async () => {
-    await stockService.reverseSale(id, user);
-    await stockService.applySale(id, items, productMap, user);
+  await withTransaction(async (client) => {
+    await repo.updateSale(id, {
+      ...oldSale,
+      ...data,
+      paymentMethod: normalizePaymentMethod(data.paymentMethod) ?? oldSale.payment_method ?? null,
+      total,
+      cmv,
+      date: updatedDate,
+    }, items, client);
+    // Itens mudaram: devolve o que a venda tinha descontado e desconta de novo pelos itens atuais
+    await safeStock("edição de venda", client, async () => {
+      await stockService.reverseSale(id, user, client);
+      await stockService.applySale(id, items, productMap, user, client);
+    });
   });
+  logAudit(id, "UPDATED", user ? user.id : null);
 
   return {
     ...oldSale,
@@ -463,14 +476,23 @@ async function cancel(id, user) {
   }
 
   const alreadyCanceled = sale.status === "CANCELED" || sale.status_venda === "cancelada";
-  await repo.updateSale(id, {
-    status: "CANCELED",
-    statusVenda: "cancelada",
-    canceledAt: new Date().toISOString(),
+  await withTransaction(async (client) => {
+    await repo.updateSale(
+      id,
+      {
+        status: "CANCELED",
+        statusVenda: "cancelada",
+        canceledAt: new Date().toISOString(),
+      },
+      undefined,
+      client
+    );
+    if (!alreadyCanceled) {
+      await safeStock("cancelamento de venda", client, () =>
+        stockService.reverseSale(id, user, client)
+      );
+    }
   });
-  if (!alreadyCanceled) {
-    await safeStock("cancelamento de venda", () => stockService.reverseSale(id, user));
-  }
 
   logAudit(id, "CANCELED", user ? user.id : null);
   return repo.getSaleById(id);

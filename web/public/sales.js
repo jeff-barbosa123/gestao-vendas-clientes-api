@@ -46,6 +46,17 @@
   const editCloseBtn = document.getElementById('edit-sale-close-btn');
   const editForm = document.getElementById('edit-form');
   const editDate = document.getElementById('edit-date');
+  const editPayment = document.getElementById('edit-payment');
+  const createPayment = document.getElementById('create-payment');
+  const detailsPayment = document.getElementById('sale-details-payment');
+  const PAYMENT_LABELS = {
+    PIX: 'Pix',
+    CASH: 'Dinheiro',
+    CREDIT_CARD: 'Cartão de crédito',
+    DEBIT_CARD: 'Cartão de débito',
+    OTHER: 'Outro',
+  };
+  const paymentLabel = (value) => PAYMENT_LABELS[value] || 'Não informado';
   const editDateHoliday = document.getElementById('edit-date-holiday');
   const editDateError = document.getElementById('edit-date-error');
   const editAddItem = document.getElementById('edit-add-item');
@@ -1505,6 +1516,7 @@
             customerId: match ? match.id : undefined,
             customerName: rawCustomer || undefined,
             date: createDate.value,
+            paymentMethod: createPayment && createPayment.value ? createPayment.value : undefined,
             items: items.map((item) => ({
               productId: item.productId,
               quantity: item.qty,
@@ -1579,6 +1591,7 @@
             '-';
           if (detailsCustomer) detailsCustomer.textContent = customerName;
           if (detailsDate) detailsDate.textContent = formatDateDisplay(sale.date || sale.dataVenda);
+          if (detailsPayment) detailsPayment.textContent = `Pagamento: ${paymentLabel(sale.paymentMethod)}`;
           if (detailsStatus) detailsStatus.textContent = statusData.label;
           if (detailsStatus) {
             detailsStatus.classList.toggle('is-canceled', statusData.key === 'CANCELADA');
@@ -1769,6 +1782,7 @@
             };
           });
           if (editDate) editDate.value = formatDateInput(sale.date || sale.dataVenda);
+          if (editPayment) editPayment.value = sale.paymentMethod || '';
           if (editDateHoliday) {
             checkHoliday(editDate.value, null, editDateHoliday);
           }
@@ -1813,6 +1827,7 @@
           method: 'PUT',
           body: JSON.stringify({
             date: editDate.value,
+            paymentMethod: editPayment && editPayment.value ? editPayment.value : undefined,
             items: editItems.map((item) => ({
               productId: item.productId,
               quantity: item.qty,

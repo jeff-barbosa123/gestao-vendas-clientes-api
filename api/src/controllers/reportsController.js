@@ -35,6 +35,27 @@ async function revenueSummary(req, res, next) {
   }
 }
 
+async function paymentMethods(req, res, next) {
+  try {
+    validateQueryKeys(req.query, ["start", "end", "day", "week", "month", "year", "timezone", "userId"]);
+    validateTimezoneInput(req);
+    const { start, end, day, week, month, year, userId } = req.query;
+    const result = await reportsService.getPaymentMethods({
+      start,
+      end,
+      day,
+      week,
+      month,
+      year,
+      userId,
+      user: req.user,
+    });
+    res.json(result);
+  } catch (e) {
+    next(e);
+  }
+}
+
 async function exportRevenue(req, res, next) {
   try {
     validateQueryKeys(req.query, [
@@ -94,4 +115,4 @@ async function financialReport(req, res, next) {
   }
 }
 
-module.exports = { revenueSummary, exportRevenue, financialReport };
+module.exports = { revenueSummary, exportRevenue, financialReport, paymentMethods };

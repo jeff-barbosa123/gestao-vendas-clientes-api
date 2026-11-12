@@ -31,6 +31,40 @@
 
   const revenueBody = document.getElementById('revenue-body');
   const financialBody = document.getElementById('financial-body');
+  const paymentBody = document.getElementById('payment-body');
+  const brl = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  function renderPaymentMethods(data) {
+    if (!paymentBody) return;
+    paymentBody.textContent = '';
+    const methods = data && Array.isArray(data.methods) ? data.methods : [];
+    if (!methods.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.className = 'has-text-grey';
+      td.textContent = 'Sem vendas no período.';
+      tr.appendChild(td);
+      paymentBody.appendChild(tr);
+      return;
+    }
+    methods.forEach((m) => {
+      const tr = document.createElement('tr');
+      const cells = [
+        m.label || m.method,
+        brl(m.total),
+        String(m.quantidadeVendas ?? 0),
+        `${(Number(m.share || 0) * 100).toFixed(1).replace('.', ',')}%`,
+      ];
+      cells.forEach((text, i) => {
+        const td = document.createElement('td');
+        if (i > 0) td.className = 'has-text-right';
+        td.textContent = text;
+        tr.appendChild(td);
+      });
+      paymentBody.appendChild(tr);
+    });
+  }
   const summaryRevenue = document.getElementById('summary-revenue');
   const summaryCmv = document.getElementById('summary-cmv');
   const summaryProfit = document.getElementById('summary-profit');
@@ -267,6 +301,19 @@
       }
     }
     
+    // Forma de pagamento não usa breakdown: reaproveita só o filtro de período
+    const paymentQuery = query
+      .replace(/^\?/, '')
+      .split('&')
+      .filter((part) => part && !part.startsWith('breakdown='))
+      .join('&');
+    try {
+      const payments = await apiRequest(`/api/reports/payment-methods${paymentQuery ? `?${paymentQuery}` : ''}`, token);
+      renderPaymentMethods(payments);
+    } catch (err) {
+      renderPaymentMethods(null);
+    }
+
     // Validação de consistência (não intrusiva, apenas aviso visual)
     validateDataConsistency(revenue, financial);
     

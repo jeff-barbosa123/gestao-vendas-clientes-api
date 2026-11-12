@@ -35,5 +35,10 @@ router.get(
   reportsController.exportRevenue
 );
 router.get('/financial', reportsController.financialReport);
+router.get(
+  '/payment-methods',
+  rateLimit({ windowMs: 60_000, max: 60, message: 'Muitas requisicoes, tente novamente mais tarde' }),
+  reportsController.paymentMethods
+);
 
 module.exports = router;

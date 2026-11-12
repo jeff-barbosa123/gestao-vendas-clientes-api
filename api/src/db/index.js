@@ -105,25 +105,6 @@ async function initDb() {
       const schema = fs.readFileSync(schemaPath, "utf8");
       await pool.query(schema);
     }
-    // Aplica migrations .sql em ordem (se existirem)
-    const migrationsDir = path.join(__dirname, "..", "..", "migrations");
-    if (fs.existsSync(migrationsDir)) {
-      const files = fs
-        .readdirSync(migrationsDir)
-        .filter((f) => f.toLowerCase().endsWith(".sql"))
-        .sort();
-      for (const file of files) {
-        try {
-          const full = path.join(migrationsDir, file);
-          const sql = fs.readFileSync(full, "utf8");
-          if (sql && sql.trim()) {
-            await pool.query(sql);
-          }
-        } catch (err) {
-          console.warn(`⚠️  Falha ao aplicar migration ${file}:`, err.message);
-        }
-      }
-    }
     await ensureCustomerColumns();
     await seedDefaults();
   } catch (err) {

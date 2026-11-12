@@ -6,6 +6,8 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes");
+const { corsOptions } = require("./config/cors");
+const { rateLimit } = require("./middleware/rateLimit");
 const { errorHandler } = require("./middleware/errorHandler");
 const { requestLogger } = require("./middleware/requestLogger");
 const { securityHeaders } = require("./middleware/securityHeaders");
@@ -20,80 +22,13 @@ const app = express();
 // Confiança no proxy (necessário para obter IP real e HTTPS redirect)
 app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS || 1));
 
-// Rate limiting global
-try {
-  const { rateLimit } = require("./middleware/rateLimit");
-  // `rateLimit` é um factory que retorna o middleware.
-  // Se passarmos a função factory direto para o Express (sem invocar),
-  // a requisição entra mas nunca recebe resposta (não há `next()` nesse caminho).
-  // Limite global por IP. Precisa ser alto: cada tela do frontend faz várias chamadas.
-  // (O default do factory em produção é 5 req/min — pensado para rotas sensíveis, não para a API toda.)
-  app.use(rateLimit({ windowMs: 60_000, max: Number(process.env.GLOBAL_RATE_LIMIT_MAX) || 300 }));
-} catch (e) {
-  // Middleware opcional não bloqueia o boot se ausente em dev
-}
+// Rate limiting global por IP. Precisa ser alto: cada tela do frontend faz várias chamadas.
+// (O default do factory em produção é 5 req/min — pensado para rotas sensíveis, não para a API toda.)
+// `rateLimit` é um factory: precisa ser invocado. Se o módulo falhar ao carregar, o boot falha
+// (antes um try/catch silencioso podia deixar produção sem proteção).
+app.use(rateLimit({ windowMs: 60_000, max: Number(process.env.GLOBAL_RATE_LIMIT_MAX) || 300 }));
 const swaggerPath = path.resolve(__dirname, "../resources/swagger.json");
 
-// CORS configuration - only allow specific origins in production
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
-  .split(",")
-  .map((o) => o.trim())
-  .filter(Boolean);
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc)
-    if (!origin) {
-      callback(null, true);
-      return;
-    }
-    // Always allow frontend dev server
-    if (origin === "http://localhost:4000") {
-      callback(null, true);
-      return;
-    }
-    
-    // In development, allow localhost
-    if (process.env.NODE_ENV !== "production") {
-      if (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) {
-        callback(null, true);
-        return;
-      }
-    }
-    
-    // In production, require whitelist
-    if (process.env.NODE_ENV === "production") {
-      if (allowedOrigins.length === 0) {
-        const { logError } = require("./utils/logger");
-        logError({
-          event: "CORS_CONFIGURATION_ERROR",
-          message: "ALLOWED_ORIGINS must be configured in production",
-        });
-        callback(new Error("CORS configuration error: ALLOWED_ORIGINS not set"), false);
-        return;
-      }
-      if (!allowedOrigins.includes(origin)) {
-        callback(new Error("Not allowed by CORS"), false);
-        return;
-      }
-      callback(null, true);
-      return;
-    }
-
-    // Fora de produção: além de localhost, só o que estiver em ALLOWED_ORIGINS.
-    // Antes qualquer origem era aceita com cookies (credentials) em dev/homologação.
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-      return;
-    }
-    callback(null, false);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-timezone", "X-CSRF-Token"],
-  exposedHeaders: ["X-Request-ID"],
-  maxAge: 86400, // 24 hours
-};
 
 app.use(cors(corsOptions));
 app.use(securityHeaders);

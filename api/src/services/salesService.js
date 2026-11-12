@@ -3,7 +3,30 @@ const repo = require("../db/repository");
 const { parseIsoDate } = require("../utils/dateValidation");
 
 const auditLog = new Map();
-const allowedPaymentMethods = ["PIX", "CREDIT_CARD", "CASH"];
+const allowedPaymentMethods = ["PIX", "CREDIT_CARD", "DEBIT_CARD", "CASH", "OTHER"];
+// Aceita também os nomes em português usados no balcão
+const PAYMENT_ALIASES = {
+  DINHEIRO: "CASH",
+  ESPECIE: "CASH",
+  CREDITO: "CREDIT_CARD",
+  CARTAO: "CREDIT_CARD",
+  CARTAO_CREDITO: "CREDIT_CARD",
+  DEBITO: "DEBIT_CARD",
+  CARTAO_DEBITO: "DEBIT_CARD",
+  OUTRO: "OTHER",
+};
+
+function normalizePaymentMethod(value) {
+  if (value == null || value === "") return null;
+  if (typeof value !== "string") return value;
+  const key = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+  return PAYMENT_ALIASES[key] || key;
+}
 
 function shouldTrackStock(product) {
   return product && Number.isFinite(product.stock) && product.stock <= 5;
@@ -115,7 +138,7 @@ async function validateSaleInput(data, user, productMap) {
     }
   }
 
-  if (data.paymentMethod && !allowedPaymentMethods.includes(data.paymentMethod)) {
+  if (data.paymentMethod && !allowedPaymentMethods.includes(normalizePaymentMethod(data.paymentMethod))) {
     const err = new Error("Forma de pagamento inválida");
     err.status = 422;
     throw err;
@@ -255,6 +278,7 @@ function formatSale(s) {
   return {
     ...s,
     customerId: s.customer_id ?? s.customerId ?? null,
+    paymentMethod: s.payment_method ?? s.paymentMethod ?? null,
     customerName,
     clienteNome: customerName,
     statusVenda: s.status_venda || s.statusVenda || (s.status === "CANCELED" ? "cancelada" : "ativa"),
@@ -315,6 +339,7 @@ async function create(data, user) {
       customerId: data.customerId,
       customerName,
       clienteNome: customerName,
+      paymentMethod: normalizePaymentMethod(data.paymentMethod),
       items,
       cmv,
       total,
@@ -370,6 +395,7 @@ async function update(id, data, user) {
     const updated = await repo.updateSale(id, {
       ...oldSale,
       ...data,
+      paymentMethod: normalizePaymentMethod(data.paymentMethod) ?? oldSale.payment_method ?? null,
       date: updatedDate,
     });
     return {
@@ -386,6 +412,7 @@ async function update(id, data, user) {
   await repo.updateSale(id, {
     ...oldSale,
     ...data,
+    paymentMethod: normalizePaymentMethod(data.paymentMethod) ?? oldSale.payment_method ?? null,
     total,
     cmv,
     date: updatedDate,

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-11-12 — Forma de pagamento e alerta de margem (US009)
+
+### Novo
+- **Forma de pagamento da venda** (Pix, dinheiro, crédito, débito, outro) no cadastro e na edição,
+  exibida nos detalhes. Aceita também nomes em português (`débito`, `dinheiro`). Migration 005.
+- Relatório **Faturamento por forma de pagamento** (`GET /api/reports/payment-methods`, mesmos filtros
+  de período do faturamento, sem vendas canceladas) com total, quantidade e participação.
+- Card **Margem dos produtos** no painel: lista produtos vendidos abaixo do custo e com margem bruta
+  abaixo de 30% (`LOW_MARGIN_THRESHOLD`). Vem em `pricingAlerts` no `/api/analytics/overview`.
+
+### Corrigido
+- A forma de pagamento era validada pela API e descartada: nunca era gravada.
+
+### Testes
+- `US009-margem-pagamento.test.js` (8 testes); suíte da API com 296 passando.
+
 ## 2026-11-12 — Cadastro único de insumos (US008)
 
 ### Novo

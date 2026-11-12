@@ -39,6 +39,37 @@ function filterSalesByDate(sales, startDate, endDate) {
   });
 }
 
+// Abaixo desta margem bruta o produto entra no alerta de precificação
+const LOW_MARGIN_THRESHOLD = Number(process.env.LOW_MARGIN_THRESHOLD || 0.3);
+
+function buildPricingAlerts(products) {
+  const alerts = [];
+  for (const p of products) {
+    const price = Number(p.price);
+    const cost = Number(p.purchase_price);
+    if (!Number.isFinite(price) || !Number.isFinite(cost) || cost <= 0) continue;
+    const margin = price > 0 ? (price - cost) / price : -1;
+    let level = null;
+    if (price < cost) level = "below_cost";
+    else if (margin < LOW_MARGIN_THRESHOLD) level = "low_margin";
+    if (!level) continue;
+    alerts.push({
+      productId: p.id,
+      name: p.name,
+      price: Number(price.toFixed(2)),
+      cost: Number(cost.toFixed(2)),
+      margin: Number(margin.toFixed(4)),
+      level,
+      message:
+        level === "below_cost"
+          ? `Vendido abaixo do custo (R$ ${price.toFixed(2)} contra custo de R$ ${cost.toFixed(2)})`
+          : `Margem de ${(margin * 100).toFixed(0)}%, abaixo do mínimo de ${(LOW_MARGIN_THRESHOLD * 100).toFixed(0)}%`,
+    });
+  }
+  // Abaixo do custo primeiro, depois menor margem
+  return alerts.sort((a, b) => (a.level === b.level ? a.margin - b.margin : a.level === "below_cost" ? -1 : 1));
+}
+
 async function getOverview(filters = {}, user) {
   const { startDate, endDate } = resolveTemporalRange(filters);
   const salesAll = await repo.listSales(user ? user.id : null);
@@ -56,6 +87,8 @@ async function getOverview(filters = {}, user) {
     products: products.length,
     recipes: recipes.length,
     linkedProducts: products.filter((p) => p.ficha_tecnica_id).length,
+    pricingAlerts: buildPricingAlerts(products),
+    lowMarginThreshold: LOW_MARGIN_THRESHOLD,
     // listSales ordena por data DESC: a venda mais recente é a primeira (antes pegava a mais antiga)
     lastSaleAt: sales.length ? sales[0].date : null,
   };
@@ -106,4 +139,5 @@ async function buildTimeseries(breakdown = "day", filters = {}, user) {
 module.exports = {
   getOverview,
   buildTimeseries,
+  buildPricingAlerts,
 };

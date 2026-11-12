@@ -909,8 +909,8 @@ async function createSale(sale, items) {
   return withTransaction(async (client) => {
     await client.query(
       `INSERT INTO sales
-        (id, customer_id, customer_name, owner_id, total, cmv, date, status, status_venda, canceled_at, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW())`,
+        (id, customer_id, customer_name, owner_id, total, cmv, date, status, status_venda, canceled_at, payment_method, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())`,
       [
         sale.id,
         sale.customerId,
@@ -922,6 +922,7 @@ async function createSale(sale, items) {
         sale.status,
         sale.statusVenda,
         sale.canceledAt,
+        sale.paymentMethod ?? null,
       ]
     );
 
@@ -958,7 +959,8 @@ async function updateSale(id, sale, items) {
              date = COALESCE($7, date),
              status = COALESCE($8, status),
              status_venda = COALESCE($9, status_venda),
-             canceled_at = COALESCE($10, canceled_at)
+             canceled_at = COALESCE($10, canceled_at),
+             payment_method = COALESCE($11, payment_method)
        WHERE id = $1`,
       [
         id,
@@ -971,6 +973,7 @@ async function updateSale(id, sale, items) {
         sale.status,
         sale.statusVenda,
         sale.canceledAt,
+        sale.paymentMethod ?? null,
       ]
     );
 

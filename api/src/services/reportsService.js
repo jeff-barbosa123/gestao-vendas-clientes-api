@@ -80,6 +80,50 @@ async function getRevenue({ start, end, day, week, month, year, breakdown, userI
   return summarize(sales, normalizedBreakdown);
 }
 
+const PAYMENT_LABELS = {
+  PIX: "Pix",
+  CREDIT_CARD: "Cartão de crédito",
+  DEBIT_CARD: "Cartão de débito",
+  CASH: "Dinheiro",
+  OTHER: "Outro",
+  NONE: "Não informado",
+};
+
+// Faturamento por forma de pagamento (mesmos filtros de período do /revenue)
+async function getPaymentMethods({ start, end, day, week, month, year, userId, user }) {
+  const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
+  const ownerId = resolveUserId(userId, user);
+  const salesAll = await repo.listSales(ownerId);
+  const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
+  const sales = salesAll.filter((s) => {
+    if (!isActiveSale(s)) return false;
+    const dx = new Date(s.date);
+    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
+  });
+
+  const buckets = {};
+  let grandTotal = 0;
+  for (const s of sales) {
+    const method = s.payment_method || "NONE";
+    buckets[method] = buckets[method] || { total: 0, count: 0 };
+    buckets[method].total += s.total || 0;
+    buckets[method].count += 1;
+    grandTotal += s.total || 0;
+  }
+
+  const methods = Object.entries(buckets)
+    .map(([method, data]) => ({
+      method,
+      label: PAYMENT_LABELS[method] || method,
+      total: Number(data.total.toFixed(2)),
+      quantidadeVendas: data.count,
+      share: grandTotal > 0 ? Number((data.total / grandTotal).toFixed(4)) : 0,
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  return { total: Number(grandTotal.toFixed(2)), quantidadeVendas: sales.length, methods };
+}
+
 async function exportRevenue({ start, end, day, week, month, year, format = "csv", breakdown = "day", userId, user }) {
   const data = await getRevenue({ start, end, day, week, month, year, breakdown, userId, user });
   const normalizedFormat = format.toLowerCase();
@@ -279,4 +323,4 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
     });
 }
 
-module.exports = { getRevenue, exportRevenue, getFinancialPerformance };
+module.exports = { getRevenue, exportRevenue, getFinancialPerformance, getPaymentMethods, PAYMENT_LABELS };

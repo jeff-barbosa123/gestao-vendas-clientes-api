@@ -73,6 +73,19 @@
                   <p class="help is-danger" id="create-date-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
+                  <label class="label" for="create-payment">Forma de pagamento</label>
+                  <div class="select is-fullwidth">
+                    <select id="create-payment" data-alias="sale-payment">
+                      <option value="">N&atilde;o informado</option>
+                      <option value="PIX">Pix</option>
+                      <option value="CASH">Dinheiro</option>
+                      <option value="CREDIT_CARD">Cart&atilde;o de cr&eacute;dito</option>
+                      <option value="DEBIT_CARD">Cart&atilde;o de d&eacute;bito</option>
+                      <option value="OTHER">Outro</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
                   <label class="label">Itens da venda</label>
                   <div class="field has-addons">
                     <div class="control is-expanded">
@@ -260,6 +273,19 @@
               <p class="help is-warning" id="edit-date-holiday" aria-live="polite" hidden></p>
               <p class="help is-danger" id="edit-date-error" aria-live="polite" hidden></p>
             </div>
+            <div class="field">
+              <label class="label" for="edit-payment">Forma de pagamento</label>
+              <div class="select is-fullwidth">
+                <select id="edit-payment">
+                      <option value="">N&atilde;o informado</option>
+                      <option value="PIX">Pix</option>
+                      <option value="CASH">Dinheiro</option>
+                      <option value="CREDIT_CARD">Cart&atilde;o de cr&eacute;dito</option>
+                      <option value="DEBIT_CARD">Cart&atilde;o de d&eacute;bito</option>
+                      <option value="OTHER">Outro</option>
+                </select>
+              </div>
+            </div>
               <div class="field">
                 <label class="label">Itens da venda</label>
                 <div class="field has-addons">
@@ -342,6 +368,7 @@
                   <p class="sales-details-hero-label">Cliente</p>
                   <p class="sales-details-hero-name" id="sale-details-customer">-</p>
                   <p class="sales-details-hero-sub" id="sale-details-date">-</p>
+                  <p class="sales-details-hero-sub" id="sale-details-payment">Pagamento: -</p>
                 </div>
                 <div class="sales-details-hero-right">
                   <p class="sales-details-hero-total" id="sale-details-total">R$ 0,00</p>

@@ -14,6 +14,7 @@ Ficam em `api/test/integration/`, um arquivo por user story:
 | `US006-price-simulation.test.js` | Simulação de preço |
 | `US007-products-ficha.test.js` | Vínculo ficha técnica ↔ produto |
 | `US008-ingredients.test.js` | Cadastro de insumos, recálculo automático, precisão de custo, margem |
+| `US009-margem-pagamento.test.js` | Forma de pagamento (gravação, edição, relatório) e alertas de margem |
 | `US998-regressoes.test.js` | Regressões de bugs corrigidos (isolamento entre usuários, CSRF, dashboard...) |
 | `US999-*.test.js` | Mensagens de erro e paginação |
 | `docs-swagger.test.js` | Swagger |

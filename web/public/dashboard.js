@@ -311,7 +311,38 @@
     };
   }
 
+  function renderPricingAlerts(data) {
+    const countEl = document.getElementById('alert-pricing-count');
+    const msgEl = document.getElementById('alert-pricing-message');
+    const listEl = document.getElementById('alert-pricing-list');
+    if (!msgEl || !listEl) return;
+    const alerts = Array.isArray(data.pricingAlerts) ? data.pricingAlerts : [];
+    const threshold = Math.round(Number(data.lowMarginThreshold ?? 0.3) * 100);
+    const below = alerts.filter((a) => a.level === 'below_cost').length;
+    listEl.textContent = '';
+    if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';
+    if (!alerts.length) {
+      msgEl.textContent = `Todos os produtos com custo informado têm margem de pelo menos ${threshold}%.`;
+      return;
+    }
+    msgEl.textContent = below
+      ? `${below} produto(s) vendido(s) abaixo do custo e ${alerts.length - below} com margem abaixo de ${threshold}%.`
+      : `${alerts.length} produto(s) com margem abaixo de ${threshold}%.`;
+    alerts.slice(0, 4).forEach((a) => {
+      const li = document.createElement('li');
+      const name = document.createElement('span');
+      name.textContent = a.name;
+      const value = document.createElement('span');
+      value.className = a.level === 'below_cost' ? 'is-below-cost' : 'is-low-margin';
+      value.textContent = a.level === 'below_cost' ? 'abaixo do custo' : `${Math.round(a.margin * 100)}%`;
+      value.title = a.message || '';
+      li.append(name, value);
+      listEl.appendChild(li);
+    });
+  }
+
   function updateMetrics(data) {
+    renderPricingAlerts(data);
     const customersValue = Number(data.customers ?? 0);
     const salesValue = Number(data.salesCount ?? 0);
     const revenueValue = Number(data.revenueTotal ?? 0);

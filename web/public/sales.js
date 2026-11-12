@@ -166,7 +166,7 @@
   function showMessage(text, type) {
     if (!messageBox) return;
     messageBox.textContent = text || '';
-    messageBox.classList.remove('is-success', 'is-danger');
+    messageBox.classList.remove('is-success', 'is-danger', 'is-warning');
     if (type) messageBox.classList.add(type);
     messageBox.hidden = !text;
     if (messageTimer) {
@@ -174,11 +174,11 @@
       messageTimer = null;
     }
     if (text) {
-      const timeout = type === 'is-danger' ? 6500 : 4500;
+      const timeout = type === 'is-danger' || type === 'is-warning' ? 6500 : 4500;
       messageTimer = setTimeout(() => {
         messageBox.hidden = true;
         messageBox.textContent = '';
-        messageBox.classList.remove('is-success', 'is-danger');
+        messageBox.classList.remove('is-success', 'is-danger', 'is-warning');
       }, timeout);
     }
   }
@@ -1510,7 +1510,7 @@
       try {
         const rawCustomer = createCustomer.value.trim();
         const match = resolveCustomerSelection(rawCustomer);
-        await apiRequest('/api/sales', null, {
+        const created = await apiRequest('/api/sales', null, {
           method: 'POST',
           body: JSON.stringify({
             customerId: match ? match.id : undefined,
@@ -1524,7 +1524,17 @@
             })),
           }),
         });
-        showMessage('Venda criada com sucesso.', 'is-success');
+        const lowStock = created && Array.isArray(created.lowStockIngredients) ? created.lowStockIngredients : [];
+        if (lowStock.length) {
+          showMessage(
+            `Venda criada com sucesso. Atenção: ${lowStock.map((i) => i.name).join(', ')} ${
+              lowStock.length === 1 ? 'chegou' : 'chegaram'
+            } ao estoque mínimo.`,
+            'is-warning'
+          );
+        } else {
+          showMessage('Venda criada com sucesso.', 'is-success');
+        }
         createForm.reset();
         items = [];
         renderItems();

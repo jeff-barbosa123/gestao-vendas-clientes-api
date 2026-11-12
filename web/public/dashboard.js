@@ -341,8 +341,42 @@
     });
   }
 
+  function formatStockQty(value, unit) {
+    const n = Number(value || 0);
+    const fmt = (v) => v.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+    if ((unit === 'g' || unit === 'ml') && Math.abs(n) >= 1000) return `${fmt(n / 1000)} ${unit === 'g' ? 'kg' : 'l'}`;
+    return `${fmt(n)} ${unit || ''}`.trim();
+  }
+
+  function renderStockAlerts(data) {
+    const countEl = document.getElementById('alert-stock-count');
+    const msgEl = document.getElementById('alert-stock-message');
+    const listEl = document.getElementById('alert-stock-list');
+    if (!msgEl || !listEl) return;
+    const alerts = Array.isArray(data.stockAlerts) ? data.stockAlerts : [];
+    listEl.textContent = '';
+    if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';
+    if (!alerts.length) {
+      msgEl.textContent = 'Nenhum insumo abaixo do estoque mínimo. Defina o mínimo na tela de Insumos para receber o aviso.';
+      return;
+    }
+    msgEl.textContent = `${alerts.length} insumo(s) no estoque mínimo ou abaixo.`;
+    alerts.slice(0, 4).forEach((a) => {
+      const li = document.createElement('li');
+      const name = document.createElement('span');
+      name.textContent = a.name;
+      const value = document.createElement('span');
+      value.className = 'is-below-cost';
+      value.textContent = formatStockQty(a.stockQuantity, a.stockUnit);
+      value.title = `Mínimo: ${formatStockQty(a.minStock, a.stockUnit)}`;
+      li.append(name, value);
+      listEl.appendChild(li);
+    });
+  }
+
   function updateMetrics(data) {
     renderPricingAlerts(data);
+    renderStockAlerts(data);
     const customersValue = Number(data.customers ?? 0);
     const salesValue = Number(data.salesCount ?? 0);
     const revenueValue = Number(data.revenueTotal ?? 0);

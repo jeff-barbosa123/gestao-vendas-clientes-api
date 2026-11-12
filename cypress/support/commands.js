@@ -108,3 +108,35 @@ Cypress.Commands.add('openClientsFromDashboard', () => {
   cy.get('#clients-manage-action').should('be.visible').click();
   cy.location('pathname').should('eq', '/clients.html');
 });
+
+// ---------- Backend real ----------
+// Cada spec com backend real cria o próprio usuário: não depende do admin do seed
+// (que pode estar bloqueado por tentativas) nem enche a conta dele com dados de teste.
+Cypress.Commands.add('createRealUser', (prefix = 'e2e') => {
+  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  const user = {
+    name: `Usuario E2E ${stamp}`,
+    email: `${prefix}.${stamp}@sgvc-e2e.test`,
+    password: `E2e@${stamp}`,
+  };
+  return cy
+    .request({ method: 'POST', url: '/api/auth/register', body: user, failOnStatusCode: false })
+    .then((res) => {
+      expect(res.status, `cadastro do usuário de teste: ${JSON.stringify(res.body)}`).to.be.oneOf([200, 201]);
+      return cy.wrap(user, { log: false });
+    });
+});
+
+Cypress.Commands.add('loginReal', (user) =>
+  cy.request('POST', '/api/auth/login', { email: user.email, password: user.password }).its('status').should('eq', 200)
+);
+
+// Requisição de escrita com o token CSRF do cookie (como as telas fazem)
+Cypress.Commands.add('apiReal', (method, url, body) =>
+  cy
+    .request('/api/auth/csrf')
+    .then(() => cy.getCookie('sgvc_csrf'))
+    .then((cookie) =>
+      cy.request({ method, url, body, headers: { 'X-CSRF-Token': cookie ? cookie.value : '' } })
+    )
+);

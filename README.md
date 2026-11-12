@@ -18,6 +18,7 @@ Sistema para microempreendedores de alimentação (confeiteiros, boleiras, cozin
 | 007 | Vínculo ficha técnica ↔ produto (custo do produto acompanha a ficha) |
 | 008 | Cadastro único de insumos: preço em um lugar só; fichas, produtos e CMV recalculados ao mudar o preço |
 | 009 | Forma de pagamento da venda, faturamento por forma de pagamento e alerta de margem baixa/abaixo do custo |
+| 010 | Estoque de insumos: baixa automática pela venda, entrada de compra, contagem e aviso de reposição |
 
 Extras: dashboard, exportação (CSV/PDF), paginação, mensagens de erro amigáveis (pt-BR/en/es),
 consulta de CEP/CNPJ, analytics de erros, métricas Prometheus.

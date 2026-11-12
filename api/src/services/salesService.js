@@ -1,5 +1,17 @@
 ﻿const { v4: uuidv4 } = require("uuid");
 const repo = require("../db/repository");
+const stockService = require("./stockService");
+const { logError } = require("../utils/logger");
+
+// Estoque de insumos não pode derrubar a venda: se falhar, registra e segue
+async function safeStock(label, fn) {
+  try {
+    return await fn();
+  } catch (err) {
+    logError({ event: "STOCK_UPDATE_FAILED", message: `${label}: ${err.message}` });
+    return null;
+  }
+}
 const { parseIsoDate } = require("../utils/dateValidation");
 
 const auditLog = new Map();
@@ -350,7 +362,8 @@ async function create(data, user) {
     };
     await repo.createSale(sale, items);
     logAudit(sale.id, "CREATED", user ? user.id : null);
-    return sale;
+    const lowStock = await safeStock("venda", () => stockService.applySale(sale.id, items, productMap, user));
+    return lowStock && lowStock.length ? { ...sale, lowStockIngredients: lowStock } : sale;
   } catch (err) {
     await rollbackStock();
     throw err;
@@ -418,6 +431,11 @@ async function update(id, data, user) {
     date: updatedDate,
   }, items);
   logAudit(id, "UPDATED", user ? user.id : null);
+  // Itens mudaram: devolve o que a venda tinha descontado e desconta de novo pelos itens atuais
+  await safeStock("edição de venda", async () => {
+    await stockService.reverseSale(id, user);
+    await stockService.applySale(id, items, productMap, user);
+  });
 
   return {
     ...oldSale,
@@ -444,11 +462,15 @@ async function cancel(id, user) {
     throw err;
   }
 
+  const alreadyCanceled = sale.status === "CANCELED" || sale.status_venda === "cancelada";
   await repo.updateSale(id, {
     status: "CANCELED",
     statusVenda: "cancelada",
     canceledAt: new Date().toISOString(),
   });
+  if (!alreadyCanceled) {
+    await safeStock("cancelamento de venda", () => stockService.reverseSale(id, user));
+  }
 
   logAudit(id, "CANCELED", user ? user.id : null);
   return repo.getSaleById(id);

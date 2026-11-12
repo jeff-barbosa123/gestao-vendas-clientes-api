@@ -31,6 +31,7 @@
           </header>
 
           <div class="notification is-light ing-message" id="ing-message" role="status" aria-live="polite" hidden></div>
+          <div class="ing-low-banner" id="ing-low-banner" role="status" aria-live="polite" hidden></div>
 
           <section class="panel-card">
             <h2 class="ing-section-title" id="form-title">Novo insumo</h2>
@@ -91,11 +92,12 @@
                     <th class="has-text-right">Preço</th>
                     <th class="has-text-right">Custo por unidade</th>
                     <th class="has-text-right">Usado em</th>
+                    <th class="has-text-right">Estoque</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody id="ing-tbody">
-                  <tr><td colspan="6">Carregando...</td></tr>
+                  <tr><td colspan="7">Carregando...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -103,6 +105,110 @@
         </section>
       </div>
     </main>
+
+    <div class="ing-modal" id="stock-modal" role="dialog" aria-modal="true" aria-labelledby="stock-title" hidden>
+      <div class="ing-modal-backdrop" data-close-stock></div>
+      <div class="ing-modal-card">
+        <header class="ing-modal-head">
+          <div>
+            <p class="ing-modal-label">Estoque</p>
+            <h2 class="ing-modal-title" id="stock-title">Insumo</h2>
+            <p class="ing-modal-sub" id="stock-current">-</p>
+          </div>
+          <button class="delete" type="button" aria-label="Fechar" data-close-stock></button>
+        </header>
+        <div class="ing-modal-body">
+          <p class="help is-danger" id="stock-error" aria-live="polite" hidden></p>
+
+          <form class="ing-stock-form" id="stock-purchase-form" novalidate>
+            <h3 class="ing-stock-title">Entrada de compra</h3>
+            <div class="ing-stock-grid">
+              <div class="field">
+                <label class="label" for="stock-purchase-qty">Quantidade comprada</label>
+                <input class="input" id="stock-purchase-qty" type="text" inputmode="decimal" placeholder="Ex.: 2" />
+              </div>
+              <div class="field">
+                <label class="label" for="stock-purchase-unit">Unidade</label>
+                <div class="select is-fullwidth">
+                  <select id="stock-purchase-unit">
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                          <option value="ml">ml</option>
+                          <option value="l">l</option>
+                          <option value="un">un</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="stock-purchase-cost">Valor pago (R$, opcional)</label>
+                <input class="input" id="stock-purchase-cost" type="text" inputmode="decimal" placeholder="Ex.: 15,80" />
+              </div>
+            </div>
+            <label class="checkbox ing-stock-check">
+              <input type="checkbox" id="stock-purchase-update" checked />
+              Usar o valor pago como novo preço do insumo (recalcula as fichas)
+            </label>
+            <button class="button is-link is-small" type="submit" id="stock-purchase-save">Registrar compra</button>
+          </form>
+
+          <form class="ing-stock-form" id="stock-adjust-form" novalidate>
+            <h3 class="ing-stock-title">Contagem do estoque</h3>
+            <p class="help">Informe quanto tem agora. Use também para ligar o controle de estoque.</p>
+            <div class="ing-stock-grid is-two">
+              <div class="field">
+                <label class="label" for="stock-adjust-qty">Quantidade em estoque</label>
+                <input class="input" id="stock-adjust-qty" type="text" inputmode="decimal" placeholder="Ex.: 1,5" />
+              </div>
+              <div class="field">
+                <label class="label" for="stock-adjust-unit">Unidade</label>
+                <div class="select is-fullwidth">
+                  <select id="stock-adjust-unit">
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                          <option value="ml">ml</option>
+                          <option value="l">l</option>
+                          <option value="un">un</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button class="button is-light is-small" type="submit" id="stock-adjust-save">Salvar contagem</button>
+          </form>
+
+          <form class="ing-stock-form" id="stock-min-form" novalidate>
+            <h3 class="ing-stock-title">Avisar quando chegar em</h3>
+            <div class="ing-stock-grid is-two">
+              <div class="field">
+                <label class="label" for="stock-min-qty">Estoque mínimo (vazio = sem aviso)</label>
+                <input class="input" id="stock-min-qty" type="text" inputmode="decimal" placeholder="Ex.: 500" />
+              </div>
+              <div class="field">
+                <label class="label" for="stock-min-unit">Unidade</label>
+                <div class="select is-fullwidth">
+                  <select id="stock-min-unit">
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                          <option value="ml">ml</option>
+                          <option value="l">l</option>
+                          <option value="un">un</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button class="button is-light is-small" type="submit" id="stock-min-save">Salvar mínimo</button>
+          </form>
+
+          <div class="ing-stock-form">
+            <h3 class="ing-stock-title">Últimas movimentações</h3>
+            <ul class="ing-moves" id="stock-moves"><li>Carregando...</li></ul>
+          </div>
+        </div>
+        <footer class="ing-modal-foot">
+          <button class="button is-danger is-light is-small" type="button" id="stock-disable">Desligar controle de estoque</button>
+          <button class="button is-light is-small" type="button" data-close-stock>Fechar</button>
+        </footer>
+      </div>
+    </div>
 
     <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
 

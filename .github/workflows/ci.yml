@@ -102,9 +102,6 @@ jobs:
       OTHER_USER_EMAIL: user@sgvc.local
       OTHER_USER_PASSWORD: User@123!
       GLOBAL_RATE_LIMIT_MAX: 5000
-      # Usuário do fluxo completo (backend real)
-      CYPRESS_E2E_EMAIL: admin@sgvc.local
-      CYPRESS_E2E_PASSWORD: Admin@123!
 
     steps:
       - name: Checkout

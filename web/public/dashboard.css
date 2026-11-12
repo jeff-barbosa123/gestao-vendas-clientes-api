@@ -588,3 +588,7 @@ a.dashboard-alert-button:hover {
   text-decoration: none;
   align-self: flex-start;
 }
+
+.dashboard-alert-list li span:last-child {
+  white-space: nowrap;
+}

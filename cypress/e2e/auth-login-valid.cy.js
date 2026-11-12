@@ -9,6 +9,8 @@ describe('Auth - Login valido', () => {
       statusCode: 200,
       body: { user: { id: 'u1', email: 'admin@negocio.com' } },
     }).as('login');
+    // Depois do login o painel confere a sessão em /api/auth/me
+    cy.intercept('GET', '**/api/auth/me', { statusCode: 200, body: { user: { id: 'u1', email: 'admin@negocio.com' } } });
 
     cy.visit('/index.html');
     cy.get('#email').clear().type('admin@negocio.com');

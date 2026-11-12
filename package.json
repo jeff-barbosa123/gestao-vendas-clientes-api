@@ -32,7 +32,9 @@
     "us004": "npm --workspace api run test:us004",
     "us005": "npm --workspace api run test:us005",
     "us006": "npm --workspace api run test:us006",
-    "us007": "npm --workspace api run test:us007"
+    "us007": "npm --workspace api run test:us007",
+    "db:init": "npm --workspace api run db:init",
+    "db:reset": "npm --workspace api run db:reset"
   },
   "dependencies": {
     "axios": "^1.13.2",

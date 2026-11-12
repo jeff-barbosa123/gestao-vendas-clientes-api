@@ -4,6 +4,28 @@ const DEFAULT_LOGIN_PAYLOAD = {
   user: { id: 'admin-user', email: 'admin@negocio.com' },
 };
 
+const DEFAULT_ME_USER = { id: 'admin-user', email: 'admin@negocio.com', name: 'Administrador' };
+
+// A sessão real é um cookie HttpOnly validado em /api/auth/me. Nos testes com API simulada,
+// "estar logado" = /api/auth/me responder 200 (e /api/auth/csrf não falhar).
+Cypress.Commands.add('stubAuthenticated', (user = DEFAULT_ME_USER) => {
+  Cypress.env('sgvcMockApi', 'auth');
+  cy.intercept({ method: 'GET', url: '**/api/auth/me' }, { statusCode: 200, body: { user } }).as('authMe');
+  cy.intercept({ method: 'GET', url: '**/api/auth/csrf' }, {
+    statusCode: 200,
+    headers: { 'set-cookie': 'sgvc_csrf=cypress-csrf; Path=/' },
+    body: { csrfToken: 'cypress-csrf' },
+  }).as('authCsrf');
+});
+
+Cypress.Commands.add('stubUnauthenticated', () => {
+  Cypress.env('sgvcMockApi', 'anon');
+  cy.intercept({ method: 'GET', url: '**/api/auth/me' }, {
+    statusCode: 401,
+    body: { success: false, message: 'Token inválido ou ausente' },
+  }).as('authMe');
+});
+
 function buildReply(options = {}, defaultResponse = { fixture: 'dashboard-overview.json' }) {
   const payload = options.response || defaultResponse;
   return {
@@ -15,13 +37,15 @@ function buildReply(options = {}, defaultResponse = { fixture: 'dashboard-overvi
 
 Cypress.Commands.add('interceptLogin', (overrides = {}) => {
   const alias = overrides.alias || 'loginRequest';
+  const statusCode = overrides.statusCode || 200;
+  const body = overrides.body || DEFAULT_LOGIN_PAYLOAD;
   cy.intercept({ method: 'POST', url: '**/api/auth/login' }, (req) => {
-    req.reply({
-      statusCode: overrides.statusCode || 200,
-      delay: overrides.delay || 0,
-      body: overrides.body || DEFAULT_LOGIN_PAYLOAD,
-    });
+    req.reply({ statusCode, delay: overrides.delay || 0, body });
   }).as(alias);
+  // Login simulado com sucesso: as páginas seguintes consultam /api/auth/me
+  if (statusCode < 400) {
+    cy.stubAuthenticated({ ...DEFAULT_ME_USER, ...(body && body.user ? body.user : {}) });
+  }
 });
 
 Cypress.Commands.add('loginAsAdmin', (overrides = {}) => {
@@ -53,6 +77,7 @@ Cypress.Commands.add('stubCustomerList', (options = {}) => {
 });
 
 Cypress.Commands.add('seedSession', (payload = DEFAULT_LOGIN_PAYLOAD) => {
+  cy.stubAuthenticated({ ...DEFAULT_ME_USER, ...(payload && payload.user ? payload.user : {}) });
   cy.window().then((win) => {
     const session = {
       token: payload.token,
@@ -67,6 +92,7 @@ Cypress.Commands.add('seedSession', (payload = DEFAULT_LOGIN_PAYLOAD) => {
 });
 
 Cypress.Commands.add('clearSession', () => {
+  cy.stubUnauthenticated();
   cy.window().then((win) => {
     win.sessionStorage.removeItem('sgvc.session');
     win.localStorage.removeItem('sgvc.session'); // Cleanup legacy

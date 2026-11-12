@@ -225,6 +225,7 @@
                   <input type="checkbox" id="remember-me" />
                   Lembrar-me
                 </label>
+                <button type="button" class="link-button" id="forgot-password-link">Esqueci minha senha</button>
               </div>
 
               <button class="btn-login" type="submit" id="login-btn">Entrar</button>
@@ -246,6 +247,30 @@
     <footer class="app-footer">
       &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
+
+    <div class="modal" id="forgot-modal" aria-hidden="true">
+      <div class="modal-background" id="forgot-close"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgot-title">
+        <header class="modal-card-head">
+          <div>
+            <p class="modal-card-title" id="forgot-title">Recuperar senha</p>
+            <p class="modal-card-subtitle">Enviaremos um link para criar uma nova senha</p>
+          </div>
+          <button class="delete modal-close-btn" type="button" aria-label="Fechar" id="forgot-close-btn"></button>
+        </header>
+        <section class="modal-card-body">
+          <form id="forgot-form" novalidate>
+            <div class="field">
+              <label class="label" for="forgot-email">E-mail da conta</label>
+              <input class="input" id="forgot-email" type="email" autocomplete="email" placeholder="voce@empresa.com" aria-describedby="forgot-email-error" />
+              <p class="help is-danger" id="forgot-email-error" aria-live="polite" hidden></p>
+            </div>
+            <button class="button is-link is-fullwidth" type="submit" id="forgot-submit">Enviar link</button>
+            <p class="help" id="forgot-msg" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </div>
 
     <div class="modal" id="register-modal" aria-hidden="true">
       <div class="modal-background" id="register-close"></div>

@@ -224,7 +224,7 @@
       html = '<strong>Senha expirada.</strong>\n<br>Redefina sua senha usando "Esqueci minha senha".';
     } else if (/muitas tentativas|aguarde|excedidas|429|423/i.test(message)) {
       html = '<strong>Muitas tentativas.</strong>\n<br>Aguarde alguns minutos antes de tentar novamente.';
-    } else if (/inv[a\u00e1]lido|incorreto|errad[oa]/i.test(message)) {
+    } else if (/inv[a\u00e1]lid[oa]s?|incorret[oa]s?|errad[oa]s?|credenciais/i.test(message)) {
       html = '<strong>E-mail ou senha incorretos.</strong>';
     } else if (/conectar|servidor|network/i.test(message)) {
       html = '<strong>N\u00e3o foi poss\u00edvel conectar ao servidor.</strong>\n<br>Verifique sua conex\u00e3o e tente novamente.';

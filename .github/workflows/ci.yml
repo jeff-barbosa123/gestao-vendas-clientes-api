@@ -128,14 +128,30 @@ jobs:
           node -e "require('./src/db').initDb().then(() => process.exit(0)).catch((e) => { console.error(e); process.exit(1); })"
           node scripts/seed-users.js
 
+      - name: Start API and web
+        run: |
+          nohup node api/src/server.js > api.log 2>&1 &
+          nohup npm --prefix web start > web.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3000/health > /dev/null && curl -sf http://127.0.0.1:4000/ > /dev/null; then
+              echo "API e web no ar"; exit 0
+            fi
+            sleep 2
+          done
+          echo "--- api.log ---"; cat api.log; echo "--- web.log ---"; cat web.log
+          exit 1
+
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
           install: false
-          start: node api/src/server.js, npm --prefix web start
-          wait-on: 'http://localhost:3000/health, http://localhost:4000'
-          wait-on-timeout: 120
           browser: electron
+
+      - name: Server logs
+        if: failure()
+        run: |
+          echo "--- api.log ---"; tail -n 200 api.log || true
+          echo "--- web.log ---"; tail -n 50 web.log || true
 
       - name: Upload screenshots
         if: failure()

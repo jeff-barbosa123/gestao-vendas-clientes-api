@@ -2,6 +2,10 @@
 //   node scripts/db-init.js           -> aplica o schema.sql (idempotente)
 //   node scripts/db-init.js --reset   -> apaga tudo e recria do zero (só fora de produção)
 
+// --env=<nome> escolhe o ambiente (ex.: --env=test carrega .env.test), igual em qualquer shell
+const envArg = process.argv.find((a) => a.startsWith("--env="));
+if (envArg) process.env.NODE_ENV = envArg.slice("--env=".length);
+
 require("../src/config/loadEnv");
 const fs = require("fs");
 const path = require("path");

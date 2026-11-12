@@ -1,3 +1,7 @@
+// --env=<nome> escolhe o ambiente (ex.: --env=test carrega .env.test), igual em qualquer shell
+const envArg = process.argv.find((a) => a.startsWith("--env="));
+if (envArg) process.env.NODE_ENV = envArg.slice("--env=".length);
+
 require("../src/config/loadEnv");
 const { pool } = require("../src/db");
 const { hashPassword } = require("../src/utils/passwordHash");

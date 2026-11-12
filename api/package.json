@@ -32,7 +32,8 @@
         "test:us006": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US006*.test.js",
         "test:us007": "mocha --no-config --reporter spec --require test/setup.js --timeout 15000 test/integration/US007*.test.js",
         "db:init": "node scripts/db-init.js",
-        "db:reset": "node scripts/db-init.js --reset && node scripts/seed-users.js"
+        "db:reset": "node scripts/db-init.js --reset && node scripts/seed-users.js",
+        "db:reset:test": "node scripts/db-init.js --reset --env=test && node scripts/seed-users.js --env=test"
     },
     "keywords": [
          "express",

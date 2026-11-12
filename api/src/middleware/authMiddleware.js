@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { tokenStore } = require("../models/db");
+const sessionStore = require("../services/sessionStore");
 
 // Validate JWT_SECRET - only allow default in development
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "production" ? null : "dev-secret");
@@ -30,7 +30,7 @@ function verifyWithRotation(token) {
   }
 }
 
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
   const authHeader = req.headers["authorization"] || "";
   // Back-compat: Authorization header wins; fallback to HttpOnly cookie.
   const token =
@@ -48,7 +48,8 @@ function authenticate(req, res, next) {
   }
   try {
     const payload = verifyWithRotation(token);
-    const entry = tokenStore.get(payload.jti);
+    // Cache em memória; após reinício da API a sessão é carregada do PostgreSQL
+    const entry = await sessionStore.get("access", payload.jti);
     if (!entry || entry.revoked) {
       const { logError } = require("../utils/logger");
       logError({
@@ -60,10 +61,10 @@ function authenticate(req, res, next) {
     }
     const now = Date.now();
     if (now - entry.lastActivity > INACTIVITY_WINDOW_MS) {
-      entry.revoked = true;
+      await sessionStore.revoke("access", payload.jti);
       return res.status(401).json({ success: false, message: MSG_SESSION_EXPIRED, error: MSG_SESSION_EXPIRED });
     }
-    entry.lastActivity = now;
+    sessionStore.touch(entry, now);
     req.user = { id: entry.userId, email: entry.email };
     req.auth = { jti: payload.jti };
     next();

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-12 — Sessões persistentes
+
+- Sessões de login gravadas no PostgreSQL (`auth_sessions`, migration 003) com cache em memória.
+  Antes ficavam só em memória: cada reinício ou deploy da API deslogava todos os usuários.
+- Refresh token de uso único também após reinício; limpeza automática de sessões expiradas.
+- Testes REG-013 a REG-015 simulam o reinício da API.
+
 ## 2026-11-12 — Revisão de layout e telas
 
 Revisão visual de todas as telas (desktop 1366px e celular 390px) com dados de demonstração.

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { tokenStore } = require('../models/db');
+const sessionStore = require('../services/sessionStore');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 const JWT_PREVIOUS_SECRET = process.env.JWT_PREVIOUS_SECRET;
@@ -17,7 +17,7 @@ function verifyWithRotation(token) {
   }
 }
 
-function authenticateStrict(req, res, next) {
+async function authenticateStrict(req, res, next) {
   const authHeader = req.headers['authorization'] || '';
   // Back-compat: Authorization header wins; fallback to HttpOnly cookie.
   const token =
@@ -31,7 +31,7 @@ function authenticateStrict(req, res, next) {
 
   try {
     const payload = verifyWithRotation(token);
-    const entry = tokenStore.get(payload.jti);
+    const entry = await sessionStore.get("access", payload.jti);
     if (!entry || entry.revoked) {
       const err = new Error(MSG_TOKEN_MISSING);
       err.status = 401;

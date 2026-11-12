@@ -5,8 +5,8 @@
 **Big Picture**
 - **App entry:** `api/src/server.js` starts the HTTP server; `api/src/app.js` wires middleware, routes and Swagger (`/api-docs`).
 - **Routing:** All route modules live under `api/src/routes/` and are mounted by `api/src/routes/index.js` at `/api`.
-- **Layering:** Controllers (`api/src/controllers/*`) handle HTTP level (req/res), services (`api/src/services/*`) contain business logic, and `api/src/db/repository.js` is the PostgreSQL data layer (schema in `api/src/db/schema.sql`, migrations in `api/migrations/`). `api/src/models/db.js` only keeps in-memory session state (tokens, failed logins).
-- **Auth:** JWT-based auth implemented in `api/src/services/authService.js` and used by `api/src/controllers/authController.js`. Tokens, revocation and failed-login blocking are stored in-memory (see `tokenStore` and `failedAttempts` in `db.js`).
+- **Layering:** Controllers (`api/src/controllers/*`) handle HTTP level (req/res), services (`api/src/services/*`) contain business logic, and `api/src/db/repository.js` is the PostgreSQL data layer (schema in `api/src/db/schema.sql`, migrations in `api/migrations/`). `api/src/models/db.js` keeps the in-memory session cache (tokens, failed logins); sessions are persisted by `api/src/services/sessionStore.js` in the `auth_sessions` table.
+- **Auth:** JWT-based auth implemented in `api/src/services/authService.js` and used by `api/src/controllers/authController.js`. Sessions (access/refresh tokens, revocation) go through `sessionStore.js` (memory cache + PostgreSQL); failed-login blocking stays in memory (`failedAttempts`).
 
 **How to run & test (concrete commands)**
 - **Install deps:** `npm install` (root, npm workspaces)
@@ -15,7 +15,7 @@
 - **Run tests:** `npm test` (Mocha via `api/.mocharc.json`; needs PostgreSQL and `api/.env.test` — see `docs/TESTES.md`).
 
 **Important project-specific behaviors & gotchas**
-- **In-memory DB with partial persistence:** The app uses an in-memory `db` object (`api/src/models/db.js`). Creating a customer writes to `fixtures/customers.json` on disk — other entities are memory-only. Tests and local development can be stateful; reset fixtures if needed.
+- **Persistence:** all business data lives in PostgreSQL (`DATABASE_URL`). Tests use a separate database configured in `api/.env.test`.
 - **Env vars loaded early:** `api/src/app.js` calls `require('dotenv').config()` at the top. Use `JWT_SECRET` and `PORT` in a local `.env` to control auth and server port.
 - **Auth semantics:** Tokens have TTL and are tracked in a `tokenStore` Map. Logout marks the token revoked in-memory — restarting the process clears revocations.
 - **Error handling pattern:** Controllers typically `try/catch` and either `next(err)` or respond with status. The global middleware is `api/src/middleware/errorHandler.js` — prefer throwing Errors with `err.status` in services so the middleware maps them consistently.

@@ -131,7 +131,8 @@ jobs:
       - name: Start API and web
         run: |
           nohup node api/src/server.js > api.log 2>&1 &
-          nohup npm --prefix web start > web.log 2>&1 &
+          # PORT do job é da API; o frontend fica na 4000
+          PORT=4000 nohup npm --prefix web start > web.log 2>&1 &
           for i in $(seq 1 60); do
             if curl -sf http://127.0.0.1:3000/health > /dev/null && curl -sf http://127.0.0.1:4000/ > /dev/null; then
               echo "API e web no ar"; exit 0

@@ -1,229 +1,102 @@
-describe('SGVC - Perfil do Usuário', () => {
+// Tela de perfil com a API simulada. Seletores seguem o layout atual de profile.html.
+describe('SGVC - Perfil do Usuario', () => {
+  const user = {
+    id: 'user-1',
+    email: 'admin@negocio.com',
+    name: 'Admin User',
+    statusUsuario: 'ATIVO',
+    dataUltimoLogin: '2026-11-10T13:45:00Z',
+  };
+
   beforeEach(() => {
-    cy.stubDashboardMetrics();
-    cy.loginAsAdmin();
-    cy.wait('@dashboardOverview');
-  });
-
-  it('carrega pagina de perfil', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-          statusUsuario: 'ATIVO',
-        },
-      },
-    }).as('getProfile');
-
+    cy.seedSession({ user });
+    cy.intercept('GET', '**/api/auth/me', { statusCode: 200, body: { user } }).as('getProfile');
     cy.visit('/profile.html');
     cy.wait('@getProfile');
-    cy.get('#profile-form, form').should('exist');
   });
 
-  it('exibe informacoes do usuario no perfil', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-          statusUsuario: 'ATIVO',
-        },
-      },
-    }).as('getProfile');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#user-name, #profile-name').should('have.value', 'Admin User');
-    cy.get('#user-email, #profile-email').should('have.value', 'admin@negocio.com');
+  it('exibe informacoes do usuario', () => {
+    cy.get('#profile-name-input').should('have.value', 'Admin User');
+    cy.get('#profile-email-input').should('have.value', 'admin@negocio.com');
+    cy.get('#profile-status').should('contain', 'ATIVO');
+    cy.get('#profile-last-login').should('not.contain', '-').and('contain', '/2026');
   });
 
-  it('atualiza nome do perfil', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-          statusUsuario: 'ATIVO',
-        },
-      },
-    }).as('getProfile');
-
-    cy.intercept('PUT', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin Atualizado',
-          statusUsuario: 'ATIVO',
-        },
-      },
+  it('atualiza nome do perfil e volta ao painel', () => {
+    cy.intercept('PUT', '**/api/auth/me', (req) => {
+      expect(req.body).to.deep.equal({ name: 'Admin Editado', email: 'admin@negocio.com' });
+      req.reply({ statusCode: 200, body: { user: { ...user, name: 'Admin Editado' } } });
     }).as('updateProfile');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#user-name, #profile-name').clear().type('Admin Atualizado');
-    cy.get('#profile-submit, #save-btn').click();
-    
+    cy.get('#profile-name-input').clear().type('Admin Editado');
+    cy.get('#profile-submit').click();
     cy.wait('@updateProfile');
-    cy.get('.notification.is-success, #profile-message').should('be.visible');
+    cy.get('#profile-form-message').should('contain', 'Dados atualizados com sucesso.');
+    cy.location('pathname', { timeout: 5000 }).should('eq', '/dashboard.html');
   });
 
-  it('valida email duplicado ao atualizar perfil', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-        },
-      },
-    }).as('getProfile');
+  it('exige nome ao salvar o perfil', () => {
+    cy.get('#profile-name-input').clear();
+    cy.get('#profile-submit').click();
+    cy.get('#profile-name-error').should('be.visible').and('contain', 'Informe o nome.');
+  });
 
+  it('mostra erro da API ao usar e-mail ja cadastrado', () => {
     cy.intercept('PUT', '**/api/auth/me', {
       statusCode: 409,
-      body: { error: 'E-mail já está em uso' },
-    }).as('updateDuplicate');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#user-email, #profile-email').clear().type('existente@teste.com');
-    cy.get('#profile-submit, #save-btn').click();
-    
-    cy.wait('@updateDuplicate');
-    cy.get('.notification.is-danger, #profile-error').should('be.visible').and('contain', 'já está em uso');
+      body: { success: false, message: 'E-mail já cadastrado' },
+    }).as('updateProfile');
+    cy.get('#profile-email-input').clear().type('outro@negocio.com');
+    cy.get('#profile-submit').click();
+    cy.wait('@updateProfile');
+    cy.get('#profile-form-message').should('be.visible').and('contain', 'E-mail já cadastrado');
   });
 
-  it('altera senha com validacao forte', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-        },
-      },
-    }).as('getProfile');
-
-    cy.intercept('POST', '**/api/auth/change-password', {
-      statusCode: 200,
-      body: { message: 'Senha atualizada com sucesso.' },
+  it('altera a senha com senha forte', () => {
+    cy.intercept('POST', '**/api/auth/change-password', (req) => {
+      expect(req.body).to.deep.equal({ currentPassword: 'Admin@123!', newPassword: 'Nova@Senha456' });
+      req.reply({ statusCode: 200, body: { success: true } });
     }).as('changePassword');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#current-password, #old-password').type('Admin@123!');
-    cy.get('#new-password').type('NovaSenha@123!');
-    cy.get('#confirm-password, #new-password-confirm').type('NovaSenha@123!');
-    cy.get('#change-password-submit, #password-submit').click();
-    
+    cy.get('#current-password').type('Admin@123!');
+    cy.get('#new-password').type('Nova@Senha456');
+    cy.get('#confirm-password').type('Nova@Senha456');
+    cy.get('#password-submit').click();
     cy.wait('@changePassword');
-    cy.get('.notification.is-success').should('be.visible');
+    cy.get('#password-message').should('contain', 'Senha atualizada com sucesso.');
+    cy.get('#new-password').should('have.value', '');
   });
 
-  it('valida senha atual incorreta na troca de senha', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-        },
-      },
-    }).as('getProfile');
-
+  it('mostra erro quando a senha atual esta incorreta', () => {
     cy.intercept('POST', '**/api/auth/change-password', {
       statusCode: 400,
-      body: { error: 'Senha atual incorreta' },
-    }).as('changePasswordError');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#current-password, #old-password').type('SenhaErrada@123!');
-    cy.get('#new-password').type('NovaSenha@123!');
-    cy.get('#confirm-password, #new-password-confirm').type('NovaSenha@123!');
-    cy.get('#change-password-submit, #password-submit').click();
-    
-    cy.wait('@changePasswordError');
-    cy.get('.notification.is-danger').should('be.visible').and('contain', 'incorreta');
+      body: { success: false, message: 'Senha atual incorreta' },
+    }).as('changePassword');
+    cy.get('#current-password').type('Errada@123');
+    cy.get('#new-password').type('Nova@Senha456');
+    cy.get('#confirm-password').type('Nova@Senha456');
+    cy.get('#password-submit').click();
+    cy.wait('@changePassword');
+    cy.get('#password-message').should('be.visible').and('contain', 'Senha atual incorreta');
   });
 
-  it('valida nova senha fraca na troca de senha', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-        },
-      },
-    }).as('getProfile');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#current-password, #old-password').type('Admin@123!');
-    cy.get('#new-password').type('senha123');
-    cy.get('#new-password').blur();
-    cy.get('.help.is-danger').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
+  it('recusa nova senha fraca antes de chamar a API', () => {
+    cy.intercept('POST', '**/api/auth/change-password', cy.spy().as('changeSpy'));
+    cy.get('#current-password').type('Admin@123!');
+    cy.get('#new-password').type('senhafraca1');
+    cy.get('#confirm-password').type('senhafraca1');
+    // As regras ficam visíveis e o botão só libera quando todas são atendidas
+    cy.get('#profile-password-rules').should('be.visible');
+    cy.get('#password-submit').should('be.disabled');
+    cy.get('#new-password').clear().type('Senha@Forte1');
+    cy.get('#confirm-password').clear().type('Senha@Forte1');
+    cy.get('#password-submit').should('not.be.disabled');
+    cy.get('@changeSpy').should('not.have.been.called');
   });
 
-  it('valida confirmacao de senha na troca', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-        },
-      },
-    }).as('getProfile');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#current-password, #old-password').type('Admin@123!');
-    cy.get('#new-password').type('NovaSenha@123!');
-    cy.get('#confirm-password, #new-password-confirm').type('SenhaDiferente@123!');
-    cy.get('#confirm-password, #new-password-confirm').blur();
-    cy.get('.help.is-danger').should('be.visible').and('contain', 'não coincidem');
-  });
-
-  it('mostra status do usuario no perfil', () => {
-    cy.intercept('GET', '**/api/auth/me', {
-      statusCode: 200,
-      body: {
-        user: {
-          id: 'user-1',
-          email: 'admin@negocio.com',
-          name: 'Admin User',
-          statusUsuario: 'ATIVO',
-          dataUltimoLogin: '2025-01-27T10:00:00Z',
-          tentativasFalha: 0,
-        },
-      },
-    }).as('getProfile');
-
-    cy.visit('/profile.html');
-    cy.wait('@getProfile');
-    
-    cy.get('#user-status, #status-display').should('contain', 'ATIVO');
+  it('recusa confirmacao diferente', () => {
+    cy.get('#current-password').type('Admin@123!');
+    cy.get('#new-password').type('Nova@Senha456');
+    cy.get('#confirm-password').type('Outra@Senha456');
+    cy.get('#password-submit').click();
+    cy.get('#confirm-password-error').should('be.visible').and('contain', 'As senhas não conferem.');
   });
 });

@@ -10,9 +10,9 @@ const openClientsForm = () => {
 
 const fillIdentification = ({
   type = '',
-  name = '',
-  email = '',
-  phone = '',
+  name,
+  email,
+  phone,
   cpf = '',
   cnpj = '',
   birthDate = '',
@@ -21,13 +21,16 @@ const fillIdentification = ({
     cy.get('#create-type').select(type, { force: true });
   }
   if (name !== undefined) {
-    cy.get('#create-name').clear().type(name);
+    cy.get('#create-name').clear();
+    if (name) cy.get('#create-name').type(name);
   }
   if (email !== undefined) {
-    cy.get('#create-email').clear().type(email);
+    cy.get('#create-email').clear();
+    if (email) cy.get('#create-email').type(email);
   }
   if (phone !== undefined) {
-    cy.get('#create-phone').clear().type(phone);
+    cy.get('#create-phone').clear();
+    if (phone) cy.get('#create-phone').type(phone);
   }
   if (cpf !== undefined && cpf !== '') {
     cy.get('#create-cpf').clear().type(cpf);
@@ -163,7 +166,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
     it('Email invalido indica erro', () => {
       fillIdentification({ email: identifications.invalidEmail });
       cy.get('#create-email').blur();
-      cy.get('#create-email-error').should('be.visible').and('contain', 'Digite um e-mail valido.');
+      cy.get('#create-email-error').should('be.visible').and('contain', 'Digite um e-mail válido.');
     });
 
     it('Email duplicado mostra alerta da API', () => {
@@ -266,7 +269,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
     it('Telefone invalido apresenta erro', () => {
       fillIdentification({ phone: identifications.invalidPhone });
       cy.get('#create-phone').blur();
-      cy.get('#create-phone-error').should('be.visible').and('contain', 'Digite um telefone com DDD (10 ou 11 digitos).');
+      cy.get('#create-phone-error').should('be.visible').and('contain', 'Telefone deve incluir DDD (10 ou 11 dígitos).');
     });
 
     it('Telefone com mascara fica formatado', () => {
@@ -299,16 +302,17 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
     });
 
     it('Data invalida dispara erro', () => {
-      fillIdentification({ birthDate: '1990/05/15' });
-      cy.get('#create-birth-date').blur();
-      cy.get('#create-birth-date-error').should('be.visible').and('contain', 'Data de nascimento invalida.');
+      // input type="date" não deixa digitar texto livre: força um valor fora do padrão
+      cy.get('#create-birth-date').invoke('attr', 'type', 'text').invoke('val', '1990/05/15').trigger('input').trigger('change');
+      cy.get('#create-birth-date').focus().blur();
+      cy.get('#create-birth-date-error').should('be.visible').and('contain', 'Data de nascimento inválida.');
     });
 
     it('Data futura exibe aviso de intervalo', () => {
       cy.clock(new Date('2025-06-15').getTime(), ['Date']);
       fillIdentification({ birthDate: '2030-01-01' });
       cy.get('#create-birth-date').blur();
-      cy.get('#create-birth-hint').should('contain', 'fora do intervalo esperado');
+      cy.get('#create-birth-date-error').should('be.visible').and('contain', 'não pode ser futura');
       cy.clock().then((clock) => clock.restore());
     });
 
@@ -332,30 +336,31 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
     });
 
     it('Selecao via calendario funciona com enter', () => {
-      cy.get('#create-birth-date').focus().type('1995-07-07{enter}');
+      cy.get('#create-birth-date').focus().type('1995-07-07');
+      cy.get('#create-birth-date').trigger('keydown', { key: 'Enter' });
       cy.get('#create-birth-date-error').should('not.be.visible');
     });
 
     it('Formato invalido apresenta mensagem amigavel', () => {
-      fillIdentification({ birthDate: '19950101' });
-      cy.get('#create-birth-date').blur();
-      cy.get('#create-birth-date-error').should('contain', 'Data de nascimento invalida.');
+      cy.get('#create-birth-date').invoke('attr', 'type', 'text').invoke('val', '19950101').trigger('input').trigger('change');
+      cy.get('#create-birth-date').focus().blur();
+      cy.get('#create-birth-date-error').should('contain', 'Data de nascimento inválida.');
     });
 
     it('Aniversariante detectado muda o insight', () => {
       cy.clock(new Date('2025-06-15').getTime(), ['Date']);
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, (req) => {
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, (req) => {
         req.reply({ fixture: 'customers-list.json' });
       }).as('birthdayReload');
       cy.reload();
       cy.wait('@birthdayReload');
-      cy.get('#birthday-insight').should('contain', 'Aniversariantes nos proximos 7 dias');
+      cy.get('#birthday-insight').should('contain', 'Aniversariantes nos próximos 14 dias');
       cy.clock().then((clock) => clock.restore());
     });
 
     it('Aviso de aniversario respeita janela selecionada', () => {
       cy.get('#birthday-window').select('14');
-      cy.get('#birthday-insight').should('contain', 'proximos 14 dias');
+      cy.get('#birthday-insight').should('contain', 'próximos 14 dias');
     });
   });
 
@@ -376,12 +381,12 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
       cy.get('#chip-city').should('contain', 'Sao Paulo');
     });
 
-    it('CEP invalido mostra alerta especifico', () => {
+    it('CEP inválido mostra alerta especifico', () => {
       stubCepLookup({}, 400);
       cy.get('#create-address-postal').type('11111-111');
       cy.get('#create-address-postal').blur();
       cy.wait('@cepLookup');
-      cy.get('#clients-message').should('contain', 'CEP invalido');
+      cy.get('#clients-message').should('contain', 'CEP inválido');
     });
 
     it('CEP inexistente informa para preencher manualmente', () => {
@@ -417,17 +422,21 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
       cy.get('#create-address-postal').type('33333333');
       cy.get('#create-address-postal').blur();
       cy.wait('@cepLookup');
-      cy.get('#clients-message').should('contain', 'Nao foi possivel consultar o CEP agora');
+      cy.get('#clients-message').should('contain', 'Erro ao consultar CEP');
     });
 
     it('Fallback manual permite preencher o endereco', () => {
       stubCepLookup({}, 500);
+      // Sem isso a tela tenta a ViaCEP direto e preenche o endereço real do CEP no meio do teste
+      cy.intercept('GET', 'https://viacep.com.br/**', { statusCode: 500, body: {} });
       cy.get('#create-address-postal').type('44444444');
       cy.get('#create-address-postal').blur();
       cy.wait('@cepLookup');
       cy.get('#create-address-street').type('Rua Manual');
-      cy.get('#create-address-city').type('Campinas');
-      cy.get('#create-address-state').type('sp').blur();
+      // UF primeiro: escolher a UF recarrega a lista de cidades
+      cy.get('#create-address-state').clear().type('sp').blur();
+      cy.get('#create-address-state').should('have.value', 'SP');
+      cy.get('#create-address-city').clear().type('Campinas').blur();
       cy.get('#location-chips').should('contain', 'UF SP').and('contain', 'Campinas');
     });
 
@@ -528,6 +537,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
   describe('Observacoes', () => {
     it('Texto simples aparece e permite envio', () => {
       stubCustomerCreation();
+      fillIdentification({ name: 'Cliente Observação', email: 'obs@teste.com', phone: '(11) 91111-2222' });
       cy.get('#create-notes').clear().type('Prefere contato por e-mail');
       submitClientForm();
       cy.wait('@createCustomer');
@@ -555,10 +565,14 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
     it('Script malicioso aparece como texto no aviso', () => {
       stubCustomerCreation();
       const script = "<script>alert('x')</script>";
+      cy.window().then((win) => cy.stub(win, 'alert').as('alertSpy'));
+      fillIdentification({ name: 'Cliente Script', email: 'script@teste.com', phone: '(11) 91111-2222' });
       cy.get('#create-notes').clear().type(script);
       submitClientForm();
-      cy.wait('@createCustomer');
-      cy.get('#clients-message').should('contain', script);
+      cy.wait('@createCustomer').its('request.body.notes').should('contain', script);
+      // O texto é salvo como texto: nenhum script roda na página
+      cy.get('@alertSpy').should('not.have.been.called');
+      cy.get('#clients-message').should('contain', 'Cliente criado com sucesso.');
     });
   });
 });

@@ -11,7 +11,8 @@ describe('SGVC - Navegacao e dashboard', () => {
     cy.stubDashboardMetrics();
     cy.loginAsAdmin();
     cy.wait('@dashboardOverview');
-    cy.get('#metric-revenue').should('contain', 'R$ 18.600,00');
+    // toLocaleString usa espaço não separável entre R$ e o valor
+    cy.get('#metric-revenue').invoke('text').should('match', /R\$\s18\.600,00/);
     cy.get('[data-empty="customers"]').should('have.class', 'is-hidden');
   });
 
@@ -77,7 +78,7 @@ describe('SGVC - Navegacao e dashboard', () => {
 
   it('Reload da pagina recarrega a lista', () => {
     loginAndOpenClients();
-    cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, (req) => {
+    cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, (req) => {
       req.reply({ fixture: 'customers-list.json' });
     }).as('customersReload');
     cy.reload();
@@ -87,7 +88,7 @@ describe('SGVC - Navegacao e dashboard', () => {
 
   it('Atualizar lista respeita o filtro atual', () => {
     loginAndOpenClients();
-    cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, (req) => {
+    cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, (req) => {
       req.reply({ fixture: 'customers-list.json' });
     }).as('refreshList');
     cy.get('#refresh-list').click();

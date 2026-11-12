@@ -71,7 +71,7 @@ Cypress.Commands.add('stubDashboardMetrics', (options = {}) => {
 
 Cypress.Commands.add('stubCustomerList', (options = {}) => {
   const alias = options.alias || 'customersList';
-  cy.intercept({ method: 'GET', url: '**/api/customers' }, (req) => {
+  cy.intercept({ method: 'GET', pathname: '/api/customers' }, (req) => {
     req.reply(buildReply(options, { fixture: 'customers-list.json' }));
   }).as(alias);
 });

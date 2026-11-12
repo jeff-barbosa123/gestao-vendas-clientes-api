@@ -6,6 +6,10 @@ describe('Network - Timeout fallback', () => {
   });
 
   it('Requisição com timeout → exibe mensagem de fallback', () => {
+    // Todas as chamadas de dados demoram mais que o timeout (o painel tenta outros endpoints antes de desistir)
+    cy.intercept({ method: 'GET', url: /\/api\/(?!auth\/)/ }, (req) => {
+      req.reply({ statusCode: 200, delay: 250, body: [] });
+    });
     cy.intercept('GET', '**/api/analytics/overview*', (req) => {
       req.reply({
         statusCode: 200,
@@ -14,11 +18,14 @@ describe('Network - Timeout fallback', () => {
       });
     }).as('overviewSlow');
 
-    cy.visit('/dashboard.html', {
-      onBeforeLoad(win) {
-        win.APP_CONFIG = Object.assign({}, win.APP_CONFIG || {}, { REQUEST_TIMEOUT_MS: 50 });
-      },
+    // O /config.js do servidor sobrescreve window.APP_CONFIG: injeta o timeout curto nele
+    cy.request('/config.js').then(({ body }) => {
+      cy.intercept('GET', '/config.js', {
+        headers: { 'content-type': 'application/javascript' },
+        body: `${body}\nwindow.APP_CONFIG.REQUEST_TIMEOUT_MS = 50;`,
+      });
     });
+    cy.visit('/dashboard.html');
 
     cy.wait('@me');
     cy.get('#dashboard-message', { timeout: 10000 })

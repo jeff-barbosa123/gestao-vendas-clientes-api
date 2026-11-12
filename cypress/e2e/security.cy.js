@@ -11,24 +11,29 @@ describe('Seguranca basica', () => {
     openSecurityClientsForm();
   });
 
-  it('SQL Injection eh bloqueado pelo backend', () => {
-    cy.intercept('POST', '**/api/customers', { statusCode: 422, body: { message: 'Nome invalido' } }).as('sqlInjection');
+  it('SQL Injection no nome e barrado antes de chegar ao backend', () => {
+    cy.intercept('POST', '**/api/customers', cy.spy().as('createSpy'));
     cy.get('#create-name').clear().type("Robert'); DROP TABLE usuarios;--");
     cy.get('#create-email').clear().type('sql@teste.com');
     cy.get('#create-phone').clear().type('(11) 95555-0000');
-    cy.get('#create-cpf').clear().type('12345678901');
     cy.get('#create-submit').click();
-    cy.wait('@sqlInjection');
-    cy.get('#clients-message').should('contain', 'Nome invalido');
+    cy.get('#create-name-error').should('be.visible').and('contain', 'caracteres inválidos');
+    cy.get('@createSpy').should('not.have.been.called');
   });
 
   it('XSS no campo de observacoes nao executa e aparece como texto', () => {
     cy.intercept('POST', '**/api/customers', { statusCode: 201, body: { id: 'xss-01' } }).as('xss');
     const script = "<script>alert('xss')</script>";
+    cy.window().then((win) => cy.stub(win, 'alert').as('alertSpy'));
+    cy.get('#create-name').clear().type('Cliente Seguro');
+    cy.get('#create-email').clear().type('seguro@teste.com');
+    cy.get('#create-phone').clear().type('(11) 95555-0000');
     cy.get('#create-notes').clear().type(script);
     cy.get('#create-submit').click();
-    cy.wait('@xss');
-    cy.get('#clients-message').should('contain', script);
+    cy.wait('@xss').its('request.body.notes').should('contain', script);
+    // O texto é salvo como texto: nenhum script roda na página
+    cy.get('@alertSpy').should('not.have.been.called');
+    cy.get('#clients-message').should('contain', 'Cliente criado com sucesso.');
   });
 
   it('Nao existem campos hidden suspeitos no formulario', () => {
@@ -38,22 +43,25 @@ describe('Seguranca basica', () => {
   it('Payload malicioso de tamanho enorme e rejeitado', () => {
     cy.intercept('POST', '**/api/customers', { statusCode: 413, body: { message: 'Payload muito grande' } }).as('payload');
     const huge = 'A'.repeat(600);
-    cy.get('#create-notes').clear().type(huge);
+    cy.get('#create-name').clear().type('Cliente Seguro');
+    cy.get('#create-email').clear().type('seguro@teste.com');
+    cy.get('#create-phone').clear().type('(11) 95555-0000');
+    cy.get('#create-notes').clear().type(huge, { delay: 0 });
     cy.get('#create-submit').click();
     cy.wait('@payload');
     cy.get('#clients-message').should('contain', 'Payload muito grande');
   });
 
   it('Overflow de telefone gera erro visivel', () => {
+    // O campo tem limite de tamanho: o excesso nem entra
     cy.get('#create-phone').clear().type('1'.repeat(20));
-    cy.get('#create-phone').blur();
-    cy.get('#create-phone-error').should('be.visible');
+    cy.get('#create-phone').invoke('val').its('length').should('be.lte', 15);
   });
 
   it('Input inesperado no email e sinalizado', () => {
     cy.get('#create-email').clear().type('user😀@teste.com');
     cy.get('#create-email').blur();
-    cy.get('#create-email-error').should('be.visible').and('contain', 'Digite um e-mail valido.');
+    cy.get('#create-email-error').should('be.visible').and('contain', 'Digite um e-mail válido.');
   });
 
   it('Senha em texto plano nao e exposta em logs', () => {
@@ -65,6 +73,7 @@ describe('Seguranca basica', () => {
     
     cy.get('#create-name').clear().type('Cliente Seguro');
     cy.get('#create-email').clear().type('seguro@teste.com');
+    cy.get('#create-phone').clear().type('(11) 95555-0000');
     cy.get('#create-submit').click();
     cy.wait('@noPasswordExposure');
   });
@@ -77,19 +86,14 @@ describe('Seguranca basica', () => {
     });
   });
 
-  it('Tokens estao em sessionStorage (mais seguro)', () => {
+  it('Sessao fica em cookie HttpOnly, sem token no navegador', () => {
     cy.stubDashboardMetrics();
     cy.loginAsAdmin();
     cy.wait('@dashboardOverview');
-    
     cy.window().then((win) => {
-      // Token deve estar em sessionStorage
-      const sessionToken = win.sessionStorage.getItem('sgvc.session');
-      expect(sessionToken).to.not.be.null;
-      
-      // localStorage não deve ter token (apenas email se lembrar-me)
-      const localStorageToken = win.localStorage.getItem('sgvc.session');
-      expect(localStorageToken).to.be.null;
+      expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;
+      expect(win.localStorage.getItem('sgvc.session')).to.be.null;
+      expect(win.document.cookie).to.not.match(/sgvc_(access|refresh)/);
     });
   });
 
@@ -119,23 +123,17 @@ describe('Seguranca basica', () => {
     }
   });
 
-  it('CORS bloqueia origens nao permitidas', () => {
+  it('CORS nao libera origens nao permitidas', () => {
+    // E-mail inexistente: não conta tentativa de login de nenhum usuário real
     cy.request({
       method: 'POST',
       url: 'http://localhost:3000/api/auth/login',
-      headers: {
-        'Origin': 'https://malicious-site.com',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        email: 'admin@negocio.com',
-        password: 'Admin@123!',
-      },
+      headers: { Origin: 'https://malicious-site.com', 'Content-Type': 'application/json' },
+      body: { email: 'cors-teste@inexistente.com', password: 'Qualquer@123' },
       failOnStatusCode: false,
     }).then((response) => {
-      // Em produção, CORS deve bloquear, mas em desenvolvimento pode permitir
-      // Verificar pelo menos que a requisição não funcionou
-      expect([401, 403, 200]).to.include(response.status);
+      expect(response.headers['access-control-allow-origin']).to.not.eq('https://malicious-site.com');
+      expect(response.status).to.not.eq(200);
     });
   });
 

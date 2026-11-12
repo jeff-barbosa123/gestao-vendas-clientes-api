@@ -120,10 +120,10 @@
   const passwordStrength = document.getElementById('password-strength');
   const registerError = document.getElementById('register-error');
   const registerSuccess = document.getElementById('register-success');
-  function updatePasswordToggle(button, isHidden) {
+  function updatePasswordToggle(button, isVisible) {
     if (!button) return;
-    const label = isHidden ? 'Ocultar senha' : 'Mostrar senha';
-    button.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+    const label = isVisible ? 'Ocultar senha' : 'Mostrar senha';
+    button.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
     button.setAttribute('aria-label', label);
     const text = button.querySelector('.toggle-password-text');
     if (text) text.textContent = label;
@@ -313,6 +313,12 @@
       passwordStrength.className = 'help password-strength';
     }
     if (registerAvatar) registerAvatar.textContent = 'U';
+    if (!isOpen) {
+      // Fechar descarta o que foi digitado (a pessoa já confirmou)
+      [registerName, registerEmail, registerPassword, document.getElementById('register-password-confirm')]
+        .forEach((input) => { if (input) input.value = ''; });
+      if (registerPassword) registerPassword.dispatchEvent(new Event('input'));
+    }
     if (isOpen && registerName) registerName.focus();
   }
 
@@ -743,7 +749,14 @@
   // Foco autom\u00e1tico no campo de e-mail ao abrir a tela
   if (emailInput) {
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => emailInput.focus(), 100);
+      // Só foca o e-mail se a pessoa ainda não estiver em outro campo
+      // (antes roubava o foco de quem já digitava no cadastro)
+      setTimeout(() => {
+        const active = document.activeElement;
+        const busy = active && active !== document.body && active !== document.documentElement;
+        const modalOpen = registerModal && registerModal.classList.contains('is-active');
+        if (!busy && !modalOpen) emailInput.focus();
+      }, 100);
     });
     emailInput.addEventListener('input', handleFieldInput);
     emailInput.addEventListener('blur', handleEmailBlur);
@@ -780,7 +793,7 @@
       passwordInput.type = isHidden ? 'text' : 'password';
       updatePasswordToggle(togglePasswordBtn, isHidden);
     });
-    updatePasswordToggle(togglePasswordBtn, passwordInput.type === 'password');
+    updatePasswordToggle(togglePasswordBtn, passwordInput.type === 'text');
   }
 
   if (logoutBtn) {
@@ -883,11 +896,12 @@
         if (registerEmail) registerEmail.focus();
         return;
       }
-      if (!password || password.length < 8) {
+      const passwordProblem = registerPasswordProblem(password);
+      if (passwordProblem) {
         setRegisterFieldError(
           registerPassword,
           registerPasswordError,
-          'Min. 8 caracteres.',
+          passwordProblem,
           registerPasswordStatus,
         );
         if (registerPassword) registerPassword.focus();
@@ -940,7 +954,14 @@
       registerPassword.type = isHidden ? 'text' : 'password';
       updatePasswordToggle(registerTogglePassword, isHidden);
     });
-    updatePasswordToggle(registerTogglePassword, registerPassword.type === 'password');
+    updatePasswordToggle(registerTogglePassword, registerPassword.type === 'text');
+  }
+
+  // Mesma regra da API (authService): 8+ caracteres com maiúscula, minúscula, número e especial
+  function registerPasswordProblem(value) {
+    if (!value || value.length < 8) return 'M\u00ednimo 8 caracteres.';
+    const ok = /[A-Z]/.test(value) && /[a-z]/.test(value) && /\d/.test(value) && /[^a-zA-Z0-9]/.test(value);
+    return ok ? '' : 'Senha muito fraca. Use letra mai\u00fascula, min\u00fascula, n\u00famero e caractere especial.';
   }
 
   function updatePasswordStrength(value) {
@@ -960,12 +981,16 @@
     const hasLower = /[a-z]/.test(value);
     const hasSymbol = /[^a-zA-Z0-9]/.test(value);
     const score = [hasNumber, hasUpper, hasLower, hasSymbol].filter(Boolean).length;
-    if (score >= 3 && value.length >= 10) {
+    // Forte = atende todas as regras da API; Média = falta uma; Fraca = falta mais de uma
+    if (score === 4) {
       passwordStrength.textContent = 'Forte';
       passwordStrength.className = 'help password-strength is-strong';
-    } else {
+    } else if (score === 3) {
       passwordStrength.textContent = 'M\u00e9dia';
       passwordStrength.className = 'help password-strength is-medium';
+    } else {
+      passwordStrength.textContent = 'Fraca';
+      passwordStrength.className = 'help password-strength is-weak';
     }
   }
 
@@ -1006,15 +1031,11 @@
         clearRegisterFieldState(registerPassword, registerPasswordError, registerPasswordStatus);
         return;
       }
-      if (value.length >= 8) {
+      const problem = registerPasswordProblem(value);
+      if (!problem) {
         setRegisterFieldValid(registerPassword, registerPasswordError, registerPasswordStatus);
       } else {
-        setRegisterFieldError(
-          registerPassword,
-          registerPasswordError,
-          'Min. 8 caracteres.',
-          registerPasswordStatus,
-        );
+        setRegisterFieldError(registerPassword, registerPasswordError, problem, registerPasswordStatus);
       }
     });
   }

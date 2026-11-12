@@ -97,9 +97,9 @@
   const ADDRESS_NUMBER_REQUIRED = 'Número obrigatório.';
   const ADDRESS_NUMBER_INVALID = 'Número inválido.';
   const ADDRESS_NEIGHBORHOOD_REQUIRED = 'Bairro obrigatório.';
-  const ADDRESS_STATE_REQUIRED = 'UF obrigatoria.';
+  const ADDRESS_STATE_REQUIRED = 'UF obrigatória.';
   const ADDRESS_CITY_REQUIRED = 'Cidade obrigatória.';
-  const ADDRESS_STATE_INVALID = 'UF invalida.';
+  const ADDRESS_STATE_INVALID = 'UF inválida.';
   const ADDRESS_CITY_INVALID = 'Cidade inválida para a UF.';
   const NAME_MIN_LENGTH = 3;
   const NAME_MAX_LENGTH = 120;
@@ -1159,6 +1159,7 @@
     const stateValue = safeValue(data.addressState);
     if (createAddressState && stateValue) {
       createAddressState.value = stateValue.toUpperCase();
+      createAddressState.dataset.lastUf = createAddressState.value;
       loadCities(createAddressState.value);
     }
     const postalValue = safeValue(data.addressPostalCode);
@@ -1271,7 +1272,8 @@
   function formatMoney(value) {
     const numberValue = Number(value);
     if (!Number.isFinite(numberValue)) return '-';
-    return numberValue.toFixed(2).replace('.', ',');
+    // Separador de milhar no padrão brasileiro (R$ 2.100,00)
+    return numberValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function formatDateBR(value) {
@@ -1439,6 +1441,7 @@
     // Primeiro atualiza a UF e carrega cidades
     if (createAddressState && stateValue) {
       createAddressState.value = stateValue.toUpperCase();
+      createAddressState.dataset.lastUf = createAddressState.value;
       clearFieldError(createAddressState, createAddressStateError);
       try {
         await loadCities(createAddressState.value);
@@ -2371,6 +2374,11 @@
     });
   }
 
+  // Observações também contam como alteração do formulário (antes não liberavam o botão)
+  if (createNotes) {
+    createNotes.addEventListener('input', () => updateDirtyState());
+  }
+
   if (createAddressComplement) {
     createAddressComplement.addEventListener('input', () => {
       setCreateMetaValue('complement', createAddressComplement.value);
@@ -2557,6 +2565,12 @@
         resetCityOptions();
       } else {
         clearFieldError(createAddressState, createAddressStateError);
+        // Trocou a UF: a cidade anterior é de outro estado
+        if (createAddressState.dataset.lastUf && createAddressState.dataset.lastUf !== createAddressState.value && createAddressCity) {
+          createAddressCity.value = '';
+          clearFieldError(createAddressCity, createAddressCityError);
+        }
+        createAddressState.dataset.lastUf = createAddressState.value;
         try {
           await loadCities(createAddressState.value);
         } catch (_err) {
@@ -2594,11 +2608,7 @@
       setCepStatus('');
       const cep = formatted.replace(/\D/g, '');
       if (cep.length === 8) {
-        // Garante que a sessão está disponível
-        if (!session || !session.token) {
-          setCepStatus('Sessão inválida. Faça login novamente.', true);
-          return;
-        }
+        // A sessão vai no cookie HttpOnly (não há token no navegador); se expirou, a API devolve 401
         try {
           await lookupCep(cep, session.token);
         } catch (err) {
@@ -2720,11 +2730,6 @@
       
       console.log('[EXPORT] 🖱️ Clique detectado no botão de exportação');
       
-      if (!session || !session.token) {
-        console.error('[EXPORT] ❌ Sessão inválida');
-        showMessage('Sessão inválida. Faça login novamente.', 'is-danger');
-        return;
-      }
 
       const format = clientsExportFormat ? clientsExportFormat.value : 'csv';
       const currentSearch = searchInput ? searchInput.value.trim() : '';

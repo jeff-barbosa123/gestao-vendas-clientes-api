@@ -810,7 +810,7 @@
           method: 'PUT',
           body: JSON.stringify(payload),
         });
-        showMessage('Cliente atualizado.', 'is-success');
+        showMessage('Cliente atualizado com sucesso!', 'is-success');
         sessionStorage.setItem(UPDATED_FLAG, 'true');
         // Atualiza o objeto original com os valores salvos
         original = {
@@ -1108,138 +1108,8 @@
     });
   }
 
-  if (form) {
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!saveBtn || saveBtn.disabled) return;
-
-      // Validações
-      const name = nameInput ? nameInput.value.trim() : '';
-      const email = emailInput ? emailInput.value.trim() : '';
-      const phone = phoneInput ? phoneInput.value.trim() : '';
-
-      clearFieldError(nameInput, nameError);
-      clearFieldError(emailInput, emailError);
-      clearFieldError(phoneInput, phoneError);
-
-      if (!validateName(name)) {
-        setFieldError(nameInput, nameError, 'Nome deve ter 3 a 120 letras, sem números.');
-        if (nameInput) nameInput.focus();
-        return;
-      }
-
-      if (!email || !validateEmail(email)) {
-        setFieldError(emailInput, emailError, 'Digite um e-mail válido.');
-        if (emailInput) emailInput.focus();
-        return;
-      }
-
-      if (phone && !validatePhone(phone)) {
-        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 dígitos).');
-        if (phoneInput) phoneInput.focus();
-        return;
-      }
-
-      // Preparar dados
-      saveBtn.disabled = true;
-      saveBtn.classList.add('is-loading');
-      const originalText = saveBtn.textContent;
-      saveBtn.textContent = 'Salvando...';
-
-      try {
-        const updateData = {
-          name,
-          email,
-          phone: phone || null,
-          birth_date: birthDateInput ? birthDateInput.value || null : null,
-          address_street: addressStreetInput ? addressStreetInput.value.trim() || null : null,
-          address_number: addressNumberInput ? addressNumberInput.value.trim() || null : null,
-          address_neighborhood: addressNeighborhoodInput ? addressNeighborhoodInput.value.trim() || null : null,
-          address_city: addressCityInput ? addressCityInput.value.trim() || null : null,
-          address_postal_code: addressPostalInput ? addressPostalInput.value.trim().replace(/\D/g, '') || null : null,
-          cnpj: cnpjInput ? cnpjInput.value.trim().replace(/\D/g, '') || null : null,
-          notes: notesInput ? notesInput.value.trim() || null : null,
-        };
-
-        if (editType && editType.value) {
-          updateData.type = editType.value.toUpperCase();
-        }
-
-        if (editCpf && editCpf.value.trim()) {
-          updateData.cpf = editCpf.value.trim().replace(/\D/g, '');
-        }
-
-        if (editTradeName && editTradeName.value.trim()) {
-          updateData.trade_name = editTradeName.value.trim();
-        }
-
-        if (editAddressComplement && editAddressComplement.value.trim()) {
-          updateData.address_complement = editAddressComplement.value.trim();
-        }
-
-        const updated = await apiRequest(`/api/customers/${customerId}`, null, {
-          method: 'PUT',
-          body: JSON.stringify(updateData),
-        });
-
-        // Marcar formulário como salvo (remove proteção contra perda de dados)
-        if (unsavedGuard) {
-          unsavedGuard.markAsSaved();
-        }
-
-        showMessage('Cliente atualizado com sucesso!', 'is-success');
-        localStorage.setItem(UPDATED_FLAG, 'true');
-        
-        setTimeout(() => {
-          window.location.href = '/clients.html';
-        }, 1500);
-      } catch (err) {
-        if (handleAuthFailure(err)) return;
-        const friendlyMessage = normalizeError(err);
-        showMessage(friendlyMessage || 'Erro ao atualizar cliente. Tente novamente.', 'is-danger');
-        saveBtn.disabled = false;
-        saveBtn.classList.remove('is-loading');
-        saveBtn.textContent = originalText;
-        updateDirtyState();
-      }
-    });
-  }
-
-  if (deleteBtn) {
-    deleteBtn.addEventListener('click', () => {
-      toggleDeleteModal(true);
-    });
-  }
-
-  if (deleteConfirm) {
-    deleteConfirm.addEventListener('click', async () => {
-      deleteConfirm.disabled = true;
-      deleteConfirm.classList.add('is-loading');
-      const originalText = deleteConfirm.textContent;
-      deleteConfirm.textContent = 'Removendo...';
-
-      try {
-        await apiRequest(`/api/customers/${customerId}`, null, {
-          method: 'DELETE',
-        });
-
-        showMessage('Cliente removido com sucesso.', 'is-success');
-        sessionStorage.setItem(DELETE_FLAG, 'true');
-        
-        setTimeout(() => {
-          window.location.href = '/clients.html';
-        }, 1500);
-      } catch (err) {
-        if (handleAuthFailure(err)) return;
-        const friendlyMessage = normalizeError(err);
-        showMessage(friendlyMessage || 'Erro ao remover cliente. Tente novamente.', 'is-danger');
-        deleteConfirm.disabled = false;
-        deleteConfirm.classList.remove('is-loading');
-        deleteConfirm.textContent = originalText;
-        toggleDeleteModal(false);
-      }
-    });
-  }
+  // (removido) segundo conjunto de tratadores de salvar/excluir: duplicava os de cima.
+  // No excluir, os dois rodavam no mesmo clique e mandavam DELETE duas vezes.
 
   function closeDeleteModal() {
     toggleDeleteModal(false);

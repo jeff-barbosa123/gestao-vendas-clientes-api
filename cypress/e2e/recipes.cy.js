@@ -29,12 +29,12 @@ describe('SGVC - Fichas de custo', () => {
 
   it('mantém o resumo com placeholder até que os dados estejam completos', () => {
     cy.get('#summary-total').should('contain', placeholderText);
-    cy.get('#calc-status').should('contain', 'Faltam informações');
+    cy.get('#create-calc-status').should('contain', 'Faltam informações');
     cy.get('#create-submit').should('be.disabled');
     prepareRecipeForm();
     cy.get('#summary-total').should('not.contain', placeholderText);
     cy.get('#create-submit').should('not.be.disabled');
-    cy.get('#calc-status').should('contain', 'Dados suficientes para calcular.');
+    cy.get('#create-calc-status').should('contain', 'Dados suficientes para calcular.');
   });
 
   it('bloqueia o salvamento quando o rendimento está vazio', () => {
@@ -42,14 +42,15 @@ describe('SGVC - Fichas de custo', () => {
     addSampleIngredient();
     cy.get('#create-form').submit();
     cy.get('#create-yield-error').should('contain', 'Informe um rendimento maior que zero.');
-    cy.get('#calc-status').should('contain', 'rendimento');
+    cy.get('#create-calc-status').should('contain', 'rendimento');
     cy.get('#create-submit').should('be.disabled');
   });
 
   it('aplica o limite de 15% nos gastos do dia a dia', () => {
     prepareRecipeForm('Bolo limite');
     cy.get('#create-overhead').clear().type('20');
-    cy.get('#create-overhead-warning').should('be.visible').and('contain', 'O máximo permitido é 15%');
+    cy.get('#create-overhead-warning').should('be.visible').and('contain', 'o cálculo usa 15%');
+    cy.get('#create-profit-fixed').clear().type('10'); // o resumo só aparece com o lucro informado
     cy.get('#summary-overhead-label').should('contain', '15%');
     cy.get('#summary-overhead').should('contain', 'R$ 0,30');
   });

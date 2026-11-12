@@ -1,4 +1,9 @@
+// As tags (Novo/Antigo/Fiel) e aniversariantes dependem da data de hoje:
+// congela a data no dia usado pelos fixtures para o teste não envelhecer.
+const FIXTURE_TODAY = new Date('2025-06-15T12:00:00Z').getTime();
+
 const openClientsPage = (customerOptions = {}) => {
+  cy.clock(FIXTURE_TODAY, ['Date']);
   cy.stubDashboardMetrics();
   cy.stubCustomerList(customerOptions);
   cy.loginAsAdmin();
@@ -43,6 +48,7 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
     });
 
     it('Permite scroll horizontal', () => {
+      cy.viewport(480, 800); // em tela estreita a tabela rola na horizontal
       cy.get('.table-container').scrollTo('right');
       cy.get('.table-container').should(($el) => {
         expect($el[0].scrollLeft).to.be.greaterThan(0);
@@ -82,16 +88,14 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
     });
 
     it('Filtro Aniversariantes destaca proximos aniversariantes', () => {
-      cy.clock(new Date('2025-06-15').getTime(), ['Date']);
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, (req) => {
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, (req) => {
         req.reply({ fixture: 'customers-list.json' });
       }).as('birthdayReload');
       cy.reload();
       cy.wait('@birthdayReload');
       cy.get('[data-filter="birthdays"]').click();
-      cy.get('#birthday-insight').should('contain', 'Aniversariantes nos proximos 7 dias');
+      cy.get('#birthday-insight').should('contain', 'Aniversariantes nos próximos 14 dias');
       cy.get('.birthday-badge').should('exist');
-      cy.clock().then((clock) => clock.restore());
     });
 
     it('Filtro Novos destaca clientes recentes', () => {
@@ -139,7 +143,7 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
 
     it('Persistencia do filtro apos refresh', () => {
       cy.get('[data-filter="loyal"]').click();
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('refreshFilter');
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('refreshFilter');
       cy.get('#refresh-list').click();
       cy.wait('@refreshFilter');
       cy.get('[data-filter="loyal"]').should('have.class', 'is-active').and('have.attr', 'aria-pressed', 'true');
@@ -147,14 +151,14 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
 
     it('Atualizar lista com filtro ativo mantem o criterio', () => {
       cy.get('[data-filter="loyal"]').click();
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('refreshFilterActive');
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('refreshFilterActive');
       cy.get('#refresh-list').click();
       cy.wait('@refreshFilterActive');
       cy.contains('.client-tag', /Fiel|Frequente/).should('exist');
     });
 
     it('Performance com carga lenta nao bloqueia a lista', () => {
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, (req) => {
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, (req) => {
         req.reply({ fixture: 'customers-list.json', delay: 1200 });
       }).as('slowLoad');
       cy.reload();
@@ -164,7 +168,7 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
 
     it('Filtro reseta apos reload', () => {
       cy.get('[data-filter="loyal"]').click();
-      cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('reloadFilter');
+      cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, { fixture: 'customers-list.json' }).as('reloadFilter');
       cy.reload();
       cy.wait('@reloadFilter');
       cy.get('[data-filter="all"]').should('have.class', 'is-active');
@@ -184,7 +188,9 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
     it('Ordenar com filtro ativo continua aplicando o filtro', () => {
       cy.get('[data-filter="loyal"]').click();
       cy.get('#name-header').click();
-      cy.get('#clients-body tr').first().should('contain', 'Carlos Paraiso');
+      // Z-A dentro do filtro de fiéis/frequentes: Nina Flores vem primeiro
+      cy.get('#clients-body tr').first().should('contain', 'Nina Flores');
+      cy.get('#clients-body').should('contain', 'Carlos Paraiso');
       cy.contains('.client-tag', /Fiel|Frequente/).should('exist');
     });
 
@@ -193,7 +199,7 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
         const updated = items.map((customer) =>
           customer.id === 'c3' ? { ...customer, name: 'Zeta Paraiso' } : customer
         );
-        cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, updated).as('reordered');
+        cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, updated).as('reordered');
         cy.get('#refresh-list').click();
         cy.wait('@reordered');
         cy.get('#name-header').click();

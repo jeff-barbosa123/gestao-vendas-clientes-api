@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/clients.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -51,7 +54,7 @@
                   <div class="control">
                     <div class="select is-fullwidth">
                       <select id="edit-type" aria-describedby="edit-type-hint">
-                        <option value="">Sem sele&#231;&#227;o (comportamento atual)</option>
+                        <option value="">N&#227;o informar</option>
                         <option value="PF">Pessoa F&#237;sica (CPF)</option>
                         <option value="PJ">Pessoa Jur&#237;dica (CNPJ)</option>
                       </select>
@@ -150,7 +153,7 @@
                 <div class="clients-step-header">
                   <span class="clients-step-index">3</span>
                   <div>
-                    <p class="clients-step-title">Endereco</p>
+                    <p class="clients-step-title">Endereço</p>
                     <p class="clients-step-subtitle">Ajuda na entrega e organizacao.</p>
                   </div>
                 </div>
@@ -169,7 +172,7 @@
                   </p>
                 </div>
                 <div class="field">
-                  <label class="label" for="edit-address-number">Numero</label>
+                  <label class="label" for="edit-address-number">Número</label>
                   <input class="input" id="edit-address-number" type="text" maxlength="20" />
                   <p class="help is-danger" id="edit-address-number-error" aria-live="polite" hidden></p>
                 </div>
@@ -226,7 +229,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <div class="modal" id="delete-modal" aria-hidden="true">
@@ -245,7 +248,7 @@
         </section>
         <footer class="modal-card-foot">
           <button class="button is-light" type="button" id="delete-cancel">Cancelar</button>
-          <button class="button is-danger" type="button" id="delete-confirm">Confirmar exclusao</button>
+          <button class="button is-danger" type="button" id="delete-confirm">Confirmar exclusão</button>
         </footer>
       </div>
     </div>

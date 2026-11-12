@@ -74,38 +74,38 @@
   const createSubmitDefaultText = createSubmit ? createSubmit.textContent.trim() : 'Criar cliente';
   const CREATE_SUBMIT_SAVING_TEXT = 'Salvando...';
   const DOCUMENT_CONFLICT_MESSAGE = 'Informe apenas CPF ou CNPJ.';
-  const EMAIL_REQUIRED_MESSAGE = 'E-mail obrigatorio.';
-  const EMAIL_SPACE_MESSAGE = 'E-mail nao pode conter espacos.';
+  const EMAIL_REQUIRED_MESSAGE = 'E-mail obrigatório.';
+  const EMAIL_SPACE_MESSAGE = 'E-mail não pode conter espaços.';
   const EMAIL_MISSING_AT_MESSAGE = 'E-mail deve conter "@".';
-  const EMAIL_MISSING_DOMAIN_MESSAGE = 'Dominio do e-mail obrigatorio.';
-  const EMAIL_INVALID_MESSAGE = 'Digite um e-mail valido.';
-  const PHONE_REQUIRED_MESSAGE = 'Telefone obrigatorio.';
-  const PHONE_DDD_MESSAGE = 'Telefone deve incluir DDD (10 ou 11 digitos).';
-  const PHONE_LETTER_MESSAGE = 'Telefone deve conter apenas digitos.';
-  const PHONE_INVALID_MESSAGE = 'Telefone invalido.';
-  const BIRTH_REQUIRED_MESSAGE = 'Data de nascimento obrigatoria.';
-  const BIRTH_FORMAT_MESSAGE = 'Data de nascimento invalida.';
-  const BIRTH_FUTURE_MESSAGE = 'Data de nascimento nao pode ser futura.';
-  const CEP_REQUIRED_MESSAGE = 'CEP obrigatorio.';
-  const CEP_DIGITS_MESSAGE = 'CEP deve conter 8 digitos.';
-  const CEP_INVALID_CHAR_MESSAGE = 'CEP deve conter apenas numeros.';
-  const ADDRESS_STREET_REQUIRED = 'Rua obrigatoria.';
+  const EMAIL_MISSING_DOMAIN_MESSAGE = 'Domínio do e-mail obrigatório.';
+  const EMAIL_INVALID_MESSAGE = 'Digite um e-mail válido.';
+  const PHONE_REQUIRED_MESSAGE = 'Telefone obrigatório.';
+  const PHONE_DDD_MESSAGE = 'Telefone deve incluir DDD (10 ou 11 dígitos).';
+  const PHONE_LETTER_MESSAGE = 'Telefone deve conter apenas dígitos.';
+  const PHONE_INVALID_MESSAGE = 'Telefone inválido.';
+  const BIRTH_REQUIRED_MESSAGE = 'Data de nascimento obrigatória.';
+  const BIRTH_FORMAT_MESSAGE = 'Data de nascimento inválida.';
+  const BIRTH_FUTURE_MESSAGE = 'Data de nascimento não pode ser futura.';
+  const CEP_REQUIRED_MESSAGE = 'CEP obrigatório.';
+  const CEP_DIGITS_MESSAGE = 'CEP deve conter 8 dígitos.';
+  const CEP_INVALID_CHAR_MESSAGE = 'CEP deve conter apenas números.';
+  const ADDRESS_STREET_REQUIRED = 'Rua obrigatória.';
   const ADDRESS_STREET_LENGTH_MESSAGE = 'Informe o logradouro com pelo menos 3 caracteres.';
-  const ADDRESS_STREET_INVALID_MESSAGE = 'Informe um logradouro valido.';
+  const ADDRESS_STREET_INVALID_MESSAGE = 'Informe um logradouro válido.';
   const ADDRESS_STREET_INVALID_PATTERN = /<\s*\/?\s*script\b|<|>|--|;/i;
   const ADDRESS_STREET_MIN_LENGTH = 3;
-  const ADDRESS_NUMBER_REQUIRED = 'Numero obrigatorio.';
-  const ADDRESS_NUMBER_INVALID = 'Numero invalido.';
-  const ADDRESS_NEIGHBORHOOD_REQUIRED = 'Bairro obrigatorio.';
+  const ADDRESS_NUMBER_REQUIRED = 'Número obrigatório.';
+  const ADDRESS_NUMBER_INVALID = 'Número inválido.';
+  const ADDRESS_NEIGHBORHOOD_REQUIRED = 'Bairro obrigatório.';
   const ADDRESS_STATE_REQUIRED = 'UF obrigatoria.';
-  const ADDRESS_CITY_REQUIRED = 'Cidade obrigatoria.';
+  const ADDRESS_CITY_REQUIRED = 'Cidade obrigatória.';
   const ADDRESS_STATE_INVALID = 'UF invalida.';
-  const ADDRESS_CITY_INVALID = 'Cidade invalida para a UF.';
+  const ADDRESS_CITY_INVALID = 'Cidade inválida para a UF.';
   const NAME_MIN_LENGTH = 3;
   const NAME_MAX_LENGTH = 120;
   const NAME_LENGTH_MESSAGE = 'Nome deve ter 3 a 120 caracteres.';
   const NAME_LETTER_MESSAGE = 'Nome deve conter pelo menos uma letra.';
-  const NAME_INVALID_CHARS_MESSAGE = 'Nome contem caracteres invalidos.';
+  const NAME_INVALID_CHARS_MESSAGE = 'Nome contém caracteres inválidos.';
   const NAME_ALLOWED_REGEX = /^[\p{L}\d\s&().'\/-]+$/u;
   const DELETE_FLAG = 'sgvc.clientDeleted';
   const UPDATED_FLAG = 'sgvc.clientUpdated';
@@ -416,19 +416,19 @@
   function getEmailWarning(value) {
     const trimmed = String(value || '').trim().toLowerCase();
     if (!trimmed || !validateEmail(trimmed)) return '';
-    if (/\.\./.test(trimmed)) return 'E-mail com pontos consecutivos. Confira se esta correto.';
+    if (/\.\./.test(trimmed)) return 'E-mail com pontos consecutivos. Confira se está correto.';
     const parts = trimmed.split('@');
     if (parts.length !== 2) return 'E-mail incompleto. Verifique.';
     const [local, domain] = parts;
-    if (!local || local.length < 2) return 'E-mail muito curto. Verifique se esta correto.';
+    if (!local || local.length < 2) return 'E-mail muito curto. Verifique se está correto.';
     if (!domain || domain.length < 4 || !domain.includes('.')) {
-      return 'Dominio do e-mail incompleto. Verifique.';
+      return 'Domínio do e-mail incompleto. Verifique.';
     }
     if (domain.startsWith('-') || domain.endsWith('-')) {
-      return 'Dominio do e-mail invalido. Verifique.';
+      return 'Domínio do e-mail inválido. Verifique.';
     }
     const tld = domain.split('.').pop() || '';
-    if (tld.length < 2) return 'Dominio do e-mail invalido. Verifique.';
+    if (tld.length < 2) return 'Domínio do e-mail inválido. Verifique.';
     const disposableDomains = new Set([
       'mailinator.com',
       '10minutemail.com',
@@ -437,7 +437,7 @@
       'yopmail.com',
     ]);
     if (disposableDomains.has(domain)) {
-      return 'E-mail temporario detectado. Prefira um e-mail valido.';
+      return 'E-mail temporário detectado. Prefira um e-mail válido.';
     }
     return '';
   }
@@ -850,7 +850,7 @@
         const items = JSON.parse(cached);
         if (Array.isArray(items) && items.length) {
           renderUfOptions(items);
-          displayUfStatus('Unidades federativas carregadas. VocÃª pode digitar manualmente.', 4000);
+          displayUfStatus('Unidades federativas carregadas. Você pode digitar manualmente.', 4000);
           setAddressStateLoading(false);
           return;
         }
@@ -869,13 +869,13 @@
       if (items.length) {
         sessionStorage.setItem(cacheKey, JSON.stringify(items));
         renderUfOptions(items);
-        displayUfStatus('Unidades federativas carregadas. VocÃª pode digitar manualmente.', 4000);
+        displayUfStatus('Unidades federativas carregadas. Você pode digitar manualmente.', 4000);
         return;
       }
       throw new Error('empty_states');
     } catch (_err) {
       renderUfOptions(FALLBACK_UFS);
-      displayUfStatus('NÃ£o foi possÃ­vel carregar o IBGE. Lista fixa disponÃ­vel como fallback.', 0);
+      displayUfStatus('Não foi possível carregar o IBGE. Lista fixa disponível como fallback.', 0);
     } finally {
       setAddressStateLoading(false);
     }
@@ -1214,7 +1214,7 @@
       cache: 'no-store',
     });
     if (response.status === 404) {
-      const err = new Error('CNPJ nao encontrado');
+      const err = new Error('CNPJ não encontrado');
       err.status = 404;
       throw err;
     }
@@ -1276,11 +1276,14 @@
 
   function formatDateBR(value) {
     if (!value) return '-';
+    // Datas "só data" (ex.: nascimento) vêm como YYYY-MM-DD ou meia-noite UTC:
+    // ler os componentes em UTC evita exibir o dia anterior no fuso do Brasil.
+    const dateOnly = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}(T00:00:00(\.000)?Z)?$/.test(value);
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const day = String(dateOnly ? date.getUTCDate() : date.getDate()).padStart(2, '0');
+    const month = String((dateOnly ? date.getUTCMonth() : date.getMonth()) + 1).padStart(2, '0');
+    const year = dateOnly ? date.getUTCFullYear() : date.getFullYear();
     return `${day}/${month}/${year}`;
   }
 
@@ -1498,7 +1501,7 @@
     }
     const payload = await response.json();
     if (payload && payload.erro) {
-      const err = new Error('CEP nao encontrado');
+      const err = new Error('CEP não encontrado');
       err.status = 404;
       throw err;
     }
@@ -1546,13 +1549,13 @@
       console.error('[CEP] Erro ao consultar:', err);
       if (handleAuthFailure(err)) return;
       if (err.status === 400) {
-        showMessage('CEP invalido. Digite 8 digitos.', 'is-danger');
-        setCepStatus('CEP invalido. Digite 8 digitos.', true);
+        showMessage('CEP inválido. Digite 8 dígitos.', 'is-danger');
+        setCepStatus('CEP inválido. Digite 8 dígitos.', true);
         return;
       }
       if (err.status === 404) {
-        showMessage('CEP nao encontrado. Preencha manualmente.', 'is-danger');
-        setCepStatus('CEP nao encontrado. Preencha manualmente.', true);
+        showMessage('CEP não encontrado. Preencha manualmente.', 'is-danger');
+        setCepStatus('CEP não encontrado. Preencha manualmente.', true);
         return;
       }
       try {
@@ -2416,7 +2419,7 @@
         return;
       }
       if (!validateCnpj(value)) {
-        setCnpjMessage('CNPJ invalido. Use 14 digitos.', true);
+        setCnpjMessage('CNPJ inválido. Use 14 dígitos.', true);
         return;
       }
       const digits = value.replace(/\D/g, '');
@@ -2425,10 +2428,10 @@
       } catch (err) {
         if (handleAuthFailure(err)) return;
         if (err.status === 404) {
-          setCnpjMessage('CNPJ nao encontrado.', true);
+          setCnpjMessage('CNPJ não encontrado.', true);
           return;
         }
-        setCnpjMessage('Nao foi possivel consultar o CNPJ agora.', true);
+        setCnpjMessage('Não foi possível consultar o CNPJ agora.', true);
       }
     });
   }

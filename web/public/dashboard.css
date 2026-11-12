@@ -183,8 +183,17 @@
   gap: 24px;
 }
 
+.dashboard-grid.primary {
+  /* 5 indicadores (clientes, vendas, faturamento, CMV, lucro) na mesma linha no desktop */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
 .dashboard-grid.primary .dashboard-card {
   min-height: 230px;
+}
+
+.dashboard-value.is-negative {
+  color: #b91c1c;
 }
 
 .dashboard-grid.secondary .dashboard-card {

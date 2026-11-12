@@ -47,13 +47,13 @@
   const deleteConfirm = document.getElementById('delete-confirm');
   const DELETE_FLAG = 'sgvc.clientDeleted';
   const UPDATED_FLAG = 'sgvc.clientUpdated';
-  const ADDRESS_STREET_REQUIRED = 'Rua obrigatoria.';
+  const ADDRESS_STREET_REQUIRED = 'Rua obrigatória.';
   const ADDRESS_STREET_LENGTH_MESSAGE = 'Informe o logradouro com pelo menos 3 caracteres.';
-  const ADDRESS_STREET_INVALID_MESSAGE = 'Informe um logradouro valido.';
+  const ADDRESS_STREET_INVALID_MESSAGE = 'Informe um logradouro válido.';
   const ADDRESS_STREET_INVALID_PATTERN = /<\s*\/?\s*script\b|<|>|--|;/i;
   const ADDRESS_STREET_MIN_LENGTH = 3;
-  const ADDRESS_NUMBER_REQUIRED = 'Numero obrigatorio.';
-  const ADDRESS_NUMBER_INVALID = 'Numero invalido.';
+  const ADDRESS_NUMBER_REQUIRED = 'Número obrigatório.';
+  const ADDRESS_NUMBER_INVALID = 'Número inválido.';
 
   let original = {
     name: '',
@@ -723,7 +723,7 @@
         return null;
       })();
       if (typeValue === 'PJ' && !cnpjDigits) {
-        setFieldError(cnpjInput, cnpjError, 'CNPJ obrigatorio para pessoa juridica.');
+        setFieldError(cnpjInput, cnpjError, 'CNPJ obrigatório para pessoa jurídica.');
         return;
       }
       const streetRaw = addressStreetInput ? addressStreetInput.value : '';
@@ -778,11 +778,11 @@
         return;
       }
       if (!payload.email) {
-        setFieldError(emailInput, emailError, 'E-mail obrigatorio.');
+        setFieldError(emailInput, emailError, 'E-mail obrigatório.');
         return;
       }
       if (!validateEmail(payload.email)) {
-        setFieldError(emailInput, emailError, 'Digite um e-mail valido.');
+        setFieldError(emailInput, emailError, 'Digite um e-mail válido.');
         return;
       }
       if (cpfDigits && cpfChanged && !validateCpf(cpfDigits)) {
@@ -790,15 +790,15 @@
         return;
       }
       if (cnpjDigits && cnpjChanged && !validateCnpj(cnpjDigits)) {
-        setFieldError(cnpjInput, cnpjError, 'CNPJ invalido.');
+        setFieldError(cnpjInput, cnpjError, 'CNPJ inválido.');
         return;
       }
       if (payload.phone && !validatePhone(payload.phone)) {
-        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 digitos).');
+        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 dígitos).');
         return;
       }
       if (!validateBirthDate(payload.birthDate)) {
-        setFieldError(birthDateInput, birthDateError, 'Data de nascimento invalida.');
+        setFieldError(birthDateInput, birthDateError, 'Data de nascimento inválida.');
         return;
       }
       saveBtn.classList.add('is-loading');
@@ -935,7 +935,7 @@
         return;
       }
       if (!validateCnpj(value)) {
-        setCnpjMessage('CNPJ invalido.', true);
+        setCnpjMessage('CNPJ inválido.', true);
         return;
       }
       try {
@@ -944,10 +944,10 @@
         setCnpjMessage('Dados preenchidos a partir do CNPJ.', false);
       } catch (err) {
         if (err.status === 404) {
-          setCnpjMessage('CNPJ nao encontrado.', true);
+          setCnpjMessage('CNPJ não encontrado.', true);
           return;
         }
-        setCnpjMessage('Nao foi possivel consultar o CNPJ agora.', true);
+        setCnpjMessage('Não foi possível consultar o CNPJ agora.', true);
       }
       updateDirtyState();
     });
@@ -1002,7 +1002,7 @@
       if (!phoneInput.value.trim() || validatePhone(phoneInput.value)) {
         clearFieldError(phoneInput, phoneError);
       } else {
-        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 digitos).');
+        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 dígitos).');
       }
       updateWhatsAppLink(phoneInput.value);
       updateDirtyState();

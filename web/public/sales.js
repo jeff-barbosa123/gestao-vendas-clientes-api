@@ -253,7 +253,7 @@
       if (match) {
         setInlineMessage(createCustomerHint, 'Cliente cadastrado selecionado.', 'is-success');
       } else if (value && value.trim()) {
-        setInlineMessage(createCustomerHint, 'Cliente nao cadastrado. Venda de balcao.', 'is-warning');
+        setInlineMessage(createCustomerHint, 'Cliente não cadastrado. Venda de balcão.', 'is-warning');
       } else {
         setInlineMessage(createCustomerHint, 'Opcional: selecione um cliente cadastrado.');
       }
@@ -416,14 +416,14 @@
       return;
     }
     if (code.length < 8) {
-      showBarcodeMessage(messageEl, 'Codigo de barras incompleto.', 'is-warning');
+      showBarcodeMessage(messageEl, 'Código de barras incompleto.', 'is-warning');
       return;
     }
-    showBarcodeMessage(messageEl, 'Buscando produto pelo codigo de barras...', 'is-success');
+    showBarcodeMessage(messageEl, 'Buscando produto pelo código de barras...', 'is-success');
     try {
       const data = await lookupBarcode(code, token);
       if (!data || (!data.name && !data.brand)) {
-        showBarcodeMessage(messageEl, 'Produto nao encontrado pelo codigo informado.', 'is-warning');
+        showBarcodeMessage(messageEl, 'Produto não encontrado pelo código informado.', 'is-warning');
         return;
       }
       const displayName = data.name || data.brand;
@@ -437,7 +437,7 @@
       }
       showBarcodeMessage(messageEl, `Produto sugerido: ${displayName}. Selecione manualmente.`, 'is-warning');
     } catch (_err) {
-      showBarcodeMessage(messageEl, 'Nao foi possivel consultar o codigo agora.', 'is-warning');
+      showBarcodeMessage(messageEl, 'Não foi possível consultar o código agora.', 'is-warning');
     }
   }
 
@@ -445,8 +445,17 @@
     return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  // Datas de venda são "só data" e chegam da API como meia-noite UTC.
+  // Exibir em UTC evita mostrar o dia anterior no fuso do Brasil (UTC-3).
   function formatDateInput(value) {
     if (!value) return '';
+    if (value instanceof Date) {
+      // "Hoje" no fuso local (toISOString() viraria o dia seguinte depois das 21h)
+      const y = value.getFullYear();
+      const m = String(value.getMonth() + 1).padStart(2, '0');
+      const d = String(value.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '';
     return date.toISOString().slice(0, 10);
@@ -456,7 +465,7 @@
     if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return String(value);
-    return date.toLocaleDateString('pt-BR');
+    return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   }
 
   async function loadHolidays(year, token) {

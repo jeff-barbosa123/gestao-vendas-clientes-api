@@ -56,7 +56,7 @@ describe('Login UI', () => {
   it('impede login sem senha e foca no campo de senha', () => {
     cy.get('#email').type('teste@exemplo.com');
     cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'Senha obrigatoria.');
+    cy.get('#password-error').should('be.visible').and('contain', 'Senha obrigatória.');
     cy.focused().should('have.attr', 'id', 'password');
   });
 

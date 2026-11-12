@@ -209,11 +209,11 @@
     if (trimmed.length < 3) return 'Use pelo menos 3 caracteres.';
     if (/^[0-9\s]+$/.test(trimmed)) return 'Inclua uma palavra para identificar o produto.';
     const allowed = /^[\p{L}0-9\s'\/-]+$/u;
-    if (!allowed.test(trimmed)) return 'Use apenas letras, numeros, espacos, / ou -.';
+    if (!allowed.test(trimmed)) return 'Use apenas letras, números, espaços, / ou -.';
     if (trimmed === trimmed.toUpperCase() || trimmed === trimmed.toLowerCase()) {
       return 'Dica: iniciais maiusculas deixam o nome mais profissional.';
     }
-    return 'Nome valido. Prossiga com ficha tecnica ou precos.';
+    return 'Nome válido. Prossiga com ficha técnica ou preços.';
   }
 
   function updateNameGuidance(input, helpEl) {
@@ -403,7 +403,7 @@
       const limited = validCache.slice(0, RECIPE_SEARCH_LIMIT);
       updateRecipeSelect(limited);
       if (createRecipeSearchHelp) {
-        createRecipeSearchHelp.textContent = `Exibindo ${limited.length} de ${total} fichas tecnicas.`;
+        createRecipeSearchHelp.textContent = `Exibindo ${limited.length} de ${total} fichas técnicas.`;
       }
       return;
     }
@@ -434,7 +434,7 @@
     if (createRecipeSearchHelp) {
       createRecipeSearchHelp.textContent = total
         ? `Exibindo ${limited.length} de ${total} fichas encontradas.`
-        : 'Nenhuma ficha tecnica encontrada. Ajuste o termo.';
+        : 'Nenhuma ficha técnica encontrada. Ajuste o termo.';
     }
   }
 
@@ -458,7 +458,7 @@
   function updateProducedSuggestionHelp(costUnit, suggested) {
     if (!createPriceSuggestedHelp) return;
     if (!Number.isFinite(costUnit) || !Number.isFinite(suggested) || suggested <= 0) {
-      createPriceSuggestedHelp.textContent = 'O preco sugerido sera calculado a partir da ficha tecnica.';
+      createPriceSuggestedHelp.textContent = 'O preço sugerido será calculado a partir da ficha técnica.';
       return;
     }
     if (costUnit > 0) {

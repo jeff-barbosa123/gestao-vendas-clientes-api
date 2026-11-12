@@ -55,7 +55,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #e2e8f0;
+  color: #475569; /* antes #e2e8f0: quase invisível sobre o cartão branco */
   margin-bottom: 12px;
 }
 

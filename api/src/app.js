@@ -1,40 +1,7 @@
-// Carregar variáveis de ambiente por ambiente
-// Suporta: .env.local, .env.hmg, .env.production, ou .env padrão
-const dotenv = require("dotenv");
+// Carrega o arquivo .env do ambiente (local, test, hmg, production) antes de tudo
+require("./config/loadEnv");
 const fs = require("fs");
 const path = require("path");
-
-const env = process.env.NODE_ENV || 'development';
-let envFile = '.env';
-
-if (process.env.ENV_FILE) {
-  // Permite especificar arquivo via variável de ambiente
-  envFile = process.env.ENV_FILE;
-} else if (env === 'production') {
-  envFile = '.env.production';
-} else if (env === 'staging' || env === 'hmg') {
-  envFile = '.env.hmg';
-} else if (env === 'test') {
-  // Testes usam banco próprio: nunca carregar o .env.local (banco de desenvolvimento)
-  envFile = '.env.test';
-} else {
-  envFile = '.env.local';
-}
-
-// Tentar carregar arquivo específico, fallback para .env
-const envPath = path.join(__dirname, "..", envFile);
-const defaultEnvPath = path.join(__dirname, "..", ".env");
-
-if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
-  console.log(`📄 Ambiente carregado de: ${envFile}`);
-} else if (fs.existsSync(defaultEnvPath)) {
-  dotenv.config({ path: defaultEnvPath });
-  console.log(`📄 Ambiente carregado de: .env (padrão)`);
-} else {
-  console.warn(`⚠️  Nenhum arquivo .env encontrado. Usando variáveis de ambiente do sistema.`);
-  console.warn(`💡 Dica: Copie um arquivo de exemplo (env.local.example, env.hmg.example, ou env.production.example)`);
-}
 
 const express = require("express");
 const cors = require("cors");

@@ -22,6 +22,8 @@
     customers: document.getElementById('metric-customers'),
     sales: document.getElementById('metric-sales'),
     revenue: document.getElementById('metric-revenue'),
+    cmv: document.getElementById('metric-cmv'),
+    profit: document.getElementById('metric-profit'),
     products: document.getElementById('metric-products'),
     recipes: document.getElementById('metric-recipes'),
     linked: document.getElementById('metric-linked'),
@@ -53,6 +55,8 @@
     customers: document.querySelector('[data-empty="customers"]'),
     sales: document.querySelector('[data-empty="sales"]'),
     revenue: document.querySelector('[data-empty="revenue"]'),
+    cmv: document.querySelector('[data-empty="cmv"]'),
+    profit: document.querySelector('[data-empty="profit"]'),
     products: document.querySelector('[data-empty="products"]'),
     recipes: document.querySelector('[data-empty="recipes"]'),
     linked: document.querySelector('[data-empty="linked"]'),
@@ -311,6 +315,8 @@
     const customersValue = Number(data.customers ?? 0);
     const salesValue = Number(data.salesCount ?? 0);
     const revenueValue = Number(data.revenueTotal ?? 0);
+    const cmvValue = Number(data.cmvTotal ?? 0);
+    const profitValue = Number(data.profitTotal ?? revenueValue - cmvValue);
     const productsValue = Number(data.products ?? 0);
     const recipesValue = Number(data.recipes ?? 0);
     const linkedValue = Number(data.linkedProducts ?? 0);
@@ -319,17 +325,24 @@
     if (els.customers) els.customers.textContent = customersValue || 0;
     if (els.sales) els.sales.textContent = salesValue || 0;
     if (els.revenue) els.revenue.textContent = money(revenueValue);
+    if (els.cmv) els.cmv.textContent = money(cmvValue);
+    if (els.profit) {
+      els.profit.textContent = money(profitValue);
+      els.profit.classList.toggle('is-negative', profitValue < 0);
+    }
     if (els.products) els.products.textContent = productsValue || 0;
     if (els.recipes) els.recipes.textContent = recipesValue || 0;
     if (els.linked) els.linked.textContent = linkedValue || 0;
     if (els.margin) {
       els.margin.textContent =
-        marginValue != null ? `${(marginValue * 100).toFixed(1)}%` : '0%';
+        marginValue != null ? `${(marginValue * 100).toFixed(1).replace(".", ",")}%` : '0%';
     }
 
     toggleEmpty('customers', customersValue <= 0);
     toggleEmpty('sales', salesValue <= 0);
     toggleEmpty('revenue', revenueValue <= 0);
+    toggleEmpty('cmv', revenueValue <= 0);
+    toggleEmpty('profit', revenueValue <= 0);
     toggleEmpty('products', productsValue <= 0);
     toggleEmpty('recipes', recipesValue <= 0);
     toggleEmpty('linked', linkedValue <= 0);
@@ -507,7 +520,7 @@
       const prevRevenue = Number(previous.revenue);
       const change = prevRevenue === 0 ? 0 : ((revenue - prevRevenue) / prevRevenue) * 100;
       const sign = change >= 0 ? "+" : "";
-      hint = `Variação de ${sign}${change.toFixed(1)}% em relação ao período anterior`;
+      hint = `Variação de ${sign}${change.toFixed(1).replace(".", ",")}% em relação ao período anterior`;
     }
     setAlertContent(alertRevenueCount, salesCount, alertRevenueMessage, message, alertRevenueHint, hint);
   }
@@ -549,7 +562,7 @@
   }
 
   async function loadRevenueInsights(token, period) {
-    if (!token || !period) return;
+    if (!period) return; // auth via cookie HttpOnly: não há token no navegador
     try {
       const current = await fetchJson("/api/reports/financial", token, {
         start: period.start,
@@ -576,7 +589,7 @@
     }
   }
   async function loadFallbackMetrics(token, period) {
-    if (!token || !period) return null;
+    if (!period) return null; // auth via cookie HttpOnly: não há token no navegador
     try {
       const [customers, products, recipes, financial] = await Promise.all([
         fetchJson("/api/customers", token),
@@ -618,6 +631,18 @@
 
   let isNavigating = false;
 
+  // Mostra o nome (ou o e-mail) do usuário logado no cabeçalho, no lugar de "Usuário"
+  function renderUserName(user) {
+    const label = document.getElementById('dashboard-user');
+    if (!label || !user) return;
+    const name = (user.name || user.nome || user.email || '').trim();
+    if (!name) return;
+    label.textContent = name;
+    label.title = user.email || name;
+    const avatar = document.querySelector('.dashboard-avatar');
+    if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+  }
+
   async function carregarDashboard() {
     const user = await ensureAuthenticated();
     if (!user) {
@@ -628,6 +653,7 @@
       return;
     }
     clearDashboardMessage();
+    renderUserName(user);
     const period = buildPeriodQuery(periodSelect ? periodSelect.value : null);
 
     try {

@@ -17,6 +17,9 @@
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.8" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js" defer></script>
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -260,7 +263,7 @@
                     <button class="button is-light is-small" type="button" id="component-add-cobertura">Cobertura</button>
                     <button class="button is-light is-small" type="button" id="component-add-embalagem">Embalagem</button>
                     <button class="button is-light is-small" type="button" id="component-add-mao-obra">M&#227;o de obra</button>
-                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Aviamentos</button>
+                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Recheio</button>
                     <button class="button is-light is-small" type="button" id="component-add-materia-prima">Mat&#233;ria-prima</button>
                     <button class="button is-light is-small" type="button" id="component-add-acabamento">Acabamento</button>
                   </div>
@@ -275,7 +278,7 @@
                 </div>
                 <div class="field has-addons component-rename">
                   <div class="control is-expanded">
-                    <input class="input" id="component-rename" type="text" placeholder="Renomear parte ativa" />
+                    <input class="input" id="component-rename" aria-label="Novo nome da parte ativa" type="text" placeholder="Renomear parte ativa" />
                   </div>
                   <div class="control">
                     <button class="button is-light" type="button" id="component-rename-btn" title="Renomear parte ativa">Renomear</button>
@@ -309,7 +312,7 @@
                     <div class="control">
                       <span class="unit-label">Unidade</span>
                       <div class="select small-select">
-                        <select id="ingredient-unit">
+                        <select id="ingredient-unit" aria-label="Unidade do ingrediente">
                           <option value="g">gramas (g)</option>
                           <option value="kg">quilos (kg)</option>
                           <option value="l">litros (l)</option>
@@ -354,7 +357,7 @@
                       </div>
                       <div>
                     <label class="label" for="ingredient-cost">Pre&#231;o do pacote</label>
-                        <input class="input" id="ingredient-cost" type="number" min="0" step="0.01" placeholder="Ex: 6,00" aria-label="Preco do pacote" />
+                        <input class="input" id="ingredient-cost" type="number" min="0" step="0.01" placeholder="Ex: 6,00" aria-label="Preço do pacote" />
                       </div>
                     </div>
                   </div>
@@ -454,7 +457,7 @@
                   <tr>
                 <th>Nome</th>
                 <th class="has-text-right">Rendimento</th>
-                <th class="has-text-right">Custo unitario</th>
+                <th class="has-text-right">Custo unitário</th>
                 <th class="has-text-right">Pre&#231;o sugerido</th>
                 <th class="has-text-right">Pre&#231;o total</th>
                 <th>Situa&#231;&#227;o</th>
@@ -465,7 +468,7 @@
               </table>
             </div>
             <div class="recipes-pagination" id="recipes-pagination" hidden>
-              <button class="button is-light is-small" id="prev-page" aria-label="Pagina anterior">
+              <button class="button is-light is-small" id="prev-page" aria-label="Página anterior">
                 Anterior
               </button>
               <div class="recipes-page-list" id="page-list"></div>
@@ -493,7 +496,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&#227;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <script src="/static/recipes.js" defer></script>

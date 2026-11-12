@@ -195,7 +195,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
         cpf: identifications.invalidCpf,
       });
       cy.get('#create-cpf').blur();
-      cy.get('#create-cpf-error').should('be.visible').and('contain', 'CPF invalido.');
+      cy.get('#create-cpf-error').should('be.visible').and('contain', 'CPF inválido.');
     });
 
     it('CPF duplicado recebe alerta da API', () => {
@@ -237,7 +237,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
         cnpj: identifications.invalidCnpj,
       });
       cy.get('#create-cnpj').blur();
-      cy.get('#create-cnpj-error').should('be.visible').and('contain', 'CNPJ invalido. Use 14 digitos.');
+      cy.get('#create-cnpj-error').should('be.visible').and('contain', 'CNPJ inválido. Use 14 dígitos.');
     });
 
     it('CNPJ duplicado dispara mensagem da API', () => {
@@ -389,7 +389,7 @@ describe('SGVC - Cadastro e formulario de clientes', () => {
       cy.get('#create-address-postal').type('22222222');
       cy.get('#create-address-postal').blur();
       cy.wait('@cepLookup');
-      cy.get('#clients-message').should('contain', 'CEP nao encontrado');
+      cy.get('#clients-message').should('contain', 'CEP não encontrado');
     });
 
     it('CEP com letras remove caracteres e mantem formato', () => {

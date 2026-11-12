@@ -14,6 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.10.8" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js" defer></script>
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -75,7 +78,7 @@
                 <div class="recipes-step-header">
                   <span class="recipes-step-index">2</span>
                   <div>
-                    <p class="recipes-step-title">Producao / rendimento</p>
+                    <p class="recipes-step-title">Produção / rendimento</p>
                       <p class="recipes-step-subtitle">Quantas unidades esse preparo gera no total.</p>
                   </div>
                 </div>
@@ -166,7 +169,7 @@
                   <table class="table is-fullwidth" style="margin-top:8px;">
                     <thead>
                       <tr>
-                        <th>Descricao</th>
+                        <th>Descrição</th>
                         <th class="has-text-right">Valor</th>
                         <th class="has-text-right">A&ccedil;&otilde;es</th>
                       </tr>
@@ -253,7 +256,7 @@
                     <button class="button is-light is-small" type="button" id="component-add-cobertura">Cobertura</button>
                     <button class="button is-light is-small" type="button" id="component-add-embalagem">Embalagem</button>
                     <button class="button is-light is-small" type="button" id="component-add-mao-obra">M&atilde;o de obra</button>
-                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Aviamentos</button>
+                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Recheio</button>
                     <button class="button is-light is-small" type="button" id="component-add-materia-prima">Mat&eacute;ria-prima</button>
                     <button class="button is-light is-small" type="button" id="component-add-acabamento">Acabamento</button>
                   </div>
@@ -346,8 +349,8 @@
                         </div>
                       </div>
                       <div>
-                        <label class="label" for="edit-ingredient-cost">Preco do pacote</label>
-                        <input class="input" id="edit-ingredient-cost" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 6,00" aria-label="Preco do pacote" />
+                        <label class="label" for="edit-ingredient-cost">Preço do pacote</label>
+                        <input class="input" id="edit-ingredient-cost" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 6,00" aria-label="Preço do pacote" />
                       </div>
                     </div>
                   </div>
@@ -417,7 +420,7 @@
                     <span class="cost-summary-value" id="summary-unit">-</span>
                   </div>
                   <div class="cost-summary-item">
-                    <span class="cost-summary-label">Preco sugerido para venda</span>
+                    <span class="cost-summary-label">Preço sugerido para venda</span>
                     <span class="cost-summary-value" id="summary-suggested">-</span>
                   </div>
                   <div class="cost-summary-item">
@@ -438,7 +441,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <div class="modal" id="delete-modal" aria-hidden="true">
@@ -454,7 +457,7 @@
         </section>
         <footer class="modal-card-foot">
           <button class="button is-light" id="delete-cancel">Cancelar</button>
-          <button class="button is-danger" id="delete-confirm">Confirmar exclusao</button>
+          <button class="button is-danger" id="delete-confirm">Confirmar exclusão</button>
         </footer>
       </div>
     </div>

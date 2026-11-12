@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/vinculos.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -34,29 +37,6 @@
           </header>
 
           <div class="links-message" id="links-message" role="status" aria-live="polite" hidden></div>
-
-          <section class="links-summary">
-            <article class="summary-card">
-              <p class="summary-label">Produtos com ficha</p>
-              <p class="summary-value" id="summary-linked">0</p>
-              <p class="summary-help">V&iacute;nculos ativos e prontos.</p>
-            </article>
-            <article class="summary-card is-warning">
-              <p class="summary-label">Sem ficha</p>
-              <p class="summary-value" id="summary-missing">0</p>
-              <p class="summary-help">Precisa vincular para calcular custo.</p>
-            </article>
-            <article class="summary-card is-alert">
-              <p class="summary-label">Ficha incompleta</p>
-              <p class="summary-value" id="summary-incomplete">0</p>
-              <p class="summary-help">Revisar rendimento ou custos.</p>
-            </article>
-            <article class="summary-card">
-              <p class="summary-label">Total de produtos</p>
-              <p class="summary-value" id="summary-total">0</p>
-              <p class="summary-help">Base de produtos cadastrados.</p>
-            </article>
-          </section>
 
           <section class="links-insights" aria-label="Alertas r&aacute;pidos de v&iacute;nculo">
             <article class="insight-card is-missing">
@@ -78,6 +58,13 @@
               <button class="button is-light is-small" type="button" data-quick-filter="incomplete">
                 Ver somente
               </button>
+            </article>
+            <article class="insight-card">
+              <div>
+                <p class="insight-label">Total de produtos</p>
+                <p class="insight-value" id="summary-total">0</p>
+                <p class="insight-help">Base de produtos cadastrados.</p>
+              </div>
             </article>
             <article class="insight-card is-linked">
               <div>
@@ -196,7 +183,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <script src="/static/vinculos.js" defer></script>

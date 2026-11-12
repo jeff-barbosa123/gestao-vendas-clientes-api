@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/clients.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
     <script src="/static/error-handler.js" defer></script>
     <script src="/static/api-client.js" defer></script>
     <script src="/static/skeleton-loading.js" defer></script>
@@ -72,14 +73,14 @@
                           aria-describedby="create-type-hint"
                           aria-label="Tipo de cliente: Pessoa Física ou Pessoa Jurídica"
                         >
-                          <option value="">Sem sele&#231;&#227;o (comportamento atual)</option>
+                          <option value="">N&#227;o informar</option>
                           <option value="PF">Pessoa F&#237;sica (CPF)</option>
                           <option value="PJ">Pessoa Jur&#237;dica (CNPJ)</option>
                         </select>
                       </div>
                     </div>
                     <p class="help clients-field-hint" id="create-type-hint">
-                      A escolha altera os campos exibidos sem impactar o comportamento atual quando n&#227;o selecionado.
+                      Pessoa f&#237;sica mostra o campo CPF; pessoa jur&#237;dica mostra o CNPJ. Opcional.
                     </p>
                   </div>
                   <div class="field">
@@ -251,7 +252,7 @@
                   </p>
                 </div>
                   <div class="field">
-                    <label class="label" for="create-address-number">Numero</label>
+                    <label class="label" for="create-address-number">Número</label>
                     <input
                       class="input"
                       id="create-address-number"
@@ -349,7 +350,7 @@
                       aria-invalid="false"
                       aria-label="CEP do endereço (8 dígitos)"
                     />
-                    <p class="clients-address-hint" id="create-address-postal-hint">Ao sair do campo CEP, o endereco sera preenchido automaticamente.</p>
+                    <p class="clients-address-hint" id="create-address-postal-hint">Ao sair do campo CEP, o endereço será preenchido automaticamente.</p>
                     <p class="help clients-field-hint" id="cep-status" aria-live="polite" hidden></p>
                   </div>
                 </div>
@@ -531,7 +532,7 @@
               <button
                 class="button is-light is-small"
                 id="prev-page"
-                aria-label="Pagina anterior"
+                aria-label="Página anterior"
                 data-testid="pagination-prev-btn"
               >
                 Anterior
@@ -550,7 +551,7 @@
                       class="button is-light is-small"
                       type="button"
                       id="page-jump-btn"
-                      aria-label="Ir para pagina"
+                      aria-label="Ir para página"
                       data-testid="pagination-jump-btn"
                     >
                       Ir
@@ -573,7 +574,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&#227;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <script src="/static/sgvc-utils.js" defer></script>

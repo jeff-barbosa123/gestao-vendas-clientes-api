@@ -5,7 +5,7 @@
  * Usage: node scripts/migrate-passwords.js
  */
 
-require("dotenv").config();
+require("../src/config/loadEnv");
 const { pool } = require("../src/db");
 const { hashPassword, isBcryptHash } = require("../src/utils/passwordHash");
 

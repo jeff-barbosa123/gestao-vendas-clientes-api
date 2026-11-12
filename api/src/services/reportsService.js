@@ -68,7 +68,8 @@ async function getRevenue({ start, end, day, week, month, year, breakdown, userI
     const dx = new Date(s.date);
     // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
     const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
-    return dx >= startDate && dx <= endOfDay;
+    // Sem filtro de período ("Sem filtro" na tela) = considera todas as vendas
+    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
   });
   if (normalizedBreakdown === "total") return summarize(sales, "total");
   if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
@@ -203,7 +204,8 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
     const dx = new Date(s.date);
     // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
     const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
-    return dx >= startDate && dx <= endOfDay;
+    // Sem filtro de período ("Sem filtro" na tela) = considera todas as vendas
+    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
   });
   const total = sales.reduce(
     (acc, sale) => {

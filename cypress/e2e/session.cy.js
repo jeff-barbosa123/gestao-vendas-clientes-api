@@ -35,7 +35,7 @@ describe('SGVC - Login e sessao', () => {
     cy.visit('/');
     cy.get('#login-btn').click();
     cy.get('#email-error').should('contain', 'E-mail obrigatório.');
-    cy.get('#password-error').should('contain', 'Senha obrigatoria.');
+    cy.get('#password-error').should('contain', 'Senha obrigatória.');
   });
 
   it('Sessao persiste apos recarregar o dashboard', () => {

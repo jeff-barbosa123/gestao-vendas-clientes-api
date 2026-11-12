@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/products.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -57,7 +60,7 @@
                 <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
               </div>
               <div class="field">
-                <label class="label" for="edit-description">Descricao</label>
+                <label class="label" for="edit-description">Descrição</label>
                 <input
                   class="input"
                   id="edit-description"
@@ -123,17 +126,17 @@
                 </div>
                 <div class="field grouped">
                   <div>
-                    <label class="label">Custo unitario</label>
+                    <label class="label">Custo unitário</label>
                     <p class="product-readonly" id="edit-cost-unit">-</p>
                   </div>
                   <div>
-                    <label class="label">Preco sugerido</label>
+                    <label class="label">Preço sugerido</label>
                     <p class="product-readonly" id="edit-price-suggested">-</p>
                   </div>
                 </div>
                 <p class="help" id="edit-price-suggested-help" style="color:#64748b;"></p>
                 <div class="field">
-                  <label class="label" for="edit-final-price">Preco final (opcional)</label>
+                  <label class="label" for="edit-final-price">Preço final (opcional)</label>
                   <input
                     class="input"
                     id="edit-final-price"
@@ -159,7 +162,7 @@
               <div class="product-type-section" id="edit-resale-section" hidden>
                 <p class="products-step">3. Custos e venda</p>
                 <div class="field">
-                  <label class="label" for="edit-purchase-price">Preco de compra <span class="required">*</span></label>
+                  <label class="label" for="edit-purchase-price">Preço de compra <span class="required">*</span></label>
                   <input
                     class="input"
                     id="edit-purchase-price"
@@ -173,7 +176,7 @@
                   <p class="help is-danger" id="edit-purchase-price-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
-                  <label class="label" for="edit-price">Preco de venda <span class="required">*</span></label>
+                  <label class="label" for="edit-price">Preço de venda <span class="required">*</span></label>
                   <input
                     class="input"
                     id="edit-price"
@@ -183,7 +186,7 @@
                     aria-required="true"
                     aria-describedby="edit-price-help edit-price-error"
                   />
-                  <p class="help" id="edit-price-help" style="color:#64748b;">Preco final cobrado do cliente.</p>
+                  <p class="help" id="edit-price-help" style="color:#64748b;">Preço final cobrado do cliente.</p>
                   <p class="help" id="edit-price-suggestion" style="color:#64748b;"></p>
                   <p class="help is-danger" id="edit-price-error" aria-live="polite" hidden></p>
                 </div>
@@ -243,7 +246,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <div class="modal" id="delete-modal" aria-hidden="true">
@@ -262,7 +265,7 @@
         </section>
         <footer class="modal-card-foot">
           <button class="button is-light" id="delete-cancel">Cancelar</button>
-          <button class="button is-danger" id="delete-confirm">Confirmar exclusao</button>
+          <button class="button is-danger" id="delete-confirm">Confirmar exclusão</button>
         </footer>
       </div>
     </div>

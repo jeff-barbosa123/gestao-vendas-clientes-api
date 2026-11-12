@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/simulacao.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -159,13 +162,13 @@
                   <label class="label">Ingredientes e custos</label>
                   <div class="field has-addons">
                     <div class="control is-expanded">
-                      <input class="input" id="ingredient-name" type="text" placeholder="Ex: Farinha de trigo" />
+                      <input class="input" id="ingredient-name" aria-label="Nome do ingrediente" type="text" placeholder="Ex: Farinha de trigo" />
                     </div>
                     <div class="control">
-                      <input class="input" id="ingredient-qty" type="text" inputmode="decimal" placeholder="Ex: 1" />
+                      <input class="input" id="ingredient-qty" aria-label="Quantidade do ingrediente" type="text" inputmode="decimal" placeholder="Ex: 1" />
                     </div>
                     <div class="control">
-                      <input class="input" id="ingredient-cost" type="text" inputmode="decimal" placeholder="Ex: 2,50" />
+                      <input class="input" id="ingredient-cost" aria-label="Custo do ingrediente (R$)" type="text" inputmode="decimal" placeholder="Ex: 2,50" />
                     </div>
                     <div class="control">
                       <button class="button is-light" type="button" id="add-ingredient">Adicionar</button>
@@ -260,7 +263,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <script src="/static/simulacao.js" defer></script>

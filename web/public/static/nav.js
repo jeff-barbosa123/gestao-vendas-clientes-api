@@ -7,6 +7,7 @@
   const ITEMS = [
     { href: '/dashboard.html', label: 'Painel' },
     { href: '/sales.html', label: 'Vendas' },
+    { href: '/orders.html', label: 'Encomendas' },
     { href: '/clients.html', label: 'Clientes', match: ['/client-edit.html'] },
     { href: '/products.html', label: 'Produtos', match: ['/product-edit.html'] },
     { href: '/ingredients.html', label: 'Insumos' },

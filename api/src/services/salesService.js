@@ -486,6 +486,8 @@ async function summary(user) {
 }
 
 module.exports = {
+  normalizePaymentMethod,
+  allowedPaymentMethods,
   getAll,
   getById,
   create,

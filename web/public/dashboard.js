@@ -374,6 +374,45 @@
     });
   }
 
+  // Encomendas em aberto nos próximos 7 dias (independe do período do painel)
+  async function loadUpcomingOrders() {
+    const msgEl = document.getElementById('alert-orders-message');
+    const listEl = document.getElementById('alert-orders-list');
+    const countEl = document.getElementById('alert-orders-count');
+    if (!msgEl || !listEl) return;
+    const from = new Date();
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(from.getTime() + 7 * 864e5);
+    try {
+      const orders = await fetchJson(
+        '/api/orders',
+        null,
+        { from: from.toISOString(), to: to.toISOString(), status: 'PENDING,READY' },
+        { method: 'GET' }
+      );
+      const list = Array.isArray(orders) ? orders : [];
+      listEl.textContent = '';
+      if (countEl) countEl.textContent = list.length ? String(list.length) : '';
+      if (!list.length) {
+        msgEl.textContent = 'Nenhuma encomenda para os próximos 7 dias.';
+        return;
+      }
+      const total = list.reduce((s, o) => s + Number(o.total || 0), 0);
+      msgEl.textContent = `${list.length} encomenda(s) nos próximos 7 dias · ${money(total)}.`;
+      list.slice(0, 4).forEach((o) => {
+        const li = document.createElement('li');
+        const name = document.createElement('span');
+        name.textContent = o.customerName || 'Cliente';
+        const when = document.createElement('span');
+        when.textContent = new Date(o.deliveryAt).toLocaleString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        li.append(name, when);
+        listEl.appendChild(li);
+      });
+    } catch (_err) {
+      msgEl.textContent = 'Não foi possível carregar as encomendas.';
+    }
+  }
+
   function updateMetrics(data) {
     renderPricingAlerts(data);
     renderStockAlerts(data);
@@ -749,6 +788,7 @@
       console.error('Dashboard error:', friendlyMessage);
     } finally {
       await Promise.all([
+        loadUpcomingOrders(),
         loadRevenueInsights(null, period),
         loadClients(null),
         loadProducts(null),

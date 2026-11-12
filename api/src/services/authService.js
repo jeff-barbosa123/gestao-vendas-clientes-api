@@ -4,7 +4,8 @@ const { v4: uuidv4 } = require("uuid");
 const repo = require("../db/repository");
 const emailService = require("./emailService");
 const { getBlockDurationMs } = require("../utils/authConfig");
-const { failedAttempts, tokenStore, refreshStore } = require("../models/db");
+const { failedAttempts } = require("../models/db");
+const sessionStore = require("./sessionStore");
 const { hashPassword, comparePassword } = require("../utils/passwordHash");
 
 // Validate required environment variables
@@ -305,7 +306,7 @@ function signRefreshToken(user, refreshJti) {
   });
 }
 
-function issueTokens(user) {
+async function issueTokens(user) {
   try {
     if (!JWT_SECRET || !JWT_REFRESH_SECRET) {
       const err = new Error('JWT_SECRET ou JWT_REFRESH_SECRET não configurado. Configure no arquivo .env.local');
@@ -321,7 +322,8 @@ function issueTokens(user) {
     const refreshToken = signRefreshToken(user, refreshJti);
 
     const now = Date.now();
-    tokenStore.set(accessJti, {
+    // Sessões gravadas em memória + PostgreSQL (sobrevivem a reinício/deploy da API)
+    await sessionStore.save("access", {
       jti: accessJti,
       userId: user.id,
       email: user.email,
@@ -331,12 +333,13 @@ function issueTokens(user) {
       expiresAt: now + JWT_TTL_SECONDS * 1000,
     });
 
-    refreshStore.set(refreshJti, {
+    await sessionStore.save("refresh", {
       jti: refreshJti,
       userId: user.id,
       email: user.email,
       revoked: false,
       issuedAt: now,
+      lastActivity: now,
       expiresAt: now + JWT_REFRESH_TTL_SECONDS * 1000,
     });
 
@@ -460,7 +463,7 @@ async function login(rawEmail, rawPassword) {
     }
 
     // Gera tokens - se falhar aqui, propaga o erro (não pode fazer login sem tokens)
-    const { token, refreshToken, exp, jti, refreshJti } = issueTokens(user);
+    const { token, refreshToken, exp, jti, refreshJti } = await issueTokens(user);
 
     return {
       token,
@@ -485,9 +488,8 @@ async function login(rawEmail, rawPassword) {
   }
 }
 
-function logout(jti) {
-  const entry = tokenStore.get(jti);
-  if (entry) entry.revoked = true;
+async function logout(jti) {
+  await sessionStore.revoke("access", jti);
 }
 
 async function refresh(refreshTokenRaw) {
@@ -516,7 +518,7 @@ async function refresh(refreshTokenRaw) {
     }
   }
 
-  const entry = refreshStore.get(payload.jti);
+  const entry = await sessionStore.get("refresh", payload.jti);
   if (!entry || entry.revoked) {
     const err = new Error(MESSAGES.refreshInvalid);
     err.status = 401;
@@ -530,7 +532,8 @@ async function refresh(refreshTokenRaw) {
     throw err;
   }
 
-  entry.revoked = true;
+  // Refresh token é de uso único
+  await sessionStore.revoke("refresh", payload.jti);
 
   return issueTokens(user);
 }

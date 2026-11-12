@@ -60,12 +60,16 @@ module.exports = {
     }
   },
 
-  logout: (req, res) => {
-    if (req.auth && req.auth.jti) {
-      authService.logout(req.auth.jti);
+  logout: async (req, res, next) => {
+    try {
+      if (req.auth && req.auth.jti) {
+        await authService.logout(req.auth.jti);
+      }
+      clearAuthCookies(res);
+      return res.status(204).end();
+    } catch (err) {
+      return next(err);
     }
-    clearAuthCookies(res);
-    return res.status(204).end();
   },
 
   register: async (req, res, next) => {

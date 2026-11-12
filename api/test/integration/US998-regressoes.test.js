@@ -213,4 +213,41 @@ describe('US998 - Regressões (varredura 11/11/2026)', () => {
       expect(found.customerName).to.equal('Cliente Nome Regressao');
     });
   });
+
+  describe('Sessões persistentes', () => {
+    const { tokenStore, refreshStore } = require('../../src/models/db');
+    const simulateRestart = () => {
+      // Reinício da API = cache de sessões em memória vazio
+      tokenStore.clear();
+      refreshStore.clear();
+    };
+
+    it('REG-013 | Sessão continua válida depois de reiniciar a API', async () => {
+      const token = await loginAndGetToken('other');
+      simulateRestart();
+      const res = await http.get('/api/auth/me').set(auth(token));
+      expect(res.status).to.equal(200);
+    });
+
+    it('REG-014 | Logout continua valendo depois de reiniciar a API', async () => {
+      const token = await loginAndGetToken('other');
+      const out = await http.post('/api/auth/logout').set(auth(token));
+      expect(out.status).to.equal(204);
+      simulateRestart();
+      const res = await http.get('/api/auth/me').set(auth(token));
+      expect(res.status).to.equal(401);
+    });
+
+    it('REG-015 | Refresh token funciona depois de reiniciar a API e é de uso único', async () => {
+      const login = await http
+        .post('/api/auth/login')
+        .send({ email: USERS.other.email, password: USERS.other.password });
+      expect(login.status).to.equal(200);
+      simulateRestart();
+      const first = await http.post('/api/auth/refresh').send({ refreshToken: login.body.refreshToken });
+      expect(first.status).to.equal(200);
+      const second = await http.post('/api/auth/refresh').send({ refreshToken: login.body.refreshToken });
+      expect(second.status).to.equal(401);
+    });
+  });
 });

@@ -52,7 +52,9 @@ funcionam sem HTTPS em desenvolvimento.
 - O frontend usa os cookies; Swagger/Postman/testes usam `Authorization: Bearer <token>`.
 - Requisições que usam o cookie de sessão precisam do header `X-CSRF-Token` igual ao cookie
   `sgvc_csrf` (obtido em `GET /api/auth/csrf`). Requisições só com Bearer não precisam.
-- Sessões ficam em memória (`tokenStore`): reiniciar a API desloga todos os usuários.
+- Sessões ficam na tabela `auth_sessions` (PostgreSQL) com cache em memória: reiniciar ou fazer
+  deploy da API **não** desloga ninguém. Refresh token é de uso único; sessões expiradas são
+  removidas automaticamente.
 
 ## E-mail (recuperação de senha e verificação de e-mail)
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-11-12 — Estoque de insumos (US010)
+
+### Novo
+- **Estoque por insumo** na unidade base (g, ml ou un), mostrado em kg/l quando passa de 1.000.
+  Só é controlado nos insumos com estoque informado; os outros seguem como antes.
+- **Baixa automática pela venda:** cada produto com ficha técnica desconta
+  (quantidade do item na ficha ÷ rendimento) × quantidade vendida de cada insumo ligado.
+  Funciona com a ficha ligada pelo produto (`ficha_tecnica_id`) ou pela ficha (`link_product_id`).
+- **Cancelar a venda devolve os insumos** (sem devolver em dobro se cancelar de novo);
+  editar os itens refaz a baixa.
+- **Entrada de compra:** soma ao estoque e, com o valor pago, atualiza o preço do insumo,
+  o que recalcula as fichas e o CMV dos produtos.
+- **Contagem** (ajuste para o valor exato) e **estoque mínimo** com aviso de reposição:
+  na tela de Insumos (faixa no topo e selo "Repor"), no painel (card "Insumos para repor")
+  e na mensagem da venda que fez o insumo chegar ao mínimo.
+- Histórico de movimentações (compra, venda, venda cancelada, contagem) com o saldo após cada uma.
+- API: `/api/ingredients/low-stock`, `/api/ingredients/{id}/stock/purchases|adjust|min|movements`
+  e `DELETE /api/ingredients/{id}/stock`. Migration 006.
+
+### Testes
+- `US010-stock.test.js` (12 testes; API com 310 passando) e `estoque-insumos.cy.js`
+  (fluxo pela tela contra o backend real).
+
 ## 2026-11-12 — Suíte Cypress verde e correções achadas por ela
 
 ### Corrigido (telas)

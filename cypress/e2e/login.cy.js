@@ -80,6 +80,7 @@ describe('Login UI', () => {
 
     cy.get('#email').type('admin@negocio.com');
     cy.get('#password').type('Admin@123!');
+    cy.stubAuthenticated();
     cy.get('#login-btn').click();
 
     cy.wait('@login');
@@ -279,6 +280,7 @@ describe('Login UI', () => {
     }).as('loginEnter');
 
     cy.get('#email').type('admin@negocio.com');
+    cy.stubAuthenticated();
     cy.get('#password').type('Admin@123!{enter}');
 
     cy.wait('@loginEnter');
@@ -595,6 +597,7 @@ describe('Login UI', () => {
 
     cy.get('#email').type('admin@negocio.com');
     cy.get('#password').type('MyP@ssw0rd123!');
+    cy.stubAuthenticated();
     cy.get('#login-btn').click();
     cy.wait('@loginStrong');
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');

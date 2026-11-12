@@ -15,6 +15,7 @@ Ficam em `api/test/integration/`, um arquivo por user story:
 | `US007-products-ficha.test.js` | Vínculo ficha técnica ↔ produto |
 | `US008-ingredients.test.js` | Cadastro de insumos, recálculo automático, precisão de custo, margem |
 | `US009-margem-pagamento.test.js` | Forma de pagamento (gravação, edição, relatório) e alertas de margem |
+| `US010-stock.test.js` | Estoque de insumos: compra, baixa pela venda, cancelamento, mínimo e avisos |
 | `US998-regressoes.test.js` | Regressões de bugs corrigidos (isolamento entre usuários, CSRF, dashboard...) |
 | `US999-*.test.js` | Mensagens de erro e paginação |
 | `docs-swagger.test.js` | Swagger |
@@ -52,9 +53,10 @@ Como as specs funcionam:
   HttpOnly). Qualquer chamada `/api` sem stub específico recebe uma resposta neutra
   (`cypress/support/e2e.js`), então a tela não volta para o login no meio do teste.
   `cy.clearSession()` simula "deslogado" (401 em tudo).
-- **Backend real:** `fluxo-completo.cy.js` não usa stubs. Faz login, cadastra insumo, produto e venda
-  e confere painel e relatório. Usa `CYPRESS_E2E_EMAIL` / `CYPRESS_E2E_PASSWORD` (padrão: admin do seed,
-  `admin@negocio.com` / `admin123`).
+- **Backend real:** `fluxo-completo.cy.js` e `estoque-insumos.cy.js` não usam stubs. Cada um cria o
+  próprio usuário na hora (`cy.createRealUser`), então não depende do admin do seed nem deixa dados
+  de teste na conta dele. Fazem login, cadastram insumo, produto e venda e conferem painel, relatório
+  e estoque.
 - Datas: specs que dependem de "hoje" (tags Novo/Antigo, aniversariantes) congelam a data com `cy.clock`.
 
 A CI roda a suíte inteira no job `e2e-tests`, depois dos testes de API.

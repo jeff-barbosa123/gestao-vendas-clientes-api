@@ -57,6 +57,12 @@
   border: 1px solid #a7f3d0;
 }
 
+.sales-message.is-warning {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
 .sales-message.is-danger {
   background: #fff1f2;
   color: #7f1d1d;

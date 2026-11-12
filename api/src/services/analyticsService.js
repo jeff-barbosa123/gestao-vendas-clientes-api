@@ -88,6 +88,13 @@ async function getOverview(filters = {}, user) {
     recipes: recipes.length,
     linkedProducts: products.filter((p) => p.ficha_tecnica_id).length,
     pricingAlerts: buildPricingAlerts(products),
+    stockAlerts: (await repo.listLowStockIngredients(user ? user.id : null)).map((i) => ({
+      ingredientId: i.id,
+      name: i.name,
+      stockQuantity: i.stockQuantity,
+      minStock: i.minStock,
+      stockUnit: i.stockUnit,
+    })),
     lowMarginThreshold: LOW_MARGIN_THRESHOLD,
     // listSales ordena por data DESC: a venda mais recente é a primeira (antes pegava a mais antiga)
     lastSaleAt: sales.length ? sales[0].date : null,

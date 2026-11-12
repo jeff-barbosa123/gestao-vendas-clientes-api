@@ -854,6 +854,7 @@ async function recalculateByIngredient(ingredientId, user) {
 
 module.exports = {
   normalizeUnit,
+  normalizeQuantity,
   recalculateByIngredient,
   list,
   getById,

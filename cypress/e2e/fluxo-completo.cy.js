@@ -1,27 +1,29 @@
 /**
  * Fluxo completo contra o backend REAL (sem stubs).
- * Precisa da API (porta 3000), da web (porta 4000) e do usuário do seed.
- * Credenciais: CYPRESS_E2E_EMAIL / CYPRESS_E2E_PASSWORD (padrão: admin do seed).
+ * Precisa da API (porta 3000) e da web (porta 4000). Usa um usuário criado na hora (cy.createRealUser).
  *
  * Cobre o caminho do dia a dia: login → insumo → ficha técnica puxando o insumo →
  * produto de revenda → venda com forma de pagamento → painel e relatório.
  */
 describe('SGVC - Fluxo Completo End-to-End (backend real)', () => {
-  const email = Cypress.env('E2E_EMAIL') || 'admin@negocio.com';
-  const password = Cypress.env('E2E_PASSWORD') || 'admin123';
+  let user;
   const tag = Date.now();
   const insumo = `Leite condensado E2E ${tag}`;
   const produto = `Refrigerante E2E ${tag}`;
   const cliente = `Cliente E2E ${tag}`;
 
-  const apiLogin = () => {
-    cy.request('POST', '/api/auth/login', { email, password }).its('status').should('eq', 200);
-  };
+  const apiLogin = () => cy.loginReal(user);
+
+  before(() => {
+    cy.createRealUser('fluxo').then((u) => {
+      user = u;
+    });
+  });
 
   it('login pela tela leva ao painel', () => {
     cy.visit('/');
-    cy.get('#email').type(email);
-    cy.get('#password').type(password, { log: false });
+    cy.get('#email').type(user.email);
+    cy.get('#password').type(user.password, { log: false });
     cy.get('#login-btn').click();
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
     cy.get('#metric-customers').should('not.be.empty');

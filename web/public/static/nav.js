@@ -9,6 +9,7 @@
     { href: '/sales.html', label: 'Vendas' },
     { href: '/clients.html', label: 'Clientes', match: ['/client-edit.html'] },
     { href: '/products.html', label: 'Produtos', match: ['/product-edit.html'] },
+    { href: '/ingredients.html', label: 'Insumos' },
     { href: '/recipes.html', label: 'Fichas técnicas', match: ['/recipe-edit.html'] },
     { href: '/vinculos.html', label: 'Vínculos' },
     { href: '/reports.html', label: 'Relatórios' },

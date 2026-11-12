@@ -258,6 +258,61 @@
     });
   }
 
+  // ===== Cadastro único de insumos =====
+  // Insumos cadastrados aparecem primeiro nas sugestões; ao escolher um, embalagem e preço são
+  // preenchidos e o item fica ligado ao cadastro (ingredientId): quando o preço mudar na tela
+  // Insumos, esta ficha é recalculada automaticamente.
+  const catalogByName = new Map();
+
+  function findCatalogIngredient(name) {
+    return catalogByName.get(String(name || '').trim().toLowerCase()) || null;
+  }
+
+  function formatCatalogNumber(value, input) {
+    const fixed = Number(value).toFixed(2).replace(/\.00$/, '');
+    return input && input.type === 'number' ? fixed : fixed.replace('.', ',');
+  }
+
+  async function loadIngredientCatalog() {
+    try {
+      const list = await apiRequest('/api/ingredients', null, { method: 'GET' });
+      (Array.isArray(list) ? list : []).forEach((item) => {
+        catalogByName.set(String(item.name).trim().toLowerCase(), item);
+      });
+      if (ingredientSuggestions && catalogByName.size) {
+        const fragment = document.createDocumentFragment();
+        catalogByName.forEach((item) => {
+          const opt = document.createElement('option');
+          opt.value = item.name;
+          opt.label = `Insumo cadastrado: R$ ${Number(item.packageCost).toFixed(2).replace('.', ',')} por ${item.packageQuantity} ${item.packageUnit}`;
+          fragment.appendChild(opt);
+        });
+        ingredientSuggestions.prepend(fragment);
+      }
+    } catch (_err) {
+      // Sem cadastro de insumos disponível: a ficha continua funcionando com preço manual
+    }
+  }
+
+  function applyCatalogToForm() {
+    const match = findCatalogIngredient(ingredientName && ingredientName.value);
+    if (!match) return;
+    if (ingredientPack) ingredientPack.value = formatCatalogNumber(match.packageQuantity, ingredientPack);
+    if (ingredientPackUnit) {
+      ingredientPackUnit.value = match.packageUnit;
+      ingredientPackUnit.dispatchEvent(new Event('change'));
+    }
+    if (ingredientCost) ingredientCost.value = formatCatalogNumber(match.packageCost, ingredientCost);
+    if (typeof setIngredientAdvancedOpen === 'function') setIngredientAdvancedOpen(true);
+    showIngredientSuccess(
+      `Preço do cadastro de insumos: R$ ${Number(match.packageCost).toFixed(2).replace('.', ',')} por ${match.packageQuantity} ${match.packageUnit}. Esta ficha será recalculada quando o preço mudar.`
+    );
+  }
+
+  if (ingredientName) {
+    ingredientName.addEventListener('change', applyCatalogToForm);
+  }
+
   async function apiRequest(path, _tokenIgnored, options = {}) {
     const url = buildUrl(path);
     const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
@@ -1346,7 +1401,7 @@
       showIngredientSuccess('Item adicionado.');
       const activeComponent = getActiveComponent();
       if (activeComponent) {
-        activeComponent.items.push({ name, quantity, packageQuantity: pack, cost, unit, packUnit, component: activeComponent.name });
+        activeComponent.items.push({ name, ingredientId: (findCatalogIngredient(name) || {}).id, quantity, packageQuantity: pack, cost, unit, packUnit, component: activeComponent.name });
       }
       ingredientName.value = '';
       ingredientQty.value = '';
@@ -1449,6 +1504,7 @@
           unit: item.unit,
           packUnit: item.packUnit,
           component: item.component || undefined,
+          ingredientId: item.ingredientId || undefined,
         }));
         await apiRequest('/api/recipes', null, {
           method: 'POST',
@@ -1807,7 +1863,7 @@
   }
 
   initMasks();
-  loadIngredientSuggestions();
+  loadIngredientSuggestions().then(loadIngredientCatalog);
   bindQuickSuggestions(createOverheadSuggestions, createOverhead, overheadMask);
   bindQuickSuggestions(createMarginSuggestions, createMargin, marginMask, () => {
     if (createProfitTypePercent && !createProfitTypePercent.checked) {

@@ -16,6 +16,7 @@ Sistema para microempreendedores de alimentação (confeiteiros, boleiras, cozin
 | 005 | Ficha técnica: ingredientes, custos indiretos, mão de obra, rendimento, custo por unidade |
 | 006 | Simulação de preço ideal |
 | 007 | Vínculo ficha técnica ↔ produto (custo do produto acompanha a ficha) |
+| 008 | Cadastro único de insumos: preço em um lugar só; fichas, produtos e CMV recalculados ao mudar o preço |
 
 Extras: dashboard, exportação (CSV/PDF), paginação, mensagens de erro amigáveis (pt-BR/en/es),
 consulta de CEP/CNPJ, analytics de erros, métricas Prometheus.

@@ -24,8 +24,11 @@ function ensureSafeText(value, fieldName) {
   }
 }
 
+// Arredondamento financeiro "meio para cima" em centavos.
+// toFixed/Math.round puros erram em casos como 0,575 (vira 0,57 por imprecisão do ponto flutuante).
 function round2(value) {
-  return Number((Number(value) || 0).toFixed(2));
+  const n = Number(value) || 0;
+  return Math.sign(n) * Math.round((Math.abs(n) + Number.EPSILON) * 100) / 100;
 }
 
 function parseMarginPercent(margin) {

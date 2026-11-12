@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-11-12 — Cadastro único de insumos (US008)
+
+### Novo
+- Tela **Insumos** (`ingredients.html`) e API `/api/ingredients`: preço e embalagem de cada
+  ingrediente em um lugar só, com custo por 100 g/ml ou por unidade e em quantas fichas é usado.
+- Itens da ficha técnica podem ser ligados a um insumo (`ingredientId`); a ficha sugere os insumos
+  cadastrados e preenche embalagem e preço automaticamente.
+- Ao mudar o preço de um insumo, **todas as fichas que o usam são recalculadas** e o custo (CMV) dos
+  produtos vinculados é atualizado. Fichas com problema são informadas sem bloquear as demais.
+- Histórico de preços dos insumos (`ingredient_price_history`), base para acompanhar a variação do CMV.
+
+### Corrigido
+- **Precisão do custo**: o custo por grama/ml era arredondado para centavos antes de multiplicar
+  (ex.: farinha a R$ 6,50/kg — 500 g custavam R$ 5,00 em vez de R$ 3,25).
+- **Arredondamento**: valores como R$ 0,575 viravam R$ 0,57 (agora meio centavo arredonda para cima).
+- **Margem da ficha não era gravada**: editar a ficha (mesmo só a descrição) zerava a margem e o preço
+  sugerido caía para o custo. Agora a margem fica salva (`recipes.margin`).
+- **CSRF nas telas**: 9 telas gravavam sem o header `X-CSRF-Token` e o servidor recusava (403)
+  cadastros, edições e o "Sair". O `api-client.js` inclui o token em toda gravação para a API.
+
+### Testes
+- `US008-ingredients.test.js` (15 testes); suíte da API com 288 passando.
+- Limite global de requisições alto no ambiente de testes (`GLOBAL_RATE_LIMIT_MAX`).
+
 ## 2026-11-12 — Sessões persistentes
 
 - Sessões de login gravadas no PostgreSQL (`auth_sessions`, migration 003) com cache em memória.

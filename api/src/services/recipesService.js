@@ -186,8 +186,11 @@ function normalizeRecipePayload(payload = {}) {
   return normalized;
 }
 
+// Arredondamento financeiro "meio para cima" em centavos.
+// toFixed/Math.round puros erram em casos como 0,575 (vira 0,57 por imprecisão do ponto flutuante).
 function round2(value) {
-  return Number((value || 0).toFixed(2));
+  const n = Number(value) || 0;
+  return Math.sign(n) * Math.round((Math.abs(n) + Number.EPSILON) * 100) / 100;
 }
 
 function computeLaborCost(payload) {
@@ -242,12 +245,20 @@ function normalizeIngredients(list) {
     const quantityBase = normalizeQuantity(quantity, unit);
     const packageBase = normalizeQuantity(finalPackQuantity, finalPackUnit);
     
-    // Calcular custo unitário e total
-    const unitCost = packageBase > 0 ? round2(packageCost / packageBase) : 0;
-    const totalCost = round2(unitCost * quantityBase);
+    // Custo por unidade base (g, ml, un) com 4 casas e custo do item calculado sem arredondar no meio.
+    // Antes o custo por grama era arredondado para centavos (ex.: R$ 0,0065/g virava R$ 0,01/g),
+    // o que inflava em até ~50% o custo de ingredientes vendidos por peso/volume.
+    const unitCost = packageBase > 0 ? Math.round((packageCost / packageBase) * 10000) / 10000 : 0;
+    const totalCost = packageBase > 0 ? round2((packageCost * quantityBase) / packageBase) : 0;
+
+    const ingredientId =
+      typeof item.ingredientId === "string" && /^[0-9a-f-]{36}$/i.test(item.ingredientId)
+        ? item.ingredientId
+        : null;
 
     return {
       name,
+      ingredientId,
       quantity,
       cost: round2(packageCost),
       packageQuantity: finalPackQuantity, // Usar o valor normalizado
@@ -450,20 +461,80 @@ async function syncProductCost(productId, mapped, recipeId) {
   return repo.updateProduct(productId, payload);
 }
 
+// Margem efetiva da ficha. Fichas antigas (sem a coluna margin) têm a margem deduzida do preço sugerido.
+function resolveMargin(payloadMargin, current) {
+  if (payloadMargin != null && payloadMargin !== "") return payloadMargin;
+  if (current && current.margin != null) return current.margin;
+  const cost = Number(current && (current.cost_per_unit ?? current.costPerUnit));
+  const suggested = Number(current && (current.price_suggested ?? current.priceSuggested));
+  if (cost > 0 && suggested > cost) return Number((suggested / cost).toFixed(4));
+  return 0;
+}
+
+/**
+ * Itens ligados ao cadastro de insumos (ingredientId) usam sempre o preço e a embalagem do cadastro.
+ */
+async function applyCatalogPrices(ingredients, user) {
+  if (!Array.isArray(ingredients)) return ingredients;
+  const cache = new Map();
+  const result = [];
+  for (const item of ingredients) {
+    const id = item && item.ingredientId;
+    if (!id) {
+      result.push(item);
+      continue;
+    }
+    if (!cache.has(id)) cache.set(id, await repo.getIngredientById(id));
+    const ingredient = cache.get(id);
+    if (!ingredient) {
+      const err = new Error("Insumo não encontrado no cadastro");
+      err.status = 400;
+      throw err;
+    }
+    if (ingredient.ownerId && user && ingredient.ownerId !== user.id) {
+      const err = new Error("Você não tem permissão para usar este insumo");
+      err.status = 403;
+      throw err;
+    }
+    const itemUnit = item.unit ? String(item.unit).trim().toLowerCase() : null;
+    const itemGroup = itemUnit ? UNIT_GROUPS[itemUnit] : null;
+    const catalogGroup = UNIT_GROUPS[ingredient.packageUnit];
+    if (itemGroup && catalogGroup && itemGroup !== catalogGroup) {
+      const hints = { weight: "g ou kg", volume: "ml ou l", unit: "un" };
+      const err = new Error(
+        `O insumo "${ingredient.name}" está cadastrado em ${ingredient.packageUnit}. ` +
+          `Informe a quantidade usada em ${hints[catalogGroup]} (hoje está em ${itemUnit}).`
+      );
+      err.status = 400;
+      throw err;
+    }
+    result.push({
+      ...item,
+      name: item.name || ingredient.name,
+      cost: ingredient.packageCost,
+      packageQuantity: ingredient.packageQuantity,
+      packUnit: ingredient.packageUnit,
+    });
+  }
+  return result;
+}
+
 async function create(payload = {}, user) {
   if (!user || !user.id) {
     const err = new Error("Token inválido ou ausente");
     err.status = 401;
     throw err;
   }
-  const mapped = buildRecipePayload(payload);
+  const withCatalog = { ...payload };
+  if (payload.ingredients) withCatalog.ingredients = await applyCatalogPrices(payload.ingredients, user);
+  const mapped = buildRecipePayload(withCatalog);
   await assertUniqueName(mapped.name, user.id);
 
   const recipe = {
     id: uuidv4(),
     ownerId: user.id,
     linkProductId: payload.linkProductId || null,
-    margin: payload.margin || null,
+    margin: payload.margin != null && payload.margin !== "" ? Number(payload.margin) : null,
     overheadExtra: payload.overhead || 0,
     labor: mapped.labor,
     status: "ACTIVE",
@@ -490,12 +561,21 @@ async function update(id, payload = {}, user) {
   }
 
   ensureOwnership(current, user);
-  const mapped = buildRecipePayload(payload, current);
+  const margin = resolveMargin(payload.margin, current);
+  const withCatalog = { ...payload, margin };
+  // Sem ingredients no payload, os itens atuais são recalculados (preços do cadastro de insumos)
+  if (payload.ingredients) {
+    withCatalog.ingredients = await applyCatalogPrices(payload.ingredients, user);
+  } else if (!payload.ingredientes) {
+    withCatalog.ingredients = await applyCatalogPrices(current.ingredients, user);
+  }
+  const mapped = buildRecipePayload(withCatalog, current);
   await assertUniqueName(mapped.name, current.owner_id, current.id);
 
   const updated = {
     ...current,
     ...mapped,
+    margin: Number(margin) || 0,
     linkProductId: payload.linkProductId ?? current.link_product_id,
     status: payload.status || current.status || "ACTIVE",
     updatedAt: new Date().toISOString(),
@@ -751,7 +831,30 @@ async function exportRecipe(id, format = "csv", user) {
   throw err;
 }
 
+/**
+ * Recalcula todas as fichas que usam o insumo (e os produtos vinculados a elas).
+ * Chamado quando o preço ou a embalagem do insumo muda.
+ */
+async function recalculateByIngredient(ingredientId, user) {
+  const recipeIds = await repo.listRecipeIdsByIngredient(ingredientId);
+  const updated = [];
+  const failed = [];
+  // Uma ficha com problema não impede o recálculo das demais
+  for (const recipeId of recipeIds) {
+    try {
+      const recipe = await update(recipeId, {}, user);
+      updated.push({ id: recipe.id, name: recipe.name, costPerUnit: recipe.costPerUnit, priceSuggested: recipe.priceSuggested });
+    } catch (err) {
+      const current = await repo.getRecipeById(recipeId).catch(() => null);
+      failed.push({ id: recipeId, name: current ? current.name : null, error: err.message });
+    }
+  }
+  return { updated, failed };
+}
+
 module.exports = {
+  normalizeUnit,
+  recalculateByIngredient,
   list,
   getById,
   create,

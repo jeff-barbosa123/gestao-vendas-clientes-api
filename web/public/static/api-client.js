@@ -166,6 +166,46 @@
   }
 
   // Expõe função globalmente
+  /**
+   * Proteção CSRF para TODAS as gravações da página.
+   * Várias telas têm a própria função de chamada à API (fetch direto) e não enviavam o header
+   * X-CSRF-Token: com o login por cookie, o servidor recusava (403) cadastros, edições e o "Sair".
+   * Aqui o fetch é envolvido uma única vez e o token é incluído em POST/PUT/PATCH/DELETE
+   * enviados para a própria API (/api/...), sem tocar em requisições para outros domínios.
+   */
+  (function installCsrfFetch() {
+    if (!window.fetch || window.fetch.__sgvcCsrf) return;
+    const originalFetch = window.fetch.bind(window);
+    const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+    function isOwnApi(rawUrl) {
+      try {
+        const url = new URL(rawUrl, window.location.href);
+        const apiOrigin = new URL(buildUrl('/api/'), window.location.href).origin;
+        return (url.origin === window.location.origin || url.origin === apiOrigin) && url.pathname.startsWith('/api/');
+      } catch (_err) {
+        return false;
+      }
+    }
+
+    const wrapped = async function sgvcFetch(input, init = {}) {
+      const rawUrl = typeof input === 'string' || input instanceof URL ? String(input) : input && input.url;
+      const method = String((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+      if (!MUTATING.has(method) || !isOwnApi(rawUrl)) {
+        return originalFetch(input, init);
+      }
+      if (!getCsrfToken()) {
+        await ensureCsrfCookie();
+      }
+      const token = getCsrfToken();
+      const headers = new Headers((init && init.headers) || (input && input.headers) || {});
+      if (token && !headers.has(CSRF_HEADER_NAME)) headers.set(CSRF_HEADER_NAME, token);
+      return originalFetch(input, { ...init, headers, credentials: (init && init.credentials) || 'include' });
+    };
+    wrapped.__sgvcCsrf = true;
+    window.fetch = wrapped;
+  })();
+
   window.apiRequest = apiRequest;
   window.apiGetMe = getMe;
   window.apiGetCsrfToken = getCsrfToken;

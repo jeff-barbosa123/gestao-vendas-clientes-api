@@ -546,7 +546,24 @@ a:focus-visible {
   cursor: pointer;
 }
 
-@media (max-width: 900px) {
+/* Menu mais compacto em telas médias: com 10 áreas ele quebrava em duas linhas */
+@media (min-width: 1001px) and (max-width: 1240px) {
+  .app-nav-inner {
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .app-nav-links {
+    gap: 2px;
+  }
+
+  .app-nav-links a {
+    padding: 0 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1000px) {
   .app-nav-toggle {
     display: inline-flex;
     align-items: center;

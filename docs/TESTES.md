@@ -16,6 +16,7 @@ Ficam em `api/test/integration/`, um arquivo por user story:
 | `US008-ingredients.test.js` | Cadastro de insumos, recálculo automático, precisão de custo, margem |
 | `US009-margem-pagamento.test.js` | Forma de pagamento (gravação, edição, relatório) e alertas de margem |
 | `US010-stock.test.js` | Estoque de insumos: compra, baixa pela venda, cancelamento, mínimo e avisos |
+| `US011-orders.test.js` | Encomendas: validação, agenda por período, status, entrega virando venda e falta de insumo |
 | `US998-regressoes.test.js` | Regressões de bugs corrigidos (isolamento entre usuários, CSRF, dashboard...) |
 | `US999-*.test.js` | Mensagens de erro e paginação |
 | `docs-swagger.test.js` | Swagger |
@@ -53,7 +54,7 @@ Como as specs funcionam:
   HttpOnly). Qualquer chamada `/api` sem stub específico recebe uma resposta neutra
   (`cypress/support/e2e.js`), então a tela não volta para o login no meio do teste.
   `cy.clearSession()` simula "deslogado" (401 em tudo).
-- **Backend real:** `fluxo-completo.cy.js` e `estoque-insumos.cy.js` não usam stubs. Cada um cria o
+- **Backend real:** `fluxo-completo.cy.js`, `estoque-insumos.cy.js` e `encomendas.cy.js` não usam stubs. Cada um cria o
   próprio usuário na hora (`cy.createRealUser`), então não depende do admin do seed nem deixa dados
   de teste na conta dele. Fazem login, cadastram insumo, produto e venda e conferem painel, relatório
   e estoque.

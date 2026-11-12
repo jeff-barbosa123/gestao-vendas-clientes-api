@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-11-12 — Encomendas (US011)
+
+### Novo
+- Tela **Encomendas**: cliente (cadastrado ou só o nome), telefone, data e hora de entrega, itens com
+  preço do produto ou combinado, sinal (valor e forma de pagamento) e observações.
+- **Agenda da semana** agrupada por dia, com total do dia, link de WhatsApp e status
+  (a fazer → pronta → entregue, ou cancelada).
+- **Entregar vira venda:** escolhe a forma de pagamento do restante e a encomenda é registrada como
+  venda, entrando no faturamento, no CMV e na baixa dos insumos (uma vez só, na entrega).
+- **Falta de insumo:** aviso com o que as encomendas em aberto da semana vão consumir comparado com o
+  estoque (ex.: "faltam 100 g · precisa 400 g, tem 300 g").
+- Card **Próximas entregas** no painel (próximos 7 dias).
+- API `/api/orders` (lista com `from`, `to`, `status`), `/api/orders/needs`, `/api/orders/{id}` e
+  `/api/orders/{id}/status`. Migration 007.
+
+### Ajustado
+- Menu mais compacto em telas médias e menu recolhido até 1000 px (com a área nova ele quebrava linha).
+
+### Testes
+- `US011-orders.test.js` (9 testes; API com 319 passando) e `encomendas.cy.js` (fluxo completo pela
+  tela, backend real).
+
 ## 2026-11-12 — Estoque de insumos (US010)
 
 ### Novo

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Encomendas</title>
+    <meta name="description" content="Encomendas com data de entrega, sinal e status. Na entrega, a encomenda vira venda." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/static/orders.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="ord-wrapper">
+          <header class="ord-header">
+            <h1 class="ord-title">Encomendas</h1>
+            <p class="ord-subtitle">
+              Anote o pedido com data e hora de entrega e o sinal recebido. Quando entregar, a encomenda vira
+              venda: entra no faturamento, calcula o CMV e desconta os insumos do estoque.
+            </p>
+          </header>
+
+          <div class="notification is-light ord-message" id="ord-message" role="status" aria-live="polite" hidden></div>
+          <div class="ord-shortage" id="ord-shortage" role="status" aria-live="polite" hidden></div>
+
+          <section class="panel-card">
+            <h2 class="ord-section-title" id="ord-form-title">Nova encomenda</h2>
+            <form id="ord-form" novalidate>
+              <input type="hidden" id="ord-id" />
+              <div class="ord-grid is-customer">
+                <div class="field ord-span-2">
+                  <label class="label" for="ord-customer">Cliente</label>
+                  <input class="input" id="ord-customer" type="text" list="ord-customers" maxlength="120" placeholder="Nome do cliente" autocomplete="off" />
+                  <datalist id="ord-customers"></datalist>
+                  <p class="help">Escolha um cliente cadastrado ou digite um nome novo.</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-phone">Telefone (opcional)</label>
+                  <input class="input" id="ord-phone" type="tel" maxlength="20" placeholder="(81) 99999-0000" />
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-date">Data da entrega</label>
+                  <input class="input" id="ord-date" type="date" />
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-time">Hora</label>
+                  <input class="input" id="ord-time" type="time" value="14:00" />
+                </div>
+              </div>
+
+              <h3 class="ord-subtitle-2">Itens</h3>
+              <div class="ord-item-row">
+                <div class="field ord-item-product">
+                  <label class="label" for="ord-item-product">Produto</label>
+                  <div class="select is-fullwidth">
+                    <select id="ord-item-product"><option value="">Selecione um produto</option></select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-item-qty">Quantidade</label>
+                  <input class="input" id="ord-item-qty" type="text" inputmode="decimal" placeholder="Ex.: 50" />
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-item-price">Preço unitário (R$)</label>
+                  <input class="input" id="ord-item-price" type="text" inputmode="decimal" placeholder="Preço do produto" />
+                </div>
+                <div class="field ord-item-add">
+                  <button class="button is-light" type="button" id="ord-item-add">Adicionar</button>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="table is-fullwidth ord-items-table">
+                  <thead>
+                    <tr><th>Produto</th><th class="has-text-right">Qtd</th><th class="has-text-right">Preço</th><th class="has-text-right">Total</th><th></th></tr>
+                  </thead>
+                  <tbody id="ord-items"><tr class="is-empty"><td colspan="5">Nenhum item ainda.</td></tr></tbody>
+                </table>
+              </div>
+
+              <div class="ord-grid">
+                <div class="field">
+                  <label class="label" for="ord-deposit">Sinal recebido (R$)</label>
+                  <input class="input" id="ord-deposit" type="text" inputmode="decimal" placeholder="0,00" />
+                </div>
+                <div class="field">
+                  <label class="label" for="ord-deposit-method">Sinal pago em</label>
+                  <div class="select is-fullwidth">
+                    <select id="ord-deposit-method">
+                      <option value="">Não informado</option>
+                      <option value="PIX">Pix</option>
+                      <option value="CASH">Dinheiro</option>
+                      <option value="CREDIT_CARD">Cartão de crédito</option>
+                      <option value="DEBIT_CARD">Cartão de débito</option>
+                      <option value="OTHER">Outro</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ord-totals ord-span-2" aria-live="polite">
+                  <p>Total: <strong id="ord-total">R$ 0,00</strong></p>
+                  <p>Falta receber na entrega: <strong id="ord-balance">R$ 0,00</strong></p>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="ord-notes">Observações (opcional)</label>
+                <textarea class="textarea" id="ord-notes" rows="2" maxlength="1000" placeholder="Ex.: tema azul, retirar na loja, sem lactose"></textarea>
+              </div>
+
+              <p class="help is-danger" id="ord-error" aria-live="polite" hidden></p>
+              <div class="ord-actions">
+                <button class="button is-link" type="submit" id="ord-save">Salvar encomenda</button>
+                <button class="button is-light" type="button" id="ord-cancel-edit" hidden>Cancelar edição</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <div class="ord-agenda-head">
+              <h2 class="ord-section-title">Agenda <span id="ord-week-label"></span></h2>
+              <div class="ord-agenda-controls">
+                <button class="button is-light is-small" type="button" id="ord-week-prev" aria-label="Semana anterior">‹ Anterior</button>
+                <button class="button is-light is-small" type="button" id="ord-week-today">Esta semana</button>
+                <button class="button is-light is-small" type="button" id="ord-week-next" aria-label="Próxima semana">Próxima ›</button>
+                <label class="checkbox ord-show-closed">
+                  <input type="checkbox" id="ord-show-closed" /> Mostrar entregues e canceladas
+                </label>
+              </div>
+            </div>
+            <div id="ord-agenda" class="ord-agenda"><p class="ord-empty">Carregando...</p></div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <div class="ord-modal" id="ord-deliver-modal" role="dialog" aria-modal="true" aria-labelledby="ord-deliver-title" hidden>
+      <div class="ord-modal-backdrop" data-close-deliver></div>
+      <div class="ord-modal-card">
+        <h2 class="ord-modal-title" id="ord-deliver-title">Entregar encomenda</h2>
+        <p id="ord-deliver-summary">-</p>
+        <div class="field">
+          <label class="label" for="ord-deliver-method">Restante pago em</label>
+          <div class="select is-fullwidth">
+            <select id="ord-deliver-method">
+              <option value="PIX">Pix</option>
+              <option value="CASH">Dinheiro</option>
+              <option value="CREDIT_CARD">Cartão de crédito</option>
+              <option value="DEBIT_CARD">Cartão de débito</option>
+              <option value="OTHER">Outro</option>
+            </select>
+          </div>
+        </div>
+        <p class="help">A encomenda vira uma venda: entra no faturamento, no CMV e desconta os insumos.</p>
+        <p class="help is-danger" id="ord-deliver-error" hidden></p>
+        <div class="ord-actions">
+          <button class="button is-link" type="button" id="ord-deliver-confirm">Confirmar entrega</button>
+          <button class="button is-light" type="button" data-close-deliver>Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/static/orders.js" defer></script>
+  </body>
+</html>

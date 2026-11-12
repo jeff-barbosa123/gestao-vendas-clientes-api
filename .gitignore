@@ -1,39 +1,19 @@
 # Dependências
 node_modules/
 
-# Variáveis de ambiente (os modelos env.*.example são versionados)
+# Ambiente (segredos)
 .env
 .env.*
 !.env.example
-api/.env*
-!api/env.*.example
 
-# Sistema / IDE
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-.cursor/
-
-# Logs e temporários
-*.log
+# Logs e relatórios
 logs/
-Tmp/
-*.tmp
-*.bak
-~$*
-~WRL*.tmp
-cookies.txt
+*.log
+mochawesome-report/
 
-# Relatórios e artefatos gerados por testes
-coverage/
-dist/
-api/mochawesome-report/
-api/reports/
-cypress/reports/
-cypress/screenshots/
+# Cypress
 cypress/videos/
-cypress/downloads/
+cypress/screenshots/
 
-# Backups/exportações de dados locais
-api/backup/
+# Backups locais
+backup/

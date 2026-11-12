@@ -982,8 +982,11 @@
         setProductType(getSelectedProductType());
         updateProducedPricing();
         updateResaleProfit();
+        if (typeof updateProductTypeCards === 'function') updateProductTypeCards();
         await loadProducts(null);
+        await loadRecipes(null);
       } catch (err) {
+        if (handleAuthFailure(err)) return;
         showMessage((err && err.message ? err.message : 'Erro ao cadastrar produto.'), 'is-danger');
       } finally {
         createSubmit.classList.remove('is-loading');
@@ -1382,95 +1385,6 @@
     });
   }
 
-  if (createForm) {
-    createForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!createSubmit || createSubmit.disabled) return;
-
-      // Validações básicas
-      const name = createName ? createName.value.trim() : '';
-      const selectedType = getSelectedProductType();
-
-      if (!name || name.length < 3) {
-        showMessage('Nome do produto é obrigatório (mínimo 3 caracteres).', 'is-danger');
-        if (createName) {
-          createName.focus();
-          setFieldError(createName, createNameError, 'Nome obrigatório (mín. 3 caracteres).');
-        }
-        return;
-      }
-
-      let purchasePrice = null;
-      if (selectedType === 'resale' && createPurchasePrice) {
-        purchasePrice = parsePrice(createPurchasePrice.value);
-        if (purchasePrice == null || purchasePrice <= 0) {
-          showMessage('Preço de compra é obrigatório para produtos de revenda.', 'is-danger');
-          if (createPurchasePrice) {
-            createPurchasePrice.focus();
-            setFieldError(createPurchasePrice, createPurchasePriceError, 'Preço de compra obrigatório.');
-          }
-          return;
-        }
-      }
-
-      let price = null;
-      if (createPrice) {
-        price = parsePrice(createPrice.value);
-        if (price == null || price <= 0) {
-          showMessage('Preço de venda é obrigatório.', 'is-danger');
-          if (createPrice) {
-            createPrice.focus();
-            setFieldError(createPrice, createPriceError, 'Preço de venda obrigatório.');
-          }
-          return;
-        }
-      }
-
-      // Preparar dados
-      createSubmit.disabled = true;
-      createSubmit.classList.add('is-loading');
-      const originalText = createSubmit.textContent;
-      createSubmit.textContent = 'Criando...';
-
-      try {
-        const productData = {
-          name,
-          description: createDescription ? createDescription.value.trim() : null,
-          price,
-          purchase_price: purchasePrice,
-          status: createStatus ? createStatus.value || 'ATIVO' : 'ATIVO',
-          product_type: selectedType,
-        };
-
-        if (selectedType === 'produced' && createRecipeId && createRecipeId.value) {
-          productData.ficha_tecnica_id = createRecipeId.value;
-        }
-
-        await apiRequest('/api/products', null, {
-          method: 'POST',
-          body: JSON.stringify(productData),
-        });
-
-        showMessage('Produto criado com sucesso!', 'is-success');
-        createForm.reset();
-        setProductType(getSelectedProductType());
-        updateResaleProfit();
-        updateResalePercentHelp();
-        updateResaleSuggestionHelp();
-        updateProductTypeCards();
-        
-        // Recarregar lista
-        await loadProducts(null);
-        await loadRecipes(null);
-      } catch (err) {
-        if (handleAuthFailure(err)) return;
-        const friendlyMessage = normalizeError(err);
-        showMessage(friendlyMessage || 'Erro ao criar produto. Tente novamente.', 'is-danger');
-      } finally {
-        createSubmit.disabled = false;
-        createSubmit.classList.remove('is-loading');
-        createSubmit.textContent = originalText;
-      }
-    });
-  }
+  // (removido) segundo tratador de envio do formulário: duplicava o primeiro e mandava
+  // ficha_tecnica_id, que a API ignora na criação. O envio fica só no tratador acima.
 })();

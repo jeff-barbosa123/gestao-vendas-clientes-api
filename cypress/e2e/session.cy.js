@@ -34,7 +34,10 @@ describe('SGVC - Login e sessao', () => {
   it('Campos vazios entao alerta de obrigatorios', () => {
     cy.visit('/');
     cy.get('#login-btn').click();
+    // A tela valida um campo por vez, começando pelo e-mail
     cy.get('#email-error').should('contain', 'E-mail obrigatório.');
+    cy.get('#email').type('admin@negocio.com');
+    cy.get('#login-btn').click();
     cy.get('#password-error').should('contain', 'Senha obrigatória.');
   });
 
@@ -42,11 +45,8 @@ describe('SGVC - Login e sessao', () => {
     cy.stubDashboardMetrics({ alias: 'dashboardOverview', response: { fixture: 'dashboard-overview.json' } });
     cy.loginAsAdmin();
     cy.wait('@dashboardOverview');
-    cy.window().then((win) => {
-      // Token deve estar em sessionStorage agora
-      const stored = JSON.parse(win.sessionStorage.getItem('sgvc.session'));
-      expect(stored).to.have.property('token', 'sgvc-test-token');
-    });
+    // Sessão em cookie HttpOnly: nada no storage, e o reload continua logado (/api/auth/me)
+    cy.window().its('sessionStorage').invoke('getItem', 'sgvc.session').should('be.null');
     cy.reload();
     cy.wait('@dashboardOverview');
     cy.location('pathname').should('eq', '/dashboard.html');

@@ -45,29 +45,18 @@ npm test                 # suíte completa + relatório HTML em api/mochawesome-
 npm run us001            # só uma user story (us001 ... us007)
 ```
 
-Situação em 12/11/2026: **288 testes passando, 0 falhando, 35 pendentes** (`it.skip` — testes de
-performance e cenários ainda não implementados).
+Como as specs funcionam:
 
-### CI
+- **API simulada (a maioria):** os testes simulam a sessão com `cy.seedSession()`, `cy.loginAsAdmin()`
+  ou `cy.stubAuthenticated()`, que respondem `/api/auth/me` como logado (a sessão real é um cookie
+  HttpOnly). Qualquer chamada `/api` sem stub específico recebe uma resposta neutra
+  (`cypress/support/e2e.js`), então a tela não volta para o login no meio do teste.
+  `cy.clearSession()` simula "deslogado" (401 em tudo).
+- **Backend real:** `fluxo-completo.cy.js` não usa stubs. Faz login, cadastra insumo, produto e venda
+  e confere painel e relatório. Usa `CYPRESS_E2E_EMAIL` / `CYPRESS_E2E_PASSWORD` (padrão: admin do seed,
+  `admin@negocio.com` / `admin123`).
+- Datas: specs que dependem de "hoje" (tags Novo/Antigo, aniversariantes) congelam a data com `cy.clock`.
 
-`.github/workflows/ci.yml` sobe um PostgreSQL 15, aplica schema/migrations, cria os usuários e roda
-`npm test` a cada push/PR em `main` e `dev`. O relatório mochawesome fica como artefato do job.
-
-## Testes E2E (Cypress)
-
-Specs em `cypress/e2e/` (login, clientes, produtos, fichas, vendas, dashboard, acessibilidade,
-segurança, sessão e fluxo completo). Precisam da API (3000) e do frontend (4000) no ar.
-
-```bash
-npm run cypress:open          # modo interativo
-npm run cypress:run           # headless
-npm run cypress:run:fluxo-completo
-npm run cypress:validate      # checa estrutura das specs
-```
-
-Situação em 12/11/2026: muitas specs falham desde antes desta revisão, porque foram escritas para o
-modelo antigo de sessão (token em `sessionStorage`) e simulam só parte da API. Hoje a autenticação é
-por cookie HttpOnly. Os testes de força de senha no cadastro são instáveis (alternam entre passar e
-falhar). Atualizar a suíte E2E para o login por cookie é o próximo passo recomendado.
+A CI roda a suíte inteira no job `e2e-tests`, depois dos testes de API.
 
 Mais detalhes em [CYPRESS_GUIA.md](CYPRESS_GUIA.md).

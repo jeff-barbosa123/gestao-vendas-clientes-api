@@ -1,187 +1,107 @@
+// Regras de senha. A API (authService) exige 8+ caracteres com maiúscula, minúscula,
+// número e caractere especial no cadastro, na troca e no reset de senha.
+// O login NÃO exige senha forte: contas antigas precisam continuar entrando.
 describe('SGVC - Validação de Força de Senha', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.clearSession();
   });
 
-  describe('Validação de senha forte no login', () => {
-    it('rejeita senha muito curta (< 8 caracteres)', () => {
+  describe('Login', () => {
+    it('so recusa senha muito curta', () => {
       cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('123');
-      cy.get('#password').blur();
-      cy.get('#password-error').should('be.visible').and('contain', 'Senha muito fraca');
+      cy.get('#password').type('12');
+      cy.get('#login-btn').click();
+      cy.get('#password-error').should('be.visible').and('contain', 'Senha muito curta.');
     });
 
-    it('rejeita senha sem maiuscula', () => {
+    it('envia senha simples para a API decidir', () => {
+      cy.intercept('POST', '**/api/auth/login', (req) => {
+        expect(req.body.password).to.eq('senha123');
+        req.reply({ statusCode: 401, body: { message: 'Credenciais inválidas' } });
+      }).as('loginSimple');
       cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('senha123!');
+      cy.get('#password').type('senha123');
       cy.get('#login-btn').click();
-      cy.get('#password-error').should('be.visible').and('contain', 'maiúscula');
-    });
-
-    it('rejeita senha sem minuscula', () => {
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('SENHA123!');
-      cy.get('#login-btn').click();
-      cy.get('#password-error').should('be.visible').and('contain', 'minúscula');
-    });
-
-    it('rejeita senha sem numero', () => {
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('Senha@teste!');
-      cy.get('#login-btn').click();
-      cy.get('#password-error').should('be.visible').and('contain', 'número');
-    });
-
-    it('rejeita senha sem caractere especial', () => {
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('Senha1234');
-      cy.get('#login-btn').click();
-      cy.get('#password-error').should('be.visible').and('contain', 'caractere especial');
-    });
-
-    it('aceita senha forte completa', () => {
-      cy.intercept('POST', '**/api/auth/login', {
-        statusCode: 200,
-        body: {
-          token: 'token-ok',
-          refreshToken: 'refresh-ok',
-          user: { id: 'u1', email: 'teste@exemplo.com' },
-        },
-      }).as('loginStrong');
-
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('Senha@123!');
-      cy.get('#login-btn').click();
-      cy.wait('@loginStrong');
-      // Não deve ter erro
-      cy.get('#password-error').should('not.be.visible');
+      cy.wait('@loginSimple');
+      cy.get('#login-error-text').should('contain', 'E-mail ou senha incorretos');
     });
   });
 
-  describe('Validação de senha forte no registro', () => {
+  describe('Cadastro', () => {
     beforeEach(() => {
       cy.get('#open-register').click();
+      cy.get('#register-name').type('Usuário Teste');
+      cy.get('#register-email').type('usuario@teste.com');
     });
 
-    it('mostra indicador visual de força da senha', () => {
-      // Senha fraca
-      cy.get('#register-password').type('senha');
+    const weak = [
+      ['sem maiúscula', 'senha123!'],
+      ['sem minúscula', 'SENHA123!'],
+      ['sem número', 'Senha@teste!'],
+      ['sem caractere especial', 'Senha1234'],
+    ];
+    weak.forEach(([label, pwd]) => {
+      it(`recusa senha ${label} antes de chamar a API`, () => {
+        cy.intercept('POST', '**/api/auth/register', cy.spy().as('registerSpy'));
+        cy.get('#register-password').type(pwd);
+        cy.get('#register-submit').click();
+        cy.get('#register-password-error')
+          .should('be.visible')
+          .and('contain', 'maiúscula, minúscula, número e caractere especial');
+        cy.get('@registerSpy').should('not.have.been.called');
+      });
+    });
+
+    it('recusa senha com 7 caracteres mesmo atendendo as outras regras', () => {
+      cy.get('#register-password').type('A1@bcde');
+      cy.get('#register-submit').click();
+      cy.get('#register-password-error').should('be.visible').and('contain', 'Mínimo 8 caracteres.');
+    });
+
+    it('indicador de força acompanha a digitação', () => {
+      cy.get('#register-password').clear().type('s');
       cy.get('#password-strength').should('contain', 'Fraca').and('have.class', 'is-weak');
-      
-      // Senha média
+      cy.get('#register-password').clear().type('senha123');
+      cy.get('#password-strength').should('contain', 'Fraca');
       cy.get('#register-password').clear().type('Senha123');
       cy.get('#password-strength').should('contain', 'Média').and('have.class', 'is-medium');
-      
-      // Senha forte
-      cy.get('#register-password').clear().type('Senha@123!');
+      cy.get('#register-password').clear().type('A1@bcdef');
       cy.get('#password-strength').should('contain', 'Forte').and('have.class', 'is-strong');
     });
 
-    it('valida requisitos em tempo real durante digitacao', () => {
-      cy.get('#register-password').type('s'); // Muito curta
-      cy.get('#password-strength').should('contain', 'Fraca');
-      
-      cy.get('#register-password').clear().type('senha123'); // Falta maiúscula e especial
-      cy.get('#password-strength').should('contain', 'Fraca');
-      
-      cy.get('#register-password').clear().type('Senha123'); // Falta especial
-      cy.get('#password-strength').should('contain', 'Média');
-      
-      cy.get('#register-password').clear().type('Senha@123!'); // Completa
-      cy.get('#password-strength').should('contain', 'Forte');
+    it('lista de regras marca o que ja foi atendido', () => {
+      cy.get('#register-password').type('Senha123');
+      cy.get('#register-password-rules [data-rule="len"]').should('have.class', 'is-ok');
+      cy.get('#register-password-rules [data-rule="upper"]').should('have.class', 'is-ok');
+      cy.get('#register-password-rules [data-rule="sym"]').should('not.have.class', 'is-ok');
     });
 
-    it('rejeita registro com senha fraca', () => {
-      cy.get('#register-name').type('Usuário Teste');
-      cy.get('#register-email').type('usuario@teste.com');
-      cy.get('#register-password').type('senha123'); // Fraca
-      cy.get('#register-submit').click();
-      cy.get('#register-password-error').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
-    });
-
-    it('aceita registro com senha forte', () => {
-      cy.intercept('POST', '**/api/auth/register', {
-        statusCode: 201,
-        body: { message: 'Usuário criado com sucesso' },
-      }).as('registerStrong');
-
-      cy.get('#register-name').type('Usuário Teste');
-      cy.get('#register-email').type('usuario@teste.com');
-      cy.get('#register-password').type('Usuario@123!');
-      cy.get('#register-submit').click();
-      cy.wait('@registerStrong');
-      // Não deve ter erro de senha
-      cy.get('#register-password-error').should('not.be.visible');
+    ['!', '#', '$', '%', '&', '*', '-', '_', '?', '/'].forEach((char) => {
+      it(`aceita "${char}" como caractere especial`, () => {
+        cy.intercept('POST', '**/api/auth/register', { statusCode: 201, body: { ok: true } }).as('register');
+        cy.intercept('POST', '**/api/auth/login', { statusCode: 200, body: { user: { id: 'u1', email: 'usuario@teste.com' } } });
+        cy.stubAuthenticated();
+        cy.get('#register-password').type(`Senha12${char}`);
+        cy.get('#register-submit').click();
+        cy.wait('@register').its('request.body.password').should('eq', `Senha12${char}`);
+      });
     });
   });
 
-  describe('Validação de senha forte no reset', () => {
+  describe('Redefinição de senha', () => {
     beforeEach(() => {
       cy.visit('/reset-password.html?token=test-token');
     });
 
-    it('valida senha forte no reset de senha', () => {
-      cy.get('input[type="password"]').first().type('senha123');
-      cy.get('input[type="password"]').first().blur();
-      cy.get('.help.is-danger').should('be.visible').and('contain', '8 caracteres');
+    it('avisa quando a senha tem menos de 8 caracteres', () => {
+      cy.get('#new-password').type('Ab1!').blur();
+      cy.get('#new-password-error').should('be.visible').and('contain', '8 caracteres');
     });
 
-    it('valida todos os requisitos no reset', () => {
-      cy.get('input[type="password"]').first().type('senha1234'); // Falta maiúscula e especial
-      cy.get('button[type="submit"]').click();
-      cy.get('.help.is-danger').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
+    it('avisa quando faltam requisitos', () => {
+      cy.get('#new-password').type('senha1234').blur();
+      cy.get('#new-password-error').should('be.visible').and('contain', 'maiúscula');
     });
-  });
-
-  describe('Casos de borda', () => {
-    it('valida senha no limite minimo (8 caracteres) que atende todos os requisitos', () => {
-      cy.intercept('POST', '**/api/auth/login', {
-        statusCode: 200,
-        body: {
-          token: 'token-ok',
-          refreshToken: 'refresh-ok',
-          user: { id: 'u1', email: 'teste@exemplo.com' },
-        },
-      }).as('loginMin');
-
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('A1@bcdef'); // Exatamente 8 chars com todos requisitos
-      cy.get('#login-btn').click();
-      cy.wait('@loginMin');
-      cy.get('#password-error').should('not.be.visible');
-    });
-
-    it('valida senha com 7 caracteres mesmo com todos requisitos', () => {
-      cy.get('#email').type('teste@exemplo.com');
-      cy.get('#password').type('A1@bcde'); // 7 chars (muito curta)
-      cy.get('#login-btn').click();
-      cy.get('#password-error').should('be.visible').and('contain', 'Senha muito fraca');
-    });
-
-    it('valida senha com caracteres especiais diversos', () => {
-      const specialChars = ['!', '@', '#', '$', '%', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', "'", '<', '>', ',', '.', '?', '/'];
-      
-      specialChars.forEach((char) => {
-        cy.intercept('POST', '**/api/auth/login', {
-          statusCode: 200,
-          body: {
-            token: 'token-ok',
-            refreshToken: 'refresh-ok',
-            user: { id: 'u1', email: 'teste@exemplo.com' },
-          },
-        }).as(`login${char}`);
-
-        cy.get('#email').clear().type('teste@exemplo.com');
-        cy.get('#password').clear().type(`Senha1${char}`);
-        cy.get('#login-btn').click();
-        cy.wait(`@login${char}`, { timeout: 1000 }).then(() => {
-          cy.get('#password-error').should('not.be.visible');
-        });
-        
-        cy.visit('/');
-        cy.clearSession();
-      });
-    }, 30000); // Timeout maior para múltiplos testes
   });
 });

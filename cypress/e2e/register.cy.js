@@ -135,6 +135,7 @@ describe('SGVC - Registro de Usuário', () => {
     cy.get('#register-name').type('Novo Usuário');
     cy.get('#register-email').type('novo@usuario.com');
     cy.get('#register-password').type('Novo@123!');
+    cy.stubAuthenticated({ id: 'new-user', email: 'novo@usuario.com', name: 'Novo Usuário' });
     cy.get('#register-submit').click();
 
     cy.wait('@register');
@@ -143,14 +144,8 @@ describe('SGVC - Registro de Usuário', () => {
     
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
     
-    // Verificar que token foi salvo em sessionStorage
-    cy.window().then((win) => {
-      const session = win.sessionStorage.getItem('sgvc.session');
-      expect(session).to.not.be.null;
-      const parsed = JSON.parse(session);
-      expect(parsed).to.have.property('token', 'new-token');
-      expect(parsed).to.have.property('refreshToken', 'new-refresh-token');
-    });
+    // Sessão por cookie HttpOnly: nenhum token fica no navegador
+    cy.window().its('sessionStorage').invoke('getItem', 'sgvc.session').should('be.null');
   });
 
   it('mostra erro quando email ja existe no registro', () => {

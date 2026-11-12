@@ -93,7 +93,7 @@ describe('Edicao e remocao de clientes', () => {
     });
 
     it('Cancelar edicao retorna para lista', () => {
-      cy.intercept({ method: 'GET', url: '**/api/customers' }, { fixture: 'customers-list' }).as('clientsList');
+      cy.intercept({ method: 'GET', pathname: '/api/customers' }, { fixture: 'customers-list' }).as('clientsList');
       cy.get('#back-list').click();
       cy.wait('@clientsList');
       cy.location('pathname').should('eq', '/clients.html');
@@ -118,7 +118,7 @@ describe('Edicao e remocao de clientes', () => {
     it('Remover cliente confirma redirecionamento', () => {
       stubCustomerDelete();
       cy.clock();
-      cy.intercept({ method: 'GET', url: '**/api/customers' }, { fixture: 'customers-list' }).as('clientsList');
+      cy.intercept({ method: 'GET', pathname: '/api/customers' }, { fixture: 'customers-list' }).as('clientsList');
       cy.get('#delete-btn').click();
       cy.get('#delete-confirm').click();
       cy.wait('@deleteCustomer');
@@ -153,7 +153,7 @@ describe('Edicao e remocao de clientes', () => {
     it('Recarregar lista solicita os dados apos remocao', () => {
       cy.fixture('customers-list').then((items) => {
         const filtered = items.filter((customer) => customer.id !== defaultCustomer.id);
-        cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
+        cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
         stubCustomerDelete();
         cy.clock();
         cy.get('#delete-btn').click();
@@ -168,7 +168,7 @@ describe('Edicao e remocao de clientes', () => {
     it('Cliente nao reaparece na lista apos remocao', () => {
       cy.fixture('customers-list').then((items) => {
         const filtered = items.filter((customer) => customer.id !== defaultCustomer.id);
-        cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
+        cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
         stubCustomerDelete();
         cy.clock();
         cy.get('#delete-btn').click();
@@ -184,7 +184,7 @@ describe('Edicao e remocao de clientes', () => {
     it('Integridade da lista ajusta o total', () => {
       cy.fixture('customers-list').then((items) => {
         const filtered = items.filter((customer) => customer.id !== defaultCustomer.id);
-        cy.intercept({ method: 'GET', url: '**/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
+        cy.intercept({ method: 'GET', pathname: '/api/customers', times: 1 }, filtered).as('clientsAfterDelete');
         stubCustomerDelete();
         cy.clock();
         cy.get('#delete-btn').click();

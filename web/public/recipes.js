@@ -540,7 +540,8 @@
 
   function formatMoney(value) {
     if (!Number.isFinite(value)) return '-';
-    return value.toFixed(2).replace('.', ',');
+    // Separador de milhar no padrão brasileiro (R$ 2.100,00)
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function formatQuantity(value) {
@@ -731,7 +732,7 @@
     }
     if (percent > 15) {
       if (createOverheadWarning) {
-        createOverheadWarning.textContent = 'O m\u00e1ximo permitido \u00e9 15%.';
+        createOverheadWarning.textContent = 'Acima do limite: o c\u00e1lculo usa 15%.';
         createOverheadWarning.hidden = false;
       }
       return 15;
@@ -807,7 +808,7 @@
     }
     if (summaryOverheadLabel) {
       if (overheadPercent > 0) {
-        summaryOverheadLabel.textContent = `Gastos extras (${formatQuantity(overheadPercent)}%)`;
+        summaryOverheadLabel.textContent = `Gastos extras (${overheadPercent.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%)`; // 15% e não 15,00%
       } else if (overheadItemsTotal > 0) {
         summaryOverheadLabel.textContent = 'Gastos extras (itens)';
       } else {

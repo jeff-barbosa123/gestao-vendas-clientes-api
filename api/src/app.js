@@ -76,9 +76,17 @@ const corsOptions = {
         callback(new Error("Not allowed by CORS"), false);
         return;
       }
+      callback(null, true);
+      return;
     }
-    
-    callback(null, true);
+
+    // Fora de produção: além de localhost, só o que estiver em ALLOWED_ORIGINS.
+    // Antes qualquer origem era aceita com cookies (credentials) em dev/homologação.
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(null, false);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

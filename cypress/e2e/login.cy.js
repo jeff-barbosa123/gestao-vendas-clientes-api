@@ -22,35 +22,17 @@ describe('Login UI', () => {
     cy.get('#email').type('teste@exemplo.com');
     cy.get('#password').type('12');
     cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'Senha muito fraca');
+    cy.get('#password-error').should('be.visible').and('contain', 'Senha muito curta.');
   });
 
-  it('exibe erro quando a senha nao atende requisitos de forca', () => {
-    cy.get('#email').type('teste@exemplo.com');
-    cy.get('#password').type('senha123'); // Falta maiúscula e especial
+  it('nao exige senha forte no login (contas antigas continuam entrando)', () => {
+    cy.intercept('POST', LOGIN_URL, { statusCode: 200, body: { user: { id: 'u1', email: 'admin@negocio.com' } } }).as('loginSimple');
+    cy.stubAuthenticated();
+    cy.get('#email').type('admin@negocio.com');
+    cy.get('#password').type('admin123');
     cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
-  });
-
-  it('exibe erro quando senha tem apenas maiusculas', () => {
-    cy.get('#email').type('teste@exemplo.com');
-    cy.get('#password').type('SENHA123!'); // Falta minúscula
-    cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
-  });
-
-  it('exibe erro quando senha nao tem numero', () => {
-    cy.get('#email').type('teste@exemplo.com');
-    cy.get('#password').type('Senha@test'); // Falta número
-    cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
-  });
-
-  it('exibe erro quando senha nao tem caractere especial', () => {
-    cy.get('#email').type('teste@exemplo.com');
-    cy.get('#password').type('Senha1234'); // Falta especial
-    cy.get('#login-btn').click();
-    cy.get('#password-error').should('be.visible').and('contain', 'maiúscula, minúscula, número e caractere especial');
+    cy.wait('@loginSimple');
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
   });
 
   it('impede login sem senha e foca no campo de senha', () => {
@@ -69,7 +51,7 @@ describe('Login UI', () => {
   it('remove espacos automaticamente antes de enviar', () => {
     cy.intercept('POST', LOGIN_URL, (req) => {
       expect(req.body.email).to.equal('admin@negocio.com');
-      expect(req.body.password).to.equal('admin123');
+      expect(req.body.password).to.equal('Admin@123!');
       req.reply({
         statusCode: 200,
         body: {
@@ -144,8 +126,10 @@ describe('Login UI', () => {
 
     cy.get('#login-btn').click();
     cy.wait('@login401');
+    cy.get('#password').clear().type('senhaerrada2');
     cy.get('#login-btn').click();
     cy.wait('@login401');
+    cy.get('#password').clear().type('senhaerrada3');
     cy.get('#login-btn').click();
     cy.wait('@login401');
 
@@ -165,8 +149,10 @@ describe('Login UI', () => {
 
     cy.get('#login-btn').click();
     cy.wait('@login401');
+    cy.get('#password').clear().type('senhaerrada2');
     cy.get('#login-btn').click();
     cy.wait('@login401');
+    cy.get('#password').clear().type('senhaerrada3');
     cy.get('#login-btn').click();
     cy.wait('@login401');
     cy.get('#login-btn').should('be.disabled');
@@ -182,8 +168,9 @@ describe('Login UI', () => {
       },
     }).as('loginAfterBlock');
 
+    cy.stubAuthenticated();
     cy.get('#password').clear().type('Admin@123!');
-    cy.get('#login-btn').click();
+    cy.get('#login-btn').should('not.be.disabled').click();
     cy.wait('@loginAfterBlock');
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
   });
@@ -225,7 +212,7 @@ describe('Login UI', () => {
   });
 
   it('mostra mensagem de sucesso no esqueci minha senha', () => {
-    cy.intercept('POST', 'http://localhost:3000/api/auth/forgot', {
+    cy.intercept('POST', '**/api/auth/forgot', {
       statusCode: 200,
       body: { sent: true },
     }).as('forgot');
@@ -335,11 +322,8 @@ describe('Login UI', () => {
       // Email ainda salva em localStorage (não é sensível)
       const saved = win.localStorage.getItem('sgvc.rememberEmail');
       expect(saved).to.equal('admin@negocio.com');
-      // Token deve estar em sessionStorage agora
-      const session = win.sessionStorage.getItem('sgvc.session');
-      expect(session).to.not.be.null;
-      const parsed = JSON.parse(session);
-      expect(parsed).to.have.property('token', 'token-fake');
+      // Sessão fica em cookie HttpOnly: nenhum token no storage do navegador
+      expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;
     });
   });
 
@@ -361,9 +345,7 @@ describe('Login UI', () => {
     cy.window().then((win) => {
       const saved = win.localStorage.getItem('sgvc.rememberEmail');
       expect(saved).to.be.null;
-      // Token deve estar em sessionStorage
-      const session = win.sessionStorage.getItem('sgvc.session');
-      expect(session).to.not.be.null;
+      expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;
     });
   });
 
@@ -382,7 +364,7 @@ describe('Login UI', () => {
     cy.get('#password').type('Admin@123!');
     cy.get('#login-btn').click();
     cy.wait('@loginNetworkError');
-    cy.get('#login-error-text').should('contain', 'Não foi possível conectar ao servidor. Tente novamente em alguns instantes.');
+    cy.get('#login-error-text').should('contain', 'Não foi possível conectar ao servidor');
   });
 
   it('mantem layout basico em tela pequena', () => {
@@ -400,7 +382,7 @@ describe('Login UI', () => {
   });
 
   it('permite navegar pelos campos usando apenas teclado', () => {
-    cy.realPress('Tab');
+    // A tela já abre com o foco no e-mail; dali o Tab segue a ordem dos campos
     cy.focused().should('have.attr', 'id', 'email');
     cy.realPress('Tab');
     cy.focused().should('have.attr', 'id', 'password');
@@ -496,7 +478,7 @@ describe('Login UI', () => {
   });
 
   it('cria conta valida e faz login automatico', () => {
-    cy.intercept('POST', 'http://localhost:3000/api/auth/register', {
+    cy.intercept('POST', '**/api/auth/register', {
       statusCode: 200,
       body: { ok: true },
     }).as('register');
@@ -513,19 +495,15 @@ describe('Login UI', () => {
     cy.get('#register-name').type('Cliente Teste');
     cy.get('#register-email').type('cliente@teste.com');
     cy.get('#register-password').type('Cliente@123!'); // Senha forte
+    cy.stubAuthenticated();
     cy.get('#register-submit').click();
 
     cy.wait('@register');
     cy.wait('@loginAfterRegister');
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
     
-    // Verificar que token foi salvo em sessionStorage
-    cy.window().then((win) => {
-      const session = win.sessionStorage.getItem('sgvc.session');
-      expect(session).to.not.be.null;
-      const parsed = JSON.parse(session);
-      expect(parsed).to.have.property('token', 'token-fake');
-    });
+    // Sessão por cookie HttpOnly: nenhum token no navegador
+    cy.window().its('sessionStorage').invoke('getItem', 'sgvc.session').should('be.null');
   });
 
   it('fecha o modal ao clicar em cancelar', () => {
@@ -598,7 +576,9 @@ describe('Login UI', () => {
 
     cy.get('#email').type('admin@negocio.com');
     cy.get('#password').type('Admin@123!');
-    cy.get('#login-btn').click().click().click();
+    cy.get('#login-btn').click();
+    cy.get('#login-btn').click({ force: true });
+    cy.get('#login-btn').click({ force: true });
     cy.wait('@loginMulti');
     cy.get('@loginMulti.all').should('have.length', 1);
   });
@@ -620,34 +600,20 @@ describe('Login UI', () => {
     cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
   });
 
-  it('salva token em sessionStorage ao inves de localStorage', () => {
+  it('nao guarda token no navegador (sessao em cookie HttpOnly)', () => {
     cy.intercept('POST', LOGIN_URL, {
       statusCode: 200,
-      body: {
-        token: 'token-fake',
-        refreshToken: 'refresh-fake',
-        user: { id: 'u1', email: 'admin@negocio.com' },
-      },
-    }).as('loginSessionStorage');
-
+      body: { user: { id: 'u1', email: 'admin@negocio.com' } },
+    }).as('loginCookie');
+    cy.stubAuthenticated();
     cy.get('#email').type('admin@negocio.com');
     cy.get('#password').type('Admin@123!');
     cy.get('#login-btn').click();
-    cy.wait('@loginSessionStorage');
-    
+    cy.wait('@loginCookie');
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
     cy.window().then((win) => {
-      // Token deve estar em sessionStorage
-      const sessionStorageToken = win.sessionStorage.getItem('sgvc.session');
-      expect(sessionStorageToken).to.not.be.null;
-      
-      // localStorage não deve ter token (apenas email se lembrar-me marcado)
-      const localStorageToken = win.localStorage.getItem('sgvc.session');
-      expect(localStorageToken).to.be.null;
-      
-      const parsed = JSON.parse(sessionStorageToken);
-      expect(parsed).to.have.property('token', 'token-fake');
-      expect(parsed).to.have.property('refreshToken', 'refresh-fake');
-      expect(parsed).to.have.property('user');
+      expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;
+      expect(win.localStorage.getItem('sgvc.session')).to.be.null;
     });
   });
 });

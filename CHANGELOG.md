@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-11-12 — Suíte Cypress verde e correções achadas por ela
+
+### Corrigido (telas)
+- **Ficha técnica (edição):** um clique em "Salvar" disparava até 3 PUTs; um deles mandava o
+  percentual de gastos extras como valor em R$ (10% virava R$ 10) e zerava o lucro fixo. O que ficava
+  gravado dependia de qual terminava por último. Ficou só um tratador, o correto.
+- **Excluir cliente e excluir ficha técnica** mandavam o DELETE duas vezes (dois tratadores no botão).
+- **Cadastro de produto:** havia um segundo tratador de envio, mais frouxo, que podia passar por cima
+  da validação e mandava `ficha_tecnica_id` (campo ignorado pela API na criação).
+- **Busca de CEP e exportação de clientes** sempre respondiam "Sessão inválida" desde a mudança para
+  login por cookie (exigiam um token que não existe mais no navegador).
+- **Cadastro e troca de senha** aceitavam senha fraca que a API recusa; agora a regra é a mesma da API
+  (8+ caracteres com maiúscula, minúscula, número e caractere especial). O indicador de força segue a
+  mesma regra.
+- **Login:** "Esqueci minha senha" ganhou link e janela (o código existia, a tela não); "Credenciais
+  inválidas" vira "E-mail ou senha incorretos"; a tela não rouba mais o foco de quem já digita no
+  cadastro; o botão de mostrar senha anunciava o estado invertido (acessibilidade).
+- **Clientes:** valores com separador de milhar (R$ 2.100,00); observações liberam o botão de salvar;
+  trocar a UF limpa a cidade do outro estado; acentos em "Próximos N dias" e mensagens de UF.
+- **Cadastro (janela):** fechar descarta o que foi digitado.
+- **Fichas:** "Gastos extras (15%)" em vez de "(15,00%)"; aviso de limite sem texto duplicado.
+
+### Segurança (API)
+- **CORS:** fora de produção qualquer origem era aceita com cookies. Agora vale só localhost e
+  `ALLOWED_ORIGINS` (produção continua exigindo a lista). Testes REG-016/017.
+
+### Testes
+- Specs Cypress atualizadas para a sessão por cookie (stubs de `/api/auth/me`, resposta neutra para
+  chamadas sem stub). Specs de produtos, vendas e perfil reescritas para o layout atual;
+  `fluxo-completo.cy.js` virou um fluxo real e curto (antes tentava a senha errada e bloqueava o admin).
+- Job `e2e-tests` na CI. API: 298 testes passando.
+
 ## 2026-11-12 — Forma de pagamento e alerta de margem (US009)
 
 ### Novo

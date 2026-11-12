@@ -184,6 +184,15 @@
       setFieldError(newPassword, newPasswordError, 'A nova senha deve ter pelo menos 8 caracteres.');
       return null;
     }
+    // Mesma regra da API: maiúscula, minúscula, número e caractere especial
+    if (!(/[A-Z]/.test(next) && /[a-z]/.test(next) && /\d/.test(next) && /[^a-zA-Z0-9]/.test(next))) {
+      setFieldError(
+        newPassword,
+        newPasswordError,
+        'Senha muito fraca. Use letra mai\u00fascula, min\u00fascula, n\u00famero e caractere especial.'
+      );
+      return null;
+    }
     if (next !== confirm) {
       setFieldError(confirmPassword, confirmPasswordError, 'As senhas n\u00e3o conferem.');
       return null;

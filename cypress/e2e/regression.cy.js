@@ -60,13 +60,18 @@ describe('Regressao completa', () => {
       statusCode: 201,
       body: { id: 'regressao-01', name: 'Regressao Flow' },
     }).as('createRegression');
+    // Depois de criar, a lista é recarregada e já traz o cliente novo
+    cy.fixture('customers-list').then((items) => {
+      cy.intercept({ method: 'GET', pathname: '/api/customers' }, [...items, regressionCustomer]).as('listAfterCreate');
+    });
     fillBasicClientData();
     cy.get('#create-submit').click();
     cy.wait('@createRegression');
+    cy.wait('@listAfterCreate');
     cy.get('#search-input').clear().type('Regressao Flow');
     cy.get('#clients-body tr').should('contain', 'Regressao Flow');
-    cy.get('#clients-body .clients-name-link').contains('Regressao Flow').click();
     cy.intercept('GET', '**/api/customers/regressao-01', regressionCustomer).as('loadRegression');
+    cy.get('#clients-body .clients-name-link').contains('Regressao Flow').click();
     cy.wait('@loadRegression');
     cy.intercept('PUT', '**/api/customers/regressao-01', {
       statusCode: 200,
@@ -83,8 +88,8 @@ describe('Regressao completa', () => {
 
   it('Navegacao continua a partir do dashboard', () => {
     openClientsPage();
-    cy.get('#clients-body .clients-name-link').first().click();
     cy.intercept('GET', '**/api/customers/c1', sampleCustomer).as('loadFirst');
+    cy.get('#clients-body .clients-name-link').first().click();
     cy.wait('@loadFirst');
     cy.go('back');
     cy.get('#back-dashboard').click();
@@ -95,7 +100,7 @@ describe('Regressao completa', () => {
 
   it('Refresh multiplo realiza varias chamadas', () => {
     openClientsPage();
-    cy.intercept({ method: 'GET', url: '**/api/customers', times: 3 }, { fixture: 'customers-list.json' }).as('multiRefresh');
+    cy.intercept({ method: 'GET', pathname: '/api/customers', times: 3 }, { fixture: 'customers-list.json' }).as('multiRefresh');
     cy.get('#refresh-list').click();
     cy.wait('@multiRefresh');
     cy.get('#refresh-list').click();
@@ -122,7 +127,7 @@ describe('Regressao completa', () => {
 
   it('Atualizar lista reflete o conteudo esperado', () => {
     openClientsPage();
-    cy.intercept('GET', '**/api/customers', { fixture: 'customers-list.json' }).as('refreshFull');
+    cy.intercept({ method: 'GET', pathname: '/api/customers' }, { fixture: 'customers-list.json' }).as('refreshFull');
     cy.get('#refresh-list').click();
     cy.wait('@refreshFull');
     cy.get('#clients-total').should('contain', '(14)');

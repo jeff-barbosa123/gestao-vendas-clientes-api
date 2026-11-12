@@ -1704,7 +1704,7 @@
   }
 
   if (componentAddAviamentos) {
-    componentAddAviamentos.addEventListener('click', () => addComponent('Aviamentos'));
+    componentAddAviamentos.addEventListener('click', () => addComponent('Recheio'));
   }
 
   if (componentAddMateriaPrima) {

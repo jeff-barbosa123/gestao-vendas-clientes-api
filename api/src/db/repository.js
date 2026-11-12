@@ -47,10 +47,15 @@ function normalizeRecipe(row) {
   };
 }
 
+// Venda + nome do cliente cadastrado (a coluna customer_name só guarda o nome avulso)
+const SALE_SELECT = "SELECT s.*, c.name AS registered_customer_name FROM sales s LEFT JOIN customers c ON c.id = s.customer_id";
+
 function normalizeSale(row) {
   if (!row) return row;
+  const { registered_customer_name: registeredName, ...rest } = row;
   return {
-    ...row,
+    ...rest,
+    customer_name: rest.customer_name || registeredName || null,
     total: toNumber(row.total),
     cmv: toNumber(row.cmv),
   };
@@ -859,8 +864,8 @@ async function listSales(ownerId, pagination = null) {
 
   // Query principal com paginação
   const sql = ownerId
-    ? `SELECT * FROM sales WHERE owner_id = $1 ORDER BY date DESC, id DESC ${hasPagination ? 'LIMIT $2 OFFSET $3' : ''}`
-    : `SELECT * FROM sales ORDER BY date DESC, id DESC ${hasPagination ? 'LIMIT $1 OFFSET $2' : ''}`;
+    ? `${SALE_SELECT} WHERE s.owner_id = $1 ORDER BY s.date DESC, s.id DESC ${hasPagination ? 'LIMIT $2 OFFSET $3' : ''}`
+    : `${SALE_SELECT} ORDER BY s.date DESC, s.id DESC ${hasPagination ? 'LIMIT $1 OFFSET $2' : ''}`;
   
   const params = ownerId
     ? (hasPagination ? [ownerId, pagination.limit, pagination.offset] : [ownerId])
@@ -888,7 +893,7 @@ async function listSales(ownerId, pagination = null) {
 async function getSaleById(id) {
   // Busca direta por id (antes carregava todas as vendas de todos os usuários)
   if (!isUuid(id)) return null;
-  const result = await query("SELECT * FROM sales WHERE id = $1", [id]);
+  const result = await query(`${SALE_SELECT} WHERE s.id = $1`, [id]);
   const [sale] = await attachSaleItems(result.rows.map(normalizeSale));
   return sale || null;
 }

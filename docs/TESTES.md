@@ -43,7 +43,7 @@ npm test                 # suíte completa + relatório HTML em api/mochawesome-
 npm run us001            # só uma user story (us001 ... us007)
 ```
 
-Situação em 11/11/2026: **268 testes passando, 0 falhando, 35 pendentes** (`it.skip` — testes de
+Situação em 12/11/2026: **270 testes passando, 0 falhando, 35 pendentes** (`it.skip` — testes de
 performance e cenários ainda não implementados).
 
 ### CI
@@ -62,5 +62,10 @@ npm run cypress:run           # headless
 npm run cypress:run:fluxo-completo
 npm run cypress:validate      # checa estrutura das specs
 ```
+
+Situação em 12/11/2026: muitas specs falham desde antes desta revisão, porque foram escritas para o
+modelo antigo de sessão (token em `sessionStorage`) e simulam só parte da API. Hoje a autenticação é
+por cookie HttpOnly. Os testes de força de senha no cadastro são instáveis (alternam entre passar e
+falhar). Atualizar a suíte E2E para o login por cookie é o próximo passo recomendado.
 
 Mais detalhes em [CYPRESS_GUIA.md](CYPRESS_GUIA.md).

@@ -621,7 +621,7 @@
     }
 
     if (!password) {
-      setFieldError(passwordInput, 'Senha obrigatoria.', passwordError);
+      setFieldError(passwordInput, 'Senha obrigatória.', passwordError);
       setStatus('Falha no login', 'is-danger');
       passwordInput.focus();
       setLoginButtonState();
@@ -786,18 +786,18 @@
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       clearMessages();
-      setStatus('Encerrando sessao...', 'is-info');
+      setStatus('Encerrando sessão...', 'is-info');
       try {
         await apiRequest('/api/auth/logout', { method: 'POST' });
       } catch (err) {
-        showAlert(err.message || 'Falha ao encerrar sessao.');
+        showAlert(err.message || 'Falha ao encerrar sessão.');
       } finally {
         state.token = null;
         state.user = null;
         clearSession();
         updateSessionUI();
-        setStatus('Sessao encerrada', 'is-light');
-        if (responseOutput) responseOutput.textContent = 'Sessao encerrada.';
+        setStatus('Sessão encerrada', 'is-light');
+        if (responseOutput) responseOutput.textContent = 'Sessão encerrada.';
       }
     });
   }

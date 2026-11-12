@@ -1,3 +1,4 @@
+require("../src/config/loadEnv");
 const { pool } = require("../src/db");
 const { hashPassword } = require("../src/utils/passwordHash");
 

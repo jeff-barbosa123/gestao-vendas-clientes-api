@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-11-12 — Revisão de layout e telas
+
+Revisão visual de todas as telas (desktop 1366px e celular 390px) com dados de demonstração.
+
+### Bugs corrigidos (frontend)
+- **8 telas inacessíveis**: Produtos, Fichas, Vendas, Vínculos, Relatórios, Simulação, Perfil e
+  Monitoramento não carregavam o `api-client.js` e jogavam o usuário de volta para o login.
+- **Datas um dia antes**: vendas e datas de nascimento eram exibidas no dia anterior (fuso UTC-3);
+  depois das 21h, a data padrão da nova venda já era a de amanhã.
+- **Lista de vendas** mostrava "-" no cliente quando a venda era de um cliente cadastrado.
+- **Relatórios** abriam zerados ("Sem filtro" descartava todas as vendas).
+- **Dashboard**: insight de faturamento ficava em "Carregando..." para sempre; cabeçalho mostrava
+  "Usuário" em vez do nome.
+- Elementos com `hidden` apareciam (ex.: aviso amarelo vazio no código de barras).
+- Login no celular com marca e formulário espremidos lado a lado.
+
+### Layout e textos
+- Rodapé deixou de ficar fixo por cima do conteúdo.
+- Login: formulário centralizado na área branca e lista de benefícios no lado azul.
+- Títulos do relatório estavam quase invisíveis (texto claro sobre fundo branco).
+- ~110 textos corrigidos (acentos, caracteres corrompidos como "VocÃª", jargão técnico como
+  "comportamento atual"); percentuais com vírgula (65,4%).
+- Vínculos: removida a fileira de indicadores repetidos.
+- Celular: grupos de campos e botões quebram linha em vez de estourar a tela.
+- Acessibilidade: rótulos em 15 campos que não tinham.
+- Ficha técnica: atalho "Aviamentos" (termo de costura) trocado por "Recheio".
+
+### Melhorias
+- **Menu de navegação** em todas as telas logadas (antes só dava para navegar voltando ao dashboard).
+- **Dashboard com CMV e lucro bruto** do período, além do faturamento.
+- `api/src/config/loadEnv.js`: carregamento do `.env` centralizado; `npm run db:seed:users` e os
+  scripts de migração não carregavam o `.env` e nunca funcionavam.
+- Removidos `web/public/styles.css` e `web/public/static/app.js` (nunca eram servidos).
+
+### Testes
+- API: 270 passando, 0 falhando (novos REG-011 e REG-012).
+- E2E (Cypress): sem regressões em relação à versão anterior. A suíte já tinha muitas falhas antigas
+  (testes escritos para o modelo antigo de sessão em `sessionStorage`); ver docs/TESTES.md.
+
 ## 2026-11-11 — Varredura, limpeza e correções
 
 ### Estrutura do repositório

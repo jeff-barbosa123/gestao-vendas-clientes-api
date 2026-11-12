@@ -21,6 +21,7 @@
   const weekInput = document.getElementById('week-input');
   const monthInput = document.getElementById('month-input');
   const yearInput = document.getElementById('year-input');
+  if (yearInput) yearInput.placeholder = String(new Date().getFullYear());
   const startInput = document.getElementById('start-input');
   const endInput = document.getElementById('end-input');
   const applyBtn = document.getElementById('apply-filters');
@@ -83,7 +84,7 @@
   }
 
   function formatPercent(value) {
-    return `${(Number(value || 0) * 100).toFixed(1)}%`;
+    return `${(Number(value || 0) * 100).toFixed(1).replace(".", ",")}%`;
   }
 
   function setControlsLoading(loading) {

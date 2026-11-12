@@ -182,4 +182,35 @@ describe('US998 - Regressões (varredura 11/11/2026)', () => {
       expect(res.body.message).to.equal(res.body.error);
     });
   });
+
+  describe('Relatórios e listagem de vendas', () => {
+    it('REG-011 | Relatório "Sem filtro" considera todas as vendas (antes voltava zerado)', async () => {
+      const product = await createProduct(adminToken);
+      await createSale(adminToken, product.id);
+      const res = await http.get('/api/reports/financial?breakdown=total').set(auth(adminToken));
+      expect(res.status).to.equal(200);
+      const body = Array.isArray(res.body) ? res.body[0] : res.body;
+      expect(Number(body.revenue ?? body.total ?? 0)).to.be.above(0);
+    });
+
+    it('REG-012 | Venda de cliente cadastrado traz o nome do cliente', async () => {
+      const customer = await http
+        .post('/api/customers')
+        .set(auth(adminToken))
+        .send({ name: 'Cliente Nome Regressao', email: `nome+${Date.now()}@teste.com` });
+      expect(customer.status).to.equal(201);
+      const product = await createProduct(adminToken);
+      const sale = await createSale(adminToken, product.id, { clienteNome: undefined, customerId: customer.body.id });
+
+      const one = await http.get(`/api/sales/${sale.id}`).set(auth(adminToken));
+      expect(one.status).to.equal(200);
+      expect(one.body.customerName).to.equal('Cliente Nome Regressao');
+
+      const list = await http.get('/api/sales').set(auth(adminToken));
+      const rows = Array.isArray(list.body) ? list.body : list.body.items || list.body.data || [];
+      const found = rows.find((r) => r.id === sale.id);
+      expect(found, 'venda na listagem').to.exist;
+      expect(found.customerName).to.equal('Cliente Nome Regressao');
+    });
+  });
 });

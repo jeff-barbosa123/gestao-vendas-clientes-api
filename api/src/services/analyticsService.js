@@ -35,7 +35,7 @@ function filterSalesByDate(sales, startDate, endDate) {
     // Venda cancelada não entra em faturamento/dashboard
     if (s.status === "CANCELED" || s.status_venda === "cancelada") return false;
     const dx = new Date(s.date);
-    return dx >= startDate && dx <= endDate;
+    return (!startDate || dx >= startDate) && (!endDate || dx <= endDate);
   });
 }
 

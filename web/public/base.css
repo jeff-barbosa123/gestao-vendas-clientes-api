@@ -15,6 +15,11 @@
   box-sizing: border-box;
 }
 
+/* O atributo hidden sempre vence classes que definem display (ex.: mensagens vazias aparecendo) */
+[hidden] {
+  display: none !important;
+}
+
 body {
   font-family: "Source Sans 3", "Sora", sans-serif;
   background: var(--bg);
@@ -40,19 +45,13 @@ main {
 }
 
 .app-footer {
+  /* Rodapé no fluxo da página (antes era fixo e ficava por cima do conteúdo) */
+  position: static;
   text-align: center;
   font-size: 12px;
-  color: #f8fafc;
-  position: fixed;
-  left: 50%;
-  right: auto;
-  bottom: 12px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #1e293b;
-  text-shadow: none;
+  color: rgba(248, 250, 252, 0.8);
+  margin: 24px auto 16px;
+  padding: 0 16px;
 }
 
 .skip-link {
@@ -467,5 +466,131 @@ a:focus-visible {
     scroll-behavior: auto !important;
     transition: none !important;
     animation: none !important;
+  }
+}
+
+/* ===== Menu de navegação comum (static/nav.js) ===== */
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.25);
+}
+
+.app-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+}
+
+.app-nav-brand {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.app-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.app-nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-nav-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.app-nav-links a.is-active {
+  background: #ffffff;
+  color: #1e3a8a;
+}
+
+.app-nav-profile {
+  margin-left: auto;
+}
+
+.app-nav-toggle {
+  display: none;
+  margin-left: auto;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .app-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .app-nav-inner {
+    flex-wrap: wrap;
+  }
+
+  .app-nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding-bottom: 12px;
+  }
+
+  .app-nav.is-open .app-nav-links {
+    display: flex;
+  }
+
+  .app-nav-links a {
+    min-height: 44px;
+  }
+
+  .app-nav-profile {
+    margin-left: 0;
+  }
+}
+
+/* ===== Celular: grupos de campo + botões quebram linha em vez de estourar a tela ===== */
+@media (max-width: 768px) {
+  .field.has-addons {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .field.has-addons .control.is-expanded {
+    flex: 1 1 100%;
+  }
+
+  .field.has-addons .control .button,
+  .field.has-addons .control .input,
+  .field.has-addons .control .select select {
+    border-radius: 8px !important;
   }
 }

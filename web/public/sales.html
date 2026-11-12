@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/static/base.css" />
     <link rel="stylesheet" href="/static/sales.css" />
     <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
   </head>
   <body>
     <main id="main">
@@ -74,18 +77,18 @@
                   <div class="field has-addons">
                     <div class="control is-expanded">
                       <div class="select is-fullwidth">
-                        <select id="item-product" data-alias="sale-products" data-alias-2="products-select">
+                        <select id="item-product" aria-label="Produto do item" data-alias="sale-products" data-alias-2="products-select">
                           <option value="">Selecione um produto</option>
                         </select>
                       </div>
                     </div>
                     <div class="control">
-                      <input class="input" id="item-qty" type="number" min="1" placeholder="Qtd" data-alias="sale-quantity" data-alias-2="quantity-input" />
+                      <input class="input" id="item-qty" aria-label="Quantidade" type="number" min="1" placeholder="Qtd" data-alias="sale-quantity" data-alias-2="quantity-input" />
                     </div>
                     <div class="control">
                       <input
                         class="input"
-                        id="item-price"
+                        id="item-price" aria-label="Preço unitário"
                         type="text"
                         placeholder="Pre&ccedil;o"
                         inputmode="decimal"
@@ -99,7 +102,7 @@
                   <p class="help is-danger" id="item-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
-                  <label class="label" for="item-barcode">Codigo de barras (opcional)</label>
+                  <label class="label" for="item-barcode">Código de barras (opcional)</label>
                   <input
                     class="input"
                     id="item-barcode"
@@ -168,10 +171,10 @@
                     <option value="year">Este ano</option>
                   </select>
                 </div>
-                <input type="date" id="date-from" style="display:none;" aria-hidden="true" data-alias="start-date" />
-                <input type="date" id="date-to" style="display:none;" aria-hidden="true" data-alias="end-date" />
-                <input type="date" id="start-date" style="display:none;" aria-hidden="true" />
-                <input type="date" id="end-date" style="display:none;" aria-hidden="true" />
+                <input type="date" id="date-from" aria-label="Data inicial" style="display:none;" aria-hidden="true" data-alias="start-date" />
+                <input type="date" id="date-to" aria-label="Data final" style="display:none;" aria-hidden="true" data-alias="end-date" />
+                <input type="date" id="start-date" aria-label="Data inicial" style="display:none;" aria-hidden="true" />
+                <input type="date" id="end-date" aria-label="Data final" style="display:none;" aria-hidden="true" />
               </div>
               <div class="field" style="display:none;" aria-hidden="true">
                 <button type="button" id="filter-btn" data-alias="apply-filter" style="display:none;" aria-hidden="true"></button>
@@ -239,7 +242,7 @@
     </main>
 
     <footer class="app-footer">
-      (c) 2025 SGVC - Vers&atilde;o 1.0.0
+      &copy; SGVC &middot; Vers&atilde;o 1.0.0
     </footer>
 
     <div class="modal" id="edit-sale-modal" aria-hidden="true">
@@ -262,18 +265,18 @@
                 <div class="field has-addons">
                   <div class="control is-expanded">
                     <div class="select is-fullwidth">
-                      <select id="edit-item-product">
+                      <select id="edit-item-product" aria-label="Produto do item">
                         <option value="">Selecione um produto</option>
                       </select>
                     </div>
                   </div>
                   <div class="control">
-                    <input class="input" id="edit-item-qty" type="number" min="1" placeholder="Qtd" />
+                    <input class="input" id="edit-item-qty" aria-label="Quantidade" type="number" min="1" placeholder="Qtd" />
                   </div>
                   <div class="control">
                     <input
                       class="input"
-                      id="edit-item-price"
+                      id="edit-item-price" aria-label="Preço unitário"
                       type="text"
                       placeholder="Pre&ccedil;o"
                       inputmode="decimal"
@@ -288,7 +291,7 @@
                 <p class="help is-danger" id="edit-item-error" aria-live="polite" hidden></p>
               </div>
               <div class="field">
-                <label class="label" for="edit-item-barcode">Codigo de barras (opcional)</label>
+                <label class="label" for="edit-item-barcode">Código de barras (opcional)</label>
                 <input
                   class="input"
                   id="edit-item-barcode"
@@ -408,7 +411,7 @@
                   <p class="sales-customer-value" id="sale-details-street">-</p>
                 </div>
                 <div id="sale-details-field-number">
-                  <p class="help">Numero</p>
+                  <p class="help">Número</p>
                   <p class="sales-customer-value" id="sale-details-number">-</p>
                 </div>
                 <div id="sale-details-field-complement">

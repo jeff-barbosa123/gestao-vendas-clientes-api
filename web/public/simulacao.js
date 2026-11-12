@@ -361,13 +361,13 @@
     const marginValue = Number(data.margem ?? data.margemLucroPercentual);
     const normalizedMargin = Number.isFinite(marginValue) ? marginValue : 0;
     if (resultMargin) {
-      resultMargin.textContent = `${normalizedMargin.toFixed(1)}%`;
+      resultMargin.textContent = `${normalizedMargin.toFixed(1).replace(".", ",")}%`;
     }
     updateMarginHealth(normalizedMargin);
     const totalCost = resolveValue(data, ['custo_total', 'custoTotal']);
     if (marginContext) {
       marginContext.textContent = Number.isFinite(normalizedMargin) && totalCost != null
-        ? `Margem de ${normalizedMargin.toFixed(1)}% aplicada sobre um custo total de R$ ${formatPrice(totalCost)}.`
+        ? `Margem de ${normalizedMargin.toFixed(1).replace(".", ",")}% aplicada sobre um custo total de R$ ${formatPrice(totalCost)}.`
         : 'Informe os dados para visualizar o resultado.';
     }
     formatCurrencyField(resultTotalCost, totalCost);
@@ -591,7 +591,7 @@
           body: JSON.stringify({ receitaId, margem: margem, taxaEntrega }),
         });
         renderResult(result);
-        showMessage('Simulacao concluida.', 'is-success');
+        showMessage('Simulação concluída.', 'is-success');
       } catch (err) {
         showMessage(err.message, 'is-danger');
       } finally {

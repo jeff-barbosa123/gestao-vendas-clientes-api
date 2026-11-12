@@ -79,9 +79,35 @@
   padding: 28px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
   position: absolute;
-  left: 50%;
+  /* centralizado na área branca (à direita da diagonal), sem sobrar espaço vazio */
+  left: 73%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.brand-benefits {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  max-width: 300px;
+}
+
+.brand-benefits li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.brand-benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+  color: #bbf7d0;
 }
 
 .login-title {
@@ -474,9 +500,54 @@
     margin-bottom: 24px;
   }
 
+  .brand-benefits {
+    display: none;
+  }
+
   .login-card {
     position: static;
     transform: none;
     width: 100%;
+  }
+}
+
+/* Login/recuperação: rodapé dentro do fundo azul (sem faixa de outra cor) */
+body {
+  background: linear-gradient(135deg, #3f73c8, #2f5fae);
+}
+
+.background {
+  min-height: calc(100vh - 60px);
+}
+
+@media (max-width: 900px) {
+  /* Celular/tablet: marca em cima e formulário embaixo (antes ficavam lado a lado, espremidos) */
+  .login-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding: 24px;
+  }
+
+  .brand {
+    text-align: center;
+  }
+
+  .brand-mark {
+    margin: 0 auto 8px;
+  }
+
+  .brand-ring {
+    stroke: #3f73c8;
+  }
+
+  .brand-wave {
+    fill: #3f73c8;
+  }
+
+  .login-card {
+    box-shadow: none;
+    padding: 8px 0 0;
+    background: transparent;
   }
 }

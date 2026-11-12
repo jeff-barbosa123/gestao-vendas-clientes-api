@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/static/base.css" />
   <link rel="stylesheet" href="/static/dashboard.css" />
   <script src="/config.js" defer></script>
+  <script src="/static/nav.js" defer></script>
   <script src="/static/error-handler.js" defer></script>
   <script src="/static/api-client.js" defer></script>
   <script src="/static/skeleton-loading.js" defer></script>
@@ -77,7 +78,7 @@
 
         <div class="dashboard-card">
           <p class="dashboard-value" id="metric-sales">--</p>
-          <p class="dashboard-label">Vendas no mês</p>
+          <p class="dashboard-label">Vendas no período</p>
           <p class="kpi-empty is-hidden" data-empty="sales">Sem dados no período.</p>
           <button class="button is-light is-small" id="sales-manage-action">
             Cadastrar venda
@@ -88,6 +89,20 @@
           <p class="dashboard-value" id="metric-revenue">R$ 0,00</p>
           <p class="dashboard-label">Faturamento</p>
           <p class="kpi-empty is-hidden" data-empty="revenue">Sem dados no período.</p>
+          <span class="kpi-spacer" aria-hidden="true"></span>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-cmv">R$ 0,00</p>
+          <p class="dashboard-label">CMV (custo do que foi vendido)</p>
+          <p class="kpi-empty is-hidden" data-empty="cmv">Sem dados no período.</p>
+          <span class="kpi-spacer" aria-hidden="true"></span>
+        </div>
+
+        <div class="dashboard-card">
+          <p class="dashboard-value" id="metric-profit">R$ 0,00</p>
+          <p class="dashboard-label">Lucro bruto (faturamento − CMV)</p>
+          <p class="kpi-empty is-hidden" data-empty="profit">Sem dados no período.</p>
           <span class="kpi-spacer" aria-hidden="true"></span>
         </div>
       </div>
@@ -222,7 +237,7 @@
 </main>
 
 <footer class="app-footer">
-  <p>(c) 2025 SGVC - Versão 1.0.0</p>
+  <p>© SGVC · Versão 1.0.0</p>
 </footer>
 
 <script src="/dashboard.js" defer></script>

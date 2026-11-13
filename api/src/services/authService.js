@@ -10,16 +10,7 @@ const { hashPassword, comparePassword } = require("../utils/passwordHash");
 const { JWT_TTL_SECONDS, JWT_SECRET, JWT_REFRESH_SECRET, JWT_REFRESH_TTL_SECONDS, JWT_REFRESH_PREVIOUS_SECRET, MAX_FAILED_ATTEMPTS, BLOCK_DURATION_MS, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, RESET_TOKEN_TTL_MINUTES, RESET_TOKEN_SECRET, WEB_BASE_URL, EMAIL_VERIFY_TOKEN_SECRET } = require("./auth/config");
 const { MESSAGES } = require("./auth/messages");
 const { getUserByEmail, getUserById } = require("./auth/userLookup");
-
-function sanitizeEmail(email) {
-  if (typeof email !== "string") return email;
-  return email.trim().toLowerCase();
-}
-
-function sanitizePassword(password) {
-  if (typeof password !== "string") return password;
-  return password.trim();
-}
+const { validateEmail, validatePassword, validateCredentials } = require("./auth/validators");
 
 function normalizeEmailKey(email) {
   return String(email || "").toLowerCase();
@@ -95,109 +86,6 @@ async function recordFailedAttempt(email) {
   return entry;
 }
 
-function validateEmail(rawEmail, passwordProvided) {
-  if (rawEmail === undefined && !passwordProvided) {
-    const err = new Error(MESSAGES.emailPasswordRequired);
-    err.status = 400;
-    throw err;
-  }
-  if (rawEmail === undefined || rawEmail === null) {
-    const err = new Error(MESSAGES.emailRequired);
-    err.status = 400;
-    throw err;
-  }
-  if (typeof rawEmail !== "string") {
-    const err = new Error(MESSAGES.invalidEmail);
-    err.status = 400;
-    throw err;
-  }
-
-  const email = sanitizeEmail(rawEmail);
-  if (!email) {
-    const err = new Error(MESSAGES.emailRequired);
-    err.status = 400;
-    throw err;
-  }
-
-  const strictEmailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-  if (!strictEmailRegex.test(email)) {
-    const err = new Error(MESSAGES.invalidEmail);
-    err.status = 400;
-    throw err;
-  }
-
-  return email;
-}
-
-function validatePasswordStrength(password) {
-  if (password.length < 8) {
-    const err = new Error(MESSAGES.passwordShort);
-    err.status = 400;
-    throw err;
-  }
-  if (password.length > MAX_PASSWORD_LENGTH) {
-    const err = new Error(MESSAGES.passwordLong);
-    err.status = 400;
-    throw err;
-  }
-  
-  // Strong password validation: at least one uppercase, one lowercase, one number, one special char
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /\d/.test(password);
-  const hasSpecial = /[^a-zA-Z0-9]/.test(password);
-  
-  if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
-    const err = new Error(MESSAGES.passwordWeak);
-    err.status = 400;
-    throw err;
-  }
-  
-  return true;
-}
-
-function validatePassword(rawPassword, requireStrength = true) {
-  if (rawPassword === undefined || rawPassword === null) {
-    const err = new Error(MESSAGES.passwordRequired);
-    err.status = 400;
-    throw err;
-  }
-  if (typeof rawPassword !== "string") {
-    const err = new Error(MESSAGES.invalidPasswordType);
-    err.status = 400;
-    throw err;
-  }
-
-  const password = sanitizePassword(rawPassword);
-  if (!password) {
-    const err = new Error(MESSAGES.passwordRequired);
-    err.status = 400;
-    throw err;
-  }
-
-  // Validação de tamanho mínimo só é necessária para registro/recuperação (requireStrength = true)
-  // No login (requireStrength = false), aceitamos qualquer senha não vazia para compatibilidade com senhas antigas
-  if (requireStrength && password.length < MIN_PASSWORD_LENGTH) {
-    const err = new Error(MESSAGES.passwordShort);
-    err.status = 400;
-    throw err;
-  }
-  
-  // Tamanho máximo sempre deve ser validado
-  if (password.length > MAX_PASSWORD_LENGTH) {
-    const err = new Error(MESSAGES.passwordLong);
-    err.status = 400;
-    throw err;
-  }
-  
-  // Validação de força só para registro/recuperação/alteração de senha
-  if (requireStrength) {
-    validatePasswordStrength(password);
-  }
-  
-  return password;
-}
-
 function hashResetToken(token) {
   return crypto
     .createHash("sha256")
@@ -215,21 +103,6 @@ function hashEmailVerificationToken(token) {
 function buildResetLink(token) {
   const base = WEB_BASE_URL.endsWith("/") ? WEB_BASE_URL.slice(0, -1) : WEB_BASE_URL;
   return `${base}/reset-password.html?token=${encodeURIComponent(token)}`;
-}
-
-function validateCredentials(rawEmail, rawPassword) {
-  const emailProvided = rawEmail !== undefined;
-  const passwordProvided = rawPassword !== undefined;
-  if (!emailProvided && !passwordProvided) {
-    const err = new Error(MESSAGES.emailPasswordRequired);
-    err.status = 400;
-    throw err;
-  }
-  const email = validateEmail(rawEmail, passwordProvided);
-  // No login, NÃO validamos força da senha (requireStrength = false)
-  // A validação de força só acontece em registro/recuperação/alteração de senha
-  const password = validatePassword(rawPassword, false);
-  return { email, password };
 }
 
 function signAccessToken(user, jti) {

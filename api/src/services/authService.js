@@ -9,6 +9,7 @@ const sessionStore = require("./sessionStore");
 const { hashPassword, comparePassword } = require("../utils/passwordHash");
 const { JWT_TTL_SECONDS, JWT_SECRET, JWT_REFRESH_SECRET, JWT_REFRESH_TTL_SECONDS, JWT_REFRESH_PREVIOUS_SECRET, MAX_FAILED_ATTEMPTS, BLOCK_DURATION_MS, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, RESET_TOKEN_TTL_MINUTES, RESET_TOKEN_SECRET, WEB_BASE_URL, EMAIL_VERIFY_TOKEN_SECRET } = require("./auth/config");
 const { MESSAGES } = require("./auth/messages");
+const { getUserByEmail, getUserById } = require("./auth/userLookup");
 
 function sanitizeEmail(email) {
   if (typeof email !== "string") return email;
@@ -18,14 +19,6 @@ function sanitizeEmail(email) {
 function sanitizePassword(password) {
   if (typeof password !== "string") return password;
   return password.trim();
-}
-
-async function getUserByEmail(email) {
-  return repo.getUserByEmail(email);
-}
-
-async function getUserById(id) {
-  return repo.getUserById(id);
 }
 
 function normalizeEmailKey(email) {

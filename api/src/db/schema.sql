@@ -305,3 +305,16 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items (order_id);
+
+
+-- ============================================================
+-- Estoque de PRODUTOS baixado por venda (para devolver ao cancelar/editar a venda).
+-- Guarda o que foi realmente baixado: produtos fora do criterio de controle de estoque
+-- nao entram aqui e, portanto, nunca recebem devolucao.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sale_product_stock (
+  sale_id UUID NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL,
+  quantity INTEGER NOT NULL,
+  PRIMARY KEY (sale_id, product_id)
+);

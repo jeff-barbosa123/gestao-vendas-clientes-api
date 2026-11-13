@@ -18,3 +18,5 @@ cypress/screenshots/
 # Backups locais
 backup/
 cyprress/reports/
+
+cypress/reports/

@@ -1254,6 +1254,35 @@ async function adjustProductStock(productId, delta, client) {
   return result.rows[0] ? Number(result.rows[0].stock) : null;
 }
 
+// Registra o que a venda realmente baixou de cada produto (para devolver ao cancelar/editar)
+async function saveSaleProductStock(saleId, entries, client) {
+  const run = client ? client.query.bind(client) : query;
+  for (const [productId, quantity] of entries) {
+    await run(
+      `INSERT INTO sale_product_stock (sale_id, product_id, quantity) VALUES ($1, $2, $3)
+       ON CONFLICT (sale_id, product_id) DO UPDATE SET quantity = sale_product_stock.quantity + EXCLUDED.quantity`,
+      [saleId, productId, quantity]
+    );
+  }
+}
+
+// Devolve ao estoque tudo o que a venda baixou e apaga o registro (idempotente: 2ª chamada não devolve nada)
+async function releaseSaleProductStock(saleId, client) {
+  if (!isUuid(saleId)) return;
+  const run = client ? client.query.bind(client) : query;
+  const rows = await run(
+    `DELETE FROM sale_product_stock WHERE sale_id = $1 RETURNING product_id, quantity`,
+    [saleId]
+  );
+  const ordered = [...rows.rows].sort((a, b) => String(a.product_id).localeCompare(String(b.product_id)));
+  for (const r of ordered) {
+    await run(
+      `UPDATE products SET stock = stock + $2, updated_at = NOW() WHERE id = $1 AND stock IS NOT NULL`,
+      [r.product_id, r.quantity]
+    );
+  }
+}
+
 // Saldo líquido que uma venda ainda tem em cada insumo (SALE negativo + SALE_CANCEL positivo)
 async function getSaleStockBalance(saleId, client = null) {
   if (!isUuid(saleId)) return [];
@@ -1311,6 +1340,8 @@ module.exports = {
   listStockMovements,
   getSaleStockBalance,
   adjustProductStock,
+  saveSaleProductStock,
+  releaseSaleProductStock,
   listLowStockIngredients,
   getUserByEmail,
   getUserById,

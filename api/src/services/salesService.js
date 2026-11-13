@@ -241,7 +241,8 @@ function normalizeItemsWithCosts(items, productMap, previousItems = []) {
 // Baixa o estoque dos produtos DENTRO da transação da venda. Cada baixa é um UPDATE atômico
 // condicionado ao saldo (sem ler-e-gravar), então vendas simultâneas não vendem o mesmo estoque
 // duas vezes. Se faltar saldo, lança 422 e a transação inteira é desfeita (rollback).
-async function reserveStock(items, productMap, client) {
+// Registra a baixa por venda (sale_product_stock) para poder devolver exatamente o que saiu.
+async function reserveStock(saleId, items, productMap, client) {
   const wanted = new Map(); // productId -> quantidade total (mesmo produto em 2 itens soma)
   for (const it of items) {
     const product = productMap.get(it.productId);
@@ -260,6 +261,12 @@ async function reserveStock(items, productMap, client) {
       throw err;
     }
   }
+  await repo.saveSaleProductStock(saleId, ordered, client);
+}
+
+// Devolve o estoque de produtos baixado pela venda (só o que foi registrado = produtos rastreados)
+async function releaseStock(saleId, client) {
+  await repo.releaseSaleProductStock(saleId, client);
 }
 
 function logAudit(saleId, action, userId) {
@@ -373,8 +380,8 @@ async function create(data, user) {
   // Tudo ou nada: baixa de produtos + venda + baixa de insumos na mesma transação.
   // Qualquer erro (ex.: estoque insuficiente) desfaz tudo automaticamente.
   const lowStock = await withTransaction(async (client) => {
-    await reserveStock(items, productMap, client);
     await repo.createSale(sale, items, client);
+    await reserveStock(sale.id, items, productMap, client);
     return safeStock("venda", client, () =>
       stockService.applySale(sale.id, items, productMap, user, client)
     );
@@ -437,6 +444,8 @@ async function update(id, data, user) {
   const updatedDate = data.date ? parseIsoDate(data.date, "date").toISOString() : oldSale.date;
 
   await withTransaction(async (client) => {
+    // Devolve o estoque de produtos da versão antiga e baixa de novo pelos itens atuais (422 se faltar saldo → rollback)
+    await releaseStock(id, client);
     await repo.updateSale(id, {
       ...oldSale,
       ...data,
@@ -445,6 +454,7 @@ async function update(id, data, user) {
       cmv,
       date: updatedDate,
     }, items, client);
+    await reserveStock(id, items, productMap, client);
     // Itens mudaram: devolve o que a venda tinha descontado e desconta de novo pelos itens atuais
     await safeStock("edição de venda", client, async () => {
       await stockService.reverseSale(id, user, client);
@@ -491,6 +501,7 @@ async function cancel(id, user) {
       client
     );
     if (!alreadyCanceled) {
+      await releaseStock(id, client);
       await safeStock("cancelamento de venda", client, () =>
         stockService.reverseSale(id, user, client)
       );

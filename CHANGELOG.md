@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-11-13 — Robustez da API: transações, validação e devolução de estoque
+
+### Novo
+- **Transações:** criar, editar e cancelar venda são "tudo ou nada" (baixa de produtos, venda e baixa
+  de insumos na mesma transação). Baixa atômica por UPDATE condicionado ao saldo: vendas simultâneas
+  não vendem o mesmo estoque duas vezes (antes havia overselling).
+- **Devolução de estoque de produtos:** cancelar a venda ou reduzir itens ao editá-la devolve a
+  quantidade ao produto. Vale só para produtos que entram no critério de controle (`stock <= 5`);
+  o que foi baixado fica registrado em `sale_product_stock`, então cancelar duas vezes não devolve em
+  duplicidade e editar acima do saldo responde 422 mantendo o estado anterior. Vendas anteriores a esta
+  versão não têm registro e não recebem devolução.
+- **Validação genérica de entrada** (`validate`, corpo JSON obrigatório, query aninhada recusada,
+  teto de paginação).
+
+### Ajustado
+- Banco unificado em `api/src/db/schema.sql` + `npm run db:init` / `db:reset` / `db:reset:test`
+  (pasta `api/migrations` removida).
+- CORS extraído para `config/cors.js`; rate limit sem try/catch silencioso.
+
+### Testes
+- `US012-atomicidade` (concorrência), `US013-validacao` e `US014-devolucao-estoque`.
+  API: 342 passando; Cypress: 271 passando.
+
 ## 2026-11-12 — Encomendas (US011)
 
 ### Novo

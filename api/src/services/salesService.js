@@ -24,7 +24,6 @@ async function safeStock(label, client, fn) {
 }
 const { parseIsoDate } = require("../utils/dateValidation");
 
-const auditLog = new Map();
 const allowedPaymentMethods = ["PIX", "CREDIT_CARD", "DEBIT_CARD", "CASH", "OTHER"];
 // Aceita também os nomes em português usados no balcão
 const PAYMENT_ALIASES = {
@@ -269,18 +268,13 @@ async function releaseStock(saleId, client) {
   await repo.releaseSaleProductStock(saleId, client);
 }
 
-function logAudit(saleId, action, userId) {
-  const now = new Date().toISOString();
-  const current = auditLog.get(saleId) || { history: [] };
-  const entry = { action, performedBy: userId || null, performedAt: now };
-  const history = [...current.history, entry];
-  auditLog.set(saleId, {
-    saleId,
-    lastAction: action,
-    performedBy: entry.performedBy,
-    performedAt: entry.performedAt,
-    history,
-  });
+// Auditoria persistida: a operação já foi concluída, então uma falha aqui é registrada mas não a desfaz
+async function logAudit(saleId, action, userId) {
+  try {
+    await repo.addSaleAudit(saleId, action, userId || null);
+  } catch (err) {
+    logError({ event: "SALE_AUDIT_FAILED", message: `${action} ${saleId}: ${err.message}` });
+  }
 }
 
 async function getAudit(saleId) {
@@ -290,12 +284,17 @@ async function getAudit(saleId) {
     err.status = 404;
     throw err;
   }
-  return auditLog.get(saleId) || {
+  const history = await repo.listSaleAudit(saleId);
+  if (!history.length) {
+    return { saleId, lastAction: "CREATED", performedBy: null, performedAt: sale.date, history: [] };
+  }
+  const last = history[history.length - 1];
+  return {
     saleId,
-    lastAction: "CREATED",
-    performedBy: null,
-    performedAt: sale.date,
-    history: [],
+    lastAction: last.action,
+    performedBy: last.performedBy,
+    performedAt: last.performedAt,
+    history,
   };
 }
 
@@ -387,7 +386,7 @@ async function create(data, user) {
     );
   });
 
-  logAudit(sale.id, "CREATED", user ? user.id : null);
+  await logAudit(sale.id, "CREATED", user ? user.id : null);
   return lowStock && lowStock.length ? { ...sale, lowStockIngredients: lowStock } : sale;
 }
 
@@ -461,7 +460,7 @@ async function update(id, data, user) {
       await stockService.applySale(id, items, productMap, user, client);
     });
   });
-  logAudit(id, "UPDATED", user ? user.id : null);
+  await logAudit(id, "UPDATED", user ? user.id : null);
 
   return {
     ...oldSale,
@@ -508,7 +507,7 @@ async function cancel(id, user) {
     }
   });
 
-  logAudit(id, "CANCELED", user ? user.id : null);
+  await logAudit(id, "CANCELED", user ? user.id : null);
   return repo.getSaleById(id);
 }
 

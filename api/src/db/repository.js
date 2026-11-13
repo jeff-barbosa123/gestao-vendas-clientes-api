@@ -1254,6 +1254,27 @@ async function adjustProductStock(productId, delta, client) {
   return result.rows[0] ? Number(result.rows[0].stock) : null;
 }
 
+// Histórico de auditoria da venda (persistido: sobrevive a reinício da API)
+async function addSaleAudit(saleId, action, userId) {
+  await query(
+    `INSERT INTO sale_audit (sale_id, action, performed_by) VALUES ($1, $2, $3)`,
+    [saleId, action, isUuid(userId) ? userId : null]
+  );
+}
+
+async function listSaleAudit(saleId) {
+  if (!isUuid(saleId)) return [];
+  const result = await query(
+    `SELECT action, performed_by, performed_at FROM sale_audit WHERE sale_id = $1 ORDER BY id`,
+    [saleId]
+  );
+  return result.rows.map((r) => ({
+    action: r.action,
+    performedBy: r.performed_by || null,
+    performedAt: new Date(r.performed_at).toISOString(),
+  }));
+}
+
 // Registra o que a venda realmente baixou de cada produto (para devolver ao cancelar/editar)
 async function saveSaleProductStock(saleId, entries, client) {
   const run = client ? client.query.bind(client) : query;
@@ -1342,6 +1363,8 @@ module.exports = {
   adjustProductStock,
   saveSaleProductStock,
   releaseSaleProductStock,
+  addSaleAudit,
+  listSaleAudit,
   listLowStockIngredients,
   getUserByEmail,
   getUserById,

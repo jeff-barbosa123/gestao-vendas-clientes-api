@@ -318,3 +318,16 @@ CREATE TABLE IF NOT EXISTS sale_product_stock (
   quantity INTEGER NOT NULL,
   PRIMARY KEY (sale_id, product_id)
 );
+
+
+-- ============================================================
+-- Historico de auditoria das vendas (antes ficava em memoria e se perdia ao reiniciar a API).
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sale_audit (
+  id BIGSERIAL PRIMARY KEY,
+  sale_id UUID NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
+  action TEXT NOT NULL,
+  performed_by UUID,
+  performed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_sale_audit_sale ON sale_audit (sale_id, id);

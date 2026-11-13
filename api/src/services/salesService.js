@@ -338,7 +338,10 @@ async function getById(id, user) {
 }
 
 async function create(data, user) {
-  const productMap = await loadProductsByIds(data.items.map((it) => it.productId));
+  const productMap = await loadProductsByIds(
+    // items ausente/inválido não pode estourar aqui (500): o validateSaleInput responde 422
+    Array.isArray(data.items) ? data.items.map((it) => it && it.productId) : []
+  );
   await validateSaleInput(data, user, productMap);
 
   const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap);

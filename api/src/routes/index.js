@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { requireObjectBody, rejectNestedQuery } = require('../middleware/validate');
 
 const authRoutes = require('./authRoutes');
 const customersRoutes = require('./customersRoutes');
@@ -18,6 +19,10 @@ const holidayRoutes = require('./holidayRoutes');
 const barcodeRoutes = require('./barcodeRoutes');
 const exportRoutes = require('./exportRoutes');
 const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
+
+// Guardas globais de entrada: corpo JSON precisa ser objeto; query sem arrays/objetos aninhados
+router.use(requireObjectBody);
+router.use(rejectNestedQuery);
 
 router.use('/auth', authRoutes);
 router.use('/customers', customersRoutes);

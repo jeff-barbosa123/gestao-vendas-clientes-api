@@ -2,6 +2,9 @@
  * Utilitários para paginação
  */
 
+// Teto de página: sem ele, page=99999999999999999999 estoura o bigint do OFFSET no PostgreSQL (500)
+const MAX_PAGE = 1_000_000;
+
 /**
  * Valida e normaliza parâmetros de paginação da query string
  * @param {object} query - Query parameters da requisição
@@ -22,6 +25,9 @@ function parsePagination(query = {}, options = {}) {
   let page = parseInt(query.page || query.p || '1', 10);
   if (isNaN(page) || page < 1) {
     page = 1;
+  }
+  if (page > MAX_PAGE) {
+    page = MAX_PAGE;
   }
 
   // Parse limit
@@ -73,7 +79,7 @@ function createPaginatedResponse(items, total, page, limit) {
 function validatePagination(query) {
   if (query.page !== undefined) {
     const page = parseInt(query.page, 10);
-    if (isNaN(page) || page < 1) {
+    if (isNaN(page) || page < 1 || page > MAX_PAGE) {
       return {
         status: 400,
         code: 'INVALID_PAGE',

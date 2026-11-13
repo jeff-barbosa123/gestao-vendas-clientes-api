@@ -3,6 +3,8 @@ const router = express.Router();
 const productsController = require('../controllers/productsController');
 const { authenticateStrict } = require('../middleware/authMiddlewareStrict');
 const { rateLimit } = require('../middleware/rateLimit');
+const { validate } = require('../middleware/validate');
+const { productBody } = require('../validation/schemas');
 
 const linkRateLimit = rateLimit({
   windowMs: 60_000,
@@ -13,9 +15,9 @@ const linkRateLimit = rateLimit({
 router.use(authenticateStrict);
 
 router.get('/', productsController.list);
-router.post('/', productsController.create);
+router.post('/', validate({ body: productBody }), productsController.create);
 router.get('/:id', productsController.getById);
-router.put('/:id', productsController.update);
+router.put('/:id', validate({ body: productBody }), productsController.update);
 router.delete('/:id', productsController.remove);
 router.post('/:id/vincular-ficha', linkRateLimit, productsController.linkFichaTecnica);
 router.delete('/:id/remover-ficha', linkRateLimit, productsController.removerFichaTecnica);

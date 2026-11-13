@@ -1,61 +1,14 @@
+require("./auth/config"); // valida os segredos JWT em producao no carregamento (precisa vir primeiro)
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
 const repo = require("../db/repository");
 const emailService = require("./emailService");
-const { getBlockDurationMs } = require("../utils/authConfig");
 const { failedAttempts } = require("../models/db");
 const sessionStore = require("./sessionStore");
 const { hashPassword, comparePassword } = require("../utils/passwordHash");
-
-// Validate required environment variables
-// Only enforce in production to allow development/testing
-if (process.env.NODE_ENV === "production") {
-  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "dev-secret" || process.env.JWT_SECRET.length < 32) {
-    throw new Error("JWT_SECRET must be set to a secure value (min 32 characters) in production. Cannot use default 'dev-secret'.");
-  }
-  if (!process.env.JWT_REFRESH_SECRET || process.env.JWT_REFRESH_SECRET === "dev-refresh-secret" || process.env.JWT_REFRESH_SECRET.length < 32) {
-    throw new Error("JWT_REFRESH_SECRET must be set to a secure value (min 32 characters) in production. Cannot use default 'dev-refresh-secret'.");
-  }
-}
-
-const JWT_TTL_SECONDS = Number(process.env.JWT_TTL_SECONDS || 15 * 60); // 15 minutes
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_PREVIOUS_SECRET = process.env.JWT_PREVIOUS_SECRET;
-
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
-const JWT_REFRESH_TTL_SECONDS = Number(process.env.JWT_REFRESH_TTL_SECONDS || 24 * 60 * 60); // 24 hours
-const JWT_REFRESH_PREVIOUS_SECRET = process.env.JWT_REFRESH_PREVIOUS_SECRET;
-
-const MAX_FAILED_ATTEMPTS = Number(process.env.LOGIN_MAX_FAILED_ATTEMPTS || 3);
-const BLOCK_DURATION_MS = getBlockDurationMs();
-const MIN_PASSWORD_LENGTH = Number(process.env.LOGIN_MIN_PASSWORD_LENGTH || 8);
-const MAX_PASSWORD_LENGTH = Number(process.env.LOGIN_MAX_PASSWORD_LENGTH || 128);
-const RESET_TOKEN_TTL_MINUTES = Number(process.env.RESET_TOKEN_TTL_MINUTES || 30);
-const RESET_TOKEN_SECRET = process.env.RESET_TOKEN_SECRET || JWT_SECRET;
-const WEB_BASE_URL = process.env.WEB_BASE_URL || "http://localhost:4000";
-const EMAIL_VERIFY_TOKEN_SECRET = process.env.EMAIL_VERIFY_TOKEN_SECRET || JWT_SECRET;
-
-const MESSAGES = {
-  invalidCredentials: "Credenciais inv\u00e1lidas",
-  invalidEmail: "Formato de e-mail inv\u00e1lido",
-  invalidPasswordType: "Formato de senha inv\u00e1lido",
-  emailRequired: "E-mail \u00e9 obrigat\u00f3rio",
-  passwordRequired: "Senha \u00e9 obrigat\u00f3ria",
-  emailPasswordRequired: "E-mail e senha s\u00e3o obrigat\u00f3rios",
-  passwordShort: "Senha muito curta. Mínimo 8 caracteres.",
-  passwordLong: "Senha muito longa. Máximo 128 caracteres.",
-  passwordWeak: "Senha muito fraca. Use pelo menos 8 caracteres incluindo letra maiúscula, minúscula, número e caractere especial.",
-  blockedUser: "Usu\u00e1rio bloqueado",
-  accessBlocked: "Acesso temporariamente bloqueado",
-  refreshMissing: "Refresh token \u00e9 obrigat\u00f3rio",
-  refreshInvalid: "Refresh token inv\u00e1lido ou revogado",
-  resetTokenInvalid: "Token inv\u00e1lido ou expirado",
-  resetTokenMissing: "Token \u00e9 obrigat\u00f3rio",
-  currentPasswordInvalid: "Senha atual incorreta",
-  passwordSame: "Nova senha deve ser diferente da atual",
-  nameRequired: "Nome \u00e9 obrigat\u00f3rio",
-};
+const { JWT_TTL_SECONDS, JWT_SECRET, JWT_REFRESH_SECRET, JWT_REFRESH_TTL_SECONDS, JWT_REFRESH_PREVIOUS_SECRET, MAX_FAILED_ATTEMPTS, BLOCK_DURATION_MS, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, RESET_TOKEN_TTL_MINUTES, RESET_TOKEN_SECRET, WEB_BASE_URL, EMAIL_VERIFY_TOKEN_SECRET } = require("./auth/config");
+const { MESSAGES } = require("./auth/messages");
 
 function sanitizeEmail(email) {
   if (typeof email !== "string") return email;

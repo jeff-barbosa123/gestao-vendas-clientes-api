@@ -18,6 +18,7 @@ import {
 import { state } from './state.js';
 import { formatCurrency, parsePrice } from './money.js';
 import { getSelectedRecipe } from './recipes.js';
+import { getSelectedProductType } from './product-type.js';
 
 function updateFinalPriceHint(customized) {
   if (!finalPriceHint) return;
@@ -47,6 +48,8 @@ function updateProducedSuggestionHelp(costUnit, suggested) {
 
 export function updateProducedPricing() {
   if (!costUnitEl || !priceSuggestedEl) return;
+  // Produto de revenda nao tem ficha tecnica: o 404 do vinculo nao pode limpar os precos.
+  if (getSelectedProductType() !== 'produced') return;
   const recipe = getSelectedRecipe() || state.linkedRecipe;
   if (!recipe) {
     costUnitEl.textContent = '-';

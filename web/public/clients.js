@@ -329,51 +329,8 @@
     return `${base}${normalizedPath}`;
   }
 
-  async function apiRequest(path, _tokenIgnored, options = {}) {
-    const url = buildUrl(path);
-    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-    
-    let response;
-    try {
-      response = await fetch(url, { ...options, headers, credentials: 'include' });
-    } catch (err) {
-      const networkError = new Error('NETWORK_ERROR');
-      networkError.status = 0;
-      networkError.payload = null;
-      networkError.name = 'NetworkError';
-      throw networkError;
-    }
-    
-    const contentType = response.headers.get('content-type') || '';
-    let payload = null;
-    
-    try {
-      payload = contentType.includes('application/json') ? await response.json() : await response.text();
-    } catch (err) {
-      const parseError = new Error('INVALID_RESPONSE');
-      parseError.status = response.status;
-      parseError.payload = null;
-      throw parseError;
-    }
-    
-    if (
-      response.ok &&
-      payload &&
-      typeof payload === 'object' &&
-      payload.error === false &&
-      Object.prototype.hasOwnProperty.call(payload, 'data')
-    ) {
-      payload = payload.data;
-    }
-    
-    if (!response.ok) {
-      const error = new Error('API_ERROR');
-      error.status = response.status;
-      error.payload = payload;
-      throw error;
-    }
-    
-    return payload;
+  function apiRequest(path, _tokenIgnored, options = {}) {
+    return window.SGVC.api.request(path, options);
   }
 
   function validateEmail(value) {
@@ -1270,10 +1227,7 @@
   }
 
   function formatMoney(value) {
-    const numberValue = Number(value);
-    if (!Number.isFinite(numberValue)) return '-';
-    // Separador de milhar no padrão brasileiro (R$ 2.100,00)
-    return numberValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return window.SGVC.utils.formatMoney(value);
   }
 
   function formatDateBR(value) {

@@ -155,29 +155,8 @@
     }
   }
 
-  async function apiRequest(path, _tokenIgnored, options = {}) {
-    const url = buildUrl(path);
-    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-    const response = await fetch(url, { ...options, headers, credentials: 'include' });
-    const contentType = response.headers.get('content-type') || '';
-    const payload = contentType.includes('application/json') ? await response.json() : await response.text();
-    if (
-      response.ok &&
-      payload &&
-      typeof payload === 'object' &&
-      payload.error === false &&
-      Object.prototype.hasOwnProperty.call(payload, 'data')
-    ) {
-      payload = payload.data;
-    }
-    if (!response.ok) {
-      const message = payload && (payload.message || payload.error) ? payload.message || payload.error : 'Erro na API';
-      const error = new Error(message);
-      error.status = response.status;
-      error.payload = payload;
-      throw error;
-    }
-    return payload;
+  function apiRequest(path, _tokenIgnored, options = {}) {
+    return window.SGVC.api.request(path, { ...options, messageFromServer: true });
   }
 
   function validateEmail(value) {

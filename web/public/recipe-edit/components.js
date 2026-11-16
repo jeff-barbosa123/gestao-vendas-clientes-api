@@ -18,12 +18,8 @@ import {
 import { state } from './state.js';
 import { showMessage } from './core.js';
 import { calculateIngredientCost, formatMoney } from './calc.js';
-import {
-  renderIngredients,
-  resetIngredientForm,
-  saveFormState,
-  updateCostSummary,
-} from '../recipe-edit.js';
+import { updateCostSummary } from './summary.js';
+import { renderIngredients, resetIngredientForm, saveFormState } from '../recipe-edit.js';
 
 export function ensureDefaultComponent() {
   if (!state.components.length) {

@@ -1,5 +1,5 @@
 /**
- * Estado mutÃ¡vel compartilhado da tela de clientes.
+ * Estado mutável compartilhado da tela de clientes.
  */
 export const state = {
   messageTimer: null,

@@ -1,5 +1,5 @@
 /**
- * IntegraÃ§Ãµes de UF/cidade, CEP (ViaCEP) e CNPJ.
+ * Integrações de UF/cidade, CEP (ViaCEP) e CNPJ.
  */
 import {
   BASE_UF_CODES,

@@ -1,5 +1,5 @@
 /**
- * ExportaÃ§Ã£o de clientes.
+ * Exportação de clientes.
  */
 import { filterButtons, searchInput } from './dom.js';
 import { buildUrl, showMessage } from './core.js';

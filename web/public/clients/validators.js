@@ -1,5 +1,5 @@
 /**
- * ValidaÃ§Ãµes dos campos do cadastro (e-mail, nome, telefone, nascimento, CEP, endereÃ§o, CPF/CNPJ).
+ * Validações dos campos do cadastro (e-mail, nome, telefone, nascimento, CEP, endereço, CPF/CNPJ).
  */
 import {
   ADDRESS_CITY_INVALID,

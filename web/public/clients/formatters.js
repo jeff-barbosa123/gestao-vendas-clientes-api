@@ -1,5 +1,5 @@
 /**
- * Formatadores, parsers e tags (documentos, telefone, datas, aniversÃ¡rio, fidelidade).
+ * Formatadores, parsers e tags (documentos, telefone, datas, aniversário, fidelidade).
  */
 import {
   FREQUENT_MIN,

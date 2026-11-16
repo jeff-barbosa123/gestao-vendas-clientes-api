@@ -1,5 +1,5 @@
 /**
- * Eventos do formulÃ¡rio de cadastro: campos e envio.
+ * Eventos do formulário de cadastro: campos e envio.
  */
 import { CREATE_SUBMIT_SAVING_TEXT, session } from './constants.js';
 import {

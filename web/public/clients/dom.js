@@ -1,5 +1,5 @@
 /**
- * ReferÃªncias de DOM da tela de clientes.
+ * Referências de DOM da tela de clientes.
  */
 // Auth via cookie HttpOnly (não usar token no browser storage)
 

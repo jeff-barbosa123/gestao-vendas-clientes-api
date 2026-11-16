@@ -1,5 +1,5 @@
 /**
- * Listagem de clientes: filtros, ordenaÃ§Ã£o, paginaÃ§Ã£o, renderizaÃ§Ã£o e carga.
+ * Listagem de clientes: filtros, ordenação, paginação, renderização e carga.
  */
 import {
   BIRTHDAY_WINDOW_KEY,

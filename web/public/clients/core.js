@@ -1,5 +1,5 @@
 /**
- * Infraestrutura da tela: URL, autenticaÃ§Ã£o, mensagens e helpers de campo.
+ * Infraestrutura da tela: URL, autenticação, mensagens e helpers de campo.
  */
 import { API_BASE, SEVERITY_CLASSES } from './constants.js';
 import { messageBox } from './dom.js';

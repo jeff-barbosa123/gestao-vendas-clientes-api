@@ -1,5 +1,5 @@
 /**
- * FormulÃ¡rio de cadastro: snapshot, campos condicionais, chips e estado do botÃ£o.
+ * Formulário de cadastro: snapshot, campos condicionais, chips e estado do botão.
  */
 import { DOCUMENT_CONFLICT_MESSAGE } from './constants.js';
 import {

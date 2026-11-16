@@ -1,80 +1,31 @@
 /**
  * Tela de edição de cliente (entrada). MÃ³dulos em /client-edit/*.js.
  */
-import { DELETE_FLAG, UPDATED_FLAG, params } from './client-edit/constants.js';
+import { DELETE_FLAG, params } from './client-edit/constants.js';
 import {
-  addressCityInput,
-  addressNeighborhoodInput,
-  addressNumberError,
-  addressNumberInput,
-  addressPostalInput,
-  addressStreetError,
-  addressStreetInput,
   backBtn,
-  birthDateError,
-  birthDateInput,
   cancelEditBtn,
-  cnpjError,
-  cnpjInput,
   deleteBtn,
   deleteCancel,
   deleteClose,
   deleteCloseBtn,
   deleteConfirm,
   deleteModal,
-  editAddressComplement,
-  editCpf,
-  editCpfError,
-  editTradeName,
-  editType,
-  emailError,
-  emailInput,
   form,
-  nameError,
-  nameInput,
-  notesInput,
-  phoneError,
-  phoneInput,
   saveBtn,
 } from './client-edit/dom.js';
 import { state } from './client-edit/state.js';
 import {
   apiRequest,
-  clearFieldError,
   closeDeleteModal,
   ensureAuthOrRedirect,
   navigateToClientList,
-  setFieldError,
   showMessage,
   toggleDeleteModal,
 } from './client-edit/core.js';
-import {
-  formatCnpj,
-  formatCpf,
-  formatPhone,
-  formatPostal,
-  updateWhatsAppLink,
-} from './client-edit/formatters.js';
-import {
-  getAddressNumberValidationError,
-  getAddressStreetValidationError,
-  normalizeText,
-  updateEditBirthHint,
-  validateBirthDate,
-  validateCnpj,
-  validateCpf,
-  validateEmail,
-  validateName,
-  validatePhone,
-} from './client-edit/validators.js';
-import {
-  buildNotesWithMeta,
-  setEditMetaValue,
-  updateEditTypeFields,
-} from './client-edit/notes-meta.js';
-import { applyCnpjData, setCnpjMessage } from './client-edit/cnpj.js';
-import { updateDirtyState } from './client-edit/dirty.js';
 import { initLoad } from './client-edit/load.js';
+import { initEventsForm } from './client-edit/events-form.js';
+import { initEventsFields } from './client-edit/events-fields.js';
 
 // Auth via cookie HttpOnly
 ensureAuthOrRedirect();
@@ -111,155 +62,7 @@ function bootstrap() {
     });
   }
 
-  if (form) {
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      showMessage('');
-      clearFieldError(nameInput, nameError);
-      clearFieldError(emailInput, emailError);
-      clearFieldError(phoneInput, phoneError);
-      clearFieldError(birthDateInput, birthDateError);
-      clearFieldError(cnpjInput, cnpjError);
-      clearFieldError(addressStreetInput, addressStreetError);
-      clearFieldError(addressNumberInput, addressNumberError);
-
-      const typeValue = editType ? editType.value.trim().toUpperCase() : '';
-      const cpfDigits = (() => {
-        if (typeValue === 'PF' && editCpf) {
-          const digits = editCpf.value.replace(/\D/g, '');
-          return digits ? digits : null;
-        }
-        return null;
-      })();
-      const cnpjDigits = (() => {
-        if (typeValue === 'PJ' && cnpjInput) {
-          const digits = cnpjInput.value.replace(/\D/g, '');
-          return digits ? digits : null;
-        }
-        return null;
-      })();
-      if (typeValue === 'PJ' && !cnpjDigits) {
-        setFieldError(cnpjInput, cnpjError, 'CNPJ obrigatório para pessoa jurídica.');
-        return;
-      }
-      const streetRaw = addressStreetInput ? addressStreetInput.value : '';
-      const streetError = getAddressStreetValidationError(streetRaw);
-      if (streetError) {
-        setFieldError(addressStreetInput, addressStreetError, streetError);
-        return;
-      }
-      if (addressStreetInput) {
-        addressStreetInput.value = normalizeText(streetRaw);
-      }
-      const numberRaw = addressNumberInput ? addressNumberInput.value : '';
-      const numberError = getAddressNumberValidationError(numberRaw);
-      if (numberError) {
-        setFieldError(addressNumberInput, addressNumberError, numberError);
-        return;
-      }
-      if (addressNumberInput) {
-        addressNumberInput.value = numberRaw.trim();
-      }
-      const notesPayload = buildNotesWithMeta(notesInput ? notesInput.value : '', state.editMeta);
-      const payload = {
-        name: nameInput.value.trim(),
-        email: emailInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        birthDate: birthDateInput ? birthDateInput.value : '',
-        addressStreet: addressStreetInput ? addressStreetInput.value.trim() : '',
-        addressNumber: addressNumberInput ? addressNumberInput.value.trim() : '',
-        addressNeighborhood: addressNeighborhoodInput ? addressNeighborhoodInput.value.trim() : '',
-        addressCity: addressCityInput ? addressCityInput.value.trim() : '',
-        addressPostalCode: addressPostalInput ? addressPostalInput.value.trim() : '',
-        notes: notesPayload,
-      };
-      // Incluir CPF ou CNPJ conforme o tipo
-      if (typeValue === 'PF' && cpfDigits) {
-        payload.cpf = cpfDigits;
-        payload.cnpj = null; // Limpa CNPJ se existir
-      } else if (typeValue === 'PJ' && cnpjDigits) {
-        payload.cnpj = cnpjDigits;
-        payload.cpf = null; // Limpa CPF se existir
-      } else if (!typeValue) {
-        // Se não há tipo definido, manter o que já existe ou enviar ambos se preenchidos
-        if (cpfDigits) payload.cpf = cpfDigits;
-        if (cnpjDigits) payload.cnpj = cnpjDigits;
-      }
-      const originalCnpjDigits = state.original.cnpj ? state.original.cnpj.replace(/\D/g, '') : '';
-      const originalCpfDigits = state.original.cpf ? state.original.cpf.replace(/\D/g, '') : '';
-      const cnpjChanged = cnpjDigits !== originalCnpjDigits;
-      const cpfChanged = cpfDigits !== originalCpfDigits;
-      if (!validateName(payload.name)) {
-        setFieldError(nameInput, nameError, 'Nome deve ter 3 a 120 caracteres.');
-        return;
-      }
-      if (!payload.email) {
-        setFieldError(emailInput, emailError, 'E-mail obrigatório.');
-        return;
-      }
-      if (!validateEmail(payload.email)) {
-        setFieldError(emailInput, emailError, 'Digite um e-mail válido.');
-        return;
-      }
-      if (cpfDigits && cpfChanged && !validateCpf(cpfDigits)) {
-        setFieldError(editCpf, editCpfError, 'CPF inválido.');
-        return;
-      }
-      if (cnpjDigits && cnpjChanged && !validateCnpj(cnpjDigits)) {
-        setFieldError(cnpjInput, cnpjError, 'CNPJ inválido.');
-        return;
-      }
-      if (payload.phone && !validatePhone(payload.phone)) {
-        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 dígitos).');
-        return;
-      }
-      if (!validateBirthDate(payload.birthDate)) {
-        setFieldError(birthDateInput, birthDateError, 'Data de nascimento inválida.');
-        return;
-      }
-      saveBtn.classList.add('is-loading');
-      saveBtn.disabled = true;
-      const originalText = saveBtn.textContent;
-      saveBtn.textContent = 'Salvando...';
-      try {
-        await apiRequest(`/api/customers/${state.customerId}`, null, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        });
-        showMessage('Cliente atualizado com sucesso!', 'is-success');
-        sessionStorage.setItem(UPDATED_FLAG, 'true');
-        // Atualiza o objeto original com os valores salvos
-        state.original = {
-          name: payload.name,
-          email: payload.email,
-          phone: payload.phone,
-          birthDate: payload.birthDate,
-          addressStreet: payload.addressStreet,
-          addressNumber: payload.addressNumber,
-          addressNeighborhood: payload.addressNeighborhood,
-          addressCity: payload.addressCity,
-          addressPostalCode: payload.addressPostalCode,
-          notes: payload.notes,
-          cpf: payload.cpf || '',
-          cnpj: payload.cnpj || '',
-          type: typeValue || '',
-          tradeName: state.editMeta.tradeName || '',
-          complement: state.editMeta.complement || '',
-        };
-        updateDirtyState();
-        // Redireciona para a lista após salvar com sucesso
-        setTimeout(() => {
-          navigateToClientList();
-        }, 1000);
-      } catch (err) {
-        showMessage(err.message, 'is-danger');
-      } finally {
-        saveBtn.classList.remove('is-loading');
-        saveBtn.textContent = originalText;
-        updateDirtyState();
-      }
-    });
-  }
+  initEventsForm();
 
   if (deleteBtn) {
     deleteBtn.addEventListener('click', async () => {
@@ -303,194 +106,7 @@ function bootstrap() {
     });
   }
 
-  if (nameInput) {
-    nameInput.addEventListener('input', () => {
-      if (validateName(nameInput.value)) {
-        clearFieldError(nameInput, nameError);
-      }
-      updateDirtyState();
-    });
-    nameInput.addEventListener('blur', () => {
-      if (!validateName(nameInput.value)) {
-        setFieldError(
-          nameInput,
-          nameError,
-          'Nome deve ter 3 a 120 letras, sem números.'
-        );
-      }
-    });
-  }
-
-  if (emailInput) {
-    emailInput.addEventListener('input', () => {
-      if (!emailInput.value.trim() || validateEmail(emailInput.value.trim())) {
-        clearFieldError(emailInput, emailError);
-      }
-      updateDirtyState();
-    });
-    emailInput.addEventListener('blur', () => {
-      const value = emailInput.value.trim();
-      if (!value) return;
-      if (!validateEmail(value)) {
-        setFieldError(emailInput, emailError, 'Digite um e-mail válido.');
-      }
-    });
-  }
-
-  if (cnpjInput) {
-    cnpjInput.addEventListener('input', () => {
-      cnpjInput.value = formatCnpj(cnpjInput.value);
-      setCnpjMessage('', true);
-      updateDirtyState();
-    });
-    cnpjInput.addEventListener('blur', async () => {
-      const value = cnpjInput.value.trim();
-      if (!value) {
-        setCnpjMessage('', true);
-        return;
-      }
-      if (!validateCnpj(value)) {
-        setCnpjMessage('CNPJ inválido.', true);
-        return;
-      }
-      try {
-        const data = await apiRequest(`/api/cnpj/${value.replace(/\D/g, '')}`, null);
-        applyCnpjData(data);
-        setCnpjMessage('Dados preenchidos a partir do CNPJ.', false);
-      } catch (err) {
-        if (err.status === 404) {
-          setCnpjMessage('CNPJ não encontrado.', true);
-          return;
-        }
-        setCnpjMessage('Não foi possível consultar o CNPJ agora.', true);
-      }
-      updateDirtyState();
-    });
-  }
-
-  if (editType) {
-    editType.addEventListener('change', () => {
-      const value = editType.value;
-      updateEditTypeFields(value);
-      updateDirtyState();
-    });
-    updateEditTypeFields(editType.value);
-  }
-
-  if (editTradeName) {
-    editTradeName.addEventListener('input', () => {
-      setEditMetaValue('tradeName', editTradeName.value);
-      updateDirtyState();
-    });
-    editTradeName.addEventListener('blur', () => {
-      editTradeName.value = normalizeText(editTradeName.value);
-      setEditMetaValue('tradeName', editTradeName.value);
-      updateDirtyState();
-    });
-  }
-
-  if (editAddressComplement) {
-    editAddressComplement.addEventListener('input', () => {
-      setEditMetaValue('complement', editAddressComplement.value);
-      updateDirtyState();
-    });
-  }
-
-  if (editCpf) {
-    editCpf.addEventListener('input', () => {
-      editCpf.value = formatCpf(editCpf.value);
-      updateDirtyState();
-    });
-    editCpf.addEventListener('blur', () => {
-      const value = editCpf.value.trim();
-      if (value && !validateCpf(value)) {
-        setFieldError(editCpf, editCpfError, 'CPF inválido.');
-      } else {
-        clearFieldError(editCpf, editCpfError);
-      }
-    });
-  }
-
-  if (phoneInput) {
-    phoneInput.addEventListener('blur', () => {
-      phoneInput.value = formatPhone(phoneInput.value);
-      if (!phoneInput.value.trim() || validatePhone(phoneInput.value)) {
-        clearFieldError(phoneInput, phoneError);
-      } else {
-        setFieldError(phoneInput, phoneError, 'Digite um telefone com DDD (10 ou 11 dígitos).');
-      }
-      updateWhatsAppLink(phoneInput.value);
-      updateDirtyState();
-    });
-    phoneInput.addEventListener('input', () => {
-      if (!phoneInput.value.trim() || validatePhone(phoneInput.value)) {
-        clearFieldError(phoneInput, phoneError);
-      }
-      updateWhatsAppLink(phoneInput.value);
-      updateDirtyState();
-    });
-  }
-
-  if (birthDateInput) {
-    birthDateInput.addEventListener('blur', () => {
-      if (!validateBirthDate(birthDateInput.value)) {
-        setFieldError(birthDateInput, birthDateError, 'Data de nascimento inválida.');
-        updateEditBirthHint('');
-      } else {
-        clearFieldError(birthDateInput, birthDateError);
-        updateEditBirthHint(birthDateInput.value);
-      }
-      updateDirtyState();
-    });
-    birthDateInput.addEventListener('input', () => {
-      if (validateBirthDate(birthDateInput.value)) {
-        clearFieldError(birthDateInput, birthDateError);
-        updateEditBirthHint(birthDateInput.value);
-      } else {
-        updateEditBirthHint('');
-      }
-      updateDirtyState();
-    });
-  }
-
-  [addressStreetInput, addressNumberInput, addressNeighborhoodInput, addressCityInput, addressPostalInput, notesInput].forEach((input) => {
-    if (!input) return;
-    input.addEventListener('input', () => updateDirtyState());
-  });
-
-  if (addressStreetInput) {
-    addressStreetInput.addEventListener('blur', () => {
-      const rawValue = addressStreetInput.value;
-      const error = getAddressStreetValidationError(rawValue);
-      addressStreetInput.value = normalizeText(rawValue);
-      if (error) {
-        setFieldError(addressStreetInput, addressStreetError, error);
-      } else {
-        clearFieldError(addressStreetInput, addressStreetError);
-      }
-      updateDirtyState();
-    });
-  }
-
-  if (addressNumberInput) {
-    addressNumberInput.addEventListener('blur', () => {
-      addressNumberInput.value = addressNumberInput.value.trim();
-      const error = getAddressNumberValidationError(addressNumberInput.value);
-      if (error) {
-        setFieldError(addressNumberInput, addressNumberError, error);
-      } else {
-        clearFieldError(addressNumberInput, addressNumberError);
-      }
-      updateDirtyState();
-    });
-  }
-
-  if (addressPostalInput) {
-    addressPostalInput.addEventListener('blur', () => {
-      addressPostalInput.value = formatPostal(addressPostalInput.value);
-      updateDirtyState();
-    });
-  }
+  initEventsFields();
 
   if (backBtn) {
     backBtn.addEventListener('click', () => {

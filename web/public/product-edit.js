@@ -42,12 +42,7 @@ import {
   toggleDeleteModal,
 } from './product-edit/core.js';
 import { standardizeText, updateNameGuidance, validateName } from './product-edit/text.js';
-import {
-  bindCurrencyInput,
-  formatCurrency,
-  parsePrice,
-  resolveNumber,
-} from './product-edit/money.js';
+import { bindCurrencyInput, formatCurrency, parsePrice } from './product-edit/money.js';
 import { getSelectedProductType, setProductType } from './product-edit/product-type.js';
 import { applyRecipeSearch, getSelectedRecipe, loadRecipes } from './product-edit/recipes.js';
 import {
@@ -60,6 +55,7 @@ import {
 } from './product-edit/pricing.js';
 import { updateDirtyState } from './product-edit/dirty.js';
 import { loadLinkedRecipe, setRecipeState } from './product-edit/linked-recipe.js';
+import { initLoad } from './product-edit/load.js';
 
 // Auth via cookie HttpOnly
 ensureAuthOrRedirect();
@@ -72,55 +68,7 @@ function bootstrap() {
 
   loadRecipes(null).catch((err) => showMessage(err.message, 'is-danger'));
 
-  apiRequest(`/api/products/${productId}`, null)
-    .then((product) => {
-      const priceValue = resolveNumber(
-        product.price,
-        product.precoVenda,
-        product.preco,
-        product.priceFinal,
-        product.preco_final
-      );
-      const purchaseValue = resolveNumber(
-        product.purchase_price,
-        product.precoCompra,
-        product.purchasePrice,
-        product.preco_compra
-      );
-      const typeValue = (product.productType || product.product_type || '').toString().toLowerCase();
-      const hasRecipe = Boolean(product.fichaTecnicaId || product.ficha_tecnica_id);
-      const isProduced = typeValue === 'produced' ? true : typeValue === 'resale' ? false : hasRecipe;
-      nameInput.value = product.name || '';
-      descriptionInput.value = product.description || '';
-      updateNameGuidance(nameInput, nameHelp);
-      if (purchasePriceInput) {
-        purchasePriceInput.value = purchaseValue != null ? formatCurrency(purchaseValue) : '';
-      }
-      priceInput.value = priceValue != null ? formatCurrency(priceValue) : '';
-      statusSelect.value = (product.status || product.status_produto || 'ATIVO').toUpperCase();
-      if (productTypeProduced) productTypeProduced.checked = isProduced;
-      if (productTypeResale) productTypeResale.checked = !isProduced;
-      setProductType(isProduced ? 'produced' : 'resale');
-      if (!isProduced && editResalePercent) {
-        updateResalePercentHelp();
-        syncPercentFromPrice();
-      }
-      state.original = {
-        name: nameInput.value.trim(),
-        description: descriptionInput.value.trim(),
-        purchasePrice: purchasePriceInput ? purchasePriceInput.value.trim() : '',
-        price: priceInput.value.trim(),
-        status: statusSelect.value,
-        recipeId: product.fichaTecnicaId || product.ficha_tecnica_id || '',
-        finalPrice: finalPriceInput ? finalPriceInput.value.trim() : '',
-        productType: isProduced ? 'produced' : 'resale',
-      };
-      updateDirtyState();
-      loadLinkedRecipe(null, productId);
-    })
-    .catch((err) => {
-      showMessage(err.message, 'is-danger');
-    });
+  initLoad();
 
   if (backBtn) {
     backBtn.addEventListener('click', () => {

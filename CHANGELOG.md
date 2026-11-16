@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-11-16 - Frontend: modularização de client-edit e product-edit
+
+### Novo
+- **client-edit.js** (1.123 linhas) e **product-edit.js** (1.055 linhas) viraram entrypoints ES module (~40 linhas) com módulos em
+  `web/public/client-edit/` (`constants`, `dom`, `state`, `core`, `formatters`, `validators`, `notes-meta`, `cnpj`,
+  `dirty`, `load`, `events-form`, `events-fields`, `events-modals`) e `web/public/product-edit/` (`constants`, `dom`,
+  `state`, `core`, `text`, `money`, `product-type`, `recipes`, `pricing`, `dirty`, `linked-recipe`, `load`,
+  `events-form`, `events-fields`, `events-recipe`, `events-modals`).
+- Specs Cypress: `client-edit-flows` (6), `client-edit-cancel` (3), `product-edit-flows` (9), `product-edit-pricing` (3).
+- Auditoria de listeners em runtime nas 9 telas; removidos registros redundantes em `clients` e `recipe-edit`.
+
+### Corrigido
+- **client-edit:** o botão Cancelar tinha dois listeners; recusar a confirmação de alterações não salvas ainda saía da página.
+  Unificado em um handler único; removidas também as duplicatas de Voltar, fechar modal e ESC.
+- **product-edit:** ao abrir um produto de revenda, o 404 de `/ficha-tecnica` limpava os campos de preço de compra e de venda.
+  `updateProducedPricing` agora só atua em produtos produzidos.
 ## 2026-11-16 - Frontend: modularização da tela de produtos
 
 ### Novo

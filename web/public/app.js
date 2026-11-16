@@ -1,16 +1,9 @@
 /**
  * Tela de login e cadastro (entrada). MÃ³dulos em /app/*.js.
  */
-import {
-  API_BASE,
-  CSRF_COOKIE_NAME,
-  CSRF_HEADER_NAME,
-  REMEMBER_KEY,
-  authState,
-} from './app/constants.js';
+import { API_BASE, authState } from './app/constants.js';
 import {
   actions,
-  alertBox,
   apiBaseEl,
   emailError,
   emailInput,
@@ -24,12 +17,8 @@ import {
   forgotMsg,
   forgotSubmit,
   loginBtn,
-  loginError,
-  loginErrorText,
   loginForm,
   loginSubtitle,
-  loginSuccess,
-  loginSuccessText,
   loginUser,
   logoutBtn,
   passwordCapsLock,
@@ -43,7 +32,6 @@ import {
   registerEmail,
   registerEmailError,
   registerEmailStatus,
-  registerError,
   registerModal,
   registerName,
   registerNameError,
@@ -53,18 +41,29 @@ import {
   registerPasswordError,
   registerPasswordStatus,
   registerSubmit,
-  registerSuccess,
   registerTogglePassword,
   rememberMe,
   responseOutput,
-  responseStatus,
   sessionStatus,
   sessionToken,
   sessionUser,
-  successBox,
   togglePasswordBtn,
 } from './app/dom.js';
-import { state } from './app/state.js';
+import { clearSession, remembered, saveRememberedEmail, saveSession } from './app/session.js';
+import { apiRequest, applyBackendFieldErrors, normalizeApiError } from './app/api.js';
+import {
+  clearFieldErrors,
+  clearMessages,
+  hasFieldErrors,
+  setFieldError,
+  setFieldSuccess,
+  setStatus,
+  showAlert,
+  showLoginError,
+  showRegisterError,
+  showRegisterSuccess,
+  showSuccess,
+} from './app/messages.js';
 
 if (passwordInput && passwordCapsLock) {
   passwordInput.addEventListener('keydown', (e) => {
@@ -177,81 +176,6 @@ function updatePasswordToggle(button, isVisible) {
 
 if (apiBaseEl) apiBaseEl.textContent = API_BASE;
 
-function setStatus(message, type = 'is-light') {
-  if (!responseStatus) return;
-  responseStatus.className = `tag ${type}`;
-  responseStatus.textContent = message;
-}
-
-function showAlert(message) {
-  alertBox.textContent = message;
-  alertBox.hidden = false;
-  alertBox.focus();
-}
-
-function showSuccess(message) {
-  if (loginSuccess && loginSuccessText) {
-    loginSuccessText.textContent = message;
-    loginSuccess.hidden = false;
-    return;
-  }
-  successBox.textContent = message;
-  successBox.hidden = false;
-  successBox.focus();
-}
-
-function clearMessages() {
-  alertBox.hidden = true;
-  successBox.hidden = true;
-  alertBox.textContent = '';
-  successBox.textContent = '';
-  if (loginError) loginError.hidden = true;
-  if (loginErrorText) loginErrorText.textContent = '';
-  if (loginSuccess) loginSuccess.hidden = true;
-  if (loginSuccessText) loginSuccessText.textContent = '';
-}
-
-function showLoginError(message) {
-  if (!loginError || !loginErrorText) return;
-  if (!message) {
-    loginErrorText.innerHTML = '';
-    loginError.hidden = true;
-    return;
-  }
-  // Mensagens especiais com \u00edcones e dicas
-  let html = '';
-  if (/bloquead[oa]/i.test(message)) {
-    html = '<strong>Usu\u00e1rio bloqueado.</strong>\n<br>Entre em contato com o administrador para desbloqueio.';
-  } else if (/expirad[oa]/i.test(message)) {
-    html = '<strong>Senha expirada.</strong>\n<br>Redefina sua senha usando "Esqueci minha senha".';
-  } else if (/muitas tentativas|aguarde|excedidas|429|423/i.test(message)) {
-    html = '<strong>Muitas tentativas.</strong>\n<br>Aguarde alguns minutos antes de tentar novamente.';
-  } else if (/inv[a\u00e1]lid[oa]s?|incorret[oa]s?|errad[oa]s?|credenciais/i.test(message)) {
-    html = '<strong>E-mail ou senha incorretos.</strong>';
-  } else if (/conectar|servidor|network/i.test(message)) {
-    html = '<strong>N\u00e3o foi poss\u00edvel conectar ao servidor.</strong>\n<br>Verifique sua conex\u00e3o e tente novamente.';
-  } else if (/interno|erro na api|api error|500/i.test(message)) {
-    html = '<strong>Erro interno do sistema.</strong>\n<br>Tente novamente mais tarde.';
-  } else {
-    html = message;
-  }
-  loginErrorText.innerHTML = html;
-  loginError.hidden = false;
-  loginError.focus();
-}
-
-function showRegisterError(message) {
-  if (!registerError) return;
-  registerError.textContent = message || '';
-  registerError.hidden = !message;
-}
-
-function showRegisterSuccess(message) {
-  if (!registerSuccess) return;
-  registerSuccess.textContent = message || '';
-  registerSuccess.hidden = !message;
-}
-
 function setRegisterFieldError(input, errorEl, message, statusEl) {
   if (!input) return;
   input.classList.remove('is-valid');
@@ -324,39 +248,6 @@ function toggleRegisterModal(isOpen) {
   if (isOpen && registerName) registerName.focus();
 }
 
-function setFieldError(input, message, errorEl) {
-  if (!input) return;
-  input.classList.add('is-danger');
-  input.classList.remove('is-success');
-  input.setAttribute('aria-invalid', 'true');
-  if (errorEl) {
-    errorEl.textContent = message || '';
-    errorEl.hidden = !message;
-  }
-}
-
-function clearFieldErrors() {
-  [emailInput, passwordInput].forEach((input) => {
-    input.classList.remove('is-danger');
-    input.classList.remove('is-success');
-    input.removeAttribute('aria-invalid');
-  });
-  if (emailError) {
-    emailError.textContent = '';
-    emailError.hidden = true;
-  }
-  if (passwordError) {
-    passwordError.textContent = '';
-    passwordError.hidden = true;
-  }
-}
-
-function hasFieldErrors() {
-  const emailInvalid = emailInput && emailInput.classList.contains('is-danger');
-  const passwordInvalid = passwordInput && passwordInput.classList.contains('is-danger');
-  return Boolean(emailInvalid || passwordInvalid);
-}
-
 function isLocked() {
   return authState.lockUntil && Date.now() < authState.lockUntil;
 }
@@ -364,33 +255,6 @@ function isLocked() {
 function setLoginButtonState() {
   if (!loginBtn) return;
   loginBtn.disabled = hasFieldErrors() || isLocked();
-}
-
-function saveSession() {
-  // Auth via cookie HttpOnly: não persistir token/sessão no browser storage
-}
-
-function clearSession() {
-  // Auth via cookie HttpOnly: nada a limpar do storage
-  authState.token = null;
-  authState.refreshToken = null;
-  authState.user = null;
-}
-
-function saveRememberedEmail(value) {
-  if (!value) {
-    localStorage.removeItem(REMEMBER_KEY);
-    return;
-  }
-  localStorage.setItem(REMEMBER_KEY, value);
-}
-
-function loadRememberedEmail() {
-  return localStorage.getItem(REMEMBER_KEY);
-}
-
-function loadSession() {
-  return null;
 }
 
 function updateSessionUI() {
@@ -429,155 +293,6 @@ function updateSessionUI() {
   }
 }
 
-function buildUrl(path) {
-  const base = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
-    return `${base}${normalizedPath.slice(4)}`;
-  }
-  return `${base}${normalizedPath}`;
-}
-
-function normalizeApiError(err) {
-  const status = err && err.status ? err.status : 0;
-  const raw = err && err.payload ? err.payload : null;
-  const apiMessage = raw && (raw.message || raw.error) ? String(raw.message || raw.error) : '';
-
-  const fallbackByStatus = {
-    400: 'Preencha e-mail e senha corretamente.',
-    401: 'E-mail ou senha incorretos. Verifique os dados e tente novamente.',
-    403: 'Usu\u00e1rio bloqueado. Entre em contato.',
-    423: 'Muitas tentativas. Tente novamente mais tarde.',
-    429: 'Muitas tentativas. Aguarde alguns minutos.',
-  };
-
-  if (status === 0) {
-    return 'N\u00e3o foi poss\u00edvel conectar ao servidor. Tente novamente em alguns instantes.';
-  }
-
-  if (status >= 500) {
-    return 'Erro interno. Tente novamente mais tarde.';
-  }
-
-  const fallback = fallbackByStatus[status];
-  if (!apiMessage) return fallback || 'Erro na API. Tente novamente.';
-
-  const looksTechnical = /exception|stack|sql|mongodb|sequelize|prisma|typeorm|trace/i.test(apiMessage);
-  if (looksTechnical) return fallback || 'Erro na API. Tente novamente.';
-
-  return apiMessage;
-}
-
-async function tryRefreshToken() {
-  // Auth via cookie HttpOnly: refresh token não é gerenciado no JS
-  return false;
-}
-
-function getCookieValue(name) {
-  try {
-    const parts = String(document.cookie || '').split(';');
-    for (let i = 0; i < parts.length; i += 1) {
-      const part = parts[i].trim();
-      if (!part) continue;
-      const eq = part.indexOf('=');
-      const key = eq >= 0 ? part.slice(0, eq).trim() : part;
-      if (key !== name) continue;
-      const raw = eq >= 0 ? part.slice(eq + 1) : '';
-      return decodeURIComponent(raw);
-    }
-  } catch (_err) {
-    // ignore
-  }
-  return null;
-}
-
-function getCsrfToken() {
-  return getCookieValue(CSRF_COOKIE_NAME);
-}
-
-async function ensureCsrfCookie() {
-  if (state.csrfEnsured) return;
-  state.csrfEnsured = true;
-  try {
-    await fetch(buildUrl('/api/auth/csrf'), {
-      method: 'GET',
-      cache: 'no-store',
-      credentials: 'include',
-    });
-  } catch (_err) {
-    // ignore
-  }
-}
-
-async function apiRequest(path, options = {}) {
-  const url = buildUrl(path);
-  const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-
-  // Auth via cookie HttpOnly (não usar Authorization: Bearer no frontend)
-
-  const method = String(options.method || 'GET').toUpperCase();
-  const isMutating = method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE';
-  if (isMutating) {
-    await ensureCsrfCookie();
-    const csrfToken = getCsrfToken();
-    if (csrfToken) headers[CSRF_HEADER_NAME] = csrfToken;
-  }
-
-  let response;
-  try {
-    response = await fetch(url, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
-  } catch (err) {
-    const error = new Error('NETWORK_ERROR');
-    error.status = 0;
-    error.payload = null;
-    throw error;
-  }
-
-  const contentType = response.headers.get('content-type') || '';
-  let payload = null;
-
-  if (contentType.includes('application/json')) {
-    payload = await response.json();
-  } else {
-    payload = await response.text();
-  }
-
-  if (!response.ok) {
-    const error = new Error('API_ERROR');
-    error.status = response.status;
-    error.payload = payload;
-    throw error;
-  }
-
-  return payload;
-}
-
-function applyBackendFieldErrors(status, message) {
-  if (status !== 401) return;
-  const normalized = String(message || '').toLowerCase();
-  const emailHint = normalized.includes('email') || normalized.includes('e-mail');
-  const passwordHint = normalized.includes('senha');
-
-  if (emailHint && !passwordHint) {
-    setFieldError(emailInput, 'E-mail incorreto.', emailError);
-    if (emailInput) emailInput.focus();
-    return;
-  }
-  if (passwordHint && !emailHint) {
-    setFieldError(passwordInput, 'Senha incorreta.', passwordError);
-    if (passwordInput) passwordInput.focus();
-    return;
-  }
-
-  setFieldError(emailInput, 'E-mail ou senha incorretos.', emailError);
-  setFieldError(passwordInput, 'E-mail ou senha incorretos.', passwordError);
-  if (emailInput) emailInput.focus();
-}
-
 function validateEmail(value) {
   const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(value);
@@ -585,17 +300,6 @@ function validateEmail(value) {
 
 function validatePassword(value) {
   return value.length >= 3;
-}
-
-function setFieldSuccess(input, errorEl) {
-  if (!input) return;
-  input.classList.remove('is-danger');
-  input.classList.add('is-success');
-  input.removeAttribute('aria-invalid');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-  }
 }
 
 if (loginForm) loginForm.addEventListener('submit', async (event) => {
@@ -1044,8 +748,6 @@ clearMessages();
 clearFieldErrors();
 
 setLoginButtonState();
-
-const remembered = loadRememberedEmail();
 
 if (remembered && emailInput) {
   emailInput.value = remembered;

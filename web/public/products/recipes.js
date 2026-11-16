@@ -5,7 +5,8 @@ import { RECIPE_SEARCH_LIMIT } from './constants.js';
 import { createRecipeId, createRecipeSearch, createRecipeSearchHelp } from './dom.js';
 import { state } from './state.js';
 import { apiRequest } from './core.js';
-import { renderPage, updateProducedPricing } from '../products.js';
+import { updateProducedPricing } from './pricing.js';
+import { renderPage } from '../products.js';
 
 function updateRecipeSelect(list = state.recipesCache) {
   if (!createRecipeId) return;

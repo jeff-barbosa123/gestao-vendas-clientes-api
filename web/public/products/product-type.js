@@ -17,7 +17,7 @@ import {
   updateProducedPricing,
   updateResalePercentHelp,
   updateResaleProfit,
-} from '../products.js';
+} from './pricing.js';
 
 export function getSelectedProductType() {
   if (productTypeResale && productTypeResale.checked) return 'resale';

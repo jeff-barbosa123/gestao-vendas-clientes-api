@@ -35,6 +35,10 @@ export function initEventsModals() {
     cancelEditBtn.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
+      if (saveBtn && !saveBtn.disabled) {
+        const shouldCancel = window.confirm('Você tem alterações não salvas. Deseja realmente cancelar?');
+        if (!shouldCancel) return;
+      }
       navigateToClientList();
     });
   }
@@ -81,38 +85,7 @@ export function initEventsModals() {
     });
   }
 
-  if (backBtn) {
-    backBtn.addEventListener('click', () => {
-      window.location.href = '/clients.html';
-    });
-  }
-
-  if (cancelEditBtn) {
-    cancelEditBtn.addEventListener('click', () => {
-      if (saveBtn && !saveBtn.disabled) {
-        const shouldCancel = window.confirm('Você tem alterações não salvas. Deseja realmente cancelar?');
-        if (!shouldCancel) return;
-      }
-      window.location.href = '/clients.html';
-    });
-  }
-
   if (deleteClose) {
     deleteClose.addEventListener('click', closeDeleteModal);
   }
-
-  if (deleteCloseBtn) {
-    deleteCloseBtn.addEventListener('click', closeDeleteModal);
-  }
-
-  if (deleteCancel) {
-    deleteCancel.addEventListener('click', closeDeleteModal);
-  }
-
-  // Fechar modal com ESC
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && deleteModal && deleteModal.classList.contains('is-active')) {
-      closeDeleteModal();
-    }
-  });
 }

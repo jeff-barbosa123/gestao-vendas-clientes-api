@@ -58,55 +58,8 @@ import {
   updateResaleProfit,
   updateResaleSuggestionHelp,
 } from './product-edit/pricing.js';
-
-function updateDirtyState() {
-  if (!saveBtn) return;
-  const current = {
-    name: nameInput.value.trim(),
-    description: descriptionInput.value.trim(),
-    purchasePrice: purchasePriceInput ? purchasePriceInput.value.trim() : '',
-    price: priceInput.value.trim(),
-    status: statusSelect.value,
-    recipeId: recipeSelect ? recipeSelect.value : '',
-    finalPrice: finalPriceInput ? finalPriceInput.value.trim() : '',
-    productType: getSelectedProductType(),
-  };
-  const isDirty =
-    current.name !== state.original.name ||
-    current.description !== state.original.description ||
-    current.purchasePrice !== state.original.purchasePrice ||
-    current.price !== state.original.price ||
-    current.status !== state.original.status ||
-    current.recipeId !== state.original.recipeId ||
-    current.finalPrice !== state.original.finalPrice ||
-    current.productType !== state.original.productType;
-  saveBtn.disabled = !isDirty;
-}
-
-function setRecipeState(recipe) {
-  state.linkedRecipe = recipe || null;
-  if (recipeSelect) {
-    recipeSelect.value = recipe && recipe.id ? recipe.id : '';
-  }
-  if (purchasePriceInput) {
-    purchasePriceInput.disabled = Boolean(recipe);
-  }
-  updateProducedPricing();
-}
-
-async function loadLinkedRecipe(token, productId) {
-  if (!productId) return;
-  try {
-    const recipe = await apiRequest(`/api/products/${productId}/ficha-tecnica`, token);
-    setRecipeState(recipe);
-  } catch (err) {
-    if (err.status === 404) {
-      setRecipeState(null);
-      return;
-    }
-    showMessage(err.message, 'is-danger');
-  }
-}
+import { updateDirtyState } from './product-edit/dirty.js';
+import { loadLinkedRecipe, setRecipeState } from './product-edit/linked-recipe.js';
 
 // Auth via cookie HttpOnly
 ensureAuthOrRedirect();

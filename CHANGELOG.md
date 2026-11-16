@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-16 - Frontend: modularização da tela de produtos
+
+### Novo
+- **products.js** (1.287 linhas) virou entrypoint ES module de ~65 linhas com módulos em `web/public/products/`
+  (`constants`, `dom`, `state`, `core`, `text`, `money`, `product-type`, `recipes`, `pricing`, `list`,
+  `events-form`, `events-list`). O Fuse continua carregado via script vendor.
+- Specs Cypress `products-flows.cy.js` (5 testes) e `products-listeners.cy.js` (4 testes).
+
+### Corrigido
+- Listagem de produtos: listeners de voltar, atualizar, busca, ordenação, paginação e tabela estavam registrados em
+  duplicidade. "Próxima" avançava duas páginas e os cabeçalhos Nome/Preço não alternavam a ordenação (um clique
+  desfazia o outro). Removida a duplicata, mantendo a versão mais completa de cada par.
 ## 2026-11-16 - Frontend: modularização da tela de vendas
 
 ### Novo

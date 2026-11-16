@@ -1,7 +1,7 @@
 /**
  * Tela de edição de produto (entrada). MÃ³dulos em /product-edit/*.js.
  */
-import { DELETE_FLAG, UPDATED_FLAG, productId } from './product-edit/constants.js';
+import { DELETE_FLAG, productId } from './product-edit/constants.js';
 import {
   backBtn,
   deleteBtn,
@@ -9,53 +9,18 @@ import {
   deleteCloseBtn,
   deleteConfirm,
   deleteModal,
-  descriptionInput,
-  editResaleCalcMargin,
-  editResaleCalcMarkup,
-  editResalePercent,
-  finalPriceInput,
-  form,
-  linkRecipeBtn,
-  nameError,
-  nameHelp,
-  nameInput,
-  priceError,
-  priceInput,
-  productTypeProduced,
-  productTypeResale,
-  purchasePriceError,
-  purchasePriceInput,
-  recipeError,
-  recipeSearch,
-  recipeSelect,
-  saveBtn,
-  statusSelect,
-  unlinkRecipeBtn,
 } from './product-edit/dom.js';
-import { state } from './product-edit/state.js';
 import {
   apiRequest,
-  clearFieldError,
   ensureAuthOrRedirect,
-  setFieldError,
   showMessage,
   toggleDeleteModal,
 } from './product-edit/core.js';
-import { standardizeText, updateNameGuidance, validateName } from './product-edit/text.js';
-import { bindCurrencyInput, formatCurrency, parsePrice } from './product-edit/money.js';
-import { getSelectedProductType, setProductType } from './product-edit/product-type.js';
-import { applyRecipeSearch, getSelectedRecipe, loadRecipes } from './product-edit/recipes.js';
-import {
-  applyResalePricingRule,
-  syncPercentFromPrice,
-  updateProducedPricing,
-  updateResalePercentHelp,
-  updateResaleProfit,
-  updateResaleSuggestionHelp,
-} from './product-edit/pricing.js';
-import { updateDirtyState } from './product-edit/dirty.js';
-import { loadLinkedRecipe, setRecipeState } from './product-edit/linked-recipe.js';
+import { loadRecipes } from './product-edit/recipes.js';
 import { initLoad } from './product-edit/load.js';
+import { initEventsForm } from './product-edit/events-form.js';
+import { initEventsFields } from './product-edit/events-fields.js';
+import { initEventsRecipe } from './product-edit/events-recipe.js';
 
 // Auth via cookie HttpOnly
 ensureAuthOrRedirect();
@@ -76,97 +41,7 @@ function bootstrap() {
     });
   }
 
-  if (form) {
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      showMessage('');
-      clearFieldError(nameInput, nameError);
-      if (purchasePriceInput) clearFieldError(purchasePriceInput, purchasePriceError);
-      clearFieldError(priceInput, priceError);
-
-      const standardizedName = standardizeText(nameInput.value, 'name');
-      const standardizedDescription = standardizeText(descriptionInput.value, 'description');
-      nameInput.value = standardizedName;
-      descriptionInput.value = standardizedDescription;
-
-      const productType = getSelectedProductType();
-      const payload = {
-        name: standardizedName,
-        description: standardizedDescription,
-        purchase_price: purchasePriceInput ? parsePrice(purchasePriceInput.value) : null,
-        price: parsePrice(priceInput.value),
-        status: statusSelect.value,
-        statusProduto: statusSelect.value,
-        productType,
-      };
-      if (!validateName(payload.name)) {
-        setFieldError(nameInput, nameError, 'Nome deve ter 3 a 120 caracteres.');
-        return;
-      }
-      if (productType === 'produced') {
-        const recipe = state.linkedRecipe || getSelectedRecipe();
-        if (!recipe) {
-          if (recipeError) {
-            recipeError.textContent = 'Selecione e vincule uma ficha t\u00e9cnica.';
-            recipeError.hidden = false;
-          }
-          if (recipeSelect) {
-            recipeSelect.classList.add('is-danger');
-            recipeSelect.focus();
-          }
-          return;
-        }
-        updateProducedPricing();
-        payload.purchase_price = null;
-        payload.price = parsePrice(priceInput.value);
-        if (payload.price == null) {
-          setFieldError(priceInput, priceError, 'Informe o pre\u00e7o de venda.');
-          return;
-        }
-      } else {
-        if (purchasePriceInput && payload.purchase_price == null) {
-          setFieldError(purchasePriceInput, purchasePriceError, 'Informe o pre\u00e7o de compra.');
-          return;
-        }
-        if (payload.price == null) {
-          setFieldError(priceInput, priceError, 'Informe o pre\u00e7o de venda.');
-          return;
-        }
-      }
-
-      saveBtn.classList.add('is-loading');
-      saveBtn.disabled = true;
-      const originalText = saveBtn.textContent;
-      saveBtn.textContent = 'Salvando...';
-      try {
-        await apiRequest(`/api/products/${productId}`, null, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        });
-        showMessage('Produto atualizado.', 'is-success');
-        sessionStorage.setItem(UPDATED_FLAG, 'true');
-        state.original = {
-          name: payload.name,
-          description: payload.description,
-          purchasePrice: purchasePriceInput ? formatCurrency(payload.purchase_price) : '',
-          price: formatCurrency(payload.price),
-          status: payload.status,
-          recipeId: recipeSelect ? recipeSelect.value : '',
-          finalPrice: finalPriceInput ? finalPriceInput.value.trim() : '',
-          productType,
-        };
-        if (purchasePriceInput) purchasePriceInput.value = state.original.purchasePrice;
-        priceInput.value = state.original.price;
-        updateDirtyState();
-      } catch (err) {
-        showMessage(err.message, 'is-danger');
-      } finally {
-        saveBtn.classList.remove('is-loading');
-        saveBtn.textContent = originalText;
-        updateDirtyState();
-      }
-    });
-  }
+  initEventsForm();
 
   if (deleteBtn) {
     deleteBtn.addEventListener('click', () => {
@@ -209,214 +84,9 @@ function bootstrap() {
     });
   }
 
-  if (linkRecipeBtn && recipeSelect) {
-    linkRecipeBtn.addEventListener('click', async () => {
-      if (recipeError) {
-        recipeError.textContent = '';
-        recipeError.hidden = true;
-      }
-      const fichaTecnicaId = recipeSelect.value;
-      if (!fichaTecnicaId) {
-        if (recipeError) {
-          recipeError.textContent = 'Selecione uma ficha t\u00e9cnica.';
-          recipeError.hidden = false;
-        }
-        return;
-      }
-      linkRecipeBtn.classList.add('is-loading');
-      linkRecipeBtn.disabled = true;
-      try {
-        await apiRequest(`/api/products/${productId}/vincular-ficha`, null, {
-          method: 'POST',
-          body: JSON.stringify({ fichaTecnicaId }),
-        });
-        showMessage('Ficha t\u00e9cnica vinculada com sucesso.', 'is-success');
-        if (productTypeProduced) productTypeProduced.checked = true;
-        if (productTypeResale) productTypeResale.checked = false;
-        setProductType('produced');
-        await loadLinkedRecipe(null, productId);
-        state.original.recipeId = recipeSelect ? recipeSelect.value : '';
-        updateDirtyState();
-      } catch (err) {
-        if (recipeError) {
-          recipeError.textContent = err.message || 'Erro ao vincular ficha t\u00e9cnica.';
-          recipeError.hidden = false;
-        } else {
-          showMessage(err.message, 'is-danger');
-        }
-      } finally {
-        linkRecipeBtn.classList.remove('is-loading');
-        linkRecipeBtn.disabled = false;
-      }
-    });
-  }
+  initEventsRecipe();
 
-  if (unlinkRecipeBtn) {
-    unlinkRecipeBtn.addEventListener('click', async () => {
-      if (recipeError) {
-        recipeError.textContent = '';
-        recipeError.hidden = true;
-      }
-      unlinkRecipeBtn.classList.add('is-loading');
-      unlinkRecipeBtn.disabled = true;
-      try {
-        await apiRequest(`/api/products/${productId}/remover-ficha`, null, {
-          method: 'DELETE',
-        });
-        showMessage('Vínculo removido com sucesso.', 'is-success');
-        setRecipeState(null);
-        if (productTypeResale) productTypeResale.checked = true;
-        if (productTypeProduced) productTypeProduced.checked = false;
-        setProductType('resale');
-        state.original.recipeId = '';
-        updateDirtyState();
-      } catch (err) {
-        if (recipeError) {
-          recipeError.textContent = err.message || 'Erro ao remover vínculo.';
-          recipeError.hidden = false;
-        } else {
-          showMessage(err.message, 'is-danger');
-        }
-      } finally {
-        unlinkRecipeBtn.classList.remove('is-loading');
-        unlinkRecipeBtn.disabled = false;
-      }
-    });
-  }
-
-  if (nameInput) {
-
-    nameInput.addEventListener('input', () => {
-      if (validateName(nameInput.value)) {
-        clearFieldError(nameInput, nameError);
-      }
-      updateNameGuidance(nameInput, nameHelp);
-      updateDirtyState();
-    });
-    nameInput.addEventListener('blur', () => {
-      const standardized = standardizeText(nameInput.value, 'name');
-      if (standardized !== nameInput.value) {
-        nameInput.value = standardized;
-      }
-      updateNameGuidance(nameInput, nameHelp);
-      updateDirtyState();
-    });
-    updateNameGuidance(nameInput, nameHelp);
-  }
-
-  if (descriptionInput) {
-    descriptionInput.addEventListener('blur', () => {
-      const standardized = standardizeText(descriptionInput.value, 'description');
-      if (standardized !== descriptionInput.value) {
-        descriptionInput.value = standardized;
-      }
-      updateDirtyState();
-    });
-  }
-
-  if (priceInput) {
-    bindCurrencyInput(priceInput, () => {
-      state.resaleCalcSource = 'price';
-      if (parsePrice(priceInput.value)) {
-        clearFieldError(priceInput, priceError);
-      } else if (priceInput.value.trim()) {
-        setFieldError(priceInput, priceError, 'Informe o pre\u00e7o de venda.');
-      }
-      syncPercentFromPrice();
-      updateResaleProfit();
-      updateDirtyState();
-    });
-  }
-
-  if (purchasePriceInput) {
-    bindCurrencyInput(purchasePriceInput, () => {
-      if (parsePrice(purchasePriceInput.value) != null) {
-        clearFieldError(purchasePriceInput, purchasePriceError);
-      } else if (purchasePriceInput.value.trim()) {
-        setFieldError(purchasePriceInput, purchasePriceError, 'Informe o pre\u00e7o de compra.');
-      }
-      if (state.resaleCalcSource === 'price') {
-        syncPercentFromPrice();
-      } else {
-        applyResalePricingRule();
-      }
-      updateResaleProfit();
-      updateDirtyState();
-    });
-  }
-
-  if (finalPriceInput) {
-    bindCurrencyInput(finalPriceInput, () => {
-      updateProducedPricing();
-      updateDirtyState();
-    });
-  }
-
-  if (recipeSearch) {
-    recipeSearch.addEventListener('input', () => {
-      applyRecipeSearch();
-    });
-  }
-
-  if (recipeSelect) {
-    recipeSelect.addEventListener('change', () => {
-      if (recipeError) {
-        recipeError.textContent = '';
-        recipeError.hidden = true;
-      }
-      recipeSelect.classList.remove('is-danger');
-      updateProducedPricing();
-      updateDirtyState();
-    });
-  }
-
-  if (statusSelect) {
-    statusSelect.addEventListener('change', () => {
-      updateDirtyState();
-    });
-  }
-
-  if (productTypeProduced) {
-    productTypeProduced.addEventListener('change', () => setProductType('produced'));
-  }
-
-  if (productTypeResale) {
-    productTypeResale.addEventListener('change', () => setProductType('resale'));
-  }
-
-  [editResaleCalcMargin, editResaleCalcMarkup].forEach((el) => {
-    if (!el) return;
-    el.addEventListener('change', () => {
-      state.resaleCalcSource = 'percent';
-      updateResalePercentHelp();
-      applyResalePricingRule();
-      updateDirtyState();
-    });
-  });
-
-  if (editResalePercent) {
-    editResalePercent.addEventListener('input', () => {
-      state.resaleCalcSource = 'percent';
-      applyResalePricingRule();
-      updateDirtyState();
-    });
-    editResalePercent.addEventListener('blur', () => {
-      const parsed = parsePrice(editResalePercent.value);
-      if (parsed != null) {
-        editResalePercent.value = parsed.toFixed(0);
-      }
-      applyResalePricingRule();
-      updateDirtyState();
-    });
-  }
-
-  setProductType(getSelectedProductType());
-
-  updateResaleProfit();
-
-  updateResalePercentHelp();
-
-  updateResaleSuggestionHelp();
+  initEventsFields();
 }
 
 bootstrap();

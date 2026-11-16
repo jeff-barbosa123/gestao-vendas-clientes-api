@@ -11,15 +11,12 @@ import {
   cancelConfirmBtn,
   cancelModal,
   createCustomer,
-  createCustomerHint,
-  createCustomerId,
   createDate,
   createDateError,
   createDateHoliday,
   createForm,
   createPayment,
   createSubmit,
-  customerOptions,
   detailsAddressBlock,
   detailsBirth,
   detailsCity,
@@ -70,8 +67,6 @@ import {
   editDateError,
   editDateHoliday,
   editForm,
-  editItemBarcode,
-  editItemBarcodeMessage,
   editItemError,
   editItemPrice,
   editItemProduct,
@@ -86,7 +81,6 @@ import {
   filterStatus,
   filterTotalMax,
   filterTotalMin,
-  itemBarcode,
   itemBarcodeMessage,
   itemError,
   itemPrice,
@@ -111,7 +105,6 @@ import {
   apiRequest,
   ensureAuthOrRedirect,
   setFieldError,
-  setInlineMessage,
   showMessage,
   showSummary,
   toggleModal,
@@ -126,7 +119,6 @@ import {
   formatPhone,
   formatPrice,
   getTypeLabel,
-  normalizeKey,
   normalizeName,
   parseNotesMeta,
   sanitizeFileName,
@@ -139,204 +131,25 @@ import {
   parsePrice,
 } from './sales/parsers.js';
 import { checkHoliday } from './sales/holidays.js';
+import {
+  getProductNameById,
+  initCatalog,
+  loadCustomers,
+  loadProducts,
+  resolveCustomerSelection,
+  setCustomerField,
+  setPriceFromProduct,
+  updateCustomerSelection,
+} from './sales/catalog.js';
+import { showBarcodeMessage } from './sales/barcode.js';
 
-function buildProductsMap(list) {
-  state.productsMap = new Map();
-  state.productsPriceMap = new Map();
-  state.productNameMap = new Map();
-  (list || []).forEach((product) => {
-    if (!product) return;
-    const id = product.id ?? product.productId ?? product.produtoId;
-    if (id == null) return;
-    const name =
-      product.name ||
-      product.nome ||
-      product.nomeProduto ||
-      product.productName ||
-      `Produto ${id}`;
-    state.productsMap.set(String(id), name);
-    const nameKey = normalizeKey(name);
-    if (nameKey && !state.productNameMap.has(nameKey)) {
-      state.productNameMap.set(nameKey, String(id));
-    }
-    if (product.price != null) {
-      state.productsPriceMap.set(String(id), Number(product.price));
-    }
-  });
-}
-
-function buildCustomerOptions(list) {
-  state.customersCache = Array.isArray(list) ? list : [];
-  state.customerValueMap = new Map();
-  state.customerNameMap = new Map();
-  if (!customerOptions) return;
-  customerOptions.innerHTML = '';
-  state.customersCache.forEach((customer) => {
-    if (!customer) return;
-    const id = customer.id ?? customer.customerId ?? customer.clienteId;
-    const name = String(customer.name || customer.nome || '').trim();
-    if (!name || id == null) return;
-    const email = String(customer.email || '').trim();
-    const display = email ? `${name} — ${email}` : name;
-    const option = document.createElement('option');
-    option.value = display;
-    customerOptions.appendChild(option);
-    state.customerValueMap.set(display, { id, name });
-    const key = normalizeKey(name);
-    if (key && !state.customerNameMap.has(key)) {
-      state.customerNameMap.set(key, { id, name });
-    }
-  });
-}
-
-function resolveCustomerSelection(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return null;
-  const direct = state.customerValueMap.get(raw);
-  if (direct) return direct;
-  const key = normalizeKey(raw);
-  return state.customerNameMap.get(key) || null;
-}
-
-function updateCustomerSelection(value) {
-  const match = resolveCustomerSelection(value);
-  if (createCustomerId) {
-    createCustomerId.value = match ? String(match.id) : '';
-  }
-  if (createCustomerHint) {
-    if (match) {
-      setInlineMessage(createCustomerHint, 'Cliente cadastrado selecionado.', 'is-success');
-    } else if (value && value.trim()) {
-      setInlineMessage(createCustomerHint, 'Cliente não cadastrado. Venda de balcão.', 'is-warning');
-    } else {
-      setInlineMessage(createCustomerHint, 'Opcional: selecione um cliente cadastrado.');
-    }
-  }
-}
-
-function isActiveProduct(product) {
-  if (!product) return false;
-  const status = String(product.status || product.status_produto || product.statusProduto || '').toUpperCase();
-  if (!status) return true;
-  return status === 'ATIVO' || status === 'ACTIVE';
-}
-
-function fillProductSelect(selectEl, selectedId) {
-  if (!selectEl) return;
-  const activeProducts = (state.productsCache || []).filter(isActiveProduct);
-  selectEl.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = activeProducts.length ? 'Selecione um produto' : 'Nenhum produto ativo';
-  placeholder.disabled = activeProducts.length === 0;
-  placeholder.selected = !selectedId;
-  selectEl.appendChild(placeholder);
-  activeProducts.forEach((product) => {
-    const id = product.id ?? product.productId ?? product.produtoId;
-    if (id == null) return;
-    const name = state.productsMap.get(String(id)) || `Produto ${id}`;
-    const option = document.createElement('option');
-    option.value = String(id);
-    option.textContent = name;
-    if (selectedId && String(id) === String(selectedId)) {
-      option.selected = true;
-    }
-    selectEl.appendChild(option);
-  });
-}
-
-function setPriceFromProduct(selectEl, priceInput) {
-  if (!selectEl || !priceInput) return;
-  const productId = selectEl.value;
-  const price = getProductPriceById(productId);
-  if (!Number.isFinite(price)) return;
-  priceInput.value = formatPrice(price);
-}
-
-function updateAddItemState(selectEl, qtyEl, priceEl, buttonEl) {
+export function updateAddItemState(selectEl, qtyEl, priceEl, buttonEl) {
   if (!buttonEl) return;
   const hasProduct = Boolean(selectEl && selectEl.value);
   const qty = Number(qtyEl ? qtyEl.value : 0);
   const price = parsePrice(priceEl ? priceEl.value : null);
   const isReady = hasProduct && qty > 0 && price != null;
   buttonEl.classList.toggle('is-highlight', isReady);
-}
-
-function getProductNameById(productId) {
-  if (!productId) return '';
-  return state.productsMap.get(String(productId)) || '';
-}
-
-function getProductPriceById(productId) {
-  if (!productId) return null;
-  const value = state.productsPriceMap.get(String(productId));
-  return Number.isFinite(value) ? value : null;
-}
-
-function getProductIdByName(name) {
-  const key = normalizeKey(name);
-  if (!key) return null;
-  return state.productNameMap.get(key) || null;
-}
-
-function showBarcodeMessage(el, text, type) {
-  if (!el) return;
-  setInlineMessage(el, text, type);
-  if (state.barcodeMessageTimer) {
-    clearTimeout(state.barcodeMessageTimer);
-    state.barcodeMessageTimer = null;
-  }
-  if (text) {
-    state.barcodeMessageTimer = setTimeout(() => {
-      setInlineMessage(el, '');
-    }, 6000);
-  }
-}
-
-function normalizeBarcode(value) {
-  return String(value || '').replace(/\D/g, '');
-}
-
-async function lookupBarcode(code, token) {
-  try {
-    return await apiRequest(`/api/barcodes/${code}`, token);
-  } catch (err) {
-    if (err.status === 404) return null;
-    throw err;
-  }
-}
-
-async function handleBarcodeLookup(inputEl, messageEl, selectEl, qtyEl, priceEl, buttonEl, token) {
-  if (!inputEl) return;
-  const code = normalizeBarcode(inputEl.value);
-  if (!code) {
-    showBarcodeMessage(messageEl, '');
-    return;
-  }
-  if (code.length < 8) {
-    showBarcodeMessage(messageEl, 'Código de barras incompleto.', 'is-warning');
-    return;
-  }
-  showBarcodeMessage(messageEl, 'Buscando produto pelo código de barras...', 'is-success');
-  try {
-    const data = await lookupBarcode(code, token);
-    if (!data || (!data.name && !data.brand)) {
-      showBarcodeMessage(messageEl, 'Produto não encontrado pelo código informado.', 'is-warning');
-      return;
-    }
-    const displayName = data.name || data.brand;
-    const productId = getProductIdByName(displayName);
-    if (productId && selectEl) {
-      selectEl.value = String(productId);
-      setPriceFromProduct(selectEl, priceEl);
-      updateAddItemState(selectEl, qtyEl, priceEl, buttonEl);
-      showBarcodeMessage(messageEl, `Produto sugerido: ${displayName}. Selecionado automaticamente.`, 'is-success');
-      return;
-    }
-    showBarcodeMessage(messageEl, `Produto sugerido: ${displayName}. Selecione manualmente.`, 'is-warning');
-  } catch (_err) {
-    showBarcodeMessage(messageEl, 'Não foi possível consultar o código agora.', 'is-warning');
-  }
 }
 
 function openPrint(details) {
@@ -626,17 +439,6 @@ function openPdf(details) {
   doc.save(`${fileBase || 'venda'}.pdf`);
 }
 
-function setCustomerField(wrapper, valueEl, value, formatter) {
-  if (!wrapper || !valueEl) return;
-  const text = formatter ? formatter(value) : String(value || '').trim();
-  if (!text || text === '-') {
-    wrapper.hidden = true;
-    return;
-  }
-  wrapper.hidden = false;
-  valueEl.textContent = text;
-}
-
 function updateTotal() {
   const total = state.items.reduce((sum, item) => sum + item.total, 0);
   saleTotal.textContent = `R$ ${formatPrice(total)}`;
@@ -848,27 +650,6 @@ async function loadSales(token) {
   renderPage();
 }
 
-async function loadProducts(token) {
-  const data = await apiRequest('/api/products', token);
-  state.productsCache = Array.isArray(data) ? data : data.items || [];
-  buildProductsMap(state.productsCache);
-  fillProductSelect(itemProduct);
-  fillProductSelect(editItemProduct);
-  setPriceFromProduct(itemProduct, itemPrice);
-  setPriceFromProduct(editItemProduct, editItemPrice);
-  updateAddItemState(itemProduct, itemQty, itemPrice, addItemBtn);
-  updateAddItemState(editItemProduct, editItemQty, editItemPrice, editAddItem);
-}
-
-async function loadCustomers(token) {
-  const data = await apiRequest('/api/customers', token);
-  const list = Array.isArray(data) ? data : data.items || [];
-  buildCustomerOptions(list);
-  if (createCustomer && createCustomer.value) {
-    updateCustomerSelection(createCustomer.value);
-  }
-}
-
 async function loadSummary(token) {
   try {
     const summary = await apiRequest('/api/sales/summary', token);
@@ -889,80 +670,7 @@ ensureAuthOrRedirect().then((user) => {
   loadSummary(null);
 });
 
-if (createDate && !createDate.value) {
-  createDate.value = formatDateInput(new Date());
-}
-
-if (createDateHoliday && createDate && createDate.value) {
-  checkHoliday(createDate.value, null, createDateHoliday);
-}
-
-if (createCustomer) {
-  createCustomer.addEventListener('input', (event) => {
-    updateCustomerSelection(event.target.value);
-  });
-  createCustomer.addEventListener('blur', (event) => {
-    updateCustomerSelection(event.target.value);
-  });
-}
-
-if (createDate) {
-  createDate.addEventListener('change', (event) => {
-    checkHoliday(event.target.value, null, createDateHoliday);
-  });
-  createDate.addEventListener('input', (event) => {
-    checkHoliday(event.target.value, null, createDateHoliday);
-  });
-}
-
-if (editDate) {
-  editDate.addEventListener('change', (event) => {
-    checkHoliday(event.target.value, null, editDateHoliday);
-  });
-  editDate.addEventListener('input', (event) => {
-    checkHoliday(event.target.value, null, editDateHoliday);
-  });
-}
-
-if (itemBarcode) {
-  itemBarcode.addEventListener('blur', () => {
-    handleBarcodeLookup(itemBarcode, itemBarcodeMessage, itemProduct, itemQty, itemPrice, addItemBtn, null);
-  });
-  itemBarcode.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleBarcodeLookup(itemBarcode, itemBarcodeMessage, itemProduct, itemQty, itemPrice, addItemBtn, null);
-    }
-  });
-}
-
-if (editItemBarcode) {
-  editItemBarcode.addEventListener('blur', () => {
-    handleBarcodeLookup(
-      editItemBarcode,
-      editItemBarcodeMessage,
-      editItemProduct,
-      editItemQty,
-      editItemPrice,
-      editAddItem,
-      null
-    );
-  });
-  editItemBarcode.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleBarcodeLookup(
-        editItemBarcode,
-        editItemBarcodeMessage,
-        editItemProduct,
-        editItemQty,
-        editItemPrice,
-        editAddItem,
-        null
-      );
-    }
-  });
-}
+initCatalog();
 
 if (storedFilters) {
   try {

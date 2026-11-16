@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-11-16 - Frontend: modularização de app.js (login) e dashboard.js
+
+### Novo
+- **app.js** (1.061 linhas) e **dashboard.js** (846 linhas) viraram entrypoints ES module (~30-40 linhas) com módulos em
+  `web/public/app/` (`constants`, `dom`, `state`, `core`, `session`, `api`, `messages`, `login`, `register`, `forgot`,
+  `events-login`, `events-register`) e `web/public/dashboard/` (`constants`, `dom`, `state`, `core`, `period`,
+  `charts`, `alerts`, `data`, `load`, `events`). O `index.html` e o `dashboard.html` passam a carregar o entrypoint
+  como `type="module"` (o dashboard agora via `/static/dashboard.js`).
+- Spec Cypress `dashboard-flows.cy.js` (14 testes): métricas, troca de período, próximas encomendas e navegação.
+- Auditoria de listeners (estática e em runtime): sem duplicatas em `app` e `dashboard`.
+
+### Alterado
+- `app.js`: a constante interna `state` foi renomeada para `authState` (evita conflito com o `state` de módulos).
+- `dashboard.js`: a função `init()` e a espera por DOMContentLoaded foram removidas; o módulo executa após o parse do DOM.
+
 ## 2026-11-16 - Frontend: modularização de client-edit e product-edit
 
 ### Novo

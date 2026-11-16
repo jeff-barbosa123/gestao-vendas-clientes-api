@@ -6,7 +6,7 @@ import { createRecipeId, createRecipeSearch, createRecipeSearchHelp } from './do
 import { state } from './state.js';
 import { apiRequest } from './core.js';
 import { updateProducedPricing } from './pricing.js';
-import { renderPage } from '../products.js';
+import { renderPage } from './list.js';
 
 function updateRecipeSelect(list = state.recipesCache) {
   if (!createRecipeId) return;

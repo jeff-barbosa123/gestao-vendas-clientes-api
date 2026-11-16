@@ -16,7 +16,6 @@ import {
   cancelEditBtn,
   cnpjError,
   cnpjInput,
-  cnpjSuccess,
   deleteBtn,
   deleteCancel,
   deleteClose,
@@ -37,8 +36,6 @@ import {
   phoneError,
   phoneInput,
   saveBtn,
-  tradeChipLabel,
-  tradeChipRow,
 } from './client-edit/dom.js';
 import { state } from './client-edit/state.js';
 import {
@@ -76,61 +73,7 @@ import {
   setEditMetaValue,
   updateEditTypeFields,
 } from './client-edit/notes-meta.js';
-
-function setCnpjMessage(message, isError) {
-  if (cnpjError) {
-    cnpjError.textContent = isError ? message : '';
-    cnpjError.hidden = !isError;
-  }
-  if (cnpjSuccess) {
-    cnpjSuccess.textContent = !isError ? message : '';
-    cnpjSuccess.hidden = isError || !message;
-  }
-}
-
-function showTradeChip(tradeName) {
-  if (!tradeChipRow || !tradeChipLabel) return;
-  const value = String(tradeName || '').trim();
-  if (!value) {
-    tradeChipRow.hidden = true;
-    tradeChipLabel.textContent = '';
-    return;
-  }
-  tradeChipLabel.textContent = `Nome fantasia: ${value}`;
-  tradeChipRow.hidden = false;
-}
-
-function applyCnpjData(data) {
-  if (!data) return;
-  if (nameInput && data.name) nameInput.value = normalizeText(data.name);
-  if (phoneInput && data.phone) phoneInput.value = formatPhone(data.phone);
-  if (addressStreetInput && data.addressStreet) {
-    addressStreetInput.value = normalizeText(data.addressStreet);
-  }
-  if (addressNumberInput && data.addressNumber) {
-    addressNumberInput.value = data.addressNumber;
-  }
-  if (addressNeighborhoodInput && data.addressNeighborhood) {
-    addressNeighborhoodInput.value = normalizeText(data.addressNeighborhood);
-  }
-  if (addressCityInput && data.addressCity) {
-    addressCityInput.value = normalizeText(data.addressCity);
-  }
-  if (addressPostalInput && data.addressPostalCode) {
-    addressPostalInput.value = formatPostal(data.addressPostalCode);
-  }
-  if (data.tradeName) {
-    const normalizedTrade = normalizeText(data.tradeName);
-    if (editTradeName) editTradeName.value = normalizedTrade;
-    setEditMetaValue('tradeName', normalizedTrade);
-    showTradeChip(normalizedTrade);
-  }
-  if (editType) {
-    editType.value = 'PJ';
-    updateEditTypeFields('PJ');
-  }
-  updateWhatsAppLink(phoneInput ? phoneInput.value : '');
-}
+import { applyCnpjData, setCnpjMessage, showTradeChip } from './client-edit/cnpj.js';
 
 function updateDirtyState() {
   if (!saveBtn) return;

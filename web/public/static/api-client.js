@@ -89,10 +89,25 @@
   async function apiRequest(path, tokenOrOptions = null, options = {}) {
     // Back-compat: assinatura antiga apiRequest(path, token, options) ainda funciona,
     // mas o token é ignorado (auth via cookie HttpOnly).
-    const requestOptions =
-      tokenOrOptions && typeof tokenOrOptions === 'object' ? tokenOrOptions : options;
+    const rawOptions =
+      tokenOrOptions && typeof tokenOrOptions === 'object' ? tokenOrOptions : options || {};
+    // `query` e `messageFromServer` são opções do cliente (não vão para o fetch).
+    const { query, messageFromServer, ...requestOptions } = rawOptions;
 
-    const url = buildUrl(path);
+    let url = buildUrl(path);
+    if (query && typeof query === 'object') {
+      try {
+        const u = new URL(url, window.location.href);
+        Object.entries(query).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && String(value).length) {
+            u.searchParams.set(key, String(value));
+          }
+        });
+        url = u.toString();
+      } catch (_err) {
+        // mantém a URL sem query
+      }
+    }
     const headers = {
       'Content-Type': 'application/json',
       ...(requestOptions.headers || {}),
@@ -156,7 +171,12 @@
 
     if (!response.ok) {
       // Cria erro estruturado para o error-handler processar
-      const apiError = new Error('API_ERROR');
+      // messageFromServer: telas que exibem err.message direto recebem a mensagem do backend.
+      const serverMessage =
+        payload && typeof payload === 'object' ? payload.message || payload.error : '';
+      const apiError = new Error(
+        messageFromServer && serverMessage ? String(serverMessage) : 'API_ERROR'
+      );
       apiError.status = response.status;
       apiError.payload = payload;
       throw apiError;
@@ -205,6 +225,26 @@
     wrapped.__sgvcCsrf = true;
     window.fetch = wrapped;
   })();
+
+  // API unificada: window.SGVC.api.{request,get,post,put,patch,del}
+  const withMethod = (method) => (path, body, options = {}) =>
+    apiRequest(path, {
+      ...options,
+      method,
+      ...(body !== undefined && body !== null
+        ? { body: typeof body === 'string' ? body : JSON.stringify(body) }
+        : {}),
+    });
+  window.SGVC = window.SGVC || {};
+  window.SGVC.api = {
+    request: (path, options = {}) => apiRequest(path, options),
+    get: (path, query, options = {}) => apiRequest(path, { ...options, method: 'GET', query }),
+    post: withMethod('POST'),
+    put: withMethod('PUT'),
+    patch: withMethod('PATCH'),
+    del: withMethod('DELETE'),
+    buildUrl,
+  };
 
   window.apiRequest = apiRequest;
   window.apiGetMe = getMe;

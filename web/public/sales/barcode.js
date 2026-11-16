@@ -4,7 +4,7 @@
 import { state } from './state.js';
 import { apiRequest, setInlineMessage } from './core.js';
 import { getProductIdByName, setPriceFromProduct } from './catalog.js';
-import { updateAddItemState } from '../sales.js';
+import { updateAddItemState } from './items.js';
 
 export function showBarcodeMessage(el, text, type) {
   if (!el) return;

@@ -28,7 +28,7 @@ import { apiRequest, setInlineMessage } from './core.js';
 import { formatDateInput, formatPrice, normalizeKey } from './formatters.js';
 import { checkHoliday } from './holidays.js';
 import { handleBarcodeLookup } from './barcode.js';
-import { updateAddItemState } from '../sales.js';
+import { updateAddItemState } from './items.js';
 
 function buildProductsMap(list) {
   state.productsMap = new Map();

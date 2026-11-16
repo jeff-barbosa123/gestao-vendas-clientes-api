@@ -3,7 +3,6 @@
  */
 import { PAGE_SIZE, SALES_FILTER_KEY, paymentLabel, storedFilters } from './sales/constants.js';
 import {
-  addItemBtn,
   backBtn,
   cancelBackBtn,
   cancelClose,
@@ -60,7 +59,6 @@ import {
   detailsTotal,
   detailsTrade,
   detailsType,
-  editAddItem,
   editClose,
   editCloseBtn,
   editDate,
@@ -68,13 +66,8 @@ import {
   editDateHoliday,
   editForm,
   editItemError,
-  editItemPrice,
-  editItemProduct,
-  editItemQty,
-  editItemsBody,
   editModal,
   editPayment,
-  editSaleTotal,
   editSubmit,
   filterClear,
   filterPeriod,
@@ -83,10 +76,6 @@ import {
   filterTotalMin,
   itemBarcodeMessage,
   itemError,
-  itemPrice,
-  itemProduct,
-  itemQty,
-  itemsBody,
   nextPage,
   pageInfo,
   pageJumpBtn,
@@ -95,7 +84,6 @@ import {
   pagination,
   prevPage,
   refreshBtn,
-  saleTotal,
   salesTotal,
   searchInput,
   tableBody,
@@ -123,13 +111,7 @@ import {
   parseNotesMeta,
   sanitizeFileName,
 } from './sales/formatters.js';
-import {
-  getSaleDate,
-  isWithinPeriod,
-  normalizeStatus,
-  parseFilterMoney,
-  parsePrice,
-} from './sales/parsers.js';
+import { getSaleDate, isWithinPeriod, normalizeStatus, parseFilterMoney } from './sales/parsers.js';
 import { checkHoliday } from './sales/holidays.js';
 import {
   getProductNameById,
@@ -138,19 +120,10 @@ import {
   loadProducts,
   resolveCustomerSelection,
   setCustomerField,
-  setPriceFromProduct,
   updateCustomerSelection,
 } from './sales/catalog.js';
 import { showBarcodeMessage } from './sales/barcode.js';
-
-export function updateAddItemState(selectEl, qtyEl, priceEl, buttonEl) {
-  if (!buttonEl) return;
-  const hasProduct = Boolean(selectEl && selectEl.value);
-  const qty = Number(qtyEl ? qtyEl.value : 0);
-  const price = parsePrice(priceEl ? priceEl.value : null);
-  const isReady = hasProduct && qty > 0 && price != null;
-  buttonEl.classList.toggle('is-highlight', isReady);
-}
+import { initItems, renderEditItems, renderItems } from './sales/items.js';
 
 function openPrint(details) {
   if (!details) return;
@@ -439,53 +412,6 @@ function openPdf(details) {
   doc.save(`${fileBase || 'venda'}.pdf`);
 }
 
-function updateTotal() {
-  const total = state.items.reduce((sum, item) => sum + item.total, 0);
-  saleTotal.textContent = `R$ ${formatPrice(total)}`;
-}
-
-function updateEditTotal() {
-  const total = state.editItems.reduce((sum, item) => sum + item.total, 0);
-  if (editSaleTotal) editSaleTotal.textContent = `R$ ${formatPrice(total)}`;
-}
-
-function renderItems() {
-  itemsBody.innerHTML = '';
-  state.items.forEach((item, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${escapeHtml(item.productName || item.productId)}</td>
-        <td class="has-text-right">${escapeHtml(item.qty)}</td>
-        <td class="has-text-right">R$ ${formatPrice(item.price)}</td>
-        <td class="has-text-right">R$ ${formatPrice(item.total)}</td>
-        <td class="has-text-right">
-          <button class="button is-light is-small" data-index="${index}" aria-label="Remover item">Remover</button>
-        </td>
-      `;
-    itemsBody.appendChild(row);
-  });
-  updateTotal();
-}
-
-function renderEditItems() {
-  if (!editItemsBody) return;
-  editItemsBody.innerHTML = '';
-  state.editItems.forEach((item, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${escapeHtml(item.productName || item.productId)}</td>
-        <td class="has-text-right">${escapeHtml(item.qty)}</td>
-        <td class="has-text-right">R$ ${formatPrice(item.price)}</td>
-        <td class="has-text-right">R$ ${formatPrice(item.total)}</td>
-        <td class="has-text-right">
-          <button class="button is-light is-small" data-edit-index="${index}" aria-label="Remover item">Remover</button>
-        </td>
-      `;
-    editItemsBody.appendChild(row);
-  });
-  updateEditTotal();
-}
-
 function updatePagination(total) {
   if (!pagination) return;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -711,107 +637,7 @@ if (refreshBtn) {
   });
 }
 
-[itemQty, itemPrice].forEach((el) => {
-  if (!el) return;
-  el.addEventListener('input', () => updateAddItemState(itemProduct, itemQty, itemPrice, addItemBtn));
-});
-
-[editItemQty, editItemPrice].forEach((el) => {
-  if (!el) return;
-  el.addEventListener('input', () => updateAddItemState(editItemProduct, editItemQty, editItemPrice, editAddItem));
-});
-
-if (itemProduct) {
-  itemProduct.addEventListener('change', () => {
-    setPriceFromProduct(itemProduct, itemPrice);
-    updateAddItemState(itemProduct, itemQty, itemPrice, addItemBtn);
-  });
-}
-
-if (editItemProduct) {
-  editItemProduct.addEventListener('change', () => {
-    setPriceFromProduct(editItemProduct, editItemPrice);
-    updateAddItemState(editItemProduct, editItemQty, editItemPrice, editAddItem);
-  });
-}
-
-if (addItemBtn) {
-  addItemBtn.addEventListener('click', () => {
-    const productId = itemProduct.value.trim();
-    const qty = Number(itemQty.value);
-    const price = parsePrice(itemPrice.value);
-
-    setFieldError(itemError, '');
-    if (!productId) {
-      setFieldError(itemError, 'Selecione um produto.');
-      return;
-    }
-    if (!qty || qty <= 0 || !price) {
-      setFieldError(itemError, 'Informe quantidade e pre\u00e7o v\u00e1lidos.');
-      return;
-    }
-
-    const total = qty * price;
-    const productName = getProductNameById(productId);
-    state.items.push({ productId, productName, qty, price, total });
-    itemProduct.value = '';
-    itemQty.value = '';
-    itemPrice.value = '';
-    updateAddItemState(itemProduct, itemQty, itemPrice, addItemBtn);
-    renderItems();
-  });
-}
-
-if (itemsBody) {
-  itemsBody.addEventListener('click', (event) => {
-    const btn = event.target.closest('button[data-index]');
-    if (!btn) return;
-    const index = Number(btn.dataset.index);
-    if (Number.isInteger(index)) {
-      state.items.splice(index, 1);
-      renderItems();
-    }
-  });
-}
-
-if (editItemsBody) {
-  editItemsBody.addEventListener('click', (event) => {
-    const btn = event.target.closest('button[data-edit-index]');
-    if (!btn) return;
-    const index = Number(btn.dataset.editIndex);
-    if (Number.isInteger(index)) {
-      state.editItems.splice(index, 1);
-      renderEditItems();
-    }
-  });
-}
-
-if (editAddItem) {
-  editAddItem.addEventListener('click', () => {
-    const productId = editItemProduct.value.trim();
-    const qty = Number(editItemQty.value);
-    const price = parsePrice(editItemPrice.value);
-
-    setFieldError(editItemError, '');
-    if (!productId) {
-      setFieldError(editItemError, 'Selecione um produto.');
-      return;
-    }
-    if (!qty || qty <= 0 || price == null) {
-      setFieldError(editItemError, 'Informe quantidade e pre\u00e7o v\u00e1lidos.');
-      return;
-    }
-
-    const total = qty * price;
-    const productName = getProductNameById(productId);
-    state.editItems.push({ productId, productName, qty, price, total });
-    editItemProduct.value = '';
-    editItemQty.value = '';
-    editItemPrice.value = '';
-    updateAddItemState(editItemProduct, editItemQty, editItemPrice, editAddItem);
-    renderEditItems();
-  });
-}
+initItems();
 
 if (createForm) {
   createForm.addEventListener('submit', async (event) => {

@@ -19,7 +19,7 @@ import {
   isIngredientAdvancedOpen,
   setIngredientAdvancedOpen,
   showIngredientSuccess,
-} from '../recipe-edit.js';
+} from './ingredients.js';
 
 export function validateEditName(showMessage) {
   const value = nameInput ? nameInput.value.trim() : '';

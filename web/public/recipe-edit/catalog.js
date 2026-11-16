@@ -17,7 +17,7 @@ import { state } from './state.js';
 import { apiRequest } from './core.js';
 import { formatCatalogNumber } from './calc.js';
 import { updateCostSummary, updateSaveState } from './summary.js';
-import { setIngredientAdvancedOpen, showIngredientSuccess } from '../recipe-edit.js';
+import { setIngredientAdvancedOpen, showIngredientSuccess } from './ingredients.js';
 
 export function initMasks() {
   if (window.Cleave) {

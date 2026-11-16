@@ -19,7 +19,8 @@ import { state } from './state.js';
 import { showMessage } from './core.js';
 import { calculateIngredientCost, formatMoney } from './calc.js';
 import { updateCostSummary } from './summary.js';
-import { renderIngredients, resetIngredientForm, saveFormState } from '../recipe-edit.js';
+import { renderIngredients, resetIngredientForm } from './ingredients.js';
+import { saveFormState } from '../recipe-edit.js';
 
 export function ensureDefaultComponent() {
   if (!state.components.length) {

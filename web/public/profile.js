@@ -133,21 +133,8 @@
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 
-  async function apiRequest(path, _tokenIgnored, options = {}) {
-    const url = buildUrl(path);
-    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-    const response = await fetch(url, { ...options, headers, credentials: 'include' });
-    const contentType = response.headers.get('content-type') || '';
-    const data = contentType.includes('application/json')
-      ? await response.json()
-      : await response.text();
-    if (!response.ok) {
-      const message = data && (data.message || data.error) ? data.message || data.error : 'Erro na requisicao.';
-      const err = new Error(message);
-      err.status = response.status;
-      throw err;
-    }
-    return data;
+  function apiRequest(path, _tokenIgnored, options = {}) {
+    return window.SGVC.api.request(path, { ...options, messageFromServer: true });
   }
 
   async function loadProfile() {

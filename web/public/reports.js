@@ -4,12 +4,7 @@
   const REPORT_FILTER_KEY = 'sgvc.reportsFilters';
 
   function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+    return window.SGVC.utils.escapeHtml(value);
   }
 
   const messageBox = document.getElementById('reports-message');
@@ -137,42 +132,8 @@
     }
   }
 
-  async function apiRequest(path, _tokenIgnored, options = {}) {
-    const url = buildUrl(path);
-    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-    headers['x-timezone'] = getTimezone();
-    
-    let response;
-    try {
-      response = await fetch(url, { ...options, headers, credentials: 'include' });
-    } catch (err) {
-      // Erro de rede (Failed to fetch)
-      const error = new Error('Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.');
-      error.status = 0;
-      error.payload = null;
-      throw error;
-    }
-    
-    const contentType = response.headers.get('content-type') || '';
-    let payload;
-    try {
-      payload = contentType.includes('application/json') ? await response.json() : await response.text();
-    } catch (err) {
-      // Erro ao parsear resposta
-      const error = new Error('Resposta inválida do servidor. Tente novamente.');
-      error.status = response.status;
-      error.payload = null;
-      throw error;
-    }
-    
-    if (!response.ok) {
-      const message = payload && (payload.message || payload.error) ? payload.message || payload.error : 'Erro ao processar solicitação. Tente novamente.';
-      const error = new Error(message);
-      error.status = response.status;
-      error.payload = payload;
-      throw error;
-    }
-    return payload;
+  function apiRequest(path, _tokenIgnored, options = {}) {
+    return window.SGVC.api.request(path, { ...options, messageFromServer: true });
   }
 
   function buildQuery() {

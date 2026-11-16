@@ -159,6 +159,8 @@ describe('Edicao e remocao de clientes', () => {
         cy.get('#delete-btn').click();
         cy.get('#delete-confirm').click();
         cy.wait('@deleteCustomer');
+        // Aguarda o app tratar a resposta (mensagem + timer de redirecionamento) antes de avançar o relógio fake
+        cy.get('#edit-message').should('contain', 'Cliente removido com sucesso.');
         cy.tick(600);
         cy.wait('@clientsAfterDelete');
         cy.clock().then((clock) => clock.restore());
@@ -174,6 +176,8 @@ describe('Edicao e remocao de clientes', () => {
         cy.get('#delete-btn').click();
         cy.get('#delete-confirm').click();
         cy.wait('@deleteCustomer');
+        // Aguarda o app tratar a resposta (mensagem + timer de redirecionamento) antes de avançar o relógio fake
+        cy.get('#edit-message').should('contain', 'Cliente removido com sucesso.');
         cy.tick(600);
         cy.wait('@clientsAfterDelete');
         cy.get('#clients-body').should('not.contain', defaultCustomer.name);
@@ -190,6 +194,8 @@ describe('Edicao e remocao de clientes', () => {
         cy.get('#delete-btn').click();
         cy.get('#delete-confirm').click();
         cy.wait('@deleteCustomer');
+        // Aguarda o app tratar a resposta (mensagem + timer de redirecionamento) antes de avançar o relógio fake
+        cy.get('#edit-message').should('contain', 'Cliente removido com sucesso.');
         cy.tick(600);
         cy.wait('@clientsAfterDelete');
         cy.get('#clients-total').should('contain', '(13)');

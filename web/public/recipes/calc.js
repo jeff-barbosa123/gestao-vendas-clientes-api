@@ -7,7 +7,7 @@ import {
   updateIngredientUnitHints,
   updatePackQuantityWarning,
   updatePackUnitHints,
-} from '../recipes.js';
+} from './ingredients.js';
 
 export function formatCatalogNumber(value, input) {
   const fixed = Number(value).toFixed(2).replace(/\.00$/, '');

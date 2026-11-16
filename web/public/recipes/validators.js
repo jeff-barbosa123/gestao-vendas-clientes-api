@@ -19,7 +19,7 @@ import {
   isIngredientAdvancedOpen,
   setIngredientAdvancedOpen,
   showIngredientSuccess,
-} from '../recipes.js';
+} from './ingredients.js';
 
 export function validateCreateName(showMessage) {
   const value = createName ? createName.value.trim() : '';

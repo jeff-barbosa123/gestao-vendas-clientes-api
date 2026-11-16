@@ -458,88 +458,15 @@
     });
   }
 
-  function buildApiUrl(path, queryParams = {}) {
-    try {
-      const url = new URL(buildUrl(path));
-      Object.entries(queryParams || {}).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && String(value).length) {
-          url.searchParams.set(key, String(value));
-        }
-      });
-      return url.toString();
-    } catch (err) {
-      return buildUrl(path);
-    }
-  }
-
   /**
    * Normaliza erro da API para mensagem amigável
    */
   function normalizeError(err) {
-    if (window.SGVCErrorHandler && window.SGVCErrorHandler.normalizeApiError) {
-      return window.SGVCErrorHandler.normalizeApiError(err);
-    }
-    return err && err.message ? err.message : 'Erro ao processar solicitação. Tente novamente.';
+    return window.SGVC.utils.normalizeError(err);
   }
 
-  async function fetchJson(path, _tokenIgnored, query = {}, options = {}) {
-    const url = buildApiUrl(path, query);
-    
-    let response;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-    try {
-      const headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      };
-      response = await fetch(url, {
-        method: options.method || 'GET',
-        headers,
-        body: options.body,
-        cache: 'no-store',
-        credentials: 'include',
-        signal: controller.signal,
-      });
-    } catch (err) {
-      if (err && err.name === 'AbortError') {
-        const timeoutError = new Error('REQUEST_TIMEOUT');
-        timeoutError.status = 0;
-        timeoutError.payload = null;
-        timeoutError.name = 'TimeoutError';
-        throw timeoutError;
-      }
-      const networkError = new Error('NETWORK_ERROR');
-      networkError.status = 0;
-      networkError.payload = null;
-      networkError.name = 'NetworkError';
-      throw networkError;
-    } finally {
-      clearTimeout(timeoutId);
-    }
-    
-    const contentType = response.headers.get('content-type') || '';
-    let payload = null;
-    
-    try {
-      payload = contentType.includes('application/json') 
-        ? await response.json() 
-        : await response.text();
-    } catch (err) {
-      const parseError = new Error('INVALID_RESPONSE');
-      parseError.status = response.status;
-      parseError.payload = null;
-      throw parseError;
-    }
-    
-    if (!response.ok) {
-      const error = new Error("API_ERROR");
-      error.status = response.status;
-      error.payload = payload;
-      throw error;
-    }
-    
-    return payload;
+  function fetchJson(path, _tokenIgnored, query = {}, options = {}) {
+    return window.SGVC.api.request(path, { ...options, query });
   }
 
   function formatIso(date) {

@@ -16,7 +16,8 @@ import {
 import { state } from './state.js';
 import { showMessage } from './core.js';
 import { calculateIngredientCost, formatMoney } from './calc.js';
-import { renderIngredients, updateSubmitState } from '../recipes.js';
+import { updateSubmitState } from './summary.js';
+import { renderIngredients } from '../recipes.js';
 
 export function getAllIngredients() {
   return state.components.flatMap((component) => {

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-16 - Frontend: modularização das telas de receitas
+
+### Novo
+- **recipes.js** (1.753 linhas) e **recipe-edit.js** (2.303 linhas) viraram entrypoints ES module de ~110 linhas
+  com módulos em `web/public/recipes/` e `web/public/recipe-edit/` (`constants`, `dom`, `state`, `core`,
+  `calc`, `validators`, `catalog`, `components`, `summary`, `ingredients`, `list`/`persist`, `events`).
+  Estado mutável centralizado em `state`; comportamento inalterado.
+- Spec Cypress `recipe-edit.cy.js` (5 testes) cobrindo carga, validação, PUT, modal de exclusão e redirect.
+
+### Corrigido
+- `recipe-edit`: removida função `getProfitType` duplicada (semântica idêntica) que ficava inacessível ao modularizar.
+
 ## 2026-11-16 — Frontend: base comum e modularização da tela de clientes
 
 ### Novo

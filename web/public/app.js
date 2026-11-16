@@ -19,12 +19,10 @@ import {
   loginBtn,
   loginForm,
   loginSubtitle,
-  loginUser,
   logoutBtn,
   passwordCapsLock,
   passwordError,
   passwordInput,
-  passwordStrength,
   registerAvatar,
   registerCancel,
   registerClose,
@@ -44,9 +42,6 @@ import {
   registerTogglePassword,
   rememberMe,
   responseOutput,
-  sessionStatus,
-  sessionToken,
-  sessionUser,
   togglePasswordBtn,
 } from './app/dom.js';
 import { clearSession, remembered, saveRememberedEmail, saveSession } from './app/session.js';
@@ -54,9 +49,7 @@ import { apiRequest, applyBackendFieldErrors, normalizeApiError } from './app/ap
 import {
   clearFieldErrors,
   clearMessages,
-  hasFieldErrors,
   setFieldError,
-  setFieldSuccess,
   setStatus,
   showAlert,
   showLoginError,
@@ -64,6 +57,27 @@ import {
   showRegisterSuccess,
   showSuccess,
 } from './app/messages.js';
+import {
+  addLoginRipple,
+  handleEmailBlur,
+  handleFieldInput,
+  handlePasswordBlur,
+  isLocked,
+  setLoginButtonState,
+  updatePasswordToggle,
+  updateSessionUI,
+  validateEmail,
+  validatePassword,
+} from './app/login.js';
+import {
+  clearRegisterFieldState,
+  confirmCloseRegister,
+  registerPasswordProblem,
+  setRegisterFieldError,
+  setRegisterFieldValid,
+  toggleRegisterModal,
+  updatePasswordStrength,
+} from './app/register.js';
 
 if (passwordInput && passwordCapsLock) {
   passwordInput.addEventListener('keydown', (e) => {
@@ -144,163 +158,7 @@ if (forgotModal) {
   });
 }
 
-function updatePasswordToggle(button, isVisible) {
-  if (!button) return;
-  const label = isVisible ? 'Ocultar senha' : 'Mostrar senha';
-  button.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
-  button.setAttribute('aria-label', label);
-  const text = button.querySelector('.toggle-password-text');
-  if (text) text.textContent = label;
-}
-
-  // Ripple effect no bot\u00e3o de login (no submit)
-  function addLoginRipple(e) {
-    if (!loginBtn) return;
-    const btn = loginBtn;
-    const rect = btn.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    const size = Math.max(rect.width, rect.height);
-    ripple.className = 'ripple-effect';
-    // Se for evento de mouse, centralizar no clique; sen\u00e3o, centralizar no bot\u00e3o
-    if (e && e.clientX && e.clientY) {
-      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-    } else {
-      ripple.style.left = (rect.width / 2 - size / 2) + 'px';
-      ripple.style.top = (rect.height / 2 - size / 2) + 'px';
-    }
-    ripple.style.width = ripple.style.height = size + 'px';
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 500);
-  }
-
 if (apiBaseEl) apiBaseEl.textContent = API_BASE;
-
-function setRegisterFieldError(input, errorEl, message, statusEl) {
-  if (!input) return;
-  input.classList.remove('is-valid');
-  input.classList.add('is-danger');
-  input.setAttribute('aria-invalid', 'true');
-  if (input.value.trim()) {
-    input.classList.add('is-filled');
-  }
-  if (errorEl) {
-    errorEl.textContent = message || '';
-    errorEl.hidden = !message;
-  }
-  if (statusEl) {
-    statusEl.textContent = '';
-    statusEl.hidden = true;
-  }
-}
-
-function setRegisterFieldValid(input, errorEl, statusEl) {
-  if (!input) return;
-  input.classList.remove('is-danger');
-  input.classList.add('is-valid');
-  input.removeAttribute('aria-invalid');
-  input.classList.add('is-filled');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-  }
-  if (statusEl) {
-    statusEl.textContent = 'OK';
-    statusEl.hidden = false;
-  }
-}
-
-function clearRegisterFieldState(input, errorEl, statusEl) {
-  if (!input) return;
-  input.classList.remove('is-danger', 'is-valid');
-  input.classList.remove('is-filled');
-  input.removeAttribute('aria-invalid');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-  }
-  if (statusEl) {
-    statusEl.textContent = '';
-    statusEl.hidden = true;
-  }
-}
-
-function toggleRegisterModal(isOpen) {
-  if (!registerModal) return;
-  registerModal.classList.toggle('is-active', isOpen);
-  registerModal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-  showRegisterError('');
-  showRegisterSuccess('');
-  clearRegisterFieldState(registerName, registerNameError, registerNameStatus);
-  clearRegisterFieldState(registerEmail, registerEmailError, registerEmailStatus);
-  clearRegisterFieldState(registerPassword, registerPasswordError, registerPasswordStatus);
-  if (passwordStrength) {
-    passwordStrength.textContent = '';
-    passwordStrength.className = 'help password-strength';
-  }
-  if (registerAvatar) registerAvatar.textContent = 'U';
-  if (!isOpen) {
-    // Fechar descarta o que foi digitado (a pessoa já confirmou)
-    [registerName, registerEmail, registerPassword, document.getElementById('register-password-confirm')]
-      .forEach((input) => { if (input) input.value = ''; });
-    if (registerPassword) registerPassword.dispatchEvent(new Event('input'));
-  }
-  if (isOpen && registerName) registerName.focus();
-}
-
-function isLocked() {
-  return authState.lockUntil && Date.now() < authState.lockUntil;
-}
-
-function setLoginButtonState() {
-  if (!loginBtn) return;
-  loginBtn.disabled = hasFieldErrors() || isLocked();
-}
-
-function updateSessionUI() {
-  if (authState.user) {
-    if (sessionStatus) sessionStatus.textContent = 'Conectado';
-    if (sessionUser) {
-      sessionUser.textContent = authState.user
-        ? authState.user.email || authState.user.name || 'Usu\u00e1rio autenticado'
-        : 'Usu\u00e1rio autenticado';
-    }
-    if (sessionToken) sessionToken.textContent = '(cookie)';
-    if (logoutBtn) logoutBtn.disabled = false;
-    if (loginUser) {
-      loginUser.textContent = '';
-      loginUser.hidden = true;
-    }
-    if (actions) {
-      Array.from(actions.querySelectorAll('button')).forEach((btn) => {
-        btn.disabled = false;
-      });
-    }
-  } else {
-    if (sessionStatus) sessionStatus.textContent = 'Desconectado';
-    if (sessionUser) sessionUser.textContent = '-';
-    if (sessionToken) sessionToken.textContent = '-';
-    if (logoutBtn) logoutBtn.disabled = true;
-    if (loginUser) {
-      loginUser.textContent = '';
-      loginUser.hidden = true;
-    }
-    if (actions) {
-      Array.from(actions.querySelectorAll('button')).forEach((btn) => {
-        btn.disabled = true;
-      });
-    }
-  }
-}
-
-function validateEmail(value) {
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(value);
-}
-
-function validatePassword(value) {
-  return value.length >= 3;
-}
 
 if (loginForm) loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -412,42 +270,6 @@ if (loginForm) loginForm.addEventListener('submit', async (event) => {
   }
 });
 
-function handleFieldInput() {
-  clearMessages();
-  clearFieldErrors();
-  setLoginButtonState();
-}
-
-function handleEmailBlur() {
-  if (!emailInput) return;
-  const value = emailInput.value.trim();
-  if (!value) {
-    emailInput.classList.remove('is-success');
-    return;
-  }
-  if (validateEmail(value)) {
-    setFieldSuccess(emailInput, emailError);
-  } else {
-    setFieldError(emailInput, 'Formato de e-mail inv\u00e1lido.', emailError);
-  }
-  setLoginButtonState();
-}
-
-function handlePasswordBlur() {
-  if (!passwordInput) return;
-  const value = passwordInput.value.trim();
-  if (!value) {
-    passwordInput.classList.remove('is-success');
-    return;
-  }
-  if (validatePassword(value)) {
-    setFieldSuccess(passwordInput, passwordError);
-  } else {
-    setFieldError(passwordInput, 'Senha muito curta.', passwordError);
-  }
-  setLoginButtonState();
-}
-
 // Foco autom\u00e1tico no campo de e-mail ao abrir a tela
 if (emailInput) {
   window.addEventListener('DOMContentLoaded', () => {
@@ -545,23 +367,6 @@ if (registerOpen) {
   registerOpen.addEventListener('click', () => toggleRegisterModal(true));
 }
 
-function registerHasData() {
-  return Boolean(
-    (registerName && registerName.value.trim()) ||
-      (registerEmail && registerEmail.value.trim()) ||
-      (registerPassword && registerPassword.value.trim()),
-  );
-}
-
-function confirmCloseRegister() {
-  if (!registerHasData()) {
-    toggleRegisterModal(false);
-    return;
-  }
-  const shouldClose = window.confirm('Voc\u00ea tem dados preenchidos. Deseja fechar mesmo assim?');
-  if (shouldClose) toggleRegisterModal(false);
-}
-
 [registerClose, registerCloseBtn, registerCancel].forEach((el) => {
   if (!el) return;
   el.addEventListener('click', () => confirmCloseRegister());
@@ -656,43 +461,6 @@ if (registerTogglePassword && registerPassword) {
     updatePasswordToggle(registerTogglePassword, isHidden);
   });
   updatePasswordToggle(registerTogglePassword, registerPassword.type === 'text');
-}
-
-// Mesma regra da API (authService): 8+ caracteres com maiúscula, minúscula, número e especial
-function registerPasswordProblem(value) {
-  if (!value || value.length < 8) return 'M\u00ednimo 8 caracteres.';
-  const ok = /[A-Z]/.test(value) && /[a-z]/.test(value) && /\d/.test(value) && /[^a-zA-Z0-9]/.test(value);
-  return ok ? '' : 'Senha muito fraca. Use letra mai\u00fascula, min\u00fascula, n\u00famero e caractere especial.';
-}
-
-function updatePasswordStrength(value) {
-  if (!passwordStrength) return;
-  if (!value) {
-    passwordStrength.textContent = '';
-    passwordStrength.className = 'help password-strength';
-    return;
-  }
-  if (value.length < 8) {
-    passwordStrength.textContent = 'Fraca';
-    passwordStrength.className = 'help password-strength is-weak';
-    return;
-  }
-  const hasNumber = /\d/.test(value);
-  const hasUpper = /[A-Z]/.test(value);
-  const hasLower = /[a-z]/.test(value);
-  const hasSymbol = /[^a-zA-Z0-9]/.test(value);
-  const score = [hasNumber, hasUpper, hasLower, hasSymbol].filter(Boolean).length;
-  // Forte = atende todas as regras da API; Média = falta uma; Fraca = falta mais de uma
-  if (score === 4) {
-    passwordStrength.textContent = 'Forte';
-    passwordStrength.className = 'help password-strength is-strong';
-  } else if (score === 3) {
-    passwordStrength.textContent = 'M\u00e9dia';
-    passwordStrength.className = 'help password-strength is-medium';
-  } else {
-    passwordStrength.textContent = 'Fraca';
-    passwordStrength.className = 'help password-strength is-weak';
-  }
 }
 
 if (registerName) {

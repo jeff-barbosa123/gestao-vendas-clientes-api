@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-16 - Frontend: modularização da tela de vendas
+
+### Novo
+- **sales.js** (1.837 linhas) virou entrypoint ES module de ~30 linhas com módulos em `web/public/sales/`
+  (`constants`, `dom`, `state`, `core`, `formatters`, `parsers`, `holidays`, `catalog`, `barcode`,
+  `items`, `print`, `pdf`, `list`, `events-forms`, `events-modals`, `events-table`). Estado mutável em
+  `state`; jsPDF continua carregado via script vendor; comportamento inalterado.
+- Spec Cypress `sales-flows.cy.js` (6 testes): edição com PUT, filtros, busca, paginação e modais.
 ## 2026-11-16 - Frontend: modularização das telas de receitas
 
 ### Novo

@@ -20,7 +20,7 @@ import { showMessage } from './core.js';
 import { calculateIngredientCost, formatMoney } from './calc.js';
 import { updateCostSummary } from './summary.js';
 import { renderIngredients, resetIngredientForm } from './ingredients.js';
-import { saveFormState } from '../recipe-edit.js';
+import { saveFormState } from './persist.js';
 
 export function ensureDefaultComponent() {
   if (!state.components.length) {

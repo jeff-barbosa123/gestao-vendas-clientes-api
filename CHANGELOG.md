@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-11-16 — Frontend: base comum e modularização da tela de clientes
+
+### Novo
+- **Base comum:** `static/utils.js` (`SGVC.utils`: `escapeHtml`, `formatMoney`, `formatCurrency`, `debounce`,
+  `normalizeError`) e cliente de API único em `static/api-client.js` (`SGVC.api`: `get/post/put/patch/del`,
+  opções `query` e `messageFromServer`). Todas as telas passaram a usá-lo (timeout e CSRF em todas as chamadas).
+- **Tela de clientes modular:** `clients.js` (2.807 linhas) virou bootstrap de 47 linhas e módulos ES em
+  `web/public/clients/` (`constants`, `dom`, `state`, `core`, `validators`, `formatters`, `lookups`, `list`,
+  `form`, `form-submit`, `export`). O estado mutável fica em `state`; comportamento inalterado.
+
+### Corrigido
+- Specs Cypress `client-edit` e `network-timeout-fallback` estabilizados (espera da mensagem antes do `cy.tick`;
+  timeout/delay com margem maior).
+- Removidas declarações duplicadas em `clients.js` (`buildUrl`, `setFieldError`, `clearFieldError`).
+
 ## 2026-11-13 — Robustez da API: transações, validação e devolução de estoque
 
 ### Novo

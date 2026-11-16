@@ -41,6 +41,3 @@ initFormSubmit();
 initForm();
 
 initExport();
-
-// Garantir que a navegação por teclado priorize o formulário
-prioritizeFormTabOrder();

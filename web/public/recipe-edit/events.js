@@ -749,23 +749,4 @@ export function initEvents() {
   // (removido) tratadores duplicados de salvar/excluir. Um clique em "Salvar" disparava até
   // 3 PUTs, e um deles (saveRecipe) mandava o percentual de gastos extras no lugar do valor
   // em R$ e zerava o lucro fixo. Excluir mandava DELETE duas vezes. Fica só o tratador do form.
-
-  if (deleteCancel) {
-    deleteCancel.addEventListener('click', (event) => {
-      event.preventDefault();
-      toggleDeleteModal(false);
-    });
-  }
-
-  if (deleteClose) {
-    deleteClose.addEventListener('click', () => {
-      toggleDeleteModal(false);
-    });
-  }
-
-  if (deleteCloseBtn) {
-    deleteCloseBtn.addEventListener('click', () => {
-      toggleDeleteModal(false);
-    });
-  }
 }

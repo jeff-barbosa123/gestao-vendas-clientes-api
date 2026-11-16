@@ -1,14 +1,13 @@
 /**
  * Tela de produtos (entrada). MÃ³dulos em /products/*.js.
  */
-import { DELETE_FLAG, PAGE_SIZE, RECIPE_SEARCH_LIMIT, UPDATED_FLAG } from './products/constants.js';
+import { DELETE_FLAG, PAGE_SIZE, UPDATED_FLAG } from './products/constants.js';
 import {
   backBtn,
   createCostUnit,
   createDescription,
   createFinalPrice,
   createFinalPriceHint,
-  createFlowHint,
   createForm,
   createName,
   createNameError,
@@ -24,7 +23,6 @@ import {
   createRecipeError,
   createRecipeId,
   createRecipeSearch,
-  createRecipeSearchHelp,
   createStatus,
   createSubmit,
   filterClear,
@@ -41,8 +39,6 @@ import {
   pagination,
   prevPage,
   priceHeader,
-  producedSection,
-  productTypeCards,
   productTypeProduced,
   productTypeResale,
   productsTotal,
@@ -51,7 +47,6 @@ import {
   resaleCalcMarkup,
   resalePercent,
   resalePercentHelp,
-  resaleSection,
   searchInput,
   tableBody,
 } from './products/dom.js';
@@ -68,161 +63,12 @@ import {
 } from './products/core.js';
 import { standardizeText, updateNameGuidance, validateName } from './products/text.js';
 import { bindCurrencyInput, formatCurrency, formatPrice, parsePrice } from './products/money.js';
-
-function getSelectedProductType() {
-  if (productTypeResale && productTypeResale.checked) return 'resale';
-  return 'produced';
-}
-
-function updateProductTypeCards() {
-  productTypeCards.forEach((card) => {
-    const input = card.querySelector('input[type="radio"]');
-    const isChecked = input && input.checked;
-    card.classList.toggle('is-selected', Boolean(isChecked));
-  });
-}
-
-function updateFlowHint(type) {
-  if (!createFlowHint) return;
-  if (type === 'produced') {
-    createFlowHint.innerHTML =
-      '<strong>Fluxo guiado:</strong> selecione a ficha tecnica, valide o preco sugerido e ajuste se necessario.';
-    return;
-  }
-  createFlowHint.innerHTML =
-    '<strong>Fluxo guiado:</strong> informe o custo de compra, escolha a regra e confirme o preco de venda.';
-}
-
-function setProductType(type) {
-  const isProduced = type === 'produced';
-  if (producedSection) producedSection.hidden = !isProduced;
-  if (resaleSection) resaleSection.hidden = isProduced;
-  if (createRecipeId) {
-    createRecipeId.toggleAttribute('required', isProduced);
-    if (isProduced) {
-      createRecipeId.setAttribute('aria-required', 'true');
-    } else {
-      createRecipeId.removeAttribute('aria-required');
-      createRecipeId.classList.remove('is-danger');
-    }
-  }
-  if (createPurchasePrice) createPurchasePrice.toggleAttribute('required', !isProduced);
-  if (createPrice) createPrice.toggleAttribute('required', !isProduced);
-  if (createRecipeError) {
-    createRecipeError.textContent = '';
-    createRecipeError.hidden = true;
-  }
-  updateProductTypeCards();
-  updateFlowHint(type);
-  if (isProduced) {
-    updateProducedPricing();
-  } else {
-    updateResalePercentHelp();
-    applyResalePricingRule();
-    updateResaleProfit();
-  }
-}
-
-function updateRecipeSelect(list = state.recipesCache) {
-  if (!createRecipeId) return;
-  const selectedId = createRecipeId.value;
-  createRecipeId.innerHTML = '<option value="">Selecione uma ficha t\u00e9cnica</option>';
-  // Garante que list seja um array válido
-  const validList = Array.isArray(list) ? list : [];
-  validList.forEach((recipe) => {
-    if (!recipe || !recipe.id) return;
-    const option = document.createElement('option');
-    option.value = recipe.id;
-    option.textContent = recipe.name || recipe.nomeReceita || 'Ficha t\u00e9cnica';
-    createRecipeId.appendChild(option);
-  });
-  if (selectedId) {
-    const selectedExists = validList.some((recipe) => recipe && recipe.id === selectedId);
-    if (!selectedExists && Array.isArray(state.recipesCache)) {
-      const selectedRecipe = state.recipesCache.find((recipe) => recipe && recipe.id === selectedId);
-      if (selectedRecipe) {
-        const option = document.createElement('option');
-        option.value = selectedRecipe.id;
-        option.textContent = `${selectedRecipe.name || selectedRecipe.nomeReceita || 'Ficha t\u00e9cnica'} (selecionada)`;
-        createRecipeId.appendChild(option);
-      }
-    }
-    createRecipeId.value = selectedId;
-  }
-}
-
-function buildRecipeFuse() {
-  if (typeof window.Fuse === 'undefined') {
-    state.recipeFuse = null;
-    return;
-  }
-  // Garante que recipesCache seja um array válido
-  const validCache = Array.isArray(state.recipesCache) ? state.recipesCache : [];
-  state.recipeFuse = new window.Fuse(validCache, {
-    keys: ['name', 'nomeReceita'],
-    threshold: 0.3,
-  });
-}
-
-function normalizeSearch(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
-function applyRecipeSearch() {
-  if (!createRecipeSearch) return;
-  // Garante que recipesCache seja um array válido
-  const validCache = Array.isArray(state.recipesCache) ? state.recipesCache : [];
-  const query = normalizeSearch(createRecipeSearch.value);
-  if (!query) {
-    const total = validCache.length;
-    const limited = validCache.slice(0, RECIPE_SEARCH_LIMIT);
-    updateRecipeSelect(limited);
-    if (createRecipeSearchHelp) {
-      createRecipeSearchHelp.textContent = `Exibindo ${limited.length} de ${total} fichas técnicas.`;
-    }
-    return;
-  }
-  let results = [];
-  if (state.recipeFuse) {
-    // Valida que recipeFuse.search() retorne um Array antes de chamar .map()
-    const searchResults = state.recipeFuse.search(query);
-    if (Array.isArray(searchResults)) {
-      results = searchResults.map((item) => item.item);
-    } else {
-      // Fallback para filtro manual se recipeFuse.search() retornar valor inválido
-      results = validCache.filter((recipe) => {
-        if (!recipe) return false;
-        const label = normalizeSearch(recipe.name || recipe.nomeReceita || '');
-        return label.includes(query);
-      });
-    }
-  } else {
-    results = validCache.filter((recipe) => {
-      if (!recipe) return false;
-      const label = normalizeSearch(recipe.name || recipe.nomeReceita || '');
-      return label.includes(query);
-    });
-  }
-  const total = results.length;
-  const limited = results.slice(0, RECIPE_SEARCH_LIMIT);
-  updateRecipeSelect(limited);
-  if (createRecipeSearchHelp) {
-    createRecipeSearchHelp.textContent = total
-      ? `Exibindo ${limited.length} de ${total} fichas encontradas.`
-      : 'Nenhuma ficha técnica encontrada. Ajuste o termo.';
-  }
-}
-
-function getSelectedRecipe() {
-  if (!createRecipeId) return null;
-  const id = createRecipeId.value;
-  // Garante que recipesCache seja um array válido
-  if (!Array.isArray(state.recipesCache)) return null;
-  return state.recipesCache.find((recipe) => recipe && recipe.id === id) || null;
-}
+import {
+  getSelectedProductType,
+  setProductType,
+  updateProductTypeCards,
+} from './products/product-type.js';
+import { applyRecipeSearch, getSelectedRecipe, loadRecipes } from './products/recipes.js';
 
 function updateFinalPriceHint(customized) {
   if (!createFinalPriceHint) return;
@@ -250,7 +96,7 @@ function updateProducedSuggestionHelp(costUnit, suggested) {
   createPriceSuggestedHelp.textContent = `Base calculada pela ficha: ${formatCurrency(suggested)}.`;
 }
 
-function updateProducedPricing() {
+export function updateProducedPricing() {
   const recipe = getSelectedRecipe();
   if (!createCostUnit || !createPriceSuggested) return;
   if (!recipe) {
@@ -284,7 +130,7 @@ function updateProducedPricing() {
   updateFinalPriceHint(override != null && override !== suggested);
 }
 
-function updateResaleProfit() {
+export function updateResaleProfit() {
   if (!createProfit) return;
   const purchase = parsePrice(createPurchasePrice ? createPurchasePrice.value : null);
   const price = parsePrice(createPrice ? createPrice.value : null);
@@ -305,7 +151,7 @@ function getResaleCalcMode() {
   return resaleCalcMarkup && resaleCalcMarkup.checked ? 'markup' : 'margin';
 }
 
-function updateResalePercentHelp() {
+export function updateResalePercentHelp() {
   if (!resalePercentHelp) return;
   const mode = getResaleCalcMode();
   resalePercentHelp.textContent =
@@ -342,7 +188,7 @@ function updateResaleSuggestionHelp() {
     )}% = ${formatCurrency(suggestedPrice)}.`;
 }
 
-function applyResalePricingRule() {
+export function applyResalePricingRule() {
   const purchase = parsePrice(createPurchasePrice ? createPurchasePrice.value : null);
   const percent = parsePrice(resalePercent ? resalePercent.value : null);
   if (purchase == null || percent == null) return;
@@ -555,7 +401,7 @@ function renderTable(items) {
   });
 }
 
-function renderPage() {
+export function renderPage() {
   const filtered = getFilteredItems();
   const total = filtered.length;
   if (productsTotal) {
@@ -589,29 +435,6 @@ async function loadProducts(token) {
     state.currentPage = 1;
     renderPage();
     throw err; // Re-lança para tratamento pelo chamador
-  }
-}
-
-async function loadRecipes(token) {
-  try {
-    const data = await apiRequest('/api/recipes', token);
-    state.recipesCache = Array.isArray(data) ? data : (data && data.items && Array.isArray(data.items) ? data.items : []);
-    buildRecipeFuse();
-    applyRecipeSearch();
-    updateProducedPricing();
-    renderPage();
-  } catch (err) {
-    // Em caso de erro (incluindo 401), garante que recipesCache seja um array vazio
-    state.recipesCache = [];
-    buildRecipeFuse();
-    applyRecipeSearch();
-    updateProducedPricing();
-    // Se for erro de autenticação, não renderiza a página (será redirecionado)
-    if (err && err.status !== 401 && err.status !== 403) {
-      renderPage();
-    }
-    // Re-lança o erro para ser tratado pelo catch do chamador
-    return Promise.reject(err);
   }
 }
 

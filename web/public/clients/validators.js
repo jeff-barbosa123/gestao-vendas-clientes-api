@@ -31,7 +31,7 @@ import {
   VALID_UFS,
 } from './constants.js';
 import { state } from './state.js';
-import { parseBirthDate } from '../clients.js';
+import { parseBirthDate } from './formatters.js';
 
 function validateEmail(value) {
   const candidate = String(value || '');

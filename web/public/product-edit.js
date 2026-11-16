@@ -1,12 +1,7 @@
 /**
  * Tela de edição de produto (entrada). MÃ³dulos em /product-edit/*.js.
  */
-import {
-  DELETE_FLAG,
-  RECIPE_SEARCH_LIMIT,
-  UPDATED_FLAG,
-  productId,
-} from './product-edit/constants.js';
+import { DELETE_FLAG, UPDATED_FLAG, productId } from './product-edit/constants.js';
 import {
   backBtn,
   costUnitEl,
@@ -22,7 +17,6 @@ import {
   editResalePercentHelp,
   finalPriceHint,
   finalPriceInput,
-  flowHint,
   form,
   linkRecipeBtn,
   nameError,
@@ -33,7 +27,6 @@ import {
   priceSuggestedEl,
   priceSuggestedHelp,
   priceSuggestion,
-  producedSection,
   productTypeProduced,
   productTypeResale,
   profitEl,
@@ -41,9 +34,7 @@ import {
   purchasePriceInput,
   recipeError,
   recipeSearch,
-  recipeSearchHelp,
   recipeSelect,
-  resaleSection,
   saveBtn,
   statusSelect,
   unlinkRecipeBtn,
@@ -64,125 +55,8 @@ import {
   parsePrice,
   resolveNumber,
 } from './product-edit/money.js';
-
-function getSelectedProductType() {
-  if (productTypeResale && productTypeResale.checked) return 'resale';
-  return 'produced';
-}
-
-function updateFlowHint(type) {
-  if (!flowHint) return;
-  if (type === 'produced') {
-    flowHint.innerHTML =
-      '<strong>Fluxo guiado:</strong> selecione a ficha tecnica, valide o preco sugerido e ajuste se necessario.';
-    return;
-  }
-  flowHint.innerHTML =
-    '<strong>Fluxo guiado:</strong> informe o custo de compra, escolha a regra e confirme o preco de venda.';
-}
-
-function setProductType(type) {
-  const isProduced = type === 'produced';
-  if (producedSection) producedSection.hidden = !isProduced;
-  if (resaleSection) resaleSection.hidden = isProduced;
-  if (recipeSelect) {
-    recipeSelect.toggleAttribute('required', isProduced);
-    if (isProduced) {
-      recipeSelect.setAttribute('aria-required', 'true');
-    } else {
-      recipeSelect.removeAttribute('aria-required');
-      recipeSelect.classList.remove('is-danger');
-    }
-  }
-  if (purchasePriceInput) purchasePriceInput.toggleAttribute('required', !isProduced);
-  if (priceInput) priceInput.toggleAttribute('required', !isProduced);
-  if (recipeError) {
-    recipeError.textContent = '';
-    recipeError.hidden = true;
-  }
-  updateFlowHint(type);
-  if (isProduced) {
-    updateProducedPricing();
-  } else {
-    updateResalePercentHelp();
-    applyResalePricingRule();
-    updateResaleProfit();
-  }
-}
-
-function updateRecipeSelect(list = state.recipesCache) {
-  if (!recipeSelect) return;
-  const currentValue = recipeSelect.value;
-  recipeSelect.innerHTML = '<option value="">Selecione uma ficha t\u00e9cnica</option>';
-  list.forEach((recipe) => {
-    const option = document.createElement('option');
-    option.value = recipe.id;
-    option.textContent = recipe.name || recipe.nomeReceita || 'Ficha t\u00e9cnica';
-    recipeSelect.appendChild(option);
-  });
-  if (currentValue) {
-    const selectedExists = list.some((recipe) => recipe.id === currentValue);
-    if (!selectedExists) {
-      const selectedRecipe = state.recipesCache.find((recipe) => recipe.id === currentValue);
-      if (selectedRecipe) {
-        const option = document.createElement('option');
-        option.value = selectedRecipe.id;
-        option.textContent = `${selectedRecipe.name || selectedRecipe.nomeReceita || 'Ficha t\u00e9cnica'} (selecionada)`;
-        recipeSelect.appendChild(option);
-      }
-    }
-    recipeSelect.value = currentValue;
-  }
-}
-
-function buildRecipeFuse() {
-  if (typeof window.Fuse === 'undefined') {
-    state.recipeFuse = null;
-    return;
-  }
-  state.recipeFuse = new window.Fuse(state.recipesCache, {
-    keys: ['name', 'nomeReceita'],
-    threshold: 0.3,
-  });
-}
-
-function normalizeSearch(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
-function applyRecipeSearch() {
-  if (!recipeSearch) return;
-  const query = normalizeSearch(recipeSearch.value);
-  if (!query) {
-    const total = state.recipesCache.length;
-    const limited = state.recipesCache.slice(0, RECIPE_SEARCH_LIMIT);
-    updateRecipeSelect(limited);
-    if (recipeSearchHelp) {
-      recipeSearchHelp.textContent = `Exibindo ${limited.length} de ${total} fichas técnicas.`;
-    }
-    return;
-  }
-  let results = [];
-  if (state.recipeFuse) {
-    results = state.recipeFuse.search(query).map((item) => item.item);
-  } else {
-    results = state.recipesCache.filter((recipe) => {
-      const label = normalizeSearch(recipe.name || recipe.nomeReceita || '');
-      return label.includes(query);
-    });
-  }
-  const total = results.length;
-  const limited = results.slice(0, RECIPE_SEARCH_LIMIT);
-  updateRecipeSelect(limited);
-  if (recipeSearchHelp) {
-    recipeSearchHelp.textContent = total
-      ? `Exibindo ${limited.length} de ${total} fichas encontradas.`
-      : 'Nenhuma ficha técnica encontrada. Ajuste o termo.';
-  }
-}
+import { getSelectedProductType, setProductType } from './product-edit/product-type.js';
+import { applyRecipeSearch, getSelectedRecipe, loadRecipes } from './product-edit/recipes.js';
 
 function updateFinalPriceHint(customized) {
   if (!finalPriceHint) return;
@@ -210,13 +84,7 @@ function updateProducedSuggestionHelp(costUnit, suggested) {
   priceSuggestedHelp.textContent = `Base calculada pela ficha: ${formatCurrency(suggested)}.`;
 }
 
-function getSelectedRecipe() {
-  if (!recipeSelect) return null;
-  const id = recipeSelect.value;
-  return state.recipesCache.find((recipe) => recipe.id === id) || null;
-}
-
-function updateProducedPricing() {
+export function updateProducedPricing() {
   if (!costUnitEl || !priceSuggestedEl) return;
   const recipe = getSelectedRecipe() || state.linkedRecipe;
   if (!recipe) {
@@ -240,7 +108,7 @@ function updateProducedPricing() {
   updateFinalPriceHint(override != null && override !== suggested);
 }
 
-function updateResaleProfit() {
+export function updateResaleProfit() {
   if (!profitEl) return;
   const purchase = parsePrice(purchasePriceInput ? purchasePriceInput.value : null);
   const price = parsePrice(priceInput ? priceInput.value : null);
@@ -261,7 +129,7 @@ function getResaleCalcMode() {
   return editResaleCalcMarkup && editResaleCalcMarkup.checked ? 'markup' : 'margin';
 }
 
-function updateResalePercentHelp() {
+export function updateResalePercentHelp() {
   if (!editResalePercentHelp) return;
   const mode = getResaleCalcMode();
   editResalePercentHelp.textContent =
@@ -298,7 +166,7 @@ function updateResaleSuggestionHelp() {
     )}% = ${formatCurrency(suggestedPrice)}.`;
 }
 
-function applyResalePricingRule() {
+export function applyResalePricingRule() {
   const purchase = parsePrice(purchasePriceInput ? purchasePriceInput.value : null);
   const percent = parsePrice(editResalePercent ? editResalePercent.value : null);
   if (purchase == null || percent == null) return;
@@ -376,13 +244,6 @@ async function loadLinkedRecipe(token, productId) {
     }
     showMessage(err.message, 'is-danger');
   }
-}
-
-async function loadRecipes(token) {
-  const data = await apiRequest('/api/recipes', token);
-  state.recipesCache = Array.isArray(data) ? data : data.items || [];
-  buildRecipeFuse();
-  applyRecipeSearch();
 }
 
 // Auth via cookie HttpOnly

@@ -56,7 +56,7 @@ import {
   updateCreateTypeFields,
   updateLocationChips,
   updateWhatsAppLink,
-} from '../clients.js';
+} from './form.js';
 
 export function resetCityOptions() {
   state.currentCityUf = '';

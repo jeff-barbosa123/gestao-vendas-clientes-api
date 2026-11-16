@@ -2,13 +2,6 @@
  * Tela de edição de cliente (entrada). MÃ³dulos em /client-edit/*.js.
  */
 import {
-  ADDRESS_NUMBER_INVALID,
-  ADDRESS_NUMBER_REQUIRED,
-  ADDRESS_STREET_INVALID_MESSAGE,
-  ADDRESS_STREET_INVALID_PATTERN,
-  ADDRESS_STREET_LENGTH_MESSAGE,
-  ADDRESS_STREET_MIN_LENGTH,
-  ADDRESS_STREET_REQUIRED,
   DELETE_FLAG,
   META_CLOSE,
   META_OPEN,
@@ -38,7 +31,6 @@ import {
   deleteConfirm,
   deleteModal,
   editAddressComplement,
-  editBirthHint,
   editCnpjField,
   editCpf,
   editCpfError,
@@ -55,7 +47,6 @@ import {
   notesInput,
   phoneError,
   phoneInput,
-  phoneWhatsapp,
   saveBtn,
   tradeChipLabel,
   tradeChipRow,
@@ -71,160 +62,25 @@ import {
   showMessage,
   toggleDeleteModal,
 } from './client-edit/core.js';
-
-function validateEmail(value) {
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-  return value.length <= 254 && emailRegex.test(value);
-}
-
-function validateName(value) {
-  const trimmed = String(value || '').trim();
-  if (trimmed.length < 3 || trimmed.length > 120) return false;
-  const nameRegex = /^[\p{L}\d\s&().'\/-]+$/u;
-  return nameRegex.test(trimmed);
-}
-
-function validateCnpj(value) {
-  if (!value) return true;
-  const digits = String(value || '').replace(/\D/g, '');
-  if (digits.length !== 14) return false;
-  if (/^(\d)\1+$/.test(digits)) return false;
-  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  const calcDigit = (base, weights) => {
-    const sum = base.split('').reduce((acc, digit, idx) => acc + Number(digit) * weights[idx], 0);
-    const mod = sum % 11;
-    return mod < 2 ? 0 : 11 - mod;
-  };
-  const base12 = digits.slice(0, 12);
-  const digit1 = calcDigit(base12, weights1);
-  const digit2 = calcDigit(base12 + digit1, weights2);
-  return digits === base12 + String(digit1) + String(digit2);
-}
-
-function validatePhone(value) {
-  let digits = String(value || '').replace(/\D/g, '');
-  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-    digits = digits.slice(2);
-  }
-  return digits.length === 10 || digits.length === 11;
-}
-
-function validateBirthDate(value) {
-  if (!value) return true;
-  return /^\d{4}-\d{2}-\d{2}$/.test(value);
-}
-
-function parseBirthDate(value) {
-  if (!value) return null;
-  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
-  const raw = String(value);
-  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (match) {
-    const year = Number(match[1]);
-    const month = Number(match[2]) - 1;
-    const day = Number(match[3]);
-    const localDate = new Date(year, month, day);
-    return Number.isNaN(localDate.getTime()) ? null : localDate;
-  }
-  const parsed = new Date(raw);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
-}
-
-function buildBirthHint(value) {
-  if (!value || !validateBirthDate(value)) return '';
-  const date = parseBirthDate(value);
-  if (!date) return '';
-  const now = new Date();
-  let age = now.getFullYear() - date.getFullYear();
-  const m = now.getMonth() - date.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < date.getDate())) {
-    age -= 1;
-  }
-  if (age < 0) {
-    return 'Data de nascimento no futuro.';
-  }
-  if (age > 120) {
-    return 'Data de nascimento fora do intervalo esperado.';
-  }
-  return `Idade aproximada: ${age} anos.`;
-}
-
-function updateEditBirthHint(value) {
-  if (!editBirthHint) return;
-  const hint = buildBirthHint(value);
-  editBirthHint.textContent = hint;
-  editBirthHint.hidden = !hint;
-}
-
-function formatPhone(value) {
-  let digits = String(value || '').replace(/\D/g, '');
-  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-    digits = digits.slice(2);
-  }
-  if (digits.length <= 10) {
-    return digits.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3').trim();
-  }
-  return digits.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3').trim();
-}
-
-function updateWhatsAppLink(value) {
-  if (!phoneWhatsapp) return;
-  let digits = String(value || '').replace(/\D/g, '');
-  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-    digits = digits.slice(2);
-  }
-  if (digits.length < 10 || digits.length > 11) {
-    phoneWhatsapp.href = '#';
-    phoneWhatsapp.setAttribute('aria-disabled', 'true');
-    phoneWhatsapp.classList.add('is-disabled');
-    return;
-  }
-  const phone = `55${digits}`;
-  phoneWhatsapp.href = `https://wa.me/${phone}`;
-  phoneWhatsapp.setAttribute('aria-disabled', 'false');
-  phoneWhatsapp.classList.remove('is-disabled');
-}
-
-function formatPostal(value) {
-  const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
-  if (!digits) return '';
-  if (digits.length <= 5) return digits;
-  return digits.replace(/^(\d{5})(\d{0,3}).*/, '$1-$2').trim();
-}
-
-function normalizeText(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return '';
-  return trimmed
-    .toLowerCase()
-    .split(/\s+/)
-    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : ''))
-    .join(' ');
-}
-
-function getAddressStreetValidationError(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return ADDRESS_STREET_REQUIRED;
-  if (trimmed.length < ADDRESS_STREET_MIN_LENGTH) return ADDRESS_STREET_LENGTH_MESSAGE;
-  if (ADDRESS_STREET_INVALID_PATTERN.test(trimmed)) return ADDRESS_STREET_INVALID_MESSAGE;
-  return '';
-}
-
-function isSnAddressNumber(value) {
-  const normalized = String(value || '')
-    .trim()
-    .toUpperCase()
-    .replace(/[\s\\/.\-]/g, '');
-  return normalized === 'SN';
-}
-
-function getAddressNumberValidationError(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return ADDRESS_NUMBER_REQUIRED;
-  if (!/^\d+$/.test(trimmed) && !isSnAddressNumber(trimmed)) return ADDRESS_NUMBER_INVALID;
-  return '';
-}
+import {
+  formatCnpj,
+  formatCpf,
+  formatPhone,
+  formatPostal,
+  updateWhatsAppLink,
+} from './client-edit/formatters.js';
+import {
+  getAddressNumberValidationError,
+  getAddressStreetValidationError,
+  normalizeText,
+  updateEditBirthHint,
+  validateBirthDate,
+  validateCnpj,
+  validateCpf,
+  validateEmail,
+  validateName,
+  validatePhone,
+} from './client-edit/validators.js';
 
 function parseNotesMeta(value) {
   const payload = String(value || '');
@@ -263,43 +119,6 @@ function buildNotesWithMeta(notes, metadata) {
   }
   const metaPayload = `${META_OPEN}${JSON.stringify(safeMeta)}${META_CLOSE}`;
   return cleanNotes ? `${cleanNotes}\n${metaPayload}` : metaPayload;
-}
-
-function formatCnpj(value) {
-  const digits = String(value || '').replace(/\D/g, '').slice(0, 14);
-  if (!digits) return '';
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-  if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
-  if (digits.length <= 12) {
-    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
-  }
-  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
-}
-
-function formatCpf(value) {
-  const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
-  if (!digits) return '';
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-}
-
-function validateCpf(value) {
-  if (!value) return true;
-  const digits = String(value || '').replace(/\D/g, '');
-  return digits.length === 11;
-}
-
-function formatDocument(value, type) {
-  if (!value) return '-';
-  if (type === 'PF') {
-    const formatted = formatCpf(value);
-    return formatted || '-';
-  }
-  const formatted = formatCnpj(value);
-  return formatted || '-';
 }
 
 function toggleConditionalField(element, shouldShow) {

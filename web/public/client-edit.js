@@ -1,560 +1,457 @@
-(() => {
-  // Preferir same-origin por padrão (evita acidentalmente apontar para localhost em produção)
-  const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || window.location.origin;
+/**
+ * Tela de edição de cliente (entrada). MÃ³dulos em /client-edit/*.js.
+ */
+import {
+  ADDRESS_NUMBER_INVALID,
+  ADDRESS_NUMBER_REQUIRED,
+  ADDRESS_STREET_INVALID_MESSAGE,
+  ADDRESS_STREET_INVALID_PATTERN,
+  ADDRESS_STREET_LENGTH_MESSAGE,
+  ADDRESS_STREET_MIN_LENGTH,
+  ADDRESS_STREET_REQUIRED,
+  DELETE_FLAG,
+  META_CLOSE,
+  META_OPEN,
+  UPDATED_FLAG,
+  params,
+  safeValue,
+} from './client-edit/constants.js';
+import {
+  addressCityInput,
+  addressNeighborhoodInput,
+  addressNumberError,
+  addressNumberInput,
+  addressPostalInput,
+  addressStreetError,
+  addressStreetInput,
+  backBtn,
+  birthDateError,
+  birthDateInput,
+  cancelEditBtn,
+  cnpjError,
+  cnpjInput,
+  cnpjSuccess,
+  deleteBtn,
+  deleteCancel,
+  deleteClose,
+  deleteCloseBtn,
+  deleteConfirm,
+  deleteModal,
+  editAddressComplement,
+  editBirthHint,
+  editCnpjField,
+  editCpf,
+  editCpfError,
+  editCpfField,
+  editNameLabelText,
+  editTradeName,
+  editTradeNameField,
+  editType,
+  emailError,
+  emailInput,
+  form,
+  nameError,
+  nameInput,
+  notesInput,
+  phoneError,
+  phoneInput,
+  phoneWhatsapp,
+  saveBtn,
+  tradeChipLabel,
+  tradeChipRow,
+} from './client-edit/dom.js';
+import { state } from './client-edit/state.js';
+import {
+  apiRequest,
+  clearFieldError,
+  closeDeleteModal,
+  ensureAuthOrRedirect,
+  navigateToClientList,
+  setFieldError,
+  showMessage,
+  toggleDeleteModal,
+} from './client-edit/core.js';
 
-  const messageBox = document.getElementById('edit-message');
-  const backBtn = document.getElementById('back-list');
-  const form = document.getElementById('edit-form');
-  const nameInput = document.getElementById('edit-name');
-  const emailInput = document.getElementById('edit-email');
-  const cnpjInput = document.getElementById('edit-cnpj');
-  const editType = document.getElementById('edit-type');
-  const editCpf = document.getElementById('edit-cpf');
-  const editTradeName = document.getElementById('edit-trade-name');
-  const editAddressComplement = document.getElementById('edit-address-complement');
-  const editCpfError = document.getElementById('edit-cpf-error');
-  const editCpfField = document.getElementById('edit-cpf-field');
-  const editCnpjField = document.getElementById('edit-cnpj-field');
-  const editTradeNameField = document.getElementById('edit-trade-name-field');
-  const editNameLabelText = document.querySelector('.clients-name-label-text');
-  const phoneInput = document.getElementById('edit-phone');
-  const phoneWhatsapp = document.getElementById('edit-phone-whatsapp');
-  const birthDateInput = document.getElementById('edit-birth-date');
-  const addressStreetInput = document.getElementById('edit-address-street');
-  const addressStreetError = document.getElementById('edit-address-street-error');
-  const addressNumberInput = document.getElementById('edit-address-number');
-  const addressNumberError = document.getElementById('edit-address-number-error');
-  const addressNeighborhoodInput = document.getElementById('edit-address-neighborhood');
-  const addressCityInput = document.getElementById('edit-address-city');
-  const addressPostalInput = document.getElementById('edit-address-postal');
-  const editBirthHint = document.getElementById('edit-birth-hint');
-  const notesInput = document.getElementById('edit-notes');
-  const saveBtn = document.getElementById('save-btn');
-  const cancelEditBtn = document.getElementById('cancel-edit');
-  const deleteBtn = document.getElementById('delete-btn');
-  const nameError = document.getElementById('edit-name-error');
-  const emailError = document.getElementById('edit-email-error');
-  const cnpjError = document.getElementById('edit-cnpj-error');
-  const cnpjSuccess = document.getElementById('edit-cnpj-success');
-  const phoneError = document.getElementById('edit-phone-error');
-  const tradeChipRow = document.getElementById('edit-trade-chip');
-  const tradeChipLabel = document.getElementById('edit-trade-chip-label');
-  const birthDateError = document.getElementById('edit-birth-date-error');
-  const deleteModal = document.getElementById('delete-modal');
-  const deleteClose = document.getElementById('delete-close');
-  const deleteCloseBtn = document.getElementById('delete-close-btn');
-  const deleteCancel = document.getElementById('delete-cancel');
-  const deleteConfirm = document.getElementById('delete-confirm');
-  const DELETE_FLAG = 'sgvc.clientDeleted';
-  const UPDATED_FLAG = 'sgvc.clientUpdated';
-  const ADDRESS_STREET_REQUIRED = 'Rua obrigatória.';
-  const ADDRESS_STREET_LENGTH_MESSAGE = 'Informe o logradouro com pelo menos 3 caracteres.';
-  const ADDRESS_STREET_INVALID_MESSAGE = 'Informe um logradouro válido.';
-  const ADDRESS_STREET_INVALID_PATTERN = /<\s*\/?\s*script\b|<|>|--|;/i;
-  const ADDRESS_STREET_MIN_LENGTH = 3;
-  const ADDRESS_NUMBER_REQUIRED = 'Número obrigatório.';
-  const ADDRESS_NUMBER_INVALID = 'Número inválido.';
+function validateEmail(value) {
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  return value.length <= 254 && emailRegex.test(value);
+}
 
-  let original = {
-    name: '',
-    email: '',
-    phone: '',
-    birthDate: '',
-    addressStreet: '',
-    addressNumber: '',
-    addressNeighborhood: '',
-    addressCity: '',
-    addressPostalCode: '',
-    cnpj: '',
-    type: '',
-    cpf: '',
-    tradeName: '',
-    complement: '',
-    notes: '',
+function validateName(value) {
+  const trimmed = String(value || '').trim();
+  if (trimmed.length < 3 || trimmed.length > 120) return false;
+  const nameRegex = /^[\p{L}\d\s&().'\/-]+$/u;
+  return nameRegex.test(trimmed);
+}
+
+function validateCnpj(value) {
+  if (!value) return true;
+  const digits = String(value || '').replace(/\D/g, '');
+  if (digits.length !== 14) return false;
+  if (/^(\d)\1+$/.test(digits)) return false;
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const calcDigit = (base, weights) => {
+    const sum = base.split('').reduce((acc, digit, idx) => acc + Number(digit) * weights[idx], 0);
+    const mod = sum % 11;
+    return mod < 2 ? 0 : 11 - mod;
   };
-  let editMeta = { type: '', tradeName: '', complement: '' };
-  let messageTimer = null;
-  const safeString = window.safeString || ((value) => {
-    if (value == null) return '';
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-    return '';
-  });
-  const safeValue = window.safeValue || ((value, fallback = '') => {
-    const normalized = safeString(value);
-    if (normalized !== '') return normalized;
-    return safeString(fallback);
-  });
+  const base12 = digits.slice(0, 12);
+  const digit1 = calcDigit(base12, weights1);
+  const digit2 = calcDigit(base12 + digit1, weights2);
+  return digits === base12 + String(digit1) + String(digit2);
+}
 
-  function buildUrl(path) {
-    const base = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE;
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
-      return `${base}${normalizedPath.slice(4)}`;
-    }
-    return `${base}${normalizedPath}`;
+function validatePhone(value) {
+  let digits = String(value || '').replace(/\D/g, '');
+  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
+    digits = digits.slice(2);
   }
+  return digits.length === 10 || digits.length === 11;
+}
 
-  // Auth via cookie HttpOnly (token não deve existir no browser storage)
-  const session = { token: null };
+function validateBirthDate(value) {
+  if (!value) return true;
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
 
-  async function ensureAuthOrRedirect() {
-    try {
-      const user = await window.apiGetMe();
-      if (!user) {
-        window.location.href = '/';
-        return null;
-      }
-      return user;
-    } catch (_err) {
-      if (_err && _err.name === 'AbortError') {
-        return null;
-      }
-      window.location.href = '/';
-      return null;
-    }
+function parseBirthDate(value) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  const raw = String(value);
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const year = Number(match[1]);
+    const month = Number(match[2]) - 1;
+    const day = Number(match[3]);
+    const localDate = new Date(year, month, day);
+    return Number.isNaN(localDate.getTime()) ? null : localDate;
   }
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
 
-  function showMessage(text, type) {
-    if (!messageBox) return;
-    messageBox.textContent = text || '';
-    messageBox.classList.remove('is-success', 'is-danger');
-    if (type) messageBox.classList.add(type);
-    messageBox.hidden = !text;
-    if (messageTimer) {
-      clearTimeout(messageTimer);
-      messageTimer = null;
-    }
-    if (text) {
-      const timeout = type === 'is-danger' ? 6500 : 4500;
-      messageTimer = setTimeout(() => {
-        messageBox.hidden = true;
-        messageBox.textContent = '';
-        messageBox.classList.remove('is-success', 'is-danger');
-      }, timeout);
-    }
+function buildBirthHint(value) {
+  if (!value || !validateBirthDate(value)) return '';
+  const date = parseBirthDate(value);
+  if (!date) return '';
+  const now = new Date();
+  let age = now.getFullYear() - date.getFullYear();
+  const m = now.getMonth() - date.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < date.getDate())) {
+    age -= 1;
   }
-
-  function setFieldError(input, errorEl, message) {
-    if (!input) return;
-    input.classList.add('is-danger');
-    input.setAttribute('aria-invalid', 'true');
-    if (errorEl) {
-      errorEl.textContent = message || '';
-      errorEl.hidden = !message;
-    }
+  if (age < 0) {
+    return 'Data de nascimento no futuro.';
   }
-
-  function clearFieldError(input, errorEl) {
-    if (!input) return;
-    input.classList.remove('is-danger');
-    input.removeAttribute('aria-invalid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.hidden = true;
-    }
+  if (age > 120) {
+    return 'Data de nascimento fora do intervalo esperado.';
   }
+  return `Idade aproximada: ${age} anos.`;
+}
 
-  function apiRequest(path, _tokenIgnored, options = {}) {
-    return window.SGVC.api.request(path, { ...options, messageFromServer: true });
+function updateEditBirthHint(value) {
+  if (!editBirthHint) return;
+  const hint = buildBirthHint(value);
+  editBirthHint.textContent = hint;
+  editBirthHint.hidden = !hint;
+}
+
+function formatPhone(value) {
+  let digits = String(value || '').replace(/\D/g, '');
+  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
+    digits = digits.slice(2);
   }
-
-  function validateEmail(value) {
-    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-    return value.length <= 254 && emailRegex.test(value);
+  if (digits.length <= 10) {
+    return digits.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3').trim();
   }
+  return digits.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3').trim();
+}
 
-  function validateName(value) {
-    const trimmed = String(value || '').trim();
-    if (trimmed.length < 3 || trimmed.length > 120) return false;
-    const nameRegex = /^[\p{L}\d\s&().'\/-]+$/u;
-    return nameRegex.test(trimmed);
+function updateWhatsAppLink(value) {
+  if (!phoneWhatsapp) return;
+  let digits = String(value || '').replace(/\D/g, '');
+  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
+    digits = digits.slice(2);
   }
-
-  function validateCnpj(value) {
-    if (!value) return true;
-    const digits = String(value || '').replace(/\D/g, '');
-    if (digits.length !== 14) return false;
-    if (/^(\d)\1+$/.test(digits)) return false;
-    const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-    const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-    const calcDigit = (base, weights) => {
-      const sum = base.split('').reduce((acc, digit, idx) => acc + Number(digit) * weights[idx], 0);
-      const mod = sum % 11;
-      return mod < 2 ? 0 : 11 - mod;
-    };
-    const base12 = digits.slice(0, 12);
-    const digit1 = calcDigit(base12, weights1);
-    const digit2 = calcDigit(base12 + digit1, weights2);
-    return digits === base12 + String(digit1) + String(digit2);
+  if (digits.length < 10 || digits.length > 11) {
+    phoneWhatsapp.href = '#';
+    phoneWhatsapp.setAttribute('aria-disabled', 'true');
+    phoneWhatsapp.classList.add('is-disabled');
+    return;
   }
+  const phone = `55${digits}`;
+  phoneWhatsapp.href = `https://wa.me/${phone}`;
+  phoneWhatsapp.setAttribute('aria-disabled', 'false');
+  phoneWhatsapp.classList.remove('is-disabled');
+}
 
-  function validatePhone(value) {
-    let digits = String(value || '').replace(/\D/g, '');
-    if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-      digits = digits.slice(2);
-    }
-    return digits.length === 10 || digits.length === 11;
+function formatPostal(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
+  if (!digits) return '';
+  if (digits.length <= 5) return digits;
+  return digits.replace(/^(\d{5})(\d{0,3}).*/, '$1-$2').trim();
+}
+
+function normalizeText(value) {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return '';
+  return trimmed
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : ''))
+    .join(' ');
+}
+
+function getAddressStreetValidationError(value) {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return ADDRESS_STREET_REQUIRED;
+  if (trimmed.length < ADDRESS_STREET_MIN_LENGTH) return ADDRESS_STREET_LENGTH_MESSAGE;
+  if (ADDRESS_STREET_INVALID_PATTERN.test(trimmed)) return ADDRESS_STREET_INVALID_MESSAGE;
+  return '';
+}
+
+function isSnAddressNumber(value) {
+  const normalized = String(value || '')
+    .trim()
+    .toUpperCase()
+    .replace(/[\s\\/.\-]/g, '');
+  return normalized === 'SN';
+}
+
+function getAddressNumberValidationError(value) {
+  const trimmed = String(value || '').trim();
+  if (!trimmed) return ADDRESS_NUMBER_REQUIRED;
+  if (!/^\d+$/.test(trimmed) && !isSnAddressNumber(trimmed)) return ADDRESS_NUMBER_INVALID;
+  return '';
+}
+
+function parseNotesMeta(value) {
+  const payload = String(value || '');
+  const start = payload.indexOf(META_OPEN);
+  if (start === -1) {
+    return { text: payload.trim(), metadata: {} };
   }
-
-  function validateBirthDate(value) {
-    if (!value) return true;
-    return /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const end = payload.indexOf(META_CLOSE, start);
+  if (end === -1) {
+    return { text: payload.trim(), metadata: {} };
   }
-
-  function parseBirthDate(value) {
-    if (!value) return null;
-    if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
-    const raw = String(value);
-    const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (match) {
-      const year = Number(match[1]);
-      const month = Number(match[2]) - 1;
-      const day = Number(match[3]);
-      const localDate = new Date(year, month, day);
-      return Number.isNaN(localDate.getTime()) ? null : localDate;
-    }
-    const parsed = new Date(raw);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  const metaPart = payload.slice(start + META_OPEN.length, end).trim();
+  let metadata = {};
+  try {
+    metadata = JSON.parse(metaPart);
+  } catch (_err) {
+    metadata = {};
   }
+  const textOnly = payload.slice(0, start).trim();
+  return { text: textOnly, metadata };
+}
 
-  function buildBirthHint(value) {
-    if (!value || !validateBirthDate(value)) return '';
-    const date = parseBirthDate(value);
-    if (!date) return '';
-    const now = new Date();
-    let age = now.getFullYear() - date.getFullYear();
-    const m = now.getMonth() - date.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < date.getDate())) {
-      age -= 1;
-    }
-    if (age < 0) {
-      return 'Data de nascimento no futuro.';
-    }
-    if (age > 120) {
-      return 'Data de nascimento fora do intervalo esperado.';
-    }
-    return `Idade aproximada: ${age} anos.`;
-  }
-
-  function updateEditBirthHint(value) {
-    if (!editBirthHint) return;
-    const hint = buildBirthHint(value);
-    editBirthHint.textContent = hint;
-    editBirthHint.hidden = !hint;
-  }
-
-  function formatPhone(value) {
-    let digits = String(value || '').replace(/\D/g, '');
-    if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-      digits = digits.slice(2);
-    }
-    if (digits.length <= 10) {
-      return digits.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3').trim();
-    }
-    return digits.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3').trim();
-  }
-
-  function updateWhatsAppLink(value) {
-    if (!phoneWhatsapp) return;
-    let digits = String(value || '').replace(/\D/g, '');
-    if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-      digits = digits.slice(2);
-    }
-    if (digits.length < 10 || digits.length > 11) {
-      phoneWhatsapp.href = '#';
-      phoneWhatsapp.setAttribute('aria-disabled', 'true');
-      phoneWhatsapp.classList.add('is-disabled');
-      return;
-    }
-    const phone = `55${digits}`;
-    phoneWhatsapp.href = `https://wa.me/${phone}`;
-    phoneWhatsapp.setAttribute('aria-disabled', 'false');
-    phoneWhatsapp.classList.remove('is-disabled');
-  }
-
-  function formatPostal(value) {
-    const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
-    if (!digits) return '';
-    if (digits.length <= 5) return digits;
-    return digits.replace(/^(\d{5})(\d{0,3}).*/, '$1-$2').trim();
-  }
-
-  function normalizeText(value) {
-    const trimmed = String(value || '').trim();
-    if (!trimmed) return '';
-    return trimmed
-      .toLowerCase()
-      .split(/\s+/)
-      .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : ''))
-      .join(' ');
-  }
-
-  function getAddressStreetValidationError(value) {
-    const trimmed = String(value || '').trim();
-    if (!trimmed) return ADDRESS_STREET_REQUIRED;
-    if (trimmed.length < ADDRESS_STREET_MIN_LENGTH) return ADDRESS_STREET_LENGTH_MESSAGE;
-    if (ADDRESS_STREET_INVALID_PATTERN.test(trimmed)) return ADDRESS_STREET_INVALID_MESSAGE;
-    return '';
-  }
-
-  function isSnAddressNumber(value) {
-    const normalized = String(value || '')
-      .trim()
-      .toUpperCase()
-      .replace(/[\s\\/.\-]/g, '');
-    return normalized === 'SN';
-  }
-
-  function getAddressNumberValidationError(value) {
-    const trimmed = String(value || '').trim();
-    if (!trimmed) return ADDRESS_NUMBER_REQUIRED;
-    if (!/^\d+$/.test(trimmed) && !isSnAddressNumber(trimmed)) return ADDRESS_NUMBER_INVALID;
-    return '';
-  }
-
-  const META_OPEN = '<sgvc-meta>';
-  const META_CLOSE = '</sgvc-meta>';
-
-  function parseNotesMeta(value) {
-    const payload = String(value || '');
-    const start = payload.indexOf(META_OPEN);
-    if (start === -1) {
-      return { text: payload.trim(), metadata: {} };
-    }
-    const end = payload.indexOf(META_CLOSE, start);
-    if (end === -1) {
-      return { text: payload.trim(), metadata: {} };
-    }
-    const metaPart = payload.slice(start + META_OPEN.length, end).trim();
-    let metadata = {};
-    try {
-      metadata = JSON.parse(metaPart);
-    } catch (_err) {
-      metadata = {};
-    }
-    const textOnly = payload.slice(0, start).trim();
-    return { text: textOnly, metadata };
-  }
-
-  function buildNotesWithMeta(notes, metadata) {
-    const cleanNotes = String(notes || '').trim();
-    const safeMeta = {};
-    if (metadata && typeof metadata === 'object') {
-      Object.keys(metadata).forEach((key) => {
-        const value = metadata[key];
-        if (value == null) return;
-        const textValue = String(value).trim();
-        if (textValue) safeMeta[key] = textValue;
-      });
-    }
-    if (!Object.keys(safeMeta).length) {
-      return cleanNotes || null;
-    }
-    const metaPayload = `${META_OPEN}${JSON.stringify(safeMeta)}${META_CLOSE}`;
-    return cleanNotes ? `${cleanNotes}\n${metaPayload}` : metaPayload;
-  }
-
-  function formatCnpj(value) {
-    const digits = String(value || '').replace(/\D/g, '').slice(0, 14);
-    if (!digits) return '';
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-    if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
-    if (digits.length <= 12) {
-      return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
-    }
-    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
-  }
-
-  function formatCpf(value) {
-    const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
-    if (!digits) return '';
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-  }
-
-  function validateCpf(value) {
-    if (!value) return true;
-    const digits = String(value || '').replace(/\D/g, '');
-    return digits.length === 11;
-  }
-
-  function formatDocument(value, type) {
-    if (!value) return '-';
-    if (type === 'PF') {
-      const formatted = formatCpf(value);
-      return formatted || '-';
-    }
-    const formatted = formatCnpj(value);
-    return formatted || '-';
-  }
-
-  function toggleConditionalField(element, shouldShow) {
-    if (!element) return;
-    element.classList.toggle('is-hidden', !shouldShow);
-    element.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
-    const focusables = element.querySelectorAll('input, select, textarea, button, a');
-    focusables.forEach((focusable) => {
-      if ('disabled' in focusable) {
-        focusable.disabled = !shouldShow;
-      }
-      if (typeof focusable.tabIndex === 'number') {
-        focusable.tabIndex = shouldShow ? 0 : -1;
-      }
+function buildNotesWithMeta(notes, metadata) {
+  const cleanNotes = String(notes || '').trim();
+  const safeMeta = {};
+  if (metadata && typeof metadata === 'object') {
+    Object.keys(metadata).forEach((key) => {
+      const value = metadata[key];
+      if (value == null) return;
+      const textValue = String(value).trim();
+      if (textValue) safeMeta[key] = textValue;
     });
   }
-
-  function updateEditTypeFields(type) {
-    const normalized = String(type || '').trim().toUpperCase();
-    toggleConditionalField(editCpfField, normalized === 'PF');
-    toggleConditionalField(editTradeNameField, normalized === 'PJ');
-    toggleConditionalField(editCnpjField, normalized !== 'PF');
-    if (editNameLabelText) {
-      if (normalized === 'PF') editNameLabelText.textContent = 'Nome da pessoa';
-      else if (normalized === 'PJ') editNameLabelText.textContent = 'Razão social';
-      else editNameLabelText.textContent = 'Nome';
-    }
-    setEditMetaValue('type', normalized);
+  if (!Object.keys(safeMeta).length) {
+    return cleanNotes || null;
   }
+  const metaPayload = `${META_OPEN}${JSON.stringify(safeMeta)}${META_CLOSE}`;
+  return cleanNotes ? `${cleanNotes}\n${metaPayload}` : metaPayload;
+}
 
-  function setEditMetaValue(key, value) {
-    if (!key) return;
-    const trimmed = String(value || '').trim();
-    if (!trimmed) {
-      delete editMeta[key];
-      return;
-    }
-    editMeta[key] = trimmed;
+function formatCnpj(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(0, 14);
+  if (!digits) return '';
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  if (digits.length <= 12) {
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
   }
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
+}
 
-  function setCnpjMessage(message, isError) {
-    if (cnpjError) {
-      cnpjError.textContent = isError ? message : '';
-      cnpjError.hidden = !isError;
-    }
-    if (cnpjSuccess) {
-      cnpjSuccess.textContent = !isError ? message : '';
-      cnpjSuccess.hidden = isError || !message;
-    }
+function formatCpf(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
+  if (!digits) return '';
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+}
+
+function validateCpf(value) {
+  if (!value) return true;
+  const digits = String(value || '').replace(/\D/g, '');
+  return digits.length === 11;
+}
+
+function formatDocument(value, type) {
+  if (!value) return '-';
+  if (type === 'PF') {
+    const formatted = formatCpf(value);
+    return formatted || '-';
   }
+  const formatted = formatCnpj(value);
+  return formatted || '-';
+}
 
-  function showTradeChip(tradeName) {
-    if (!tradeChipRow || !tradeChipLabel) return;
-    const value = String(tradeName || '').trim();
-    if (!value) {
-      tradeChipRow.hidden = true;
-      tradeChipLabel.textContent = '';
-      return;
+function toggleConditionalField(element, shouldShow) {
+  if (!element) return;
+  element.classList.toggle('is-hidden', !shouldShow);
+  element.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+  const focusables = element.querySelectorAll('input, select, textarea, button, a');
+  focusables.forEach((focusable) => {
+    if ('disabled' in focusable) {
+      focusable.disabled = !shouldShow;
     }
-    tradeChipLabel.textContent = `Nome fantasia: ${value}`;
-    tradeChipRow.hidden = false;
+    if (typeof focusable.tabIndex === 'number') {
+      focusable.tabIndex = shouldShow ? 0 : -1;
+    }
+  });
+}
+
+function updateEditTypeFields(type) {
+  const normalized = String(type || '').trim().toUpperCase();
+  toggleConditionalField(editCpfField, normalized === 'PF');
+  toggleConditionalField(editTradeNameField, normalized === 'PJ');
+  toggleConditionalField(editCnpjField, normalized !== 'PF');
+  if (editNameLabelText) {
+    if (normalized === 'PF') editNameLabelText.textContent = 'Nome da pessoa';
+    else if (normalized === 'PJ') editNameLabelText.textContent = 'Razão social';
+    else editNameLabelText.textContent = 'Nome';
   }
+  setEditMetaValue('type', normalized);
+}
 
-  function applyCnpjData(data) {
-    if (!data) return;
-    if (nameInput && data.name) nameInput.value = normalizeText(data.name);
-    if (phoneInput && data.phone) phoneInput.value = formatPhone(data.phone);
-    if (addressStreetInput && data.addressStreet) {
-      addressStreetInput.value = normalizeText(data.addressStreet);
-    }
-    if (addressNumberInput && data.addressNumber) {
-      addressNumberInput.value = data.addressNumber;
-    }
-    if (addressNeighborhoodInput && data.addressNeighborhood) {
-      addressNeighborhoodInput.value = normalizeText(data.addressNeighborhood);
-    }
-    if (addressCityInput && data.addressCity) {
-      addressCityInput.value = normalizeText(data.addressCity);
-    }
-    if (addressPostalInput && data.addressPostalCode) {
-      addressPostalInput.value = formatPostal(data.addressPostalCode);
-    }
-    if (data.tradeName) {
-      const normalizedTrade = normalizeText(data.tradeName);
-      if (editTradeName) editTradeName.value = normalizedTrade;
-      setEditMetaValue('tradeName', normalizedTrade);
-      showTradeChip(normalizedTrade);
-    }
-    if (editType) {
-      editType.value = 'PJ';
-      updateEditTypeFields('PJ');
-    }
-    updateWhatsAppLink(phoneInput ? phoneInput.value : '');
+function setEditMetaValue(key, value) {
+  if (!key) return;
+  const trimmed = String(value || '').trim();
+  if (!trimmed) {
+    delete state.editMeta[key];
+    return;
   }
+  state.editMeta[key] = trimmed;
+}
 
-  function updateDirtyState() {
-    if (!saveBtn) return;
-    const current = {
-      name: nameInput.value.trim(),
-      email: emailInput.value.trim(),
-      cnpj: cnpjInput ? cnpjInput.value.trim() : '',
-      phone: phoneInput.value.trim(),
-      type: editType ? editType.value : '',
-      cpf: editCpf ? editCpf.value.trim() : '',
-      birthDate: birthDateInput ? birthDateInput.value : '',
-      addressStreet: addressStreetInput ? addressStreetInput.value.trim() : '',
-      addressNumber: addressNumberInput ? addressNumberInput.value.trim() : '',
-      addressNeighborhood: addressNeighborhoodInput ? addressNeighborhoodInput.value.trim() : '',
-      addressCity: addressCityInput ? addressCityInput.value.trim() : '',
-      addressPostalCode: addressPostalInput ? addressPostalInput.value.trim() : '',
-      tradeName: editTradeName ? editTradeName.value.trim() : '',
-      complement: editAddressComplement ? editAddressComplement.value.trim() : '',
-      notes: notesInput ? notesInput.value.trim() : '',
-    };
-    const isDirty =
-      current.name !== original.name ||
-      current.email !== original.email ||
-      current.cnpj !== original.cnpj ||
-      current.phone !== original.phone ||
-      current.type !== original.type ||
-      current.cpf !== original.cpf ||
-      current.birthDate !== original.birthDate ||
-      current.addressStreet !== original.addressStreet ||
-      current.addressNumber !== original.addressNumber ||
-      current.addressNeighborhood !== original.addressNeighborhood ||
-      current.addressCity !== original.addressCity ||
-      current.addressPostalCode !== original.addressPostalCode ||
-      current.tradeName !== original.tradeName ||
-      current.complement !== original.complement ||
-      current.notes !== original.notes;
-    saveBtn.disabled = !isDirty;
+function setCnpjMessage(message, isError) {
+  if (cnpjError) {
+    cnpjError.textContent = isError ? message : '';
+    cnpjError.hidden = !isError;
   }
-
-  function toggleDeleteModal(isOpen) {
-    if (!deleteModal) return;
-    deleteModal.classList.toggle('is-active', isOpen);
-    deleteModal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-    if (isOpen) {
-      deleteConfirm && deleteConfirm.focus();
-    } else {
-      deleteBtn && deleteBtn.focus();
-    }
+  if (cnpjSuccess) {
+    cnpjSuccess.textContent = !isError ? message : '';
+    cnpjSuccess.hidden = isError || !message;
   }
+}
 
-  // Auth via cookie HttpOnly
-  ensureAuthOrRedirect();
+function showTradeChip(tradeName) {
+  if (!tradeChipRow || !tradeChipLabel) return;
+  const value = String(tradeName || '').trim();
+  if (!value) {
+    tradeChipRow.hidden = true;
+    tradeChipLabel.textContent = '';
+    return;
+  }
+  tradeChipLabel.textContent = `Nome fantasia: ${value}`;
+  tradeChipRow.hidden = false;
+}
 
-  // Verificar se o ID do cliente foi fornecido na URL
-  const params = new URLSearchParams(window.location.search);
-  let customerId = params.get('id');
-  if (!customerId) {
+function applyCnpjData(data) {
+  if (!data) return;
+  if (nameInput && data.name) nameInput.value = normalizeText(data.name);
+  if (phoneInput && data.phone) phoneInput.value = formatPhone(data.phone);
+  if (addressStreetInput && data.addressStreet) {
+    addressStreetInput.value = normalizeText(data.addressStreet);
+  }
+  if (addressNumberInput && data.addressNumber) {
+    addressNumberInput.value = data.addressNumber;
+  }
+  if (addressNeighborhoodInput && data.addressNeighborhood) {
+    addressNeighborhoodInput.value = normalizeText(data.addressNeighborhood);
+  }
+  if (addressCityInput && data.addressCity) {
+    addressCityInput.value = normalizeText(data.addressCity);
+  }
+  if (addressPostalInput && data.addressPostalCode) {
+    addressPostalInput.value = formatPostal(data.addressPostalCode);
+  }
+  if (data.tradeName) {
+    const normalizedTrade = normalizeText(data.tradeName);
+    if (editTradeName) editTradeName.value = normalizedTrade;
+    setEditMetaValue('tradeName', normalizedTrade);
+    showTradeChip(normalizedTrade);
+  }
+  if (editType) {
+    editType.value = 'PJ';
+    updateEditTypeFields('PJ');
+  }
+  updateWhatsAppLink(phoneInput ? phoneInput.value : '');
+}
+
+function updateDirtyState() {
+  if (!saveBtn) return;
+  const current = {
+    name: nameInput.value.trim(),
+    email: emailInput.value.trim(),
+    cnpj: cnpjInput ? cnpjInput.value.trim() : '',
+    phone: phoneInput.value.trim(),
+    type: editType ? editType.value : '',
+    cpf: editCpf ? editCpf.value.trim() : '',
+    birthDate: birthDateInput ? birthDateInput.value : '',
+    addressStreet: addressStreetInput ? addressStreetInput.value.trim() : '',
+    addressNumber: addressNumberInput ? addressNumberInput.value.trim() : '',
+    addressNeighborhood: addressNeighborhoodInput ? addressNeighborhoodInput.value.trim() : '',
+    addressCity: addressCityInput ? addressCityInput.value.trim() : '',
+    addressPostalCode: addressPostalInput ? addressPostalInput.value.trim() : '',
+    tradeName: editTradeName ? editTradeName.value.trim() : '',
+    complement: editAddressComplement ? editAddressComplement.value.trim() : '',
+    notes: notesInput ? notesInput.value.trim() : '',
+  };
+  const isDirty =
+    current.name !== state.original.name ||
+    current.email !== state.original.email ||
+    current.cnpj !== state.original.cnpj ||
+    current.phone !== state.original.phone ||
+    current.type !== state.original.type ||
+    current.cpf !== state.original.cpf ||
+    current.birthDate !== state.original.birthDate ||
+    current.addressStreet !== state.original.addressStreet ||
+    current.addressNumber !== state.original.addressNumber ||
+    current.addressNeighborhood !== state.original.addressNeighborhood ||
+    current.addressCity !== state.original.addressCity ||
+    current.addressPostalCode !== state.original.addressPostalCode ||
+    current.tradeName !== state.original.tradeName ||
+    current.complement !== state.original.complement ||
+    current.notes !== state.original.notes;
+  saveBtn.disabled = !isDirty;
+}
+
+// Auth via cookie HttpOnly
+ensureAuthOrRedirect();
+
+state.customerId = params.get('id');
+
+function bootstrap() {
+  if (!state.customerId) {
     // Se não houver ID, redirecionar para a lista de clientes
     console.warn('[CLIENT-EDIT] ID do cliente não fornecido. Redirecionando para /clients.html');
     window.location.href = '/clients.html';
     return;
   }
 
-  // Inicializar proteção contra perda de dados não salvos
-  let unsavedGuard = null;
   if (window.UnsavedChangesGuard && form) {
-    unsavedGuard = new window.UnsavedChangesGuard('#edit-form');
+    state.unsavedGuard = new window.UnsavedChangesGuard('#edit-form');
   }
 
   // Carregar dados do cliente apenas se a sessão for válida
-  apiRequest(`/api/customers/${customerId}`, null)
+  apiRequest(`/api/customers/${state.customerId}`, null)
     .then((customer) => {
       if (!customer) {
         console.error('[CLIENT-EDIT] Cliente não encontrado');
@@ -601,20 +498,20 @@
       const notesCandidate = safeValue(customer.notes, customer.note);
       const notesData = parseNotesMeta(notesCandidate);
       if (notesInput) notesInput.value = notesData.text || '';
-      editMeta = {
+      state.editMeta = {
         type: notesData.metadata.type || '',
         tradeName: notesData.metadata.tradeName || '',
         complement: notesData.metadata.complement || '',
       };
-      if (editTradeName) editTradeName.value = editMeta.tradeName || '';
-      if (editAddressComplement) editAddressComplement.value = editMeta.complement || '';
+      if (editTradeName) editTradeName.value = state.editMeta.tradeName || '';
+      if (editAddressComplement) editAddressComplement.value = state.editMeta.complement || '';
       if (editType) {
-        editType.value = editMeta.type || '';
+        editType.value = state.editMeta.type || '';
         updateEditTypeFields(editType.value);
       }
-      showTradeChip(editMeta.tradeName || '');
+      showTradeChip(state.editMeta.tradeName || '');
       updateWhatsAppLink(phoneInput ? phoneInput.value : '');
-      original = {
+      state.original = {
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         cnpj: cnpjInput ? cnpjInput.value.trim() : '',
@@ -649,14 +546,6 @@
         window.location.href = '/clients.html';
       }, 2000);
     });
-
-  function navigateToClientList() {
-    editMeta = { type: '', tradeName: '', complement: '' };
-    // Usar setTimeout para garantir que o redirecionamento aconteça após todos os handlers
-    setTimeout(() => {
-      window.location.href = '/clients.html';
-    }, 0);
-  }
 
   if (backBtn) {
     backBtn.addEventListener('click', (event) => {
@@ -723,7 +612,7 @@
       if (addressNumberInput) {
         addressNumberInput.value = numberRaw.trim();
       }
-      const notesPayload = buildNotesWithMeta(notesInput ? notesInput.value : '', editMeta);
+      const notesPayload = buildNotesWithMeta(notesInput ? notesInput.value : '', state.editMeta);
       const payload = {
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
@@ -748,8 +637,8 @@
         if (cpfDigits) payload.cpf = cpfDigits;
         if (cnpjDigits) payload.cnpj = cnpjDigits;
       }
-      const originalCnpjDigits = original.cnpj ? original.cnpj.replace(/\D/g, '') : '';
-      const originalCpfDigits = original.cpf ? original.cpf.replace(/\D/g, '') : '';
+      const originalCnpjDigits = state.original.cnpj ? state.original.cnpj.replace(/\D/g, '') : '';
+      const originalCpfDigits = state.original.cpf ? state.original.cpf.replace(/\D/g, '') : '';
       const cnpjChanged = cnpjDigits !== originalCnpjDigits;
       const cpfChanged = cpfDigits !== originalCpfDigits;
       if (!validateName(payload.name)) {
@@ -785,14 +674,14 @@
       const originalText = saveBtn.textContent;
       saveBtn.textContent = 'Salvando...';
       try {
-        await apiRequest(`/api/customers/${customerId}`, null, {
+        await apiRequest(`/api/customers/${state.customerId}`, null, {
           method: 'PUT',
           body: JSON.stringify(payload),
         });
         showMessage('Cliente atualizado com sucesso!', 'is-success');
         sessionStorage.setItem(UPDATED_FLAG, 'true');
         // Atualiza o objeto original com os valores salvos
-        original = {
+        state.original = {
           name: payload.name,
           email: payload.email,
           phone: payload.phone,
@@ -806,8 +695,8 @@
           cpf: payload.cpf || '',
           cnpj: payload.cnpj || '',
           type: typeValue || '',
-          tradeName: editMeta.tradeName || '',
-          complement: editMeta.complement || '',
+          tradeName: state.editMeta.tradeName || '',
+          complement: state.editMeta.complement || '',
         };
         updateDirtyState();
         // Redireciona para a lista após salvar com sucesso
@@ -848,7 +737,7 @@
       deleteConfirm.classList.add('is-loading');
       deleteConfirm.disabled = true;
       try {
-        await apiRequest(`/api/customers/${customerId}`, null, {
+        await apiRequest(`/api/customers/${state.customerId}`, null, {
           method: 'DELETE',
         });
         sessionStorage.setItem(DELETE_FLAG, 'true');
@@ -899,7 +788,6 @@
       }
     });
   }
-
 
   if (cnpjInput) {
     cnpjInput.addEventListener('input', () => {
@@ -1056,21 +944,6 @@
     });
   }
 
-  // Event listeners dos botões principais
-  function handleAuthFailure(err) {
-    if (err && err.name === 'AbortError') return true;
-    if (!err || (err.status !== 401 && err.status !== 403)) return false;
-    window.location.href = '/';
-    return true;
-  }
-
-  function normalizeError(err) {
-    if (window.SGVCErrorHandler && window.SGVCErrorHandler.normalizeApiError) {
-      return window.SGVCErrorHandler.normalizeApiError(err);
-    }
-    return err && err.message ? err.message : 'Erro ao processar solicitação. Tente novamente.';
-  }
-
   if (backBtn) {
     backBtn.addEventListener('click', () => {
       window.location.href = '/clients.html';
@@ -1085,13 +958,6 @@
       }
       window.location.href = '/clients.html';
     });
-  }
-
-  // (removido) segundo conjunto de tratadores de salvar/excluir: duplicava os de cima.
-  // No excluir, os dois rodavam no mesmo clique e mandavam DELETE duas vezes.
-
-  function closeDeleteModal() {
-    toggleDeleteModal(false);
   }
 
   if (deleteClose) {
@@ -1112,11 +978,6 @@
       closeDeleteModal();
     }
   });
-})();
+}
 
-
-
-
-
-
-
+bootstrap();

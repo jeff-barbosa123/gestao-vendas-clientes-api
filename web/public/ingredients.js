@@ -53,8 +53,7 @@
     // aceita "395", "1,5", "1.5", "7,50" e "1.234,56"
     return Number(s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s);
   };
-  const escapeHtml = (s) =>
-    String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const escapeHtml = (s) => window.SGVC.utils.escapeHtml(s);
 
   function showMessage(text, type = 'is-success') {
     if (!els.message) return;

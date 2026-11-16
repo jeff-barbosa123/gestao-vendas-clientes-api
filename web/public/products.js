@@ -3,12 +3,7 @@
   const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || window.location.origin;
 
   function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+    return window.SGVC.utils.escapeHtml(value);
   }
 
   const messageBox = document.getElementById('products-message');
@@ -125,20 +120,8 @@
     }
   }
 
-  async function apiRequest(path, _tokenIgnored, options = {}) {
-    const url = buildUrl(path);
-    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
-    const response = await fetch(url, { ...options, headers, credentials: 'include' });
-    const contentType = response.headers.get('content-type') || '';
-    const payload = contentType.includes('application/json') ? await response.json() : await response.text();
-    if (!response.ok) {
-      const message = payload && (payload.message || payload.error) ? payload.message || payload.error : 'Erro na API';
-      const error = new Error(message);
-      error.status = response.status;
-      error.payload = payload;
-      throw error;
-    }
-    return payload;
+  function apiRequest(path, _tokenIgnored, options = {}) {
+    return window.SGVC.api.request(path, { ...options, messageFromServer: true });
   }
 
   function setFieldError(input, errorEl, message) {

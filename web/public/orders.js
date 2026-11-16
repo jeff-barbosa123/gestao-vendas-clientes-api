@@ -62,8 +62,7 @@
     if (!s) return NaN;
     return Number(s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s);
   };
-  const escapeHtml = (s) =>
-    String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const escapeHtml = (s) => window.SGVC.utils.escapeHtml(s);
   const pad = (n) => String(n).padStart(2, '0');
   const toDateInput = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const toTimeInput = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;

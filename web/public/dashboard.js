@@ -1,7 +1,7 @@
 /**
  * Dashboard (entrada). MÃ³dulos em /dashboard/*.js.
  */
-import { API_BASE, DEBUG, FALLBACK_METRICS } from './dashboard/constants.js';
+import { API_BASE, DEBUG } from './dashboard/constants.js';
 import {
   alertClientsBtn,
   alertProductsBtn,
@@ -21,25 +21,8 @@ import {
   salesBtn,
 } from './dashboard/dom.js';
 import { state } from './dashboard/state.js';
-import {
-  clearDashboardMessage,
-  ensureAuthenticated,
-  fetchJson,
-  handleAuthFailure,
-  isLocalhostHost,
-  normalizeError,
-  showDashboardMessage,
-} from './dashboard/core.js';
-import { buildPeriodQuery } from './dashboard/period.js';
-import {
-  loadClients,
-  loadFallbackMetrics,
-  loadProducts,
-  loadRevenueInsights,
-  loadUpcomingOrders,
-  renderUserName,
-  updateMetrics,
-} from './dashboard/data.js';
+import { fetchJson, isLocalhostHost } from './dashboard/core.js';
+import { carregarDashboard } from './dashboard/load.js';
 
 'use strict';
 
@@ -53,55 +36,6 @@ try {
   }
 } catch (_e) {
   // ignore
-}
-
-async function carregarDashboard() {
-  const user = await ensureAuthenticated();
-  if (!user) {
-    // Não redirecionar se estiver navegando (clique em botão)
-    if (state.isNavigating) return;
-    showDashboardMessage('Sessão expirada. Faça login novamente.', 'is-danger');
-    updateMetrics(FALLBACK_METRICS);
-    return;
-  }
-  clearDashboardMessage();
-  renderUserName(user);
-  const period = buildPeriodQuery(periodSelect ? periodSelect.value : null);
-
-  try {
-    const data = await fetchJson('/api/analytics/overview', null, {
-      start: period.start,
-      end: period.end,
-    });
-    updateMetrics(data || {});
-  } catch (err) {
-    if (handleAuthFailure(err)) return;
-    
-    const friendlyMessage = normalizeError(err);
-    
-    try {
-      const fallback = await loadFallbackMetrics(null, period);
-      if (fallback) {
-        clearDashboardMessage();
-        updateMetrics(fallback);
-        return;
-      }
-    } catch (fallbackErr) {
-      const fallbackFriendly = normalizeError(fallbackErr);
-      console.error('Fallback dashboard:', fallbackFriendly);
-    }
-    
-    showDashboardMessage(friendlyMessage || 'Não foi possível carregar os indicadores. Tente novamente mais tarde.', 'is-danger');
-    updateMetrics(FALLBACK_METRICS);
-    console.error('Dashboard error:', friendlyMessage);
-  } finally {
-    await Promise.all([
-      loadUpcomingOrders(),
-      loadRevenueInsights(null, period),
-      loadClients(null),
-      loadProducts(null),
-    ]);
-  }
 }
 
 // Adicionar event listeners PRIMEIRO, antes de qualquer outra coisa

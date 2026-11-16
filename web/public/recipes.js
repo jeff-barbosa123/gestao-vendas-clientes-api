@@ -1,7 +1,7 @@
 /**
  * Tela de fichas de custo (entrada). MÃ³dulos em /recipes/*.js.
  */
-import { DEFAULT_COMPONENT_NAME, DELETE_FLAG, PAGE_SIZE } from './recipes/constants.js';
+import { DELETE_FLAG, PAGE_SIZE } from './recipes/constants.js';
 import {
   addIngredientBtn,
   backBtn,
@@ -22,9 +22,6 @@ import {
   componentRename,
   componentRenameBtn,
   componentSelect,
-  componentSubtotal,
-  componentsSummary,
-  componentsTotal,
   createDescription,
   createForm,
   createMargin,
@@ -117,6 +114,21 @@ import {
   loadIngredientSuggestions,
   setMaskedValue,
 } from './recipes/catalog.js';
+import {
+  addComponent,
+  duplicateActiveComponent,
+  ensureDefaultComponent,
+  getActiveComponent,
+  getAllIngredients,
+  moveActiveComponent,
+  removeActiveComponent,
+  renameActiveComponent,
+  renderComponentSelect,
+  renderComponentsSummary,
+  setActiveComponent,
+  updateComponentSubtotal,
+  updateComponentsTotal,
+} from './recipes/components.js';
 
 initCatalog();
 
@@ -147,7 +159,7 @@ export function showIngredientSuccess(message) {
   }
 }
 
-function renderIngredients() {
+export function renderIngredients() {
   if (!ingredientsBody) return;
   ingredientsBody.innerHTML = '';
   const activeComponent = getActiveComponent();
@@ -239,16 +251,6 @@ function renderIngredients() {
   updateSubmitState();
 }
 
-function getAllIngredients() {
-  return state.components.flatMap((component) => {
-    const items = Array.isArray(component.items) ? component.items : [];
-    return items.map((item) => ({
-      ...item,
-      component: component.name,
-    }));
-  });
-}
-
 function getRecipeFormState() {
   const nameValue = createName ? String(createName.value || '').trim() : '';
   const yieldValue = toNumber(createYield ? createYield.value : null, 0.01);
@@ -256,38 +258,6 @@ function getRecipeFormState() {
   const hasYield = yieldValue != null;
   const hasItems = getAllIngredients().length > 0;
   return { nameValue, yieldValue, hasName, hasYield, hasItems };
-}
-
-function updateComponentsTotal() {
-  if (!componentsTotal) return;
-  const total = getAllIngredients().reduce((sum, item) => sum + calculateIngredientCost(item), 0);
-  componentsTotal.textContent = `R$ ${formatMoney(total)}`;
-}
-
-function updateComponentSubtotal() {
-  if (!componentSubtotal) return;
-  const activeComponent = getActiveComponent();
-  const items = activeComponent ? activeComponent.items || [] : [];
-  const subtotal = items.reduce((sum, item) => sum + calculateIngredientCost(item), 0);
-  componentSubtotal.textContent = `R$ ${formatMoney(subtotal)}`;
-}
-
-function renderComponentsSummary() {
-  if (!componentsSummary) return;
-  if (!state.components.length) {
-    componentsSummary.innerHTML = '<span class="components-summary-empty">Nenhuma parte adicionada.</span>';
-    return;
-  }
-  const items = state.components.map((component) => {
-    const subtotal = (component.items || []).reduce((sum, item) => sum + calculateIngredientCost(item), 0);
-    return `
-        <div class="components-summary-item">
-          <span class="components-summary-name">${component.name}</span>
-          <span class="components-summary-value">R$ ${formatMoney(subtotal)}</span>
-        </div>
-      `;
-  });
-  componentsSummary.innerHTML = items.join('');
 }
 
 function getOverheadPercentValue() {
@@ -449,115 +419,6 @@ function updateCalcStatus() {
     calcStatus.textContent = 'Dados suficientes para calcular.';
     calcStatus.classList.add('is-ready');
   }
-}
-
-function ensureDefaultComponent() {
-  if (state.components.length) return;
-  state.components = [{ name: DEFAULT_COMPONENT_NAME, items: [] }];
-}
-
-function getActiveComponent() {
-  if (!state.components.length) return null;
-  const name = componentSelect ? componentSelect.value : '';
-  const found = state.components.find((component) => component.name === name);
-  return found || state.components[0];
-}
-
-function setActiveComponent(name) {
-  const active = state.components.find((component) => component.name === name) || state.components[0];
-  if (componentSelect && active) {
-    componentSelect.value = active.name;
-  }
-  renderIngredients();
-  updateComponentSubtotal();
-  renderComponentsSummary();
-  updateSubmitState();
-}
-
-function renderComponentSelect() {
-  if (!componentSelect) return;
-  componentSelect.innerHTML = '';
-  state.components.forEach((component) => {
-    const option = document.createElement('option');
-    option.value = component.name;
-    option.textContent = component.name;
-    componentSelect.appendChild(option);
-  });
-  const active = getActiveComponent();
-  if (active) componentSelect.value = active.name;
-  const activeIndex = state.components.findIndex((component) => component.name === componentSelect.value);
-  const isDefault = active && active.name === DEFAULT_COMPONENT_NAME;
-  if (componentRenameBtn) componentRenameBtn.disabled = !active || isDefault;
-  if (componentRemoveBtn) componentRemoveBtn.disabled = !active || isDefault || state.components.length <= 1;
-  if (componentDuplicateBtn) componentDuplicateBtn.disabled = !active;
-  if (componentMoveUpBtn) componentMoveUpBtn.disabled = activeIndex <= 0;
-  if (componentMoveDownBtn) componentMoveDownBtn.disabled = activeIndex < 0 || activeIndex >= state.components.length - 1;
-}
-
-function addComponent(rawName) {
-  const name = String(rawName || '').trim();
-  if (!name) return;
-  const existing = state.components.find((component) => component.name.toLowerCase() === name.toLowerCase());
-  if (existing) {
-    renderComponentSelect();
-    setActiveComponent(existing.name);
-    showMessage('Essa parte j\u00e1 existe. Selecionei para voc\u00ea.', 'is-success');
-    return;
-  }
-  state.components.push({ name, items: [] });
-  renderComponentSelect();
-  setActiveComponent(name);
-}
-
-function renameActiveComponent(rawName) {
-  const active = getActiveComponent();
-  const name = String(rawName || '').trim();
-  if (!active || !name || active.name === DEFAULT_COMPONENT_NAME) return;
-  if (state.components.some((component) => component.name.toLowerCase() === name.toLowerCase())) {
-    showMessage('Essa parte j\u00e1 existe.', 'is-danger');
-    return;
-  }
-  active.name = name;
-  renderComponentSelect();
-  setActiveComponent(name);
-}
-
-function removeActiveComponent() {
-  const active = getActiveComponent();
-  if (!active || active.name === DEFAULT_COMPONENT_NAME || state.components.length <= 1) return;
-  if (!window.confirm('Remover esta parte e todos os itens dela?')) return;
-  state.components = state.components.filter((component) => component !== active);
-  renderComponentSelect();
-  setActiveComponent(state.components[0].name);
-}
-
-function duplicateActiveComponent() {
-  const active = getActiveComponent();
-  if (!active) return;
-  const base = `${active.name} copia`;
-  let name = base;
-  let index = 2;
-  while (state.components.some((component) => component.name.toLowerCase() === name.toLowerCase())) {
-    name = `${base} ${index}`;
-    index += 1;
-  }
-  const items = (active.items || []).map((item) => ({ ...item }));
-  state.components.push({ name, items });
-  renderComponentSelect();
-  setActiveComponent(name);
-}
-
-function moveActiveComponent(direction) {
-  const active = getActiveComponent();
-  if (!active) return;
-  const index = state.components.findIndex((component) => component === active);
-  const nextIndex = index + direction;
-  if (index < 0 || nextIndex < 0 || nextIndex >= state.components.length) return;
-  const swap = state.components[nextIndex];
-  state.components[nextIndex] = active;
-  state.components[index] = swap;
-  renderComponentSelect();
-  setActiveComponent(active.name);
 }
 
 function updatePackUnitDisplay() {

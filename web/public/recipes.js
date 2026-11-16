@@ -111,6 +111,12 @@ import {
   parseLocaleNumber,
   toNumber,
 } from './recipes/calc.js';
+import {
+  validateCreateName,
+  validateCreateYield,
+  validateIngredientFields,
+  validateName,
+} from './recipes/validators.js';
 
 function initMasks() {
   if (window.Cleave) {
@@ -231,96 +237,18 @@ if (ingredientName) {
   ingredientName.addEventListener('change', applyCatalogToForm);
 }
 
-function validateCreateName(showMessage) {
-  const value = createName ? createName.value.trim() : '';
-  if (value.length < 3) {
-    if (showMessage) {
-      setFieldError(createName, createNameError, 'Informe um nome com pelo menos 3 letras.');
-    } else if (createName) {
-      createName.classList.add('is-danger');
-    }
-    return false;
-  }
-  clearFieldError(createName, createNameError);
-  return true;
-}
-
-function validateCreateYield(showMessage) {
-  const value = toNumber(createYield ? createYield.value : null, 0.01);
-  if (value == null) {
-    if (showMessage) {
-      setFieldError(createYield, createYieldError, 'Informe um rendimento maior que zero.');
-    } else if (createYield) {
-      createYield.classList.add('is-danger');
-    }
-    return false;
-  }
-  clearFieldError(createYield, createYieldError);
-  return true;
-}
-
-function setIngredientAdvancedOpen(isOpen) {
+export function setIngredientAdvancedOpen(isOpen) {
   if (!ingredientAdvanced || !ingredientAdvancedToggle) return;
   ingredientAdvanced.classList.toggle('is-open', isOpen);
   ingredientAdvanced.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
   ingredientAdvancedToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 }
 
-function isIngredientAdvancedOpen() {
+export function isIngredientAdvancedOpen() {
   return Boolean(ingredientAdvanced && ingredientAdvanced.classList.contains('is-open'));
 }
 
-    function validateIngredientFields(showMessage) {
-  const name = ingredientName ? ingredientName.value.trim() : '';
-  const quantity = toNumber(ingredientQty ? ingredientQty.value : null, 0.01);
-  const pack = toNumber(ingredientPack ? ingredientPack.value : null, 0.01);
-  const cost = toNumber(ingredientCost ? ingredientCost.value : null, 0);
-  const unit = ingredientUnit ? ingredientUnit.value : '';
-  const advancedOpen = isIngredientAdvancedOpen();
-  const wantsPrice = advancedOpen || pack != null || cost != null;
-  const packValid = !wantsPrice || pack != null;
-  const costValid = !wantsPrice || cost != null;
-  const fields = [
-    { input: ingredientName, valid: Boolean(name) },
-    { input: ingredientQty, valid: quantity != null },
-    { input: ingredientPack, valid: packValid },
-    { input: ingredientCost, valid: costValid },
-  ];
-  let isValid = Boolean(name && quantity != null && unit && packValid && costValid);
-  fields.forEach((field) => {
-    if (!field.input) return;
-    if (!wantsPrice && (field.input === ingredientPack || field.input === ingredientCost)) {
-      field.input.classList.remove('is-danger');
-      field.input.removeAttribute('aria-invalid');
-      return;
-    }
-    if (field.valid) {
-      field.input.classList.remove('is-danger');
-      field.input.removeAttribute('aria-invalid');
-    } else {
-      field.input.classList.add('is-danger');
-      field.input.setAttribute('aria-invalid', 'true');
-    }
-  });
-  if (showMessage) {
-    if (!isValid) {
-      if (!advancedOpen) {
-        setIngredientAdvancedOpen(true);
-      }
-      setFieldError(
-        ingredientName,
-        ingredientError,
-        'Informe item, quantidade usada e a unidade.',
-      );
-    } else {
-      clearFieldError(ingredientName, ingredientError);
-    }
-  }
-  if (!isValid) showIngredientSuccess('');
-  return isValid;
-}
-
-function showIngredientSuccess(message) {
+export function showIngredientSuccess(message) {
   if (!ingredientSuccess) return;
   ingredientSuccess.textContent = message || '';
   ingredientSuccess.hidden = !message;
@@ -334,12 +262,6 @@ function showIngredientSuccess(message) {
       ingredientSuccess.textContent = '';
     }, 2500);
   }
-}
-
-function validateName(value) {
-  const trimmed = String(value || '').trim();
-  if (trimmed.length < 3 || trimmed.length > 120) return false;
-  return true;
 }
 
 function renderIngredients() {

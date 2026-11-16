@@ -1,14 +1,7 @@
 /**
  * Tela de fichas de custo (entrada). MÃ³dulos em /recipes/*.js.
  */
-import {
-  DEFAULT_COMPONENT_NAME,
-  DELETE_FLAG,
-  INGREDIENTS_FALLBACK,
-  INGREDIENTS_URL,
-  PAGE_SIZE,
-  catalogByName,
-} from './recipes/constants.js';
+import { DEFAULT_COMPONENT_NAME, DELETE_FLAG, PAGE_SIZE } from './recipes/constants.js';
 import {
   addIngredientBtn,
   backBtn,
@@ -60,7 +53,6 @@ import {
   ingredientPackUnit,
   ingredientQty,
   ingredientSuccess,
-  ingredientSuggestions,
   ingredientUnit,
   ingredientUnitHelp,
   ingredientUnitWarning,
@@ -103,7 +95,6 @@ import {
 import {
   applyUnitNormalization,
   calculateIngredientCost,
-  formatCatalogNumber,
   formatMoney,
   formatQuantity,
   normalizeKgValue,
@@ -117,125 +108,17 @@ import {
   validateIngredientFields,
   validateName,
 } from './recipes/validators.js';
+import {
+  bindQuickSuggestions,
+  findCatalogIngredient,
+  initCatalog,
+  initMasks,
+  loadIngredientCatalog,
+  loadIngredientSuggestions,
+  setMaskedValue,
+} from './recipes/catalog.js';
 
-function initMasks() {
-  if (window.Cleave) {
-    if (createOverhead) {
-      state.overheadMask = new window.Cleave(createOverhead, {
-        numeral: true,
-        numeralDecimalMark: ',',
-        delimiter: '.',
-        numeralDecimalScale: 2,
-        numeralPositiveOnly: true,
-      });
-    }
-    if (createMargin) {
-      state.marginMask = new window.Cleave(createMargin, {
-        numeral: true,
-        numeralDecimalMark: ',',
-        delimiter: '.',
-        numeralDecimalScale: 2,
-        numeralPositiveOnly: true,
-      });
-    }
-  }
-  if (window.AutoNumeric) {
-    const moneyOptions = {
-      decimalCharacter: ',',
-      digitGroupSeparator: '.',
-      decimalPlaces: 2,
-      minimumValue: '0',
-      modifyValueOnWheel: false,
-    };
-    if (createProfitFixed) {
-      state.profitFixedMask = new window.AutoNumeric(createProfitFixed, moneyOptions);
-    }
-    if (overheadItemValue) {
-      state.overheadItemMask = new window.AutoNumeric(overheadItemValue, moneyOptions);
-    }
-  }
-}
-
-function setMaskedValue(input, value, mask) {
-  if (!input) return;
-  const safeValue = value == null ? '' : value;
-  if (mask && typeof mask.clear === 'function' && safeValue === '') {
-    mask.clear();
-    return;
-  }
-  if (mask && typeof mask.set === 'function') {
-    mask.set(safeValue);
-  } else if (mask && typeof mask.setRawValue === 'function') {
-    mask.setRawValue(String(safeValue));
-  } else {
-    input.value = String(safeValue);
-  }
-}
-
-async function loadIngredientSuggestions() {
-  if (!ingredientSuggestions) return;
-  let items = INGREDIENTS_FALLBACK.slice();
-  try {
-    const response = await fetch(INGREDIENTS_URL, { cache: 'no-store' });
-    if (response.ok) {
-      const data = await response.json();
-      if (Array.isArray(data)) items = data.slice();
-    }
-  } catch (_err) {
-    items = INGREDIENTS_FALLBACK.slice();
-  }
-  const unique = Array.from(new Set(items.map((item) => String(item || '').trim()).filter(Boolean)));
-  ingredientSuggestions.textContent = '';
-  unique.forEach((item) => {
-    const opt = document.createElement('option');
-    opt.value = String(item);
-    ingredientSuggestions.appendChild(opt);
-  });
-}
-
-function findCatalogIngredient(name) {
-  return catalogByName.get(String(name || '').trim().toLowerCase()) || null;
-}
-
-async function loadIngredientCatalog() {
-  try {
-    const list = await apiRequest('/api/ingredients', null, { method: 'GET' });
-    (Array.isArray(list) ? list : []).forEach((item) => {
-      catalogByName.set(String(item.name).trim().toLowerCase(), item);
-    });
-    if (ingredientSuggestions && catalogByName.size) {
-      const fragment = document.createDocumentFragment();
-      catalogByName.forEach((item) => {
-        const opt = document.createElement('option');
-        opt.value = item.name;
-        opt.label = `Insumo cadastrado: R$ ${Number(item.packageCost).toFixed(2).replace('.', ',')} por ${item.packageQuantity} ${item.packageUnit}`;
-        fragment.appendChild(opt);
-      });
-      ingredientSuggestions.prepend(fragment);
-    }
-  } catch (_err) {
-    // Sem cadastro de insumos disponível: a ficha continua funcionando com preço manual
-  }
-}
-
-function applyCatalogToForm() {
-  const match = findCatalogIngredient(ingredientName && ingredientName.value);
-  if (!match) return;
-  if (ingredientPack) ingredientPack.value = formatCatalogNumber(match.packageQuantity, ingredientPack);
-  if (ingredientPackUnit) {
-    ingredientPackUnit.value = match.packageUnit;
-    ingredientPackUnit.dispatchEvent(new Event('change'));
-  }
-  if (ingredientCost) ingredientCost.value = formatCatalogNumber(match.packageCost, ingredientCost);
-  if (typeof setIngredientAdvancedOpen === 'function') setIngredientAdvancedOpen(true);
-  showIngredientSuccess(
-    `Preço do cadastro de insumos: R$ ${Number(match.packageCost).toFixed(2).replace('.', ',')} por ${match.packageQuantity} ${match.packageUnit}. Esta ficha será recalculada quando o preço mudar.`
-  );
-}
-
-if (ingredientName) {
-  ingredientName.addEventListener('change', applyCatalogToForm);
-}
+initCatalog();
 
 export function setIngredientAdvancedOpen(isOpen) {
   if (!ingredientAdvanced || !ingredientAdvancedToggle) return;
@@ -463,7 +346,7 @@ function renderOverheadItems() {
   updateSubmitState();
 }
 
-function updateCostSummary() {
+export function updateCostSummary() {
   if (!summaryTotal || !summaryUnit || !summarySuggested || !summaryYield || !summaryProfit || !summaryProfitType) {
     return;
   }
@@ -540,7 +423,7 @@ function updateCostSummary() {
   }
 }
 
-function updateSubmitState() {
+export function updateSubmitState() {
   if (!createSubmit) return;
   const { hasName, hasYield, hasItems } = getRecipeFormState();
   const shouldEnable = hasName && hasYield && hasItems;
@@ -566,23 +449,6 @@ function updateCalcStatus() {
     calcStatus.textContent = 'Dados suficientes para calcular.';
     calcStatus.classList.add('is-ready');
   }
-}
-
-function bindQuickSuggestions(container, input, mask, beforeApply) {
-  if (!container || !input) return;
-  container.addEventListener('click', (event) => {
-    const btn = event.target.closest('button[data-value]');
-    if (!btn) return;
-    const value = Number(btn.dataset.value);
-    if (!Number.isFinite(value)) return;
-    if (typeof beforeApply === 'function') {
-      beforeApply();
-    }
-    setMaskedValue(input, value, mask);
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    updateCostSummary();
-    updateSubmitState();
-  });
 }
 
 function ensureDefaultComponent() {

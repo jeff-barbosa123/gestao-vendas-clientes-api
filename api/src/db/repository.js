@@ -1,5 +1,5 @@
 const { runInTx, isUuid, toNumber } = require("./repositories/shared");
-const { getUserByEmail, getUserByUsername, getUserByIdentifier, getUserById, createUser, setEmailVerificationToken, verifyEmailByTokenHash, updateUserLogin, updateUserPassword, updateUserProfile, createPasswordReset, getPasswordResetByTokenHash, markPasswordResetUsed } = require("./repositories/users");
+const { getUserByGoogleSub, linkGoogleAccount, getUserByEmail, getUserByUsername, getUserByIdentifier, getUserById, createUser, setEmailVerificationToken, verifyEmailByTokenHash, updateUserLogin, updateUserPassword, updateUserProfile, createPasswordReset, getPasswordResetByTokenHash, markPasswordResetUsed } = require("./repositories/users");
 const { listCustomers, getCustomerById, customerEmailExists, customerCpfExists, customerCnpjExists, createCustomer, updateCustomer, deleteCustomer } = require("./repositories/customers");
 const { listProducts, getProductById, createProduct, updateProduct, deleteProduct, adjustProductStock } = require("./repositories/products");
 const { listRecipes, getRecipeById, createRecipe, updateRecipe, softDeleteRecipe } = require("./repositories/recipes");
@@ -30,6 +30,8 @@ module.exports = {
   addSaleAudit,
   listSaleAudit,
   listLowStockIngredients,
+  getUserByGoogleSub,
+  linkGoogleAccount,
   getUserByEmail,
   getUserByUsername,
   getUserByIdentifier,

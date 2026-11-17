@@ -29,7 +29,51 @@ function clearAuthCookies(res) {
   res.clearCookie('sgvc_token_exp', { ...opts, httpOnly: false });
 }
 
+const googleAuth = require("../services/auth/googleAuth");
+const OAUTH_COOKIE = "sgvc_oauth";
+const oauthCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/api/auth/google",
+});
+const googleFail = (res, code) => res.redirect(302, "/?google_error=" + encodeURIComponent(code));
+const safeEqual = (a, b) => {
+  const x = Buffer.from(String(a));
+  const y = Buffer.from(String(b));
+  return x.length === y.length && require("crypto").timingSafeEqual(x, y);
+};
+
 module.exports = {
+  providers: (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    return res.json({ google: googleAuth.isEnabled() });
+  },
+
+  googleStart: (_req, res) => {
+    if (!googleAuth.isEnabled()) return res.status(404).json({ error: "Login com Google nao configurado" });
+    const { url, cookie } = googleAuth.createAuthRequest();
+    res.cookie(OAUTH_COOKIE, cookie, { ...oauthCookieOptions(), maxAge: 10 * 60 * 1000 });
+    return res.redirect(302, url);
+  },
+
+  googleCallback: async (req, res) => {
+    if (!googleAuth.isEnabled()) return googleFail(res, "disabled");
+    const [state, verifier, nonce] = String((req.cookies && req.cookies[OAUTH_COOKIE]) || "").split(".");
+    res.clearCookie(OAUTH_COOKIE, oauthCookieOptions());
+    if (req.query.error) return googleFail(res, "cancelled");
+    if (!state || !verifier || !nonce || !req.query.code || !safeEqual(state, req.query.state || "")) {
+      return googleFail(res, "invalid_state");
+    }
+    try {
+      const { token, refreshToken, exp } = await googleAuth.signIn({ code: String(req.query.code), verifier, nonce });
+      setAuthCookies(res, token, refreshToken, exp);
+      return res.redirect(302, "/dashboard.html");
+    } catch (err) {
+      return googleFail(res, err && err.code ? err.code : "failed");
+    }
+  },
+
   login: async (req, res, next) => {
     try {
       const { token, refreshToken, user, exp, jti, refreshJti } = await authService.login(

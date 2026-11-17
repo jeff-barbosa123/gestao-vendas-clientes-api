@@ -45,11 +45,13 @@ async function createUser(data) {
     tentativas_falha: data.tentativasFalha || 0,
     blocked: !!data.blocked,
     username: data.username || null,
+    google_sub: data.googleSub || null,
+    auth_provider: data.authProvider || "local",
   };
   const result = await query(
     `INSERT INTO users
-      (id, email, password, name, email_verified, email_verification_token, status_usuario, data_ultimo_login, tentativas_falha, blocked, username, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())
+      (id, email, password, name, email_verified, email_verification_token, status_usuario, data_ultimo_login, tentativas_falha, blocked, username, google_sub, auth_provider, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NOW())
      RETURNING *`,
     [
       payload.id,
@@ -63,9 +65,24 @@ async function createUser(data) {
       payload.tentativas_falha,
       payload.blocked,
       payload.username,
+      payload.google_sub,
+      payload.auth_provider,
     ]
   );
   return result.rows[0];
+}
+
+async function getUserByGoogleSub(sub) {
+  const result = await query("SELECT * FROM users WHERE google_sub = $1", [sub]);
+  return result.rows[0] || null;
+}
+
+async function linkGoogleAccount(id, sub) {
+  const result = await query(
+    "UPDATE users SET google_sub = $2, email_verified = TRUE, updated_at = NOW() WHERE id = $1 RETURNING *",
+    [id, sub]
+  );
+  return result.rows[0] || null;
 }
 
 async function setEmailVerificationToken(userId, tokenHash) {
@@ -168,6 +185,8 @@ async function markPasswordResetUsed(id) {
 }
 
 module.exports = {
+  getUserByGoogleSub,
+  linkGoogleAccount,
   getUserByEmail,
   getUserByUsername,
   getUserByIdentifier,

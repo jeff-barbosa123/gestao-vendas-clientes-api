@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-17 - Login social com Google
+
+- Migracao 0007: `users.password` passa a aceitar NULL; novas colunas `google_sub` (unico) e `auth_provider`; CHECK garante senha OU google_sub.
+- OAuth 2.0 Authorization Code com PKCE (S256), state e nonce; ID token validado com `google-auth-library` (audience, nonce, e-mail verificado).
+- Rotas: `GET /api/auth/google`, `GET /api/auth/google/callback`, `GET /api/auth/providers`. Sessao por cookies HttpOnly (mesmo fluxo do login por senha).
+- Conta local com o mesmo e-mail e vinculada ao Google (senha e dados preservados); usuario novo nasce sem senha e com e-mail verificado; bloqueado nao entra.
+- Tela de login: botao "Continuar com o Google" (tokens do tema Grafite Noturno, cores da marca Google em `base.css :root`); aparece so se `GOOGLE_CLIENT_ID/SECRET` estiverem definidos.
+- Testes: Mocha US019 (10) e Cypress google-login (6). Mocha 423, Cypress 371.
+
 ## 2026-11-17 - Suite sem pendentes + upgrades de seguranca
 
 - Removidos 35 `it.skip` vazios (PERF-REP, PERF-REC, PERF-SIM, API-SIM-024, API-VIN-018).

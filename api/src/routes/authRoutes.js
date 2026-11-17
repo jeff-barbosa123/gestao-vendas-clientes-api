@@ -95,6 +95,15 @@ router
   .post(authenticate, rateLimit({ windowMs: 15 * 60 * 1000, max: 5, message: "Muitas tentativas. Tente novamente em 15 minutos." }), authController.changePassword)
   .all(methodNotAllowed);
 
+const googleRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: "Muitas tentativas de login com Google. Tente novamente em 1 minuto.",
+});
+router.get("/providers", authController.providers);
+router.get("/google", googleRateLimit, authController.googleStart);
+router.get("/google/callback", googleRateLimit, authController.googleCallback);
+
 router.post("/register", registerRateLimit, authController.register);
 
 module.exports = router;

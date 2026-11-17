@@ -27,7 +27,7 @@ function buildFinancialAggregates(sales) {
 
 function filterByOwner(list, user) {
   if (!user || !user.id) return list;
-  return list.filter((item) => !item.owner_id || item.owner_id === user.id);
+  return list.filter((item) => item.owner_id === user.id);
 }
 
 function filterSalesByDate(sales, startDate, endDate) {

@@ -6,27 +6,14 @@ import { messageBox } from './dom.js';
 import { state } from './state.js';
 import { apiRequest } from '../shared/http.js';
 import { setFieldError, clearFieldError } from '../shared/form-errors.js';
-export { apiRequest, setFieldError, clearFieldError };
+import { ensureAuthOrRedirect } from '../shared/auth.js';
+export { apiRequest, setFieldError, clearFieldError, ensureAuthOrRedirect };
 
 export function escapeHtml(value) {
   return window.SGVC.utils.escapeHtml(value);
 }
 
 
-
-export async function ensureAuthOrRedirect() {
-  try {
-    const user = await window.apiGetMe();
-    if (!user) {
-      window.location.href = '/';
-      return null;
-    }
-    return user;
-  } catch (_err) {
-    window.location.href = '/';
-    return null;
-  }
-}
 
 export function showMessage(text, type) {
   if (!messageBox) return;

@@ -7,6 +7,7 @@ import { state } from './state.js';
 import { apiRequest } from './core.js';
 import { updateProducedPricing } from './pricing.js';
 import { renderPage } from './list.js';
+import { normalizeSearch } from '../shared/search.js';
 
 function updateRecipeSelect(list = state.recipesCache) {
   if (!createRecipeId) return;
@@ -47,13 +48,6 @@ function buildRecipeFuse() {
     keys: ['name', 'nomeReceita'],
     threshold: 0.3,
   });
-}
-
-function normalizeSearch(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
 }
 
 export function applyRecipeSearch() {

@@ -5,6 +5,7 @@ import { RECIPE_SEARCH_LIMIT } from './constants.js';
 import { recipeSearch, recipeSearchHelp, recipeSelect } from './dom.js';
 import { state } from './state.js';
 import { apiRequest } from './core.js';
+import { normalizeSearch } from '../shared/search.js';
 
 function updateRecipeSelect(list = state.recipesCache) {
   if (!recipeSelect) return;
@@ -40,13 +41,6 @@ function buildRecipeFuse() {
     keys: ['name', 'nomeReceita'],
     threshold: 0.3,
   });
-}
-
-function normalizeSearch(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
 }
 
 export function applyRecipeSearch() {

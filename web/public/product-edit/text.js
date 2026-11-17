@@ -1,46 +1,13 @@
 /**
  * Validação e padronização do nome do produto.
  */
+import { normalizeSpaces, standardizeText } from '../shared/text.js';
+export { standardizeText };
 export function validateName(value) {
   const trimmed = String(value || '').trim();
   if (trimmed.length < 3 || trimmed.length > 120) return false;
   const nameRegex = /^[A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff0-9\s'\/-]+$/;
   return nameRegex.test(trimmed);
-}
-
-function normalizeSpaces(value) {
-  return String(value || '').replace(/\s+/g, ' ').trim();
-}
-
-function toTitleCase(value) {
-  const lower = normalizeSpaces(value).toLowerCase();
-  const lowerWords = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'para', 'em', 'na', 'no', 'nas', 'nos', 'com']);
-  return lower
-    .split(' ')
-    .map((word, index) => {
-      if (!word) return '';
-      if (index > 0 && lowerWords.has(word)) return word;
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(' ');
-}
-
-export function standardizeText(value, type) {
-  const normalized = normalizeSpaces(value);
-  if (!normalized) return '';
-  if (type === 'name') {
-    if (normalized === normalized.toUpperCase() || normalized === normalized.toLowerCase()) {
-      return toTitleCase(normalized);
-    }
-    return normalized;
-  }
-  if (type === 'description') {
-    if (normalized === normalized.toLowerCase()) {
-      return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    }
-    return normalized;
-  }
-  return normalized;
 }
 
 function getNameGuidance(value) {

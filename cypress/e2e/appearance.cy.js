@@ -1,0 +1,129 @@
+describe('Aparência (White-Label)', () => {
+  const DEFAULT_DTO = {
+    companyName: null,
+    primaryColor: '#4f46e5',
+    backgroundColor: '#3f73c8',
+    textColor: '#0f172a',
+    hasLogo: false,
+    logoUrl: null,
+    isDefault: true,
+  };
+
+  const PNG = {
+    mimeType: 'image/png',
+    fileName: 'logo.png',
+    contents: Cypress.Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+      'base64'
+    ),
+  };
+
+  beforeEach(() => {
+    cy.stubAuthenticated();
+    cy.intercept('GET', '**/api/branding', { statusCode: 200, body: DEFAULT_DTO }).as('getBranding');
+    cy.visit('/appearance.html');
+    cy.wait('@getBranding');
+  });
+
+  it('carrega os valores padrão e mostra contraste AA aprovado', () => {
+    cy.get('#primary-color-hex').should('have.value', '#4f46e5');
+    cy.get('#background-color-hex').should('have.value', '#3f73c8');
+    cy.get('#text-color-hex').should('have.value', '#0f172a');
+    cy.get('#primary-color-badge').should('contain', 'AA aprovado');
+    cy.get('#appearance-save').should('not.be.disabled');
+  });
+
+  it('mostra contraste insuficiente e bloqueia o salvamento', () => {
+    cy.get('#primary-color-hex').clear().type('#ffeb3b');
+    cy.get('#primary-color-badge').should('contain', 'abaixo de AA');
+    cy.get('#appearance-save').should('be.disabled');
+  });
+
+  it('valida o formato da cor', () => {
+    cy.get('#text-color-hex').clear().type('azul');
+    cy.get('#text-color-badge').should('contain', 'Use #RRGGBB');
+    cy.get('#appearance-save').should('be.disabled');
+  });
+
+  it('atualiza a prévia ao trocar cores e nome', () => {
+    cy.get('#company-name').type('Doces da Ana');
+    cy.get('#background-color-hex').clear().type('#1e3a8a');
+    cy.get('#preview-name').should('have.text', 'Doces da Ana');
+    cy.get('#appearance-preview').should('have.attr', 'style').and('contain', '#1e3a8a');
+  });
+
+  it('salva a paleta enviando os 3 tons e o nome', () => {
+    cy.intercept('PUT', '**/api/branding', (req) => {
+      expect(req.body).to.deep.include({
+        companyName: 'Doces da Ana',
+        primaryColor: '#1d4ed8',
+        backgroundColor: '#1e3a8a',
+        textColor: '#111827',
+      });
+      req.reply({ statusCode: 200, body: { ...DEFAULT_DTO, companyName: 'Doces da Ana', primaryColor: '#1d4ed8', isDefault: false } });
+    }).as('putBranding');
+    cy.get('#company-name').type('Doces da Ana');
+    cy.get('#primary-color-hex').clear().type('#1d4ed8');
+    cy.get('#background-color-hex').clear().type('#1e3a8a');
+    cy.get('#text-color-hex').clear().type('#111827');
+    cy.get('#appearance-save').click();
+    cy.wait('@putBranding');
+    cy.get('#appearance-form-message').should('contain', 'Aparência salva');
+  });
+
+  it('exibe o erro do servidor quando o contraste é recusado', () => {
+    cy.intercept('PUT', '**/api/branding', {
+      statusCode: 422,
+      body: { success: false, code: 'CONTRAST_AA', message: 'Paleta fora do contraste mínimo WCAG AA', error: 'Paleta fora do contraste mínimo WCAG AA' },
+    }).as('putRejeitado');
+    cy.get('#appearance-save').click();
+    cy.wait('@putRejeitado');
+    cy.get('#appearance-form-message').should('contain', 'contraste');
+  });
+
+  it('envia o logotipo em base64 e mostra a imagem', () => {
+    cy.intercept('POST', '**/api/branding/logo', (req) => {
+      expect(req.body.contentType).to.equal('image/png');
+      expect(req.body.data).to.match(/^iVBOR/);
+      req.reply({ statusCode: 200, body: { ...DEFAULT_DTO, hasLogo: true, logoUrl: '/api/branding/logo?v=1' } });
+    }).as('postLogo');
+    cy.intercept('GET', '**/api/branding/logo?v=1', { statusCode: 200, headers: { 'content-type': 'image/png' }, body: PNG.contents }).as('getLogo');
+    cy.get('#logo-file').selectFile(PNG, { force: true });
+    cy.wait('@postLogo');
+    cy.get('#logo-message').should('contain', 'Logotipo atualizado');
+    cy.get('#logo-preview').should('not.have.attr', 'hidden');
+    cy.get('#logo-remove').should('not.have.attr', 'hidden');
+  });
+
+  it('recusa arquivo de tipo inválido sem chamar a API', () => {
+    cy.intercept('POST', '**/api/branding/logo', cy.spy().as('logoCall'));
+    cy.get('#logo-file').selectFile({ contents: Cypress.Buffer.from('texto'), fileName: 'a.txt', mimeType: 'text/plain' }, { force: true });
+    cy.get('#logo-message').should('contain', 'Formato não suportado');
+    cy.get('@logoCall').should('not.have.been.called');
+  });
+
+  it('recusa logotipo acima de 512 KB sem chamar a API', () => {
+    cy.get('#logo-file').selectFile(
+      { contents: Cypress.Buffer.alloc(512 * 1024 + 1), fileName: 'grande.png', mimeType: 'image/png' },
+      { force: true }
+    );
+    cy.get('#logo-message').should('contain', '512 KB');
+  });
+
+  it('o dashboard exibe o botão Aparência e leva para a página', () => {
+    cy.intercept('GET', '**/api/branding', { statusCode: 200, body: { ...DEFAULT_DTO, companyName: 'Doces da Ana', hasLogo: true, logoUrl: '/api/branding/logo?v=1' } });
+    cy.visit('/dashboard.html');
+    cy.get('#brand-name').should('contain', 'Doces da Ana');
+    cy.get('#brand-logo').should('have.attr', 'src', '/api/branding/logo?v=1');
+    cy.get('#appearance-btn').click();
+    cy.location('pathname').should('eq', '/appearance.html');
+  });
+
+  it('o servidor web entrega /theme.css como CSS (tema padrão para visitante)', () => {
+    cy.request('/theme.css').then((res) => {
+      expect(res.status).to.equal(200);
+      expect(res.headers['content-type']).to.match(/text\/css/);
+      expect(res.body).to.not.include('--accent');
+    });
+  });
+});

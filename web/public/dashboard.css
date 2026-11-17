@@ -592,3 +592,15 @@ a.dashboard-alert-button:hover {
 .dashboard-alert-list li span:last-child {
   white-space: nowrap;
 }
+
+.brand-logo {
+  max-height: 32px;
+  max-width: 120px;
+  object-fit: contain;
+  margin-right: 8px;
+}
+
+.brand-name {
+  font-weight: 700;
+  margin-right: 8px;
+}

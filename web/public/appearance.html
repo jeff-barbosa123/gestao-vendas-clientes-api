@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Apar&ecirc;ncia</title>
+    <meta name="description" content="Personalize logotipo e cores do painel da sua empresa." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/theme.css" />
+    <link rel="stylesheet" href="/static/profile.css" />
+    <link rel="stylesheet" href="/static/appearance.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/utils.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="profile">
+          <header class="profile-header">
+            <div>
+              <h3 class="profile-title">Apar&ecirc;ncia</h3>
+              <p class="profile-subtitle">
+                Defina o logotipo e as cores do painel da sua empresa. As cores precisam ter contraste m&iacute;nimo WCAG AA (4,5:1).
+              </p>
+            </div>
+            <nav class="profile-actions" aria-label="A&ccedil;&otilde;es da p&aacute;gina">
+              <button class="button is-light is-small" id="appearance-back" type="button">Voltar ao dashboard</button>
+            </nav>
+          </header>
+
+          <div class="profile-message" id="appearance-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="profile-grid">
+            <div class="panel-card">
+              <h4 class="panel-title">Identidade</h4>
+              <form id="appearance-form" novalidate>
+                <div class="field">
+                  <label class="label" for="company-name">Nome da empresa</label>
+                  <input class="input" id="company-name" type="text" maxlength="80" autocomplete="organization" />
+                </div>
+
+                <div class="field color-field" data-field="primaryColor">
+                  <label class="label" for="primary-color">Cor prim&aacute;ria (bot&otilde;es e destaques)</label>
+                  <div class="color-row">
+                    <input type="color" id="primary-color" aria-label="Seletor da cor prim&aacute;ria" />
+                    <input class="input" id="primary-color-hex" type="text" maxlength="7" spellcheck="false" aria-label="C&oacute;digo da cor prim&aacute;ria" />
+                    <span class="contrast-badge" id="primary-color-badge" role="status" aria-live="polite"></span>
+                  </div>
+                </div>
+
+                <div class="field color-field" data-field="backgroundColor">
+                  <label class="label" for="background-color">Cor de fundo (cabe&ccedil;alhos e telas)</label>
+                  <div class="color-row">
+                    <input type="color" id="background-color" aria-label="Seletor da cor de fundo" />
+                    <input class="input" id="background-color-hex" type="text" maxlength="7" spellcheck="false" aria-label="C&oacute;digo da cor de fundo" />
+                    <span class="contrast-badge" id="background-color-badge" role="status" aria-live="polite"></span>
+                  </div>
+                </div>
+
+                <div class="field color-field" data-field="textColor">
+                  <label class="label" for="text-color">Cor do texto</label>
+                  <div class="color-row">
+                    <input type="color" id="text-color" aria-label="Seletor da cor do texto" />
+                    <input class="input" id="text-color-hex" type="text" maxlength="7" spellcheck="false" aria-label="C&oacute;digo da cor do texto" />
+                    <span class="contrast-badge" id="text-color-badge" role="status" aria-live="polite"></span>
+                  </div>
+                </div>
+
+                <div class="profile-message is-inline" id="appearance-form-message" role="status" aria-live="polite" hidden></div>
+
+                <div class="appearance-actions">
+                  <button class="button is-link" type="submit" id="appearance-save">Salvar apar&ecirc;ncia</button>
+                  <button class="button is-light" type="button" id="appearance-reset">Restaurar padr&atilde;o</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <h4 class="panel-title">Logotipo</h4>
+              <p class="help">PNG, JPG ou WebP, at&eacute; 512 KB.</p>
+              <div class="logo-box">
+                <img id="logo-preview" alt="Logotipo da empresa" hidden />
+                <p id="logo-empty" class="help">Nenhum logotipo enviado.</p>
+              </div>
+              <div class="field">
+                <label class="label" for="logo-file">Enviar novo logotipo</label>
+                <input class="input" id="logo-file" type="file" accept="image/png,image/jpeg,image/webp" />
+              </div>
+              <div class="profile-message is-inline" id="logo-message" role="status" aria-live="polite" hidden></div>
+              <button class="button is-light" type="button" id="logo-remove" hidden>Remover logotipo</button>
+
+              <h4 class="panel-title appearance-preview-title">Pr&eacute;via</h4>
+              <div class="appearance-preview" id="appearance-preview" aria-label="Pr&eacute;via das cores">
+                <div class="appearance-preview-header">
+                  <img id="preview-logo" alt="" hidden />
+                  <strong id="preview-name">Sua empresa</strong>
+                </div>
+                <div class="appearance-preview-body">
+                  <p>Texto de exemplo sobre superf&iacute;cie branca.</p>
+                  <button type="button" class="appearance-preview-button" tabindex="-1">Bot&atilde;o prim&aacute;rio</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/static/appearance.js" defer></script>
+  </body>
+</html>

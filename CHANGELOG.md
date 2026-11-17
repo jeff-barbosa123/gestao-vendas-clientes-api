@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-17 - Multiempresa (owner_id) e White-Label (Fase 3)
+
+### Novo
+- Migracao 0004: owner_id NOT NULL e FK para users em customers, products, recipes, sales, orders, ingredients e ingredient_stock_movements. Linhas legadas sem dono passam para a conta mais antiga. filterByOwner do dashboard deixou de tratar owner nulo como visivel. Testes DB-owner.
+- Migracao 0005: tabela company_settings (por owner_id): nome, 3 cores (primaria, fundo, texto) e logo (BYTEA).
+- API /api/branding: GET/PUT/DELETE; POST/GET/DELETE /logo (PNG/JPG/WebP ate 512 KB, validacao por magic bytes, SVG recusado); GET /theme.css (publico, tema padrao para visitante). Paleta validada em WCAG AA (4,5:1 contra branco) com 422 CONTRAST_AA e detalhes.
+- Web: /theme.css (proxy para a API) carregado apos base.css em todas as paginas, sobrescrevendo --accent, --accent-dark, --bg, --bg-dark, --ink e --slate-900. Tela appearance.html (cores com contraste ao vivo, previa, upload/remocao de logo), botao Aparencia e logo/nome no dashboard.
+- Testes: US015-branding (11, Mocha) e appearance.cy.js (11, Cypress).
+
+### Observacao
+- A tela de login nao aplica o tema da empresa (ainda nao ha sessao para identificar a empresa). Logo/cores nos PDFs sao a Fase 4.
+
 ## 2026-11-17 - Design tokens (Fase 2)
 
 ### Novo

@@ -19,7 +19,7 @@ const API_ORIGIN = (() => {
 // Proxy /api/* requests to backend API (http://localhost:3000) in development.
 // This makes the browser see the API as same-origin (localhost:4000),
 // allowing SameSite=lax cookies to work without HTTPS.
-app.use('/api', (req, res) => {
+function proxyToApi(req, res) {
   try {
     const target = new URL(API_BASE);
     const isHttps = target.protocol === 'https:';
@@ -79,6 +79,14 @@ app.use('/api', (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'PROXY_ERROR', message: err.message });
   }
+}
+
+app.use('/api', proxyToApi);
+
+// Tema dinamico da empresa (cores): mesma origem, cookie de sessao repassado a API.
+app.get('/theme.css', (req, res) => {
+  req.originalUrl = '/api/branding/theme.css';
+  proxyToApi(req, res);
 });
 
 app.disable('x-powered-by');

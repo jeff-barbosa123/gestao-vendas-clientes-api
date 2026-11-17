@@ -19,6 +19,7 @@ const holidayRoutes = require('./holidayRoutes');
 const barcodeRoutes = require('./barcodeRoutes');
 const exportRoutes = require('./exportRoutes');
 const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
+const brandingRoutes = require('./brandingRoutes');
 
 // Guardas globais de entrada: corpo JSON precisa ser objeto; query sem arrays/objetos aninhados
 router.use(requireObjectBody);
@@ -41,5 +42,6 @@ router.use('/holidays', holidayRoutes);
 router.use('/barcodes', barcodeRoutes);
 router.use('/export', exportRoutes);
 router.use('/errors/analytics', errorAnalyticsRoutes);
+router.use('/branding', brandingRoutes);
 
 module.exports = router;

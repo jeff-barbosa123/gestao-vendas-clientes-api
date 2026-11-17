@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-17 - PDFs com a marca da empresa (Fase 4)
+
+### Novo
+- Helper api/src/services/pdfBranding.js (loadPdfBranding, drawBrandHeader) aplicado nos 3 geradores pdfkit: lista de clientes (exportController), faturamento (reportsService.exportRevenue) e ficha tecnica (recipes/exportRenderer). Cabecalho com logo, nome da empresa, linha e titulo na cor primaria; texto do corpo na cor de texto; cabecalho da tabela da ficha tecnica com tom da cor primaria.
+- Fallback fiel: sem configuracao, ou so com valores padrao (sem nome nem logo), o cabecalho e exatamente o anterior (titulo centralizado).
+- Limite: pdfkit so embute PNG e JPEG; logo WebP aparece no painel mas nao no PDF (o nome continua). Falha ao carregar a marca nunca derruba a exportacao.
+- Testes: US016-pdf-branding (9, Mocha).
+
 ## 2026-11-17 - Multiempresa (owner_id) e White-Label (Fase 3)
 
 ### Novo

@@ -10,6 +10,7 @@ const { parsePagination } = require('../utils/pagination');
 
 // PDFDocument está disponível (já instalado no package.json)
 const PDFDocument = require('pdfkit');
+const { loadPdfBranding, drawBrandHeader } = require('../services/pdfBranding');
 
 /**
  * Exporta clientes
@@ -116,12 +117,13 @@ async function exportCustomers(req, res, next) {
         return next(err);
       }
 
+      const branding = await loadPdfBranding(req.user && req.user.id);
       const doc = new PDFDocument({ size: 'A4', margin: 50 });
       const chunks = [];
       doc.on('data', (chunk) => chunks.push(chunk));
 
       // Cabeçalho
-      doc.fontSize(18).text('Lista de Clientes', { align: 'center' });
+      drawBrandHeader(doc, branding, 'Lista de Clientes');
       doc.moveDown(0.5);
       doc.fontSize(10).text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, { align: 'right' });
       doc.moveDown();

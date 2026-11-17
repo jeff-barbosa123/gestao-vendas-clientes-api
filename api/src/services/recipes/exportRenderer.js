@@ -1,7 +1,8 @@
 const PDFDocument = require("pdfkit");
+const { loadPdfBranding, drawBrandHeader } = require("../pdfBranding");
 const { normalizeIngredients } = require("./normalizers");
 
-async function renderRecipeExport(recipe, format = "csv") {
+async function renderRecipeExport(recipe, format = "csv", options = {}) {
   
   // Recalcular os ingredientes para garantir que os custos estão corretos
   // (importante para receitas antigas que foram salvas com unidades mistas)
@@ -82,11 +83,12 @@ async function renderRecipeExport(recipe, format = "csv") {
     const laborTotal = Number.isFinite(recipe.labor) ? recipe.labor : 0;
     const generatedAt = new Date().toLocaleString("pt-BR");
 
+    const branding = await loadPdfBranding(options.ownerId);
     const doc = new PDFDocument({ size: "A4", margin: 50 });
     const chunks = [];
     doc.on("data", (c) => chunks.push(c));
 
-    doc.fontSize(18).text("Ficha Técnica", { align: "center" });
+    drawBrandHeader(doc, branding, "Ficha Técnica");
     doc.moveDown(0.5);
     doc.fontSize(10).text(`Gerado em: ${generatedAt}`, { align: "right" });
     doc.moveDown();
@@ -142,9 +144,13 @@ async function renderRecipeExport(recipe, format = "csv") {
       const y = doc.y;
       doc.save();
       doc.fillOpacity(1);
-      doc.rect(tableX, y - 2, tableWidth, rowHeight).fill("#e6e6e6");
+      if (branding.custom) {
+        doc.fillColor(branding.primary).fillOpacity(0.15).rect(tableX, y - 2, tableWidth, rowHeight).fill();
+      } else {
+        doc.rect(tableX, y - 2, tableWidth, rowHeight).fill("#e6e6e6");
+      }
       doc.restore();
-      doc.font("Helvetica-Bold").fillColor("#000");
+      doc.font("Helvetica-Bold").fillColor(branding.text);
       const headers = ["Ingrediente", "Qtd", "Un", "Custo un.", "Custo total"];
       headers.forEach((text, idx) => {
         doc.text(text, colX[idx], y, {
@@ -162,7 +168,7 @@ async function renderRecipeExport(recipe, format = "csv") {
         drawHeader();
       }
       const y = doc.y;
-      doc.font("Helvetica").fillColor("#000");
+      doc.font("Helvetica").fillColor(branding.text);
       values.forEach((text, idx) => {
         doc.text(text, colX[idx], y, {
           width: colWidths[idx],

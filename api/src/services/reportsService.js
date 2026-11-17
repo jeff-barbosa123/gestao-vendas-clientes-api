@@ -1,4 +1,5 @@
 const PDFDocument = require("pdfkit");
+const { loadPdfBranding, drawBrandHeader } = require("./pdfBranding");
 const repo = require("../db/repository");
 const {
   resolveTemporalRange,
@@ -139,10 +140,11 @@ async function exportRevenue({ start, end, day, week, month, year, format = "csv
   }
 
   if (normalizedFormat === "pdf") {
+    const branding = await loadPdfBranding(resolveUserId(userId, user));
     const doc = new PDFDocument({ size: "A4", margin: 50 });
     const chunks = [];
     doc.on("data", (c) => chunks.push(c));
-    doc.fontSize(18).text("Relatório de Faturamento", { align: "center" });
+    drawBrandHeader(doc, branding, "Relatório de Faturamento");
     doc.moveDown();
     const rows = Array.isArray(data) ? data : [{ period: "total", total: data.total }];
     doc.fontSize(12);

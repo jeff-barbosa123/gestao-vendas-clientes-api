@@ -312,7 +312,7 @@ async function recalculateByIngredient(ingredientId, user) {
 
 async function exportRecipe(id, format = "csv", user) {
   const recipe = await getById(id, user);
-  return renderRecipeExport(recipe, format);
+  return renderRecipeExport(recipe, format, { ownerId: user && user.id });
 }
 
 module.exports = {

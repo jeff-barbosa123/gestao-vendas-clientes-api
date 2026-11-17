@@ -5,7 +5,8 @@ const { DEFAULTS } = require("./brandingService");
 
 const PLAIN = Object.freeze({ custom: false, companyName: null, primary: "#000000", text: "#000", logo: null });
 
-// pdfkit so embute PNG e JPEG; WebP fica de fora do PDF (continua valido no painel).
+// pdfkit so embute PNG e JPEG. Logos WebP sao convertidos para PNG no upload (brandingService);
+// o filtro cobre linhas antigas que ainda estejam em outro formato.
 const PDF_IMAGE_MIMES = new Set(["image/png", "image/jpeg"]);
 
 async function loadPdfBranding(ownerId) {

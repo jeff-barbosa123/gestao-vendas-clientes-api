@@ -2,11 +2,10 @@ const { expect } = require('chai');
 const { getClient } = require('../utils/httpClient');
 const { pool } = require('../../src/db');
 const { loadPdfBranding, drawBrandHeader } = require('../../src/services/pdfBranding');
+const sharp = require('sharp');
 const { renderRecipeExport } = require('../../src/services/recipes/exportRenderer');
 
 const PNG_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
-// WebP minimo valido (cabecalho RIFF....WEBP)
-const WEBP_B64 = Buffer.concat([Buffer.from('RIFF'), Buffer.from([0x1a, 0, 0, 0]), Buffer.from('WEBPVP8 '), Buffer.alloc(24)]).toString('base64');
 
 const RECIPE = {
   name: 'Bolo de Cenoura',
@@ -105,13 +104,29 @@ describe('Fase 4 - PDFs com a marca da empresa', () => {
       expect(doc.calls.find((c) => c[0] === 'text' && c[1] === 'Ficha Tecnica')).to.be.an('array');
     });
 
-    it('PDF-004 | Logo WebP nao entra no PDF (pdfkit so embute PNG/JPEG), mas o nome continua', async () => {
-      const up = await http.post('/api/branding/logo').set(auth()).send({ data: WEBP_B64 });
+    it('PDF-004 | Logo WebP e convertido para PNG no upload e aparece no PDF', async () => {
+      const webp = await sharp({ create: { width: 64, height: 32, channels: 3, background: '#1d4ed8' } }).webp().toBuffer();
+      expect(webp.subarray(8, 12).toString()).to.equal('WEBP');
+      const up = await http.post('/api/branding/logo').set(auth()).send({ contentType: 'image/webp', data: webp.toString('base64') });
       expect(up.status, JSON.stringify(up.body)).to.equal(200);
+      expect(up.body.hasLogo).to.equal(true);
+      const img = await http.get('/api/branding/logo').set(auth()).buffer(true).parse(buf);
+      expect(img.headers['content-type']).to.equal('image/png');
+      expect(img.body.subarray(0, 8).toString('hex')).to.equal('89504e470d0a1a0a');
       const b = await loadPdfBranding(ownerId);
       expect(b.custom).to.equal(true);
-      expect(b.logo).to.equal(null);
+      expect(Buffer.isBuffer(b.logo)).to.equal(true);
+      const comLogo = await renderRecipeExport(RECIPE, 'pdf', { ownerId });
+      const semLogo = await renderRecipeExport(RECIPE, 'pdf', { ownerId: null });
+      expect(comLogo.body.length).to.be.greaterThan(semLogo.body.length);
       await http.post('/api/branding/logo').set(auth()).send({ data: PNG_B64 });
+    });
+
+    it('PDF-004b | WebP corrompido (cabecalho valido, conteudo invalido) retorna 400', async () => {
+      const lixo = Buffer.concat([Buffer.from('RIFF'), Buffer.from([0x1a, 0, 0, 0]), Buffer.from('WEBPVP8 '), Buffer.alloc(24)]);
+      const r = await http.post('/api/branding/logo').set(auth()).send({ data: lixo.toString('base64') });
+      expect(r.status).to.equal(400);
+      expect(r.body.code).to.equal('INVALID_LOGO');
     });
 
     it('PDF-005 | Logo corrompido nao derruba o cabecalho', () => {

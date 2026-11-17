@@ -105,6 +105,20 @@ function detectImageMime(buf) {
   return null;
 }
 
+// WebP e convertido para PNG no upload: o pdfkit so embute PNG/JPEG, e assim o mesmo arquivo serve painel e PDFs.
+// Limita a 1024px de largura/altura (sem ampliar) para o PNG resultante nao crescer demais.
+async function webpToPng(buffer) {
+  try {
+    const sharp = require("sharp");
+    return await sharp(buffer, { failOn: "error" })
+      .resize({ width: 1024, height: 1024, fit: "inside", withoutEnlargement: true })
+      .png()
+      .toBuffer();
+  } catch (_err) {
+    throw httpError(400, "Nao foi possivel ler a imagem WebP (arquivo corrompido)", "INVALID_LOGO");
+  }
+}
+
 async function uploadLogo(ownerId, body) {
   const raw = body && body.data;
   if (typeof raw !== "string" || !raw) throw httpError(400, "Envie a imagem em base64 no campo data", "INVALID_LOGO");
@@ -117,6 +131,9 @@ async function uploadLogo(ownerId, body) {
   if (!mime) throw httpError(415, "Formato nao suportado: use PNG, JPG ou WebP", "LOGO_UNSUPPORTED_TYPE");
   if (body.contentType && body.contentType !== mime) {
     throw httpError(415, "O conteudo da imagem nao corresponde ao tipo informado", "LOGO_UNSUPPORTED_TYPE");
+  }
+  if (mime === "image/webp") {
+    return toDto(await repo.setLogo(ownerId, await webpToPng(buffer), "image/png"));
   }
   return toDto(await repo.setLogo(ownerId, buffer, mime));
 }

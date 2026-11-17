@@ -1,20 +1,22 @@
 const repo = require("../db/repositories/branding");
-const { isHexColor, normalizeHex, contrastRatio, darken, AA_NORMAL_TEXT } = require("../utils/contrast");
+const { isHexColor, normalizeHex, contrastRatio, darken, ensureContrastOn, AA_NORMAL_TEXT } = require("../utils/contrast");
 
 const DEFAULTS = Object.freeze({
   primaryColor: "#4f46e5",
-  backgroundColor: "#3f73c8",
-  textColor: "#0f172a",
+  backgroundColor: "#0b1220",
+  textColor: "#f1f5f9",
 });
+// Tema base Grafite Noturno: superficie dos cards (--surface em base.css) e texto branco sobre botoes/cabecalhos.
 const WHITE = "#ffffff";
+const SURFACE_DARK = "#111c33";
 const MAX_LOGO_BYTES = 512 * 1024;
 const MAX_COMPANY_NAME = 80;
 
-// Regras WCAG AA (texto normal, 4.5:1) contra o branco usado nos botoes, cabecalhos e superficies.
+// Regras WCAG AA (texto normal, 4.5:1): primaria e fundo contra o branco (botoes/cabecalhos); texto contra a superficie escura.
 const CONTRAST_RULES = [
   { field: "primaryColor", label: "Cor primaria (texto branco em botoes)", against: WHITE },
   { field: "backgroundColor", label: "Cor de fundo (texto branco sobre o fundo)", against: WHITE },
-  { field: "textColor", label: "Cor do texto (sobre superficies brancas)", against: WHITE },
+  { field: "textColor", label: "Cor do texto (sobre superficies escuras)", against: SURFACE_DARK },
 ];
 
 function httpError(status, message, code, details) {
@@ -85,7 +87,7 @@ async function saveBranding(ownerId, body) {
   if (failed.length) {
     throw httpError(
       422,
-      "Paleta fora do contraste minimo WCAG AA (4.5:1). Escolha tons mais escuros.",
+      "Paleta fora do contraste minimo WCAG AA (4.5:1). Primaria e fundo precisam de tons escuros; o texto precisa de um tom claro.",
       "CONTRAST_AA",
       failed
     );
@@ -157,6 +159,7 @@ function buildThemeCss(row) {
     ":root {",
     `  --accent: ${primary};`,
     `  --accent-dark: ${darken(primary, 0.15)};`,
+    `  --accent-text: ${ensureContrastOn(primary, [SURFACE_DARK, bg])};`,
     `  --bg: ${bg};`,
     `  --bg-dark: ${darken(bg, 0.15)};`,
     `  --ink: ${row.text_color};`,

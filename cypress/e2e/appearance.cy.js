@@ -2,8 +2,8 @@ describe('Aparência (White-Label)', () => {
   const DEFAULT_DTO = {
     companyName: null,
     primaryColor: '#4f46e5',
-    backgroundColor: '#3f73c8',
-    textColor: '#0f172a',
+    backgroundColor: '#0b1220',
+    textColor: '#f1f5f9',
     hasLogo: false,
     logoUrl: null,
     isDefault: true,
@@ -27,8 +27,8 @@ describe('Aparência (White-Label)', () => {
 
   it('carrega os valores padrão e mostra contraste AA aprovado', () => {
     cy.get('#primary-color-hex').should('have.value', '#4f46e5');
-    cy.get('#background-color-hex').should('have.value', '#3f73c8');
-    cy.get('#text-color-hex').should('have.value', '#0f172a');
+    cy.get('#background-color-hex').should('have.value', '#0b1220');
+    cy.get('#text-color-hex').should('have.value', '#f1f5f9');
     cy.get('#primary-color-badge').should('contain', 'AA aprovado');
     cy.get('#appearance-save').should('not.be.disabled');
   });
@@ -37,6 +37,14 @@ describe('Aparência (White-Label)', () => {
     cy.get('#primary-color-hex').clear().type('#ffeb3b');
     cy.get('#primary-color-badge').should('contain', 'abaixo de AA');
     cy.get('#appearance-save').should('be.disabled');
+  });
+
+  it('exige texto claro: cor escura no texto fica abaixo de AA e bloqueia o salvamento', () => {
+    cy.get('#text-color-hex').clear().type('#111827');
+    cy.get('#text-color-badge').should('contain', 'abaixo de AA');
+    cy.get('#appearance-save').should('be.disabled');
+    cy.get('#text-color-hex').clear().type('#e2e8f0');
+    cy.get('#text-color-badge').should('contain', 'AA aprovado');
   });
 
   it('valida o formato da cor', () => {
@@ -58,14 +66,14 @@ describe('Aparência (White-Label)', () => {
         companyName: 'Doces da Ana',
         primaryColor: '#1d4ed8',
         backgroundColor: '#1e3a8a',
-        textColor: '#111827',
+        textColor: '#e2e8f0',
       });
       req.reply({ statusCode: 200, body: { ...DEFAULT_DTO, companyName: 'Doces da Ana', primaryColor: '#1d4ed8', isDefault: false } });
     }).as('putBranding');
     cy.get('#company-name').type('Doces da Ana');
     cy.get('#primary-color-hex').clear().type('#1d4ed8');
     cy.get('#background-color-hex').clear().type('#1e3a8a');
-    cy.get('#text-color-hex').clear().type('#111827');
+    cy.get('#text-color-hex').clear().type('#e2e8f0');
     cy.get('#appearance-save').click();
     cy.wait('@putBranding');
     cy.get('#appearance-form-message').should('contain', 'Aparência salva');

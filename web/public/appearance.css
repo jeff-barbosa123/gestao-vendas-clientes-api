@@ -70,7 +70,7 @@
   border: 1px solid var(--slate-200);
   border-radius: 12px;
   overflow: hidden;
-  background: var(--white);
+  background: var(--surface);
 }
 
 .appearance-preview-header {
@@ -79,7 +79,7 @@
   gap: 10px;
   padding: 12px 16px;
   background: var(--pv-bg, var(--bg));
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .appearance-preview-header img {
@@ -99,5 +99,5 @@
   padding: 8px 16px;
   font-weight: 600;
   background: var(--pv-primary, var(--accent));
-  color: var(--white);
+  color: var(--on-accent);
 }

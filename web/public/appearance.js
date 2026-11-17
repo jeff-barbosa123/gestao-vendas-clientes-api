@@ -3,9 +3,9 @@
   const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
   const MIN_RATIO = 4.5;
   const FIELDS = [
-    { key: 'primaryColor', id: 'primary-color', fallback: '#4f46e5' },
-    { key: 'backgroundColor', id: 'background-color', fallback: '#3f73c8' },
-    { key: 'textColor', id: 'text-color', fallback: '#0f172a' },
+    { key: 'primaryColor', id: 'primary-color', fallback: '#4f46e5', against: '#ffffff' },
+    { key: 'backgroundColor', id: 'background-color', fallback: '#0b1220', against: '#ffffff' },
+    { key: 'textColor', id: 'text-color', fallback: '#f1f5f9', against: '#111c33' }, // texto claro sobre superficie escura
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -34,8 +34,9 @@
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
-  function contrastWithWhite(hex) {
-    return 1.05 / (luminance(hex) + 0.05);
+  function contrastRatio(a, b) {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
   }
 
   const isHex = (v) => /^#[0-9a-fA-F]{6}$/.test(v);
@@ -62,7 +63,7 @@
         allOk = false;
         return;
       }
-      const ratio = contrastWithWhite(hex);
+      const ratio = contrastRatio(hex, f.against);
       const ok = ratio >= MIN_RATIO;
       badge.textContent = `${ratio.toFixed(2).replace('.', ',')}:1 ${ok ? 'AA aprovado' : 'abaixo de AA'}`;
       badge.classList.add(ok ? 'is-ok' : 'is-fail');

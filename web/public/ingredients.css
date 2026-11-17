@@ -1,6 +1,6 @@
 .ing-wrapper {
   width: min(1080px, 100%);
-  background: linear-gradient(135deg, #23458a, var(--bg-dark));
+  background: linear-gradient(135deg, var(--bg), var(--bg-dark));
   border-radius: 18px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -10,7 +10,7 @@
 }
 
 .ing-header {
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .ing-title {
@@ -91,7 +91,7 @@
 
 @keyframes ing-flash {
   from {
-    background: #dcfce7;
+    background: var(--ok-bg);
   }
   to {
     background: transparent;
@@ -113,8 +113,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #dcfce7;
-  color: #166534;
+  background: var(--ok-bg);
+  color: var(--ok-fg);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -137,7 +137,7 @@
   border-radius: 12px;
   border: 1px solid var(--danger-300);
   background: var(--danger-50);
-  color: #9f1239;
+  color: var(--danger-fg);
   font-weight: 600;
 }
 
@@ -288,15 +288,15 @@ body.ing-modal-open {
 }
 
 .ing-move-type.is-purchase {
-  color: #166534;
+  color: var(--ok-fg);
 }
 
 .ing-move-type.is-sale {
-  color: #9a3412;
+  color: var(--warn-fg);
 }
 
 .ing-move-type.is-sale_cancel {
-  color: #1d4ed8;
+  color: var(--info-fg);
 }
 
 .ing-move-qty {

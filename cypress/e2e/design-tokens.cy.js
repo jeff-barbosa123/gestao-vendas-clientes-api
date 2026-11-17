@@ -1,17 +1,20 @@
 describe('Design tokens (paridade visual)', () => {
   const ROOT_TOKENS = {
-    '--bg': '#3f73c8',
-    '--bg-dark': '#2f5fae',
+    '--bg': '#0b1220',
+    '--bg-dark': '#070d18',
+    '--surface': '#111c33',
+    '--accent-text': '#a5b4fc',
+    '--on-accent': '#ffffff',
     '--accent': '#4f46e5',
     '--accent-dark': '#4338ca',
-    '--white': '#ffffff',
-    '--slate-500': '#64748b',
-    '--slate-900': '#0f172a',
-    '--success-800': '#065f46',
-    '--danger-700': '#b91c1c',
+    '--white': '#111c33',
+    '--slate-500': '#94a3b8',
+    '--slate-900': '#f1f5f9',
+    '--success-800': '#a7f3d0',
+    '--danger-700': '#fca5a5',
   };
 
-  it('define os tokens no :root com os valores originais', () => {
+  it('define os tokens do tema Grafite Noturno no :root', () => {
     cy.visit('/index.html');
     cy.document().then((doc) => {
       const cs = getComputedStyle(doc.documentElement);
@@ -21,10 +24,10 @@ describe('Design tokens (paridade visual)', () => {
     });
   });
 
-  it('mantem as cores renderizadas da tela de login', () => {
+  it('renderiza o login com fundo grafite e texto claro', () => {
     cy.visit('/index.html');
-    cy.get('.background').should('have.css', 'background-image').and('contain', 'rgb(63, 115, 200)');
-    cy.get('body').should('have.css', 'color', 'rgb(15, 23, 42)');
+    cy.get('.background').should('have.css', 'background-image').and('contain', 'rgb(11, 18, 32)');
+    cy.get('body').should('have.css', 'color', 'rgb(241, 245, 249)');
   });
 
   it('carrega a paleta em todas as paginas autenticadas (base.css)', () => {
@@ -32,7 +35,7 @@ describe('Design tokens (paridade visual)', () => {
     ['/dashboard.html', '/products.html', '/sales.html'].forEach((page) => {
       cy.visit(page);
       cy.document().then((doc) => {
-        expect(getComputedStyle(doc.documentElement).getPropertyValue('--slate-900').trim().toLowerCase(), page).to.equal('#0f172a');
+        expect(getComputedStyle(doc.documentElement).getPropertyValue('--slate-900').trim().toLowerCase(), page).to.equal('#f1f5f9');
       });
     });
   });

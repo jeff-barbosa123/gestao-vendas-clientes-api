@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: var(--slate-50);
+  color: var(--slate-900);
   margin-bottom: 16px;
 }
 
@@ -46,7 +46,7 @@
 
 .sim-subtitle {
   font-size: 12px;
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .sim-actions {
@@ -119,7 +119,7 @@
 }
 
 #result-price {
-  background: #fef9c3;
+  background: var(--warn-bg);
   padding: 6px 12px;
   border-radius: 12px;
   display: inline-flex;
@@ -197,21 +197,21 @@
 }
 
 .margin-pill.is-low {
-  background: #fef2f2;
-  color: #991b1b;
+  background: var(--danger-bg);
+  color: var(--danger-fg);
   border-color: var(--danger-300);
 }
 
 .margin-pill.is-ok {
   background: var(--success-50);
-  color: #047857;
-  border-color: #bbf7d0;
+  color: var(--ok-fg);
+  border-color: var(--ok-line);
 }
 
 .margin-pill.is-high {
-  background: #fefce8;
+  background: var(--warn-bg);
   color: var(--warning-800);
-  border-color: #fde68a;
+  border-color: var(--warn-line);
 }
 
 .grouped {

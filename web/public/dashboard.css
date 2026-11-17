@@ -1,4 +1,4 @@
-﻿/* ==============================
+/* ==============================
    DASHBOARD SGVC - UI
    ============================== */
 
@@ -6,7 +6,7 @@
 .dashboard {
   width: min(1120px, 100%);
   margin: 0 auto;
-  background: linear-gradient(180deg, var(--bg-dark) 0%, #2b5aa3 100%);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg) 100%);
   border-radius: 22px;
   padding: 28px 28px 32px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -44,9 +44,9 @@
 }
 
 .dashboard-message.is-success {
-  background: #ecfdf5;
-  color: #0f766e;
-  border-color: #6ee7b7;
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+  border-color: var(--ok-line);
 }
 
 .dashboard-message.is-danger {
@@ -58,14 +58,14 @@
 .dashboard-title {
   font-size: 24px;
   font-weight: 700;
-  color: var(--slate-50);
+  color: var(--slate-900);
   margin: 0;
   font-family: "Sora", "Source Sans 3", system-ui, sans-serif;
 }
 
 .dashboard-subtitle {
   font-size: 14px;
-  color: var(--slate-200);
+  color: var(--slate-800);
   margin-bottom: 10px;
 }
 
@@ -86,7 +86,7 @@
   height: 32px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
-  color: var(--white);
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,7 +96,7 @@
 .dashboard-user {
   font-size: 12px;
   font-weight: 600;
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .dashboard-menu {
@@ -106,7 +106,7 @@
 
 .dashboard-menu .button {
   background: rgba(248, 250, 252, 0.18);
-  color: var(--slate-50);
+  color: var(--slate-900);
   border: 1px solid rgba(248, 250, 252, 0.3);
 }
 
@@ -120,13 +120,13 @@
 
 .dashboard-period-form label {
   font-size: 14px;
-  color: var(--slate-100);
+  color: var(--slate-800);
 }
 
 .dashboard-period-form select {
   background: var(--slate-50);
   color: var(--slate-800);
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--line-strong);
   border-radius: 8px;
   padding: 6px 12px;
   font-size: 14px;
@@ -137,7 +137,7 @@
 .dashboard-period-note,
 .dashboard-updated {
   font-size: 12px;
-  color: var(--slate-200);
+  color: var(--slate-800);
   margin: 0 0 6px;
 }
 
@@ -271,7 +271,7 @@
   height: 36px;
   border-radius: 50%;
   background: var(--brand-100);
-  color: var(--accent-dark);
+  color: var(--accent-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,7 +365,7 @@
 
 .dashboard-actions .button {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .dashboard-actions .button.is-light {
@@ -491,7 +491,7 @@
 }
 
 .dashboard-alert-list .is-low-margin {
-  color: #b45309;
+  color: var(--warn-fg);
   font-weight: 600;
 }
 

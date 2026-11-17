@@ -385,13 +385,13 @@
         <div style="padding: 10px 16px 16px;">
           <p class="help" style="text-align:center;color:var(--slate-600);">
             Ao criar sua conta você concorda com os
-            <a href="#" style="color:#3b82f6;text-decoration:none;">Termos de Uso</a>
+            <a href="#" style="color:var(--accent-text);text-decoration:none;">Termos de Uso</a>
             e
-            <a href="#" style="color:#3b82f6;text-decoration:none;">Política de Privacidade</a>.
+            <a href="#" style="color:var(--accent-text);text-decoration:none;">Política de Privacidade</a>.
           </p>
           <p class="help" style="text-align:center;margin-top:8px;">
             Já tem uma conta?
-            <a href="/index.html" style="color:#3b82f6;text-decoration:none;">Fazer login</a>
+            <a href="/index.html" style="color:var(--accent-text);text-decoration:none;">Fazer login</a>
           </p>
         </div>
       </div>
@@ -420,10 +420,10 @@
             var icon = el.querySelector('.pwd-icon');
             if (ok[key]) {
               el.classList.add('is-ok');
-              if (icon) { icon.textContent = '\u2713'; icon.style.color = '#16a34a'; }
+              if (icon) { icon.textContent = '\u2713'; icon.style.color = 'var(--success-600)'; }
             } else {
               el.classList.remove('is-ok');
-              if (icon) { icon.textContent = '\u2717'; icon.style.color = '#ef4444'; }
+              if (icon) { icon.textContent = '\u2717'; icon.style.color = 'var(--danger-700)'; }
             }
           });
         });

@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: var(--slate-50);
+  color: var(--slate-900);
   margin-bottom: 16px;
 }
 
@@ -24,7 +24,7 @@
 
 .clients-subtitle {
   font-size: 12px;
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .clients-actions {
@@ -56,13 +56,13 @@
 .clients-message.is-warning {
   background: var(--warning-50);
   color: var(--warning-800);
-  border: 1px solid #fcd34d;
+  border: 1px solid var(--warn-line);
 }
 
 .clients-message.is-info {
-  background: #ecf2ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--info-bg);
+  color: var(--info-fg);
+  border: 1px solid var(--info-line);
 }
 
 .clients-grid {
@@ -101,7 +101,7 @@
 
 .clients-form .button.is-link {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .clients-form .button.is-link:hover {
@@ -124,7 +124,7 @@
 
 .clients-form .input.is-loading {
   background-color: var(--slate-50);
-  background-image: linear-gradient(90deg, var(--slate-50) 0%, #edf2f7 40%, var(--slate-50) 100%);
+  background-image: linear-gradient(90deg, var(--slate-50) 0%, var(--slate-100) 40%, var(--slate-50) 100%);
   background-size: 200% 100%;
   animation: clients-input-shimmer 1s linear infinite;
 }
@@ -137,7 +137,7 @@
 .clients-email-warning {
   color: var(--warning-800);
   background: var(--warning-50);
-  border: 1px solid #fcd34d;
+  border: 1px solid var(--warn-line);
   padding: 6px 10px;
   border-radius: 10px;
   margin-top: 6px;
@@ -165,7 +165,7 @@
 }
 
 .clients-email-chip:hover {
-  background: #c7d2fe;
+  background: var(--info-bg-strong);
 }
 
 .clients-cnpj-success {
@@ -231,7 +231,7 @@
   height: 28px;
   border-radius: 999px;
   background: var(--brand-100);
-  color: var(--accent-dark);
+  color: var(--accent-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -322,7 +322,7 @@
 
 .clients-filters .button.is-active {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
   border-color: var(--accent-dark);
 }
 
@@ -412,7 +412,7 @@
 }
 
 .clients-name-link:hover {
-  color: var(--accent-dark);
+  color: var(--accent-text);
   text-decoration: underline;
 }
 
@@ -484,7 +484,7 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #eef2ff;
+  background: var(--info-bg);
   color: var(--brand-800);
   font-size: 11px;
   font-weight: 600;
@@ -498,7 +498,7 @@
 
 .birthday-soon {
   font-weight: 600;
-  color: #dc2626;
+  color: var(--danger-fg);
 }
 
 .birthday-badge {
@@ -516,7 +516,7 @@
 
 .top-buyer-total {
   font-weight: 600;
-  color: #0f766e;
+  color: var(--ok-fg);
 }
 
 .notes-badge {

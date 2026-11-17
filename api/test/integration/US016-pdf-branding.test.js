@@ -84,16 +84,16 @@ describe('Fase 4 - PDFs com a marca da empresa', () => {
     });
 
     it('PDF-002 | Configuracao so com valores padrao continua sem marca', async () => {
-      await http.put('/api/branding').set(auth()).send({ primaryColor: '#4f46e5', backgroundColor: '#3f73c8', textColor: '#0f172a' });
+      await http.put('/api/branding').set(auth()).send({ primaryColor: '#4f46e5', backgroundColor: '#0b1220', textColor: '#f1f5f9' });
       expect((await loadPdfBranding(ownerId)).custom).to.equal(false);
     });
 
     it('PDF-003 | Com nome, logo PNG e cores: desenha logo, nome e titulo na cor primaria', async () => {
-      await http.put('/api/branding').set(auth()).send({ companyName: 'Doces da Ana', primaryColor: '#1d4ed8', backgroundColor: '#1e3a8a', textColor: '#111827' });
+      await http.put('/api/branding').set(auth()).send({ companyName: 'Doces da Ana', primaryColor: '#1d4ed8', backgroundColor: '#1e3a8a', textColor: '#e2e8f0' });
       const up = await http.post('/api/branding/logo').set(auth()).send({ data: PNG_B64 });
       expect(up.status, JSON.stringify(up.body)).to.equal(200);
       const b = await loadPdfBranding(ownerId);
-      expect(b).to.include({ custom: true, companyName: 'Doces da Ana', primary: '#1d4ed8', text: '#111827' });
+      expect(b).to.include({ custom: true, companyName: 'Doces da Ana', primary: '#1d4ed8', text: '#0f172a' });
       expect(Buffer.isBuffer(b.logo)).to.equal(true);
       const doc = fakeDoc();
       drawBrandHeader(doc, b, 'Ficha Tecnica');

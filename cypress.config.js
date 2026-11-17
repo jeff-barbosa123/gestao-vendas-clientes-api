@@ -19,6 +19,10 @@ module.exports = defineConfig({
     setupNodeEvents(on) {
       require('cypress-mochawesome-reporter/plugin')(on);
       on('task', {
+        log(message) {
+          console.log(message);
+          return null;
+        },
         writeAxeReport(violations) {
           const reportDir = path.join(__dirname, 'cypress', 'reports');
           if (!fs.existsSync(reportDir)) {

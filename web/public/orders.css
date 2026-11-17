@@ -1,6 +1,6 @@
 .ord-wrapper {
   width: min(1080px, 100%);
-  background: linear-gradient(135deg, #23458a, var(--bg-dark));
+  background: linear-gradient(135deg, var(--bg), var(--bg-dark));
   border-radius: 18px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -10,7 +10,7 @@
 }
 
 .ord-header {
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .ord-title {
@@ -51,11 +51,11 @@
   border-radius: 12px;
   border: 1px solid var(--danger-300);
   background: var(--danger-50);
-  color: #9f1239;
+  color: var(--danger-fg);
 }
 
 .ord-shortage a {
-  color: #9f1239;
+  color: var(--danger-fg);
   font-weight: 700;
   text-decoration: underline;
 }
@@ -83,7 +83,7 @@
   width: 100%;
   min-height: 64px;
   padding: 8px 10px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
   font: inherit;
   resize: vertical;
@@ -249,18 +249,18 @@
 }
 
 .ord-status.is-pending {
-  background: #fef3c7;
+  background: var(--warn-bg);
   color: var(--warning-800);
 }
 
 .ord-status.is-ready {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--info-bg);
+  color: var(--info-fg);
 }
 
 .ord-status.is-delivered {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--ok-bg);
+  color: var(--ok-fg);
 }
 
 .ord-status.is-canceled {

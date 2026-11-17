@@ -38,6 +38,21 @@ function darken(hex, amount) {
   return rgbToHex(hexToRgb(hex).map((v) => v * (1 - amount)));
 }
 
+// Clareia misturando com branco (amount 0..1)
+function lighten(hex, amount) {
+  return rgbToHex(hexToRgb(hex).map((v) => v + (255 - v) * amount));
+}
+
 const AA_NORMAL_TEXT = 4.5;
 
-module.exports = { isHexColor, normalizeHex, luminance, contrastRatio, darken, AA_NORMAL_TEXT };
+// Clareia o tom ate atingir o contraste minimo contra todos os fundos (usado em textos/links sobre superficies escuras).
+function ensureContrastOn(hex, backgrounds, min = AA_NORMAL_TEXT) {
+  let out = normalizeHex(hex);
+  for (let i = 0; i <= 20; i += 1) {
+    if (backgrounds.every((bg) => contrastRatio(out, bg) >= min)) return out;
+    out = lighten(hex, (i + 1) * 0.05);
+  }
+  return "#ffffff";
+}
+
+module.exports = { isHexColor, normalizeHex, luminance, contrastRatio, darken, lighten, ensureContrastOn, AA_NORMAL_TEXT };

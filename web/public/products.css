@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: var(--slate-50);
+  color: var(--slate-900);
   margin-bottom: 16px;
 }
 
@@ -23,7 +23,7 @@
 
 .products-subtitle {
   font-size: 12px;
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 .products-required-note {
   font-size: 11px;
@@ -64,9 +64,9 @@
   padding: 8px 10px;
   border-radius: 10px;
   font-size: 12px;
-  background: #eff6ff;
-  color: #1e3a8a;
-  border: 1px solid #bfdbfe;
+  background: var(--info-bg);
+  color: var(--info-fg);
+  border: 1px solid var(--info-line);
 }
 .products-hint {
   margin-top: 10px;
@@ -78,7 +78,7 @@
   border-left: 3px solid var(--accent);
 }
 .products-hint strong {
-  color: #111827;
+  color: var(--ink);
 }
 
 .products-grid {
@@ -126,7 +126,7 @@
 
 .products-form .button.is-link {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
 }
 
 .products-form .button.is-link:hover {
@@ -175,7 +175,7 @@
 .product-type-card:has(input:checked),
 .product-type-card.is-selected {
   border-color: var(--accent);
-  background: #eef2ff;
+  background: var(--info-bg);
 }
 .product-calc-cards {
   margin-top: 6px;
@@ -190,7 +190,7 @@
   font-weight: 600;
 }
 .select select.is-danger {
-  border-color: #fca5a5;
+  border-color: var(--danger-line);
   box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
 }
 
@@ -200,7 +200,7 @@
   gap: 6px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #eef2ff;
+  background: var(--info-bg);
   color: var(--brand-800);
   font-size: 11px;
   font-weight: 600;
@@ -302,7 +302,7 @@
 }
 
 .products-name-link:hover {
-  color: var(--accent-dark);
+  color: var(--accent-text);
   text-decoration: underline;
 }
 
@@ -314,7 +314,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--success-50);
-  color: #059669;
+  color: var(--ok-fg);
   font-weight: 600;
 }
 .products-status::before {
@@ -344,12 +344,12 @@
   font-weight: 600;
 }
 .products-type.is-produced {
-  background: #ecfdf5;
-  color: #059669;
+  background: var(--ok-bg);
+  color: var(--ok-fg);
 }
 .products-type.is-resale {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: var(--info-bg);
+  color: var(--info-fg);
 }
 
 .products-empty td {

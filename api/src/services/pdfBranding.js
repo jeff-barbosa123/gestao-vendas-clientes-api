@@ -3,6 +3,7 @@
 const repo = require("../db/repositories/branding");
 const { DEFAULTS } = require("./brandingService");
 
+const PDF_TEXT = "#0f172a";
 const PLAIN = Object.freeze({ custom: false, companyName: null, primary: "#000000", text: "#000", logo: null });
 
 // pdfkit so embute PNG e JPEG. Logos WebP sao convertidos para PNG no upload (brandingService);
@@ -29,14 +30,14 @@ async function loadPdfBranding(ownerId) {
     }
   }
   const companyName = settings.company_name || null;
-  const colorsChanged =
-    settings.primary_color !== DEFAULTS.primaryColor || settings.text_color !== DEFAULTS.textColor;
+  // A cor de texto da empresa vale para a tela (tema escuro); o papel do PDF e branco, entao o corpo usa tom escuro fixo.
+  const colorsChanged = settings.primary_color !== DEFAULTS.primaryColor;
   if (!companyName && !logo && !colorsChanged) return { ...PLAIN };
   return {
     custom: true,
     companyName,
     primary: settings.primary_color,
-    text: settings.text_color,
+    text: PDF_TEXT,
     logo,
   };
 }

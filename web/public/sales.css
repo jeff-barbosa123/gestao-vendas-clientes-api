@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: var(--slate-50);
+  color: var(--slate-900);
   margin-bottom: 16px;
 }
 
@@ -24,7 +24,7 @@
 
 .sales-subtitle {
   font-size: 12px;
-  color: var(--slate-50);
+  color: var(--slate-900);
 }
 
 .sales-actions {
@@ -46,9 +46,9 @@
   padding: 10px 12px;
   border-radius: 12px;
   font-size: 12px;
-  background: #eff6ff;
-  color: #1e3a8a;
-  border: 1px solid #bfdbfe;
+  background: var(--info-bg);
+  color: var(--info-fg);
+  border: 1px solid var(--info-line);
 }
 
 .sales-message.is-success {
@@ -59,7 +59,7 @@
 
 .sales-message.is-warning {
   background: var(--warning-50);
-  border: 1px solid #fcd34d;
+  border: 1px solid var(--warn-line);
   color: var(--warning-800);
 }
 
@@ -72,7 +72,7 @@
 .help.is-warning {
   background: var(--warning-50);
   color: var(--warning-800);
-  border: 1px solid #fde68a;
+  border: 1px solid var(--warn-line);
   border-radius: 8px;
   padding: 6px 8px;
   display: inline-block;
@@ -225,7 +225,7 @@
   cursor: pointer;
 }
 .sales-customer-link:hover {
-  color: var(--accent-dark);
+  color: var(--accent-text);
   text-decoration: underline;
 }
 
@@ -351,7 +351,7 @@
   gap: 6px;
   margin-top: 10px;
   font-size: 12px;
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
 }
 .sales-customer-link-secondary:hover {
@@ -359,7 +359,7 @@
 }
 
 .sales-details-empty {
-  border: 1px solid #fde68a;
+  border: 1px solid var(--warn-line);
   background: var(--warning-50);
   border-radius: 12px;
   padding: 12px 14px;
@@ -374,7 +374,7 @@
 
 .sales-details-empty-icon {
   font-size: 14px;
-  color: #b45309;
+  color: var(--warn-fg);
 }
 
 .sales-details-empty-title {
@@ -413,7 +413,7 @@
 
 .button.is-highlight {
   background: var(--accent);
-  color: var(--white);
+  color: var(--on-accent);
   border-color: transparent;
   box-shadow: 0 10px 22px rgba(79, 70, 229, 0.28);
 }

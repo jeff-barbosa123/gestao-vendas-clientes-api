@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-17 - Tema Grafite Noturno (Fase 5)
+
+### Novo
+- Identidade visual base escura (direcao B aprovada): superficies #0b1220 (fundo) e #111c33 (cards), texto #f1f5f9. Aplicada em todas as telas (login, dashboard, vendas, clientes, produtos, fichas, insumos, encomendas, vinculos, relatorios, simulacao, perfil, aparencia) pela inversao da paleta primitiva em base.css (`--white`, `--slate-*`, `--success/danger/warning/brand-*`) e por tons semanticos novos (`--info-*`, `--ok-*`, `--warn-*`, `--danger-*`, `--line-strong`, `--on-accent`, `--accent-text`). Cores fixas de tons claros foram remapeadas para esses tokens.
+- White-label sobre o tema escuro: a cor primaria continua sendo fundo de botoes com texto branco (AA contra branco) e agora gera `--accent-text`, uma versao clareada automaticamente ate atingir 4.5:1 sobre a superficie escura e sobre o fundo da empresa (links, destaques). Logo e nome seguem inalterados.
+- Regras de contraste: primaria e fundo continuam contra branco; a cor de texto agora e validada contra a superficie escura (#111c33), ou seja, precisa ser clara. Padroes novos: fundo #0b1220, texto #f1f5f9. A tela Aparencia usa a mesma regra no badge e na previa.
+- Migracao 0006: paletas salvas voltam ao texto claro padrao (#f1f5f9) e, se estavam no fundo azul antigo, ao grafite; cor primaria e logo sao mantidos.
+- PDFs: papel continua branco; o corpo do PDF usa tom escuro fixo (#0f172a) e nao a cor de texto da tela. A cor primaria da empresa segue no cabecalho.
+- Testes: accessibility.cy.js ganhou verificacao axe de contraste AA (color-contrast) em 17 telas e checagem dos tokens; design-tokens e appearance atualizados; US015 (BRD-005b, accent-text) e US016 ajustados.
+
 ## 2026-11-17 - Conversao automatica de logo WebP para PNG
 
 ### Novo

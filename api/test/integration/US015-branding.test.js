@@ -29,7 +29,7 @@ describe('Fase 3 - White-Label (API /api/branding)', () => {
   it('BRD-001 | Sem configuracao devolve o padrao', async () => {
     const r = await http.get('/api/branding').set(auth(tokenB));
     expect(r.status).to.equal(200);
-    expect(r.body).to.include({ primaryColor: '#4f46e5', backgroundColor: '#3f73c8', textColor: '#0f172a', hasLogo: false, isDefault: true });
+    expect(r.body).to.include({ primaryColor: '#4f46e5', backgroundColor: '#0b1220', textColor: '#f1f5f9', hasLogo: false, isDefault: true });
   });
 
   it('BRD-002 | Exige autenticacao (exceto theme.css)', async () => {
@@ -40,24 +40,31 @@ describe('Fase 3 - White-Label (API /api/branding)', () => {
 
   it('BRD-003 | Salva paleta valida e normaliza para minusculas', async () => {
     const r = await http.put('/api/branding').set(auth(tokenA)).send({
-      companyName: '  Doces da Ana  ', primaryColor: '#1D4ED8', backgroundColor: '#1E3A8A', textColor: '#111827',
+      companyName: '  Doces da Ana  ', primaryColor: '#1D4ED8', backgroundColor: '#1E3A8A', textColor: '#e2e8f0',
     });
     expect(r.status, JSON.stringify(r.body)).to.equal(200);
     expect(r.body).to.include({ companyName: 'Doces da Ana', primaryColor: '#1d4ed8', backgroundColor: '#1e3a8a', isDefault: false });
   });
 
   it('BRD-004 | Cor fora do formato #RRGGBB retorna 400', async () => {
-    const r = await http.put('/api/branding').set(auth(tokenA)).send({ primaryColor: 'azul', backgroundColor: '#1e3a8a', textColor: '#111827' });
+    const r = await http.put('/api/branding').set(auth(tokenA)).send({ primaryColor: 'azul', backgroundColor: '#1e3a8a', textColor: '#e2e8f0' });
     expect(r.status).to.equal(400);
     expect(r.body.code).to.equal('INVALID_COLOR');
   });
 
   it('BRD-005 | Contraste abaixo de AA retorna 422 com detalhes', async () => {
-    const r = await http.put('/api/branding').set(auth(tokenA)).send({ primaryColor: '#ffeb3b', backgroundColor: '#1e3a8a', textColor: '#111827' });
+    const r = await http.put('/api/branding').set(auth(tokenA)).send({ primaryColor: '#ffeb3b', backgroundColor: '#1e3a8a', textColor: '#e2e8f0' });
     expect(r.status).to.equal(422);
     expect(r.body.code).to.equal('CONTRAST_AA');
     expect(r.body.details[0]).to.include({ field: 'primaryColor', ok: false, min: 4.5 });
     expect(r.body.details[0].ratio).to.be.below(4.5);
+  });
+
+  it('BRD-005b | Texto escuro sobre superficie escura (contraste abaixo de AA) retorna 422', async () => {
+    const r = await http.put('/api/branding').set(auth(tokenA)).send({ primaryColor: '#1d4ed8', backgroundColor: '#1e3a8a', textColor: '#111827' });
+    expect(r.status).to.equal(422);
+    expect(r.body.code).to.equal('CONTRAST_AA');
+    expect(r.body.details.map((d) => d.field)).to.deep.equal(['textColor']);
   });
 
   it('BRD-006 | Configuracao e isolada por empresa', async () => {
@@ -71,7 +78,11 @@ describe('Fase 3 - White-Label (API /api/branding)', () => {
     const a = await http.get('/api/branding/theme.css').set(auth(tokenA));
     expect(a.status).to.equal(200);
     expect(a.headers['content-type']).to.match(/text\/css/);
-    expect(a.text).to.include('--accent: #1d4ed8;').and.include('--bg: #1e3a8a;').and.include('--accent-dark:');
+    expect(a.text).to.include('--accent: #1d4ed8;').and.include('--bg: #1e3a8a;').and.include('--accent-dark:').and.include('--accent-text:');
+    const m = a.text.match(/--accent-text: (#[0-9a-f]{6});/);
+    const { contrastRatio } = require('../../src/utils/contrast');
+    expect(contrastRatio(m[1], '#111c33')).to.be.at.least(4.5);
+    expect(contrastRatio(m[1], '#1e3a8a')).to.be.at.least(4.5);
     const visitante = await http.get('/api/branding/theme.css');
     expect(visitante.status).to.equal(200);
     expect(visitante.text).to.not.include('--accent');

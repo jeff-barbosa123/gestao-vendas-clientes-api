@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-17 - Dashboard com agregacao em SQL (Fase 6)
+
+### Melhoria
+- analyticsService.getOverview e buildTimeseries deixaram de carregar todas as vendas (e itens) em memoria: soma, contagem e agrupamento por dia/semana/mes/ano (UTC, semana ISO 8601) agora rodam no PostgreSQL via novo repositorio db/repositories/analytics.js. O banco devolve uma linha por periodo.
+- Contagens do painel (clientes, produtos, vinculados, fichas ativas) numa unica consulta; alerta de precificacao le so os campos necessarios (produtos com custo > 0); lastSaleAt vem de MAX(date).
+- Contrato da API inalterado (mesmos campos e regras: venda cancelada fora dos totais, isolamento por empresa, limite de 366 dias). Usa o indice existente (owner_id, date).
+- Testes: US017-dashboard-sql (12) comparam o resultado com a implementacao de referencia em JS nas bordas de ano/semana ISO, cancelamentos, isolamento e 20.000 vendas.
+
 ## 2026-11-17 - Tema Grafite Noturno (Fase 5)
 
 ### Novo

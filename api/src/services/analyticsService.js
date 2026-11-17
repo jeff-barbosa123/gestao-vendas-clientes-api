@@ -1,42 +1,24 @@
 const repo = require("../db/repository");
+const analyticsRepo = require("../db/repositories/analytics");
 const {
   resolveTemporalRange,
   validateBreakdown,
-  toIsoDay,
-  toWeekKeyUTC,
-  toMonthKeyUTC,
 } = require("../utils/dateValidation");
 
-function buildFinancialAggregates(sales) {
-  const salesCount = sales.length;
-  const revenueTotal = sales.reduce((sum, s) => sum + (s.total || 0), 0);
-  const cmvTotal = sales.reduce((sum, s) => sum + (s.cmv || 0), 0);
-  const profitTotal = revenueTotal - cmvTotal;
-  const avgTicket = salesCount > 0 ? revenueTotal / salesCount : 0;
-  const margin = revenueTotal > 0 ? profitTotal / revenueTotal : 0;
+// Recebe os totais ja agregados no banco: { salesCount, revenue, cmv }
+function buildFinancialAggregates({ salesCount = 0, revenue = 0, cmv = 0 } = {}) {
+  const profitTotal = revenue - cmv;
+  const avgTicket = salesCount > 0 ? revenue / salesCount : 0;
+  const margin = revenue > 0 ? profitTotal / revenue : 0;
 
   return {
-    revenueTotal: Number(revenueTotal.toFixed(2)),
-    cmvTotal: Number(cmvTotal.toFixed(2)),
+    revenueTotal: Number(revenue.toFixed(2)),
+    cmvTotal: Number(cmv.toFixed(2)),
     profitTotal: Number(profitTotal.toFixed(2)),
     margin,
     avgTicket: Number(avgTicket.toFixed(2)),
     salesCount,
   };
-}
-
-function filterByOwner(list, user) {
-  if (!user || !user.id) return list;
-  return list.filter((item) => item.owner_id === user.id);
-}
-
-function filterSalesByDate(sales, startDate, endDate) {
-  return sales.filter((s) => {
-    // Venda cancelada não entra em faturamento/dashboard
-    if (s.status === "CANCELED" || s.status_venda === "cancelada") return false;
-    const dx = new Date(s.date);
-    return (!startDate || dx >= startDate) && (!endDate || dx <= endDate);
-  });
 }
 
 // Abaixo desta margem bruta o produto entra no alerta de precificação
@@ -72,23 +54,24 @@ function buildPricingAlerts(products) {
 
 async function getOverview(filters = {}, user) {
   const { startDate, endDate } = resolveTemporalRange(filters);
-  const salesAll = await repo.listSales(user ? user.id : null);
-  const sales = filterSalesByDate(salesAll, startDate, endDate);
-  const aggregates = buildFinancialAggregates(sales);
-  const customers = filterByOwner(await repo.listCustomers(user ? user.id : null), user);
-  const products = filterByOwner(await repo.listProducts(user ? user.id : null), user);
-  const recipes = filterByOwner(await repo.listRecipes(user ? user.id : null, false), user).filter(
-    (r) => r.status !== "INACTIVE"
-  );
+  const ownerId = user ? user.id : null;
+  // Agregacao no PostgreSQL: soma/contagem das vendas no periodo e contagens do painel, sem carregar vendas em memoria
+  const [[totals], lastSaleAt, counts, pricingProducts, lowStock] = await Promise.all([
+    analyticsRepo.salesTotalsByPeriod(ownerId, startDate, endDate, "total"),
+    analyticsRepo.lastSaleDate(ownerId, startDate, endDate),
+    analyticsRepo.overviewCounts(ownerId),
+    analyticsRepo.productsForPricingAlerts(ownerId),
+    repo.listLowStockIngredients(ownerId),
+  ]);
 
   return {
-    ...aggregates,
-    customers: customers.length,
-    products: products.length,
-    recipes: recipes.length,
-    linkedProducts: products.filter((p) => p.ficha_tecnica_id).length,
-    pricingAlerts: buildPricingAlerts(products),
-    stockAlerts: (await repo.listLowStockIngredients(user ? user.id : null)).map((i) => ({
+    ...buildFinancialAggregates(totals),
+    customers: counts.customers,
+    products: counts.products,
+    recipes: counts.recipes,
+    linkedProducts: counts.linkedProducts,
+    pricingAlerts: buildPricingAlerts(pricingProducts),
+    stockAlerts: lowStock.map((i) => ({
       ingredientId: i.id,
       name: i.name,
       stockQuantity: i.stockQuantity,
@@ -96,8 +79,8 @@ async function getOverview(filters = {}, user) {
       stockUnit: i.stockUnit,
     })),
     lowMarginThreshold: LOW_MARGIN_THRESHOLD,
-    // listSales ordena por data DESC: a venda mais recente é a primeira (antes pegava a mais antiga)
-    lastSaleAt: sales.length ? sales[0].date : null,
+    // venda mais recente dentro do filtro (MAX(date) no banco)
+    lastSaleAt,
   };
 }
 
@@ -105,42 +88,9 @@ async function buildTimeseries(breakdown = "day", filters = {}, user) {
   const normalizedBreakdown = validateBreakdown(breakdown);
   const { startDate, endDate } = resolveTemporalRange(filters);
 
-  // Somente vendas do usuário autenticado (antes listava vendas de todos os usuários)
-  const salesAll = await repo.listSales(user ? user.id : null);
-  const sales = filterSalesByDate(salesAll, startDate, endDate);
-  const buckets = {};
-
-  sales.forEach((sale) => {
-    const d = new Date(sale.date);
-    let key = "";
-    if (normalizedBreakdown === "day") {
-      key = toIsoDay(d);
-    } else if (normalizedBreakdown === "week") {
-      key = toWeekKeyUTC(d);
-    } else if (normalizedBreakdown === "month") {
-      key = toMonthKeyUTC(d);
-    } else if (normalizedBreakdown === "year") {
-      key = String(d.getUTCFullYear());
-    }
-    buckets[key] = buckets[key] || [];
-    buckets[key].push(sale);
-  });
-
-  if (normalizedBreakdown === "total") {
-    return [
-      {
-        period: "total",
-        ...buildFinancialAggregates(sales),
-      },
-    ];
-  }
-
-  return Object.entries(buckets)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([period, entries]) => ({
-      period,
-      ...buildFinancialAggregates(entries),
-    }));
+  // Somente vendas do usuario autenticado; o agrupamento por periodo (UTC) e feito no banco
+  const rows = await analyticsRepo.salesTotalsByPeriod(user ? user.id : null, startDate, endDate, normalizedBreakdown);
+  return rows.map((row) => ({ period: row.period, ...buildFinancialAggregates(row) }));
 }
 
 module.exports = {

@@ -90,20 +90,17 @@ app.get('/theme.css', (req, res) => {
 });
 
 app.disable('x-powered-by');
-app.use('/static', express.static(path.join(__dirname, 'public'), {
-  etag: false,
-  lastModified: false,
+// Producao: ETag + revalidacao (304) em vez de no-store; dev/testes mantem no-store.
+const IS_PROD = process.env.NODE_ENV === 'production';
+const STATIC_OPTIONS = {
+  etag: IS_PROD,
+  lastModified: IS_PROD,
   setHeaders: function(res) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Cache-Control', IS_PROD ? 'no-cache' : 'no-store, no-cache, must-revalidate');
   }
-}));
-app.use(express.static(path.join(__dirname, 'public'), {
-  etag: false,
-  lastModified: false,
-  setHeaders: function(res) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-  }
-}));
+};
+app.use('/static', express.static(path.join(__dirname, 'public'), STATIC_OPTIONS));
+app.use(express.static(path.join(__dirname, 'public'), STATIC_OPTIONS));
 
 app.use((req, res, next) => {
   const fixedSources = ["'self'", 'https://servicodados.ibge.gov.br', 'https://cdn.jsdelivr.net', 'http://localhost:3000'];

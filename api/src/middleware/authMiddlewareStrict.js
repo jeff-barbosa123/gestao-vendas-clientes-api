@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const sessionStore = require('../services/sessionStore');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'dev-secret');
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured in production');
+}
 const JWT_PREVIOUS_SECRET = process.env.JWT_PREVIOUS_SECRET;
 
 const MSG_TOKEN_MISSING = 'Token inv\u00e1lido ou ausente';

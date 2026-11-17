@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-17 - Frontend: módulos compartilhados entre products/product-edit e recipes/recipe-edit
+
+### Novo
+- `web/public/shared/` com os itens idênticos das 4 telas: `config`, `http`, `form-errors`, `auth`, `money`, `text`,
+  `search`, `product-name`, `recipe-constants`, `recipe-format`, `recipe-catalog`, `recipe-validators`. As telas
+  importam de `../shared/` e os módulos locais mantêm re-export.
+- Mapa do que ficou compartilhado, do que continua por tela e por quê: `docs/FRONTEND_MODULOS_COMPARTILHADOS.md`.
+- Spec Cypress `product-edit-name.cy.js` (1 teste).
+
+### Corrigido
+- **product-edit:** o nome do produto só aceitava letras Latin-1, enquanto a criação aceitava qualquer letra Unicode;
+  um produto criado como "Łódź" não podia ser salvo na edição. Alinhado em `\p{L}`.
 ## 2026-11-16 - Frontend: modularização de app.js (login) e dashboard.js
 
 ### Novo

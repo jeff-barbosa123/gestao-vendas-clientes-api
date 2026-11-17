@@ -134,4 +134,15 @@ describe('Aparência (White-Label)', () => {
       expect(res.body).to.not.include('--accent');
     });
   });
+
+  it('o /theme.css pelo servidor web traz ETag e responde 304 na revalidação', () => {
+    cy.request('/theme.css').then((res) => {
+      const etag = res.headers.etag;
+      expect(etag, 'etag').to.match(/^"[0-9a-f]{40}"$/);
+      expect(res.headers['cache-control']).to.include('no-cache');
+      cy.request({ url: '/theme.css', headers: { 'If-None-Match': etag }, failOnStatusCode: false }).then((again) => {
+        expect(again.status).to.equal(304);
+      });
+    });
+  });
 });

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-17 - Cache HTTP (ETag) no /theme.css
+
+### Melhoria
+- GET /api/branding/theme.css (e /theme.css no servidor web, que repassa os cabecalhos) agora devolve ETag forte (SHA-1 do CSS), Cache-Control: private, no-cache e Vary: Cookie, Authorization. A revalidacao com If-None-Match (ETag forte, fraco W/ ou *) responde 304 sem corpo; antes era no-store e o CSS era reenviado em toda pagina.
+- Ao salvar ou remover a marca o conteudo muda, o hash muda e a proxima carga ja traz o tema novo (sem versao manual). Cada empresa/visitante tem o proprio ETag; private + Vary impedem reutilizacao por cache compartilhado.
+- Testes: BRD-007b (Mocha) e revalidacao 304 via servidor web (Cypress appearance).
+
 ## 2026-11-17 - Dashboard com agregacao em SQL (Fase 6)
 
 ### Melhoria

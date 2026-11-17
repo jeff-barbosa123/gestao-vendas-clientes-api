@@ -91,6 +91,38 @@ describe('Fase 3 - White-Label (API /api/branding)', () => {
     expect(invalido.text).to.not.include('--accent');
   });
 
+  it('BRD-007b | theme.css usa ETag: 304 sem corpo enquanto a paleta nao muda e novo ETag apos salvar', async () => {
+    const first = await http.get('/api/branding/theme.css').set(auth(tokenA));
+    expect(first.status).to.equal(200);
+    const etag = first.headers.etag;
+    expect(etag).to.match(/^"[0-9a-f]{40}"$/);
+    expect(first.headers['cache-control']).to.include('private').and.include('no-cache');
+    expect(first.headers.vary).to.match(/Cookie/i);
+
+    const again = await http.get('/api/branding/theme.css').set(auth(tokenA)).set('If-None-Match', etag);
+    expect(again.status).to.equal(304);
+    expect(again.text || '').to.equal('');
+    expect(again.headers.etag).to.equal(etag);
+    expect((await http.get('/api/branding/theme.css').set(auth(tokenA)).set('If-None-Match', 'W/' + etag + ', "outro"')).status).to.equal(304);
+    expect((await http.get('/api/branding/theme.css').set(auth(tokenA)).set('If-None-Match', '*')).status).to.equal(304);
+    expect((await http.get('/api/branding/theme.css').set(auth(tokenA)).set('If-None-Match', '"velho"')).status).to.equal(200);
+
+    // ETag do visitante (tema padrao) e diferente do tema da empresa e nao vaza entre sessoes
+    const visitante = await http.get('/api/branding/theme.css');
+    expect(visitante.headers.etag).to.not.equal(etag);
+    expect((await http.get('/api/branding/theme.css').set('If-None-Match', etag)).status).to.equal(200);
+
+    // salvar nova paleta invalida o ETag antigo
+    const put = await http.put('/api/branding').set(auth(tokenA)).send({ companyName: 'Doces da Ana', primaryColor: '#0f766e', backgroundColor: '#1e3a8a', textColor: '#e2e8f0' });
+    expect(put.status, JSON.stringify(put.body)).to.equal(200);
+    const novo = await http.get('/api/branding/theme.css').set(auth(tokenA)).set('If-None-Match', etag);
+    expect(novo.status).to.equal(200);
+    expect(novo.headers.etag).to.not.equal(etag);
+    expect(novo.text).to.include('--accent: #0f766e;');
+    // restaura a paleta usada pelos testes seguintes
+    await http.put('/api/branding').set(auth(tokenA)).send({ companyName: 'Doces da Ana', primaryColor: '#1d4ed8', backgroundColor: '#1e3a8a', textColor: '#e2e8f0' });
+  });
+
   it('BRD-008 | Upload de logo PNG, leitura com Content-Type correto e versao na URL', async () => {
     const up = await http.post('/api/branding/logo').set(auth(tokenA)).send({ contentType: 'image/png', data: PNG_B64 });
     expect(up.status, JSON.stringify(up.body)).to.equal(200);

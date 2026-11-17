@@ -1,4 +1,12 @@
+const crypto = require("crypto");
 const brandingService = require("../services/brandingService");
+
+// If-None-Match: lista de ETags (fortes ou fracos "W/") ou "*"
+function etagMatches(header, etag) {
+  if (!header) return false;
+  if (header.trim() === "*") return true;
+  return header.split(",").some((t) => t.trim().replace(/^W\//, "") === etag);
+}
 
 function fail(res, err) {
   if (!err.status) return null;
@@ -42,8 +50,15 @@ module.exports = {
   themeCss: async (req, res, next) => {
     try {
       const css = await brandingService.getThemeCss(req.user ? req.user.id : null);
+      // ETag forte pelo conteudo: o navegador revalida a cada pagina (If-None-Match) e recebe 304 sem corpo
+      // enquanto a paleta nao muda; ao salvar/remover a marca o hash muda e o tema novo vem na proxima carga.
+      // "private" + Vary: o CSS depende da sessao (empresa logada), nunca pode ser reutilizado por cache compartilhado.
+      const etag = `"${crypto.createHash("sha1").update(css).digest("hex")}"`;
       res.setHeader("Content-Type", "text/css; charset=utf-8");
-      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Cache-Control", "private, no-cache");
+      res.setHeader("Vary", "Cookie, Authorization");
+      res.setHeader("ETag", etag);
+      if (etagMatches(req.headers["if-none-match"], etag)) return res.status(304).end();
       res.status(200).send(css);
     } catch (err) {
       next(err);

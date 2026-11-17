@@ -49,8 +49,9 @@ function normalizePaymentMethod(value) {
   return PAYMENT_ALIASES[key] || key;
 }
 
+// Todo produto com controle de estoque (stock IS NOT NULL) tem o saldo validado e baixado na venda.
 function shouldTrackStock(product) {
-  return product && Number.isFinite(product.stock) && product.stock <= 5;
+  return Boolean(product) && Number.isFinite(product.stock);
 }
 
 function hasSqlInjectionRisk(value) {

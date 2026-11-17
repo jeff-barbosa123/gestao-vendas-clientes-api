@@ -56,11 +56,11 @@ describe('US014 - Devolucao de estoque ao cancelar/editar venda', () => {
     expect(await getStock(produto.id)).to.equal(5);
   });
 
-  it('DEV-002 | Produto fora do criterio (stock > 5) nao tem baixa nem devolucao', async () => {
+  it('DEV-002 | Produto com estoque alto (stock > 5) tambem tem baixa e devolucao', async () => {
     const produto = await createProduct(50);
     const venda = await sell([{ productId: produto.id, quantity: 2 }]);
     expect(venda.status, JSON.stringify(venda.body)).to.equal(201);
-    expect(await getStock(produto.id)).to.equal(50);
+    expect(await getStock(produto.id)).to.equal(48);
 
     await cancel(venda.body.id);
     expect(await getStock(produto.id)).to.equal(50);

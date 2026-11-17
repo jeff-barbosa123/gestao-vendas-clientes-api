@@ -18,7 +18,7 @@ describe('US003 - Vendas', () => {
         name: `Produto Venda ${Date.now()}`,
         price: 100,
         purchase_price: 50,
-        stock: 10,
+        stock: 100000,
         ...overrides,
       });
 
@@ -536,7 +536,7 @@ describe('US003 - Vendas', () => {
     expect(resposta.body.total).to.equal(vendaCriada.body.total);
   });
 
-  it('API-VEN-024 | Nao deve controlar estoque para produto com estoque alto', async () => {
+  it('API-VEN-024 | Deve controlar estoque tambem para produto com estoque alto', async () => {
     const produto = await createProduct({ stock: 50 });
 
     const before = await client
@@ -558,7 +558,7 @@ describe('US003 - Vendas', () => {
       .get(`/api/products/${produto.id}`)
       .set('Authorization', `Bearer ${token}`);
 
-    expect(after.body.stock).to.equal(before.body.stock);
+    expect(after.body.stock).to.equal(before.body.stock - 20);
   });
 
   it('SEC-VEN-001 | Deve bloquear acesso com token inválido', async () => {

@@ -6,7 +6,7 @@ export { standardizeText };
 export function validateName(value) {
   const trimmed = String(value || '').trim();
   if (trimmed.length < 3 || trimmed.length > 120) return false;
-  const nameRegex = /^[A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff0-9\s'\/-]+$/;
+  const nameRegex = /^[\p{L}0-9\s'\/-]+$/u;
   return nameRegex.test(trimmed);
 }
 
@@ -15,7 +15,7 @@ function getNameGuidance(value) {
   if (!trimmed) return 'Exemplo: Bolo de Chocolate 1kg.';
   if (trimmed.length < 3) return 'Use pelo menos 3 caracteres.';
   if (/^[0-9\s]+$/.test(trimmed)) return 'Inclua uma palavra para identificar o produto.';
-  const allowed = /^[A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff0-9\s'\/-]+$/;
+  const allowed = /^[\p{L}0-9\s'\/-]+$/u;
   if (!allowed.test(trimmed)) return 'Use apenas letras, números, espaços, / ou -.';
   if (trimmed === trimmed.toUpperCase() || trimmed === trimmed.toLowerCase()) {
     return 'Dica: iniciais maiusculas deixam o nome mais profissional.';

@@ -500,18 +500,4 @@ describe('US004 - Faturamento', () => {
     expect(monthResp.body.total).to.equal(Number(monthTotal.toFixed(2)));
   });
 
-  it.skip('PERF-REP-001 | Deve suportar consulta de faturamento com 100 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REP-002 | Deve suportar consulta de faturamento com 500 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REP-003 | Deve suportar consulta de faturamento com 1000 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REP-004 | Deve manter desempenho aceitavel em consultas com filtros complexos', async () => {});
-  it.skip('PERF-REP-005 | Deve manter consistencia durante consulta com registro simultaneo de vendas', async () => {});
-  it.skip('PERF-REP-006 | Deve manter estabilidade durante cancelamento de vendas em massa', async () => {});
-  it.skip('PERF-REP-007 | Deve suportar exportacao de faturamento com multiplos usuarios simultaneos', async () => {});
-  it.skip('PERF-REP-008 | Deve exportar faturamento em CSV com grande volume de dados', async () => {});
-  it.skip('PERF-REP-009 | Deve exportar faturamento em PDF com grande volume de dados', async () => {});
-  it.skip('PERF-REP-010 | Deve suportar pico de consultas em curto intervalo de tempo', async () => {});
-  it.skip('PERF-REP-011 | Deve manter estabilidade em consulta continua por periodo prolongado', async () => {});
-  it.skip('PERF-REP-012 | Deve manter desempenho com base de dados grande', async () => {});
-  it.skip('PERF-REP-013 | Deve respeitar SLA de latencia em consulta simples de faturamento', async () => {});
-  it.skip('PERF-REP-014 | Deve respeitar SLA de latencia em exportacao de faturamento', async () => {});
 });

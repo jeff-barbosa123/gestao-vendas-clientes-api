@@ -367,9 +367,4 @@ describe('US006 - Simulacao de Preco Ideal', () => {
     expect(response.body).to.have.property('margem', 15);
   });
 
-  it.skip('API-SIM-024 | Deve suportar multiplas simulacoes simultaneas', async () => {});
-  it.skip('PERF-SIM-001 | Deve suportar 100 requisicoes simultaneas', async () => {});
-  it.skip('PERF-SIM-002 | Deve suportar 500 requisicoes simultaneas', async () => {});
-  it.skip('PERF-SIM-003 | Deve suportar 1000 requisicoes simultaneas', async () => {});
-  it.skip('PERF-SIM-004 | Deve suportar payload grande com muitos ingredientes', async () => {});
 });

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-17 - Suite sem pendentes + upgrades de seguranca
+
+- Removidos 35 `it.skip` vazios (PERF-REP, PERF-REC, PERF-SIM, API-SIM-024, API-VIN-018).
+- Novo `US018-performance-smoke.test.js` (12 testes): SLA de latencia, concorrencia (40 requisicoes), exportacao CSV/PDF e ficha com 100 ingredientes.
+- Cargas de 500/1000 requisicoes ficam para teste de carga dedicado (k6), fora do Mocha/CI.
+- Dependencias: bcrypt 6, nodemailer 10, uuid substituido por `crypto.randomUUID`; `npm audit` de producao com 0 vulnerabilidades.
+- JWT: `authMiddlewareStrict` falha no boot em producao sem `JWT_SECRET`; estaticos do front com ETag em producao.
+- Mocha: 413 passando, 0 pendentes. Cypress: 365/365.
+
 ## 2026-11-17 - Cores restantes migradas para design tokens (Fase 7)
 
 ### Melhoria

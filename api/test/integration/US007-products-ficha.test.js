@@ -479,5 +479,4 @@ describe('US007 - Vincular ficha técnica ao produto', () => {
     expect([400, 413]).to.include(res.status);
   });
 
-  it.skip('API-VIN-018 | Deve garantir tempo de resposta aceitavel no vinculo', async () => {});
 });

@@ -377,19 +377,4 @@ const createRecipeRaw = async (token, payload = {}) =>
     expect(reread.status).to.equal(200);
   });
 
-  it.skip('PERF-REC-001 | Deve suportar criacao de ficha tecnica com 100 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REC-002 | Deve suportar criacao de ficha tecnica com 500 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REC-003 | Deve suportar criacao de ficha tecnica com 1000 requisicoes simultaneas', async () => {});
-  it.skip('PERF-REC-004 | Deve suportar consulta de fichas tecnicas com multiplos usuarios simultaneos', async () => {});
-  it.skip('PERF-REC-005 | Deve suportar consulta durante criacao simultanea de fichas tecnicas', async () => {});
-  it.skip('PERF-REC-006 | Deve suportar consulta durante inativacao em massa de fichas tecnicas', async () => {});
-  it.skip('PERF-REC-007 | Deve suportar exportacao de ficha tecnica com multiplos usuarios simultaneos', async () => {});
-  it.skip('PERF-REC-008 | Deve suportar exportacao de ficha tecnica em CSV com grande volume de dados', async () => {});
-  it.skip('PERF-REC-009 | Deve suportar exportacao de ficha tecnica em PDF com grande volume de dados', async () => {});
-  it.skip('PERF-REC-010 | Deve suportar pico de criacao e consulta em curto intervalo de tempo', async () => {});
-  it.skip('PERF-REC-011 | Deve suportar uso continuo do cadastro e consulta de receitas', async () => {});
-  it.skip('PERF-REC-012 | Deve suportar consulta com base de dados grande', async () => {});
-  it.skip('PERF-REC-013 | Deve garantir latencia aceitavel na criacao simples de ficha tecnica', async () => {});
-  it.skip('PERF-REC-014 | Deve garantir latencia aceitavel na consulta simples de ficha tecnica', async () => {});
-  it.skip('PERF-REC-015 | Deve garantir latencia aceitavel na exportacao de ficha tecnica', async () => {});
 });

@@ -18,6 +18,8 @@ import { apiRequest } from './core.js';
 import { formatCatalogNumber } from './calc.js';
 import { updateCostSummary, updateSaveState } from './summary.js';
 import { setIngredientAdvancedOpen, showIngredientSuccess } from './ingredients.js';
+import { setMaskedValue, findCatalogIngredient } from '../shared/recipe-catalog.js';
+export { setMaskedValue, findCatalogIngredient };
 
 export function initMasks() {
   if (window.Cleave) {
@@ -73,22 +75,6 @@ export function initMasks() {
   }
 }
 
-export function setMaskedValue(input, value, mask) {
-  if (!input) return;
-  const safeValue = value == null ? '' : value;
-  if (mask && typeof mask.clear === 'function' && safeValue === '') {
-    mask.clear();
-    return;
-  }
-  if (mask && typeof mask.set === 'function') {
-    mask.set(safeValue);
-  } else if (mask && typeof mask.setRawValue === 'function') {
-    mask.setRawValue(String(safeValue));
-  } else {
-    input.value = String(safeValue);
-  }
-}
-
 export async function loadIngredientSuggestions() {
   if (!ingredientSuggestions) return;
   let items = INGREDIENTS_FALLBACK.slice();
@@ -114,10 +100,6 @@ export async function loadIngredientSuggestions() {
     opt.value = String(item);
     ingredientSuggestions.appendChild(opt);
   });
-}
-
-export function findCatalogIngredient(name) {
-  return catalogByName.get(String(name || '').trim().toLowerCase()) || null;
 }
 
 export async function loadIngredientCatalog() {

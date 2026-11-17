@@ -8,11 +8,8 @@ import {
   updatePackQuantityWarning,
   updatePackUnitHints,
 } from './ingredients.js';
-
-export function formatCatalogNumber(value, input) {
-  const fixed = Number(value).toFixed(2).replace(/\.00$/, '');
-  return input && input.type === 'number' ? fixed : fixed.replace('.', ',');
-}
+import { formatCatalogNumber, formatMoney, formatQuantity, normalizeKgValue } from '../shared/recipe-format.js';
+export { formatCatalogNumber, formatMoney, formatQuantity, normalizeKgValue };
 
 export function parseLocaleNumber(value) {
   if (typeof value === 'number') return Number.isFinite(value) ? value : null;
@@ -90,15 +87,6 @@ export function toNumber(value, min = 0) {
   return parsed;
 }
 
-export function formatMoney(value) {
-  return window.SGVC.utils.formatMoney(value);
-}
-
-export function formatQuantity(value) {
-  if (!Number.isFinite(value)) return '-';
-  return value.toFixed(2).replace('.', ',');
-}
-
 export function normalizeQuantity(value, unit) {
   const numeric = parseLocaleNumber(value);
   if (!Number.isFinite(numeric)) return null;
@@ -128,10 +116,3 @@ export function calculateIngredientCost(item) {
   return (quantity / pack) * cost;
 }
 
-export function normalizeKgValue(value) {
-  if (!Number.isFinite(value)) return value;
-  if (value >= 100 && Number.isInteger(value)) {
-    return value / 1000;
-  }
-  return value;
-}

@@ -20,6 +20,8 @@ import {
   setIngredientAdvancedOpen,
   showIngredientSuccess,
 } from './ingredients.js';
+import { validateName } from '../shared/recipe-validators.js';
+export { validateName };
 
 export function validateEditName(showMessage) {
   const value = nameInput ? nameInput.value.trim() : '';
@@ -99,8 +101,3 @@ export function validateIngredientFields(showMessage) {
   return isValid;
 }
 
-export function validateName(value) {
-  const trimmed = String(value || '').trim();
-  if (trimmed.length < 3 || trimmed.length > 120) return false;
-  return true;
-}

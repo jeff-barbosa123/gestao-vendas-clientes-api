@@ -2,7 +2,7 @@ const repo = require("../../db/repository");
 const { failedAttempts } = require("../../models/db");
 const { MAX_FAILED_ATTEMPTS, BLOCK_DURATION_MS } = require("./config");
 const { MESSAGES } = require("./messages");
-const { getUserByEmail } = require("./userLookup");
+const { getUserByIdentifier } = require("./userLookup");
 
 function normalizeEmailKey(email) {
   return String(email || "").toLowerCase();
@@ -31,7 +31,7 @@ async function clearAttempts(email) {
   
   // Tenta atualizar no banco, mas não falha se banco não estiver disponível
   try {
-    const user = await getUserByEmail(email);
+    const user = await getUserByIdentifier(email);
     if (user) {
       const statusUsuario = computeStatus(user, null);
       await repo.updateUserLogin(user.id, user.data_ultimo_login, 0, statusUsuario);
@@ -65,7 +65,7 @@ async function recordFailedAttempt(email) {
   
   // Tenta atualizar no banco, mas não falha se banco não estiver disponível
   try {
-    const user = await getUserByEmail(email);
+    const user = await getUserByIdentifier(email);
     if (user) {
       const statusUsuario = computeStatus(user, entry.blockedUntil);
       await repo.updateUserLogin(user.id, user.data_ultimo_login, entry.count, statusUsuario);

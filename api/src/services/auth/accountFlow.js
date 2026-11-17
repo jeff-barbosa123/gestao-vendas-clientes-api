@@ -5,12 +5,13 @@ const emailService = require("../emailService");
 const { hashPassword, comparePassword } = require("../../utils/passwordHash");
 const { RESET_TOKEN_TTL_MINUTES } = require("./config");
 const { MESSAGES } = require("./messages");
-const { getUserByEmail, getUserById } = require("./userLookup");
-const { validateEmail, validatePassword } = require("./validators");
+const { getUserByEmail, getUserByUsername, getUserById } = require("./userLookup");
+const { validateEmail, validatePassword, validateOptionalUsername } = require("./validators");
 const { hashResetToken, hashEmailVerificationToken, buildResetLink } = require("./tokens");
 
 async function registerUser(data) {
   const { email, password, name } = data;
+  const username = validateOptionalUsername(data.username);
   
   // Validate email is provided
   const validatedEmail = validateEmail(email, false);
@@ -28,8 +29,16 @@ async function registerUser(data) {
     throw err;
   }
   
+  if (username && (await getUserByUsername(username))) {
+    const err = new Error(MESSAGES.usernameTaken);
+    err.status = 409;
+    err.code = "USERNAME_ALREADY_EXISTS";
+    throw err;
+  }
+
   const newUser = await repo.createUser({
     id: uuidv4(),
+    username,
     email: validatedEmail,
     password: hashedPassword,
     name,
@@ -219,7 +228,7 @@ async function verifyEmail(token) {
   return { ok: true };
 }
 
-async function updateProfile(userId, rawName, rawEmail) {
+async function updateProfile(userId, rawName, rawEmail, rawUsername) {
   if (!userId) {
     const err = new Error("Usu\u00e1rio n\u00e3o encontrado");
     err.status = 404;
@@ -244,7 +253,20 @@ async function updateProfile(userId, rawName, rawEmail) {
     err.status = 409;
     throw err;
   }
-  return repo.updateUserProfile(userId, name, email);
+  let username;
+  if (rawUsername !== undefined) {
+    username = validateOptionalUsername(rawUsername);
+    if (username) {
+      const taken = await getUserByUsername(username);
+      if (taken && taken.id !== userId) {
+        const err = new Error(MESSAGES.usernameTaken);
+        err.status = 409;
+        err.code = "USERNAME_ALREADY_EXISTS";
+        throw err;
+      }
+    }
+  }
+  return repo.updateUserProfile(userId, name, email, username);
 }
 
 module.exports = {

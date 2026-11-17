@@ -170,10 +170,13 @@
                 <span id="login-success-text"></span>
               </div>
               <div class="field">
-                <label class="label" for="email">E-mail</label>
+                <label class="label" for="email">E-mail ou usuário</label>
                 <input
                   class="input"
-                  type="email"
+                  type="text"
+                  inputmode="email"
+                  autocapitalize="none"
+                  spellcheck="false"
                   id="email"
                   name="email"
                   autocomplete="username"
@@ -181,7 +184,7 @@
                   aria-required="true"
                   aria-describedby="email-help"
                 />
-                <p class="help" id="email-help">Digite o e-mail usado no seu cadastro.</p>
+                <p class="help" id="email-help">Digite seu e-mail ou nome de usuário.</p>
                 <p class="help is-danger" id="email-error" aria-live="polite" hidden></p>
               </div>
 
@@ -298,6 +301,12 @@
             <span class="field-status" id="register-email-status" aria-hidden="true" hidden></span>
             <p class="help is-danger" id="register-email-error" aria-live="polite" hidden></p>
           </div>
+              <div class="field">
+                <label class="label" for="register-username">Usuário (opcional)</label>
+                <input class="input" id="register-username" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="30" aria-describedby="register-username-help" />
+                <p class="help" id="register-username-help">3 a 30 caracteres: letras, números, ponto, hífen ou sublinhado. Permite entrar sem digitar o e-mail.</p>
+                <p class="help is-danger" id="register-username-error" aria-live="polite" hidden></p>
+              </div>
           <div class="field">
             <label class="label" for="register-password"><span aria-hidden="true">🔒</span> Senha</label>
             <div class="password-wrapper">

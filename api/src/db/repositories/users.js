@@ -10,6 +10,22 @@ async function getUserByEmail(email) {
   return result.rows[0] || null;
 }
 
+async function getUserByUsername(username) {
+  if (!username) return null;
+  const result = await query(
+    "SELECT * FROM users WHERE lower(username) = lower($1) LIMIT 1",
+    [username]
+  );
+  return result.rows[0] || null;
+}
+
+// '@' => e-mail; caso contrario => username
+async function getUserByIdentifier(identifier) {
+  return String(identifier || "").includes("@")
+    ? getUserByEmail(identifier)
+    : getUserByUsername(identifier);
+}
+
 async function getUserById(id) {
   if (!isUuid(id)) return null;
   const result = await query("SELECT * FROM users WHERE id = $1", [id]);
@@ -28,11 +44,12 @@ async function createUser(data) {
     data_ultimo_login: data.dataUltimoLogin || null,
     tentativas_falha: data.tentativasFalha || 0,
     blocked: !!data.blocked,
+    username: data.username || null,
   };
   const result = await query(
     `INSERT INTO users
-      (id, email, password, name, email_verified, email_verification_token, status_usuario, data_ultimo_login, tentativas_falha, blocked, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW())
+      (id, email, password, name, email_verified, email_verification_token, status_usuario, data_ultimo_login, tentativas_falha, blocked, username, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())
      RETURNING *`,
     [
       payload.id,
@@ -45,6 +62,7 @@ async function createUser(data) {
       payload.data_ultimo_login,
       payload.tentativas_falha,
       payload.blocked,
+      payload.username,
     ]
   );
   return result.rows[0];
@@ -101,15 +119,18 @@ async function updateUserPassword(id, password) {
   return result.rows[0] || null;
 }
 
-async function updateUserProfile(id, name, email) {
+async function updateUserProfile(id, name, email, username) {
+  // username === undefined => mantem; null/'' => remove; string => define
+  const hasUsername = username !== undefined;
   const result = await query(
     `UPDATE users
        SET name = $2,
            email = $3,
+           username = CASE WHEN $4::boolean THEN $5 ELSE username END,
            updated_at = NOW()
      WHERE id = $1
      RETURNING *`,
-    [id, name, email]
+    [id, name, email, hasUsername, hasUsername ? username || null : null]
   );
   return result.rows[0] || null;
 }
@@ -148,6 +169,8 @@ async function markPasswordResetUsed(id) {
 
 module.exports = {
   getUserByEmail,
+  getUserByUsername,
+  getUserByIdentifier,
   getUserById,
   createUser,
   setEmailVerificationToken,

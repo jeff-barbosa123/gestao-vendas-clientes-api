@@ -4,10 +4,17 @@ const sessionStore = require("../sessionStore");
 const { hashPassword, comparePassword, isBcryptHash } = require("../../utils/passwordHash");
 const { JWT_REFRESH_SECRET, JWT_REFRESH_PREVIOUS_SECRET } = require("./config");
 const { MESSAGES } = require("./messages");
-const { getUserByEmail, getUserById } = require("./userLookup");
+const { getUserByIdentifier, getUserById } = require("./userLookup");
 const { validateCredentials } = require("./validators");
 const { computeStatus, clearAttempts, isBlocked, buildFailedLoginError } = require("./lockout");
 const { issueTokens } = require("./tokens");
+
+// Hash descartavel: usuario inexistente gasta o mesmo tempo de um bcrypt compare (evita enumeracao por timing)
+let dummyHashPromise = null;
+function getDummyHash() {
+  if (!dummyHashPromise) dummyHashPromise = hashPassword("sgvc-dummy-password-timing");
+  return dummyHashPromise;
+}
 
 async function login(rawEmail, rawPassword) {
   const { email, password } = validateCredentials(rawEmail, rawPassword);
@@ -20,7 +27,7 @@ async function login(rawEmail, rawPassword) {
 
   let user;
   try {
-    user = await getUserByEmail(email);
+    user = await getUserByIdentifier(email);
   } catch (dbError) {
     // Se erro de banco de dados, retorna erro mais amigável
     const errorMessage = dbError.message || 'Erro desconhecido';
@@ -42,6 +49,7 @@ async function login(rawEmail, rawPassword) {
   }
 
   if (!user) {
+    await comparePassword(password, await getDummyHash()).catch(() => false);
     throw await buildFailedLoginError(email);
   }
 
@@ -102,6 +110,7 @@ async function login(rawEmail, rawPassword) {
       user: {
         id: updatedUser.id,
         email: updatedUser.email,
+        username: updatedUser.username || null,
         name: updatedUser.name,
         statusUsuario: updatedUser.status_usuario || updatedUser.statusUsuario || 'ATIVO',
         dataUltimoLogin: updatedUser.data_ultimo_login || updatedUser.dataUltimoLogin || dataUltimoLogin,

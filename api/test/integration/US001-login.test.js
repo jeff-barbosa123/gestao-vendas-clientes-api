@@ -83,14 +83,14 @@ describe('Login', () => {
     expect(resposta.body.error).to.equal(MESSAGES.invalidCredentials);
   });
 
-  it("API-004 | Deve retornar 400 e a mensagem 'Formato de e-mail inv\u00e1lido' quando o e-mail n\u00e3o tiver '@'", async () => {
+  it("API-004 | Deve retornar 400 e a mensagem 'Formato de e-mail ou usu\u00e1rio inv\u00e1lido' quando o identificador n\u00e3o for e-mail nem usu\u00e1rio v\u00e1lido", async () => {
     const resposta = await postLogin({
-      email: 'emailinvalido.com',
+      email: 'email invalido.com',
       password: '123456',
     });
 
     expect(resposta.status).to.equal(400);
-    expect(resposta.body.error).to.equal(MESSAGES.invalidEmail);
+    expect(resposta.body.error).to.equal('Formato de e-mail ou usu\u00e1rio inv\u00e1lido');
   });
 
   it("API-005 | Deve retornar 400 e a mensagem 'Formato de e-mail inv\u00e1lido' quando o e-mail n\u00e3o tiver dom\u00ednio", async () => {

@@ -45,6 +45,56 @@ function validateEmail(rawEmail, passwordProvided) {
   return email;
 }
 
+const USERNAME_REGEX = /^[a-z0-9._-]{3,30}$/;
+
+function normalizeUsername(raw) {
+  return typeof raw === "string" ? raw.trim().toLowerCase() : raw;
+}
+
+function isValidUsername(raw) {
+  return typeof raw === "string" && USERNAME_REGEX.test(normalizeUsername(raw));
+}
+
+// Username opcional: vazio/undefined/null => null; invalido => 400
+function validateOptionalUsername(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "string") {
+    const err = new Error(MESSAGES.invalidUsername);
+    err.status = 400;
+    throw err;
+  }
+  const username = normalizeUsername(raw);
+  if (!username) return null;
+  if (!USERNAME_REGEX.test(username)) {
+    const err = new Error(MESSAGES.invalidUsername);
+    err.status = 400;
+    throw err;
+  }
+  return username;
+}
+
+// Login: aceita e-mail (contem '@') ou username
+function validateIdentifier(rawIdentifier, passwordProvided) {
+  if (typeof rawIdentifier === "string" && rawIdentifier.includes("@")) {
+    return validateEmail(rawIdentifier, passwordProvided);
+  }
+  if (rawIdentifier === undefined || rawIdentifier === null || typeof rawIdentifier !== "string") {
+    return validateEmail(rawIdentifier, passwordProvided);
+  }
+  const identifier = normalizeUsername(rawIdentifier);
+  if (!identifier) {
+    const err = new Error(MESSAGES.emailRequired);
+    err.status = 400;
+    throw err;
+  }
+  if (!USERNAME_REGEX.test(identifier)) {
+    const err = new Error(MESSAGES.invalidIdentifier);
+    err.status = 400;
+    throw err;
+  }
+  return identifier;
+}
+
 function validatePasswordStrength(password) {
   if (password.length < 8) {
     const err = new Error(MESSAGES.passwordShort);
@@ -122,7 +172,7 @@ function validateCredentials(rawEmail, rawPassword) {
     err.status = 400;
     throw err;
   }
-  const email = validateEmail(rawEmail, passwordProvided);
+  const email = validateIdentifier(rawEmail, passwordProvided);
   // No login, NÃO validamos força da senha (requireStrength = false)
   // A validação de força só acontece em registro/recuperação/alteração de senha
   const password = validatePassword(rawPassword, false);
@@ -133,6 +183,10 @@ module.exports = {
   sanitizeEmail,
   sanitizePassword,
   validateEmail,
+  validateIdentifier,
+  validateOptionalUsername,
+  normalizeUsername,
+  isValidUsername,
   validatePasswordStrength,
   validatePassword,
   validateCredentials,

@@ -66,6 +66,13 @@ export function initEventsRegister() {
       const name = registerName ? registerName.value.trim() : '';
       const email = registerEmail ? registerEmail.value.trim() : '';
       const password = registerPassword ? registerPassword.value.trim() : '';
+      const usernameInput = document.getElementById('register-username');
+      const usernameError = document.getElementById('register-username-error');
+      const username = usernameInput ? usernameInput.value.trim().toLowerCase() : '';
+      if (usernameError) {
+        usernameError.hidden = true;
+        usernameError.textContent = '';
+      }
 
       if (!name) {
         setRegisterFieldError(registerName, registerNameError, 'Informe o nome.', registerNameStatus);
@@ -75,6 +82,14 @@ export function initEventsRegister() {
       if (!email || !validateEmail(email)) {
         setRegisterFieldError(registerEmail, registerEmailError, 'Digite um e-mail v\u00e1lido.', registerEmailStatus);
         if (registerEmail) registerEmail.focus();
+        return;
+      }
+      if (username && !/^[a-z0-9._-]{3,30}$/.test(username)) {
+        if (usernameError) {
+          usernameError.textContent = 'Usu\u00e1rio inv\u00e1lido: use 3 a 30 caracteres (letras, n\u00fameros, ponto, h\u00edfen ou sublinhado).';
+          usernameError.hidden = false;
+        }
+        if (usernameInput) usernameInput.focus();
         return;
       }
       const passwordProblem = registerPasswordProblem(password);
@@ -97,7 +112,7 @@ export function initEventsRegister() {
       try {
         await apiRequest('/api/auth/register', {
           method: 'POST',
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify(username ? { name, email, password, username } : { name, email, password }),
         });
         setRegisterFieldValid(registerName, registerNameError, registerNameStatus);
         setRegisterFieldValid(registerEmail, registerEmailError, registerEmailStatus);

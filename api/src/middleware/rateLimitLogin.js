@@ -3,7 +3,9 @@ const { failedAttempts } = require('../models/db');
 const MESSAGE = 'Acesso temporariamente bloqueado';
 
 module.exports = (req, res, next) => {
-  const email = typeof (req.body || {}).email === 'string' ? req.body.email.toLowerCase() : null;
+  const body = req.body || {};
+  const raw = body.identifier !== undefined ? body.identifier : body.email;
+  const email = typeof raw === 'string' ? raw.trim().toLowerCase() : null;
 
   if (!email) return next();
 

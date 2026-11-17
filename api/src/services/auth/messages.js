@@ -1,6 +1,9 @@
 const MESSAGES = {
   invalidCredentials: "Credenciais inv\u00e1lidas",
   invalidEmail: "Formato de e-mail inv\u00e1lido",
+  invalidIdentifier: "Formato de e-mail ou usu\u00e1rio inv\u00e1lido",
+  invalidUsername: "Usu\u00e1rio deve ter de 3 a 30 caracteres (letras, n\u00fameros, ponto, h\u00edfen ou sublinhado)",
+  usernameTaken: "Nome de usu\u00e1rio j\u00e1 est\u00e1 em uso",
   invalidPasswordType: "Formato de senha inv\u00e1lido",
   emailRequired: "E-mail \u00e9 obrigat\u00f3rio",
   passwordRequired: "Senha \u00e9 obrigat\u00f3ria",

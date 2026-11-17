@@ -33,7 +33,7 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       const { token, refreshToken, user, exp, jti, refreshJti } = await authService.login(
-        req.body.email,
+        req.body.identifier !== undefined ? req.body.identifier : req.body.email,
         req.body.password
       );
       setAuthCookies(res, token, refreshToken, exp);
@@ -101,6 +101,7 @@ module.exports = {
         user: {
           id: user.id,
           email: user.email,
+          username: user.username || null,
           name: user.name,
           statusUsuario: user.status_usuario,
           dataUltimoLogin: user.data_ultimo_login,
@@ -114,12 +115,13 @@ module.exports = {
 
   updateProfile: async (req, res, next) => {
     try {
-      const { name, email } = req.body || {};
-      const user = await authService.updateProfile(req.user.id, name, email);
+      const { name, email, username } = req.body || {};
+      const user = await authService.updateProfile(req.user.id, name, email, username);
       return res.status(200).json({
         user: {
           id: user.id,
           email: user.email,
+          username: user.username || null,
           name: user.name,
           statusUsuario: user.status_usuario,
           dataUltimoLogin: user.data_ultimo_login,

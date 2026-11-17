@@ -5,17 +5,46 @@ describe('Login UI', () => {
     cy.visit('/index.html');
   });
 
-  it('exibe erro quando o e-mail esta vazio', () => {
+  it('exibe erro quando o e-mail ou usuario esta vazio', () => {
     cy.get('#login-btn').click();
-    cy.get('#email-error').should('be.visible').and('contain', 'E-mail obrigatório.');
+    cy.get('#email-error').should('be.visible').and('contain', 'E-mail ou usuário obrigatório.');
     cy.focused().should('have.attr', 'id', 'email');
   });
 
   it('exibe erro quando o e-mail e invalido', () => {
-    cy.get('#email').type('emailinvalido.com');
+    cy.get('#email').type('email@invalido');
     cy.get('#password').type('123456');
     cy.get('#login-btn').click();
     cy.get('#email-error').should('be.visible').and('contain', 'Formato de e-mail inválido.');
+  });
+
+  it('exibe erro quando o usuario tem formato invalido', () => {
+    cy.get('#email').type('a b');
+    cy.get('#password').type('123456');
+    cy.get('#login-btn').click();
+    cy.get('#email-error').should('be.visible').and('contain', 'Formato de e-mail ou usu\u00e1rio inv\u00e1lido.');
+  });
+
+  it('aceita nome de usuario e envia identifier junto com email (compatibilidade)', () => {
+    cy.intercept('POST', LOGIN_URL, (req) => {
+      expect(req.body.identifier).to.equal('maria.silva');
+      expect(req.body.email).to.equal('maria.silva');
+      req.reply({
+        statusCode: 200,
+        body: { token: 'token-fake', refreshToken: 'refresh-fake', user: { id: 'u1', email: 'maria@teste.com', username: 'maria.silva' }, exp: Date.now() + 900000 },
+      });
+    }).as('loginUsuario');
+    cy.stubAuthenticated();
+    cy.get('#email').type('maria.silva');
+    cy.get('#password').type('Admin@123!');
+    cy.get('#login-btn').click();
+    cy.wait('@loginUsuario');
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/dashboard.html');
+  });
+
+  it('campo de login aceita texto livre e rotula e-mail ou usuario', () => {
+    cy.get('label[for="email"]').should('contain', 'E-mail ou usu\u00e1rio');
+    cy.get('#email').should('have.attr', 'type', 'text');
   });
 
   it('exibe erro quando a senha e muito curta', () => {
@@ -43,7 +72,7 @@ describe('Login UI', () => {
   });
 
   it('desabilita o botao quando ha erro ativo', () => {
-    cy.get('#email').type('emailinvalido.com').blur();
+    cy.get('#email').type('email@invalido').blur();
     cy.get('#email-error').should('be.visible');
     cy.get('#login-btn').should('be.disabled');
   });

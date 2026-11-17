@@ -1,5 +1,6 @@
 const MESSAGES = {
   invalidEmail: 'Formato de e-mail inv\u00e1lido',
+  invalidIdentifier: 'Formato de e-mail ou usu\u00e1rio inv\u00e1lido',
   invalidPasswordType: 'Formato de senha inv\u00e1lido',
   emailRequired: 'E-mail \u00e9 obrigat\u00f3rio',
   passwordRequired: 'Senha \u00e9 obrigat\u00f3ria',
@@ -18,7 +19,10 @@ module.exports = (req, res, next) => {
     return res.status(415).json(errorBody('Content-Type inv\u00e1lido', 'INVALID_CONTENT_TYPE'));
   }
 
-  const { email, password } = req.body || {};
+  const body = req.body || {};
+  // "identifier" (e-mail ou usuario) tem prioridade; "email" mantido por compatibilidade
+  const email = body.identifier !== undefined ? body.identifier : body.email;
+  const password = body.password;
 
   if (email === undefined && password === undefined) {
     return res.status(400).json(errorBody(MESSAGES.emailPasswordRequired));
@@ -51,9 +55,13 @@ module.exports = (req, res, next) => {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = password.trim();
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(cleanEmail)) {
-    return res.status(400).json(errorBody(MESSAGES.invalidEmail));
+  if (cleanEmail.includes('@')) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json(errorBody(MESSAGES.invalidEmail));
+    }
+  } else if (!/^[a-z0-9._-]{3,30}$/.test(cleanEmail)) {
+    return res.status(400).json(errorBody(MESSAGES.invalidIdentifier));
   }
 
   // Para LOGIN, validamos apenas que a senha não está vazia e tem tamanho razoável
@@ -67,6 +75,7 @@ module.exports = (req, res, next) => {
   }
 
   req.body.email = cleanEmail;
+  req.body.identifier = cleanEmail;
   req.body.password = cleanPass;
 
   next();

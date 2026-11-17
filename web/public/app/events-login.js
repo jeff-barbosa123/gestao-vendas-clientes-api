@@ -38,7 +38,7 @@ import {
   setLoginButtonState,
   updatePasswordToggle,
   updateSessionUI,
-  validateEmail,
+  validateIdentifier,
   validatePassword,
 } from './login.js';
 
@@ -67,15 +67,19 @@ export function initEventsLogin() {
     const password = passwordInput.value.trim();
 
     if (!email) {
-      setFieldError(emailInput, 'E-mail obrigat\u00f3rio.', emailError);
+      setFieldError(emailInput, 'E-mail ou usu\u00e1rio obrigat\u00f3rio.', emailError);
       setStatus('Falha no login', 'is-danger');
       emailInput.focus();
       setLoginButtonState();
       return;
     }
 
-    if (!validateEmail(email)) {
-      setFieldError(emailInput, 'Formato de e-mail inv\u00e1lido.', emailError);
+    if (!validateIdentifier(email)) {
+      setFieldError(
+        emailInput,
+        email.includes('@') ? 'Formato de e-mail inv\u00e1lido.' : 'Formato de e-mail ou usu\u00e1rio inv\u00e1lido.',
+        emailError,
+      );
       setStatus('Falha no login', 'is-danger');
       emailInput.focus();
       setLoginButtonState();
@@ -113,7 +117,7 @@ export function initEventsLogin() {
     try {
       const data = await apiRequest('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier: email, email, password }),
       });
 
       // Auth via cookie HttpOnly: backend não deve retornar token no body

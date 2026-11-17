@@ -176,7 +176,7 @@ describe('US998 - Regressões (varredura 11/11/2026)', () => {
     });
 
     it('REG-010 | Validação do login segue o formato padrão (success/code/message/error)', async () => {
-      const res = await http.post('/api/auth/login').send({ email: 'invalido', password: 'x' });
+      const res = await http.post('/api/auth/login').send({ email: 'inv alido', password: 'x' });
       expect(res.status).to.equal(400);
       expect(res.body).to.include.keys('success', 'code', 'message', 'error');
       expect(res.body.message).to.equal(res.body.error);

@@ -103,6 +103,15 @@ export function validateEmail(value) {
   return emailRegex.test(value);
 }
 
+export function validateUsername(value) {
+  return /^[a-zA-Z0-9._-]{3,30}$/.test(value);
+}
+
+// Login aceita e-mail (contem '@') ou nome de usuario
+export function validateIdentifier(value) {
+  return value.includes('@') ? validateEmail(value) : validateUsername(value);
+}
+
 export function validatePassword(value) {
   return value.length >= 3;
 }
@@ -120,10 +129,14 @@ export function handleEmailBlur() {
     emailInput.classList.remove('is-success');
     return;
   }
-  if (validateEmail(value)) {
+  if (validateIdentifier(value)) {
     setFieldSuccess(emailInput, emailError);
   } else {
-    setFieldError(emailInput, 'Formato de e-mail inv\u00e1lido.', emailError);
+    setFieldError(
+      emailInput,
+      value.includes('@') ? 'Formato de e-mail inv\u00e1lido.' : 'Formato de e-mail ou usu\u00e1rio inv\u00e1lido.',
+      emailError,
+    );
   }
   setLoginButtonState();
 }

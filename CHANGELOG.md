@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-11-17 - Estoque, migrações versionadas e login por e-mail ou usuário (Fase 1)
+
+### Corrigido
+- **Vendas/estoque:** a baixa e a validação de saldo só valiam para produtos com `stock <= 5` (bug). Agora todo produto com
+  controle de estoque (`stock IS NOT NULL`) tem o saldo validado (422 "Estoque insuficiente") e baixado de forma atômica
+  na venda; cancelar/editar devolve exatamente o que foi baixado. Testes legados (API-VEN-024, DEV-002) atualizados.
+  Novo `US003-sales-stock.test.js` (5 testes, inclui concorrência: 12 vendas paralelas contra saldo 8).
+
+### Novo
+- **Migrações versionadas:** `api/src/db/migrate.js` + `api/src/db/migrations/NNNN_nome.sql`, histórico em
+  `schema_migrations` (checksum, advisory lock, transação por migração). Roda no `initDb`, em `db:init`/`db:reset` e via
+  `npm run db:migrate` / `db:migrate:status`. `schema.sql` segue como baseline; mudanças novas entram como migração.
+- **Índices críticos** (0002): `customers/products/recipes(owner_id, created_at)`, `products(owner_id, status_produto)`,
+  `sales(owner_id, date)`, `sales(customer_id)`, `sale_items(sale_id)`, `sale_items(product_id)`, `recipes(link_product_id)`.
+- **Login por e-mail ou usuário:** coluna `users.username` (0003; opcional, única sem diferenciar maiúsculas, 3-30 chars
+  `[a-z0-9._-]`). `POST /api/auth/login` aceita `identifier` (e-mail ou usuário); `email` continua aceito por compatibilidade.
+  Mesma resposta/tempo para usuário inexistente e senha errada (hash descartável), bloqueio por tentativas vale para o
+  identificador. Cadastro e perfil (`PUT /api/auth/me`) aceitam `username` (409 `USERNAME_ALREADY_EXISTS`).
+- UI: campo "E-mail ou usuário" no login e "Usuário (opcional)" no cadastro.
+- Testes: `DB-migrations.test.js` (4), `US001-login-username.test.js` (9) e 3 specs Cypress novos em `login.cy.js`.
+
+### Alterado
+- Mensagem de login vazio: "E-mail ou usuário obrigatório."; identificador sem `@` e fora do padrão retorna
+  "Formato de e-mail ou usuário inválido". Testes que usavam texto sem `@` como "e-mail inválido" foram ajustados.
+
 ## 2026-11-17 - Frontend: módulos compartilhados entre products/product-edit e recipes/recipe-edit
 
 ### Novo

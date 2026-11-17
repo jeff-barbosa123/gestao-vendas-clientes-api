@@ -35,7 +35,7 @@ describe('SGVC - Login e sessao', () => {
     cy.visit('/');
     cy.get('#login-btn').click();
     // A tela valida um campo por vez, começando pelo e-mail
-    cy.get('#email-error').should('contain', 'E-mail obrigatório.');
+    cy.get('#email-error').should('contain', 'E-mail ou usu\u00e1rio obrigat\u00f3rio.');
     cy.get('#email').type('admin@negocio.com');
     cy.get('#login-btn').click();
     cy.get('#password-error').should('contain', 'Senha obrigatória.');

@@ -106,6 +106,7 @@ async function initDb() {
       await pool.query(schema);
     }
     await ensureCustomerColumns();
+    await require("./migrate").runMigrations(pool, { log: (m) => console.log("[DB] " + m) });
     await seedDefaults();
   } catch (err) {
     // Em desenvolvimento, permite continuar mesmo se banco falhar

@@ -3,7 +3,7 @@
   background: var(--bg-dark);
   border-radius: 18px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgb(var(--rgb-white) / 0.3);
 }
 
 .products-header {
@@ -151,7 +151,7 @@
   cursor: pointer;
 }
 .product-type-card:focus-within {
-  outline: 3px solid #c7d2fe;
+  outline: 3px solid var(--brand-800);
   outline-offset: 2px;
 }
 
@@ -191,7 +191,7 @@
 }
 .select select.is-danger {
   border-color: var(--danger-line);
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 0 1px rgb(var(--rgb-danger) / 0.2);
 }
 
 .final-price-badge {
@@ -322,7 +322,7 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #10b981;
+  background: var(--emerald-500);
   display: inline-block;
 }
 

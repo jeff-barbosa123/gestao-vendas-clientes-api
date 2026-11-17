@@ -1,3 +1,6 @@
+// Chart.js desenha em canvas (nao resolve var()): le os tokens do tema atual
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 /**
  * Dashboard de Monitoramento de Erros
  */
@@ -251,8 +254,8 @@
             datasets: [{
               label: 'Erros por dia',
               data: counts,
-              borderColor: '#ef4444',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              borderColor: cssVar('--danger-500'),
+              backgroundColor: `rgb(${cssVar('--rgb-danger')} / 0.1)`,
               tension: 0.4,
             }],
           },

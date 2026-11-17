@@ -9,8 +9,8 @@
   background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg) 100%);
   border-radius: 22px;
   padding: 28px 28px 32px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgb(var(--rgb-white) / 0.25);
+  box-shadow: 0 24px 60px rgb(var(--rgb-ink) / 0.25);
   position: relative;
   overflow: hidden;
   font-family: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -85,7 +85,7 @@
   width: 32px;
   height: 32px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(var(--rgb-white) / 0.2);
   color: var(--on-accent);
   display: flex;
   align-items: center;
@@ -105,9 +105,9 @@
 }
 
 .dashboard-menu .button {
-  background: rgba(248, 250, 252, 0.18);
+  background: rgb(var(--rgb-snow) / 0.18);
   color: var(--slate-900);
-  border: 1px solid rgba(248, 250, 252, 0.3);
+  border: 1px solid rgb(var(--rgb-snow) / 0.3);
 }
 
 /* Periodo */
@@ -147,15 +147,15 @@
 }
 
 .dashboard-block.is-secondary {
-  background: rgba(248, 250, 252, 0.08);
-  border: 1px solid rgba(248, 250, 252, 0.16);
+  background: rgb(var(--rgb-snow) / 0.08);
+  border: 1px solid rgb(var(--rgb-snow) / 0.16);
   border-radius: 16px;
   padding: 18px;
 }
 
 .dashboard-block.is-charts {
-  background: rgba(248, 250, 252, 0.06);
-  border: 1px dashed rgba(226, 232, 240, 0.4);
+  background: rgb(var(--rgb-snow) / 0.06);
+  border: 1px dashed rgb(var(--rgb-mist) / 0.4);
   border-radius: 16px;
   padding: 18px 18px 22px;
   margin-top: 6px;
@@ -171,7 +171,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: rgba(226, 232, 240, 0.9);
+  color: rgb(var(--rgb-mist) / 0.9);
   margin-bottom: 14px;
   font-weight: 600;
 }
@@ -256,14 +256,14 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 6px 14px rgb(var(--rgb-ink) / 0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   align-items: flex-start;
 }
 
 .dashboard-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 10px 22px rgb(var(--rgb-ink) / 0.18);
 }
 
 .dashboard-icon {
@@ -305,7 +305,7 @@
 
 .kpi-empty {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--slate-500);
 }
 
 .kpi-empty.is-hidden {
@@ -315,15 +315,15 @@
 .chart-wrap {
   width: 100%;
   min-height: 160px;
-  background: rgba(79, 70, 229, 0.06);
+  background: rgb(var(--rgb-accent) / 0.06);
   border-radius: 14px;
   padding: 8px 10px;
-  box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.18);
+  box-shadow: inset 0 0 0 1px rgb(var(--rgb-accent) / 0.18);
 }
 
 .chart-wrap.is-revenue {
-  background: rgba(22, 163, 74, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.18);
+  background: rgb(var(--rgb-success) / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(var(--rgb-success) / 0.18);
 }
 
 .chart-wrap canvas {
@@ -380,8 +380,8 @@
 .dashboard-block.is-lists {
   margin-bottom: 32px;
   padding: 22px 22px 18px;
-  background: rgba(248, 250, 252, 0.05);
-  border: 1px dashed rgba(226, 232, 240, 0.4);
+  background: rgb(var(--rgb-snow) / 0.05);
+  border: 1px dashed rgb(var(--rgb-mist) / 0.4);
   border-radius: 16px;
 }
 
@@ -428,8 +428,8 @@
 }
 
 .dashboard-block.is-alerts {
-  background: rgba(248, 250, 252, 0.04);
-  border: 1px dashed rgba(226, 232, 240, 0.4);
+  background: rgb(var(--rgb-snow) / 0.04);
+  border: 1px dashed rgb(var(--rgb-mist) / 0.4);
   border-radius: 16px;
   padding: 22px;
   margin-bottom: 32px;
@@ -445,7 +445,7 @@
   border-radius: 14px;
   padding: 18px;
   min-height: 210px;
-  border: 1px solid rgba(226, 232, 240, 0.6);
+  border: 1px solid rgb(var(--rgb-mist) / 0.6);
   background: var(--white);
   display: flex;
   flex-direction: column;
@@ -453,19 +453,19 @@
 }
 
 .dashboard-alert-card.alert-yellow {
-  border-color: rgba(245, 158, 11, 0.4);
+  border-color: rgb(var(--rgb-warning) / 0.4);
 }
 
 .dashboard-alert-card.alert-blue {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgb(var(--rgb-info) / 0.4);
 }
 
 .dashboard-alert-card.alert-red {
-  border-color: rgba(239, 68, 68, 0.4);
+  border-color: rgb(var(--rgb-danger) / 0.4);
 }
 
 .dashboard-alert-card.alert-orange {
-  border-color: rgba(234, 88, 12, 0.45);
+  border-color: rgb(var(--rgb-orange) / 0.45);
 }
 
 .dashboard-alert-list {
@@ -543,7 +543,7 @@
 
 /* Acessibilidade */
 :focus-visible {
-  outline: 3px solid #6366f1;
+  outline: 3px solid var(--indigo-500);
   outline-offset: 2px;
 }
 

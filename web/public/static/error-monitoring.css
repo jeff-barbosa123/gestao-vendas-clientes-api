@@ -17,7 +17,7 @@
 }
 
 .monitoring-subtitle {
-  color: #6b7280;
+  color: var(--slate-500);
   margin: 0;
 }
 
@@ -44,7 +44,7 @@
   padding: 1.5rem;
   background: var(--white);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgb(var(--rgb-black) / 0.1);
 }
 
 .monitoring-block-title {
@@ -62,7 +62,7 @@
 
 .monitoring-card {
   padding: 1.5rem;
-  background: #f9fafb;
+  background: var(--slate-50);
   border-radius: 6px;
   text-align: center;
 }
@@ -75,7 +75,7 @@
 }
 
 .monitoring-label {
-  color: #6b7280;
+  color: var(--slate-500);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -92,9 +92,9 @@
 .monitoring-table-container th {
   text-align: left;
   padding: 0.75rem;
-  background: #f3f4f6;
+  background: var(--slate-100);
   font-weight: 600;
-  color: #374151;
+  color: var(--slate-700);
   border-bottom: 2px solid var(--gray-200);
 }
 
@@ -122,7 +122,7 @@
 
 .recent-error-item {
   padding: 1rem;
-  background: #f9fafb;
+  background: var(--slate-50);
   border-radius: 6px;
   border-left: 4px solid var(--danger-500);
 }
@@ -145,12 +145,12 @@
 .recent-error-time {
   margin-left: auto;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--slate-500);
 }
 
 .recent-error-details {
   font-size: 0.875rem;
-  color: #4b5563;
+  color: var(--slate-600);
 }
 
 .recent-error-details p {
@@ -175,22 +175,22 @@
 
 .tag.is-danger {
   background: var(--danger-100);
-  color: #991b1b;
+  color: var(--danger-fg);
 }
 
 .tag.is-warning {
-  background: #fef3c7;
+  background: var(--warn-bg);
   color: var(--warning-800);
 }
 
 .tag.is-info {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--info-bg);
+  color: var(--info-fg);
 }
 
 code {
   font-family: 'Courier New', monospace;
-  background: #f3f4f6;
+  background: var(--slate-100);
   padding: 0.125rem 0.25rem;
   border-radius: 3px;
   font-size: 0.875rem;

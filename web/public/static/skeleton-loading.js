@@ -139,7 +139,7 @@
     style.id = 'skeleton-styles';
     style.textContent = `
       .skeleton {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, var(--slate-100) 25%, var(--slate-200) 50%, var(--slate-100) 75%);
         background-size: 200% 100%;
         animation: skeleton-loading 1.5s ease-in-out infinite;
         border-radius: 4px;
@@ -161,14 +161,14 @@
       .skeleton-card {
         padding: 1rem;
         margin-bottom: 1rem;
-        background: #fafafa;
+        background: var(--slate-50);
         border-radius: 4px;
       }
       
       .skeleton-item {
         padding: 0.75rem;
         margin-bottom: 0.5rem;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--slate-200);
       }
       
       .skeleton-container,

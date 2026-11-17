@@ -3,8 +3,8 @@
   background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg) 100%);
   border-radius: 22px;
   padding: 26px 26px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgb(var(--rgb-white) / 0.25);
+  box-shadow: 0 24px 60px rgb(var(--rgb-ink) / 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -13,7 +13,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(var(--rgb-white) / 0.12) 1px, transparent 1px);
   background-size: 18px 18px;
   opacity: 0.25;
   pointer-events: none;
@@ -41,7 +41,7 @@
 
 .profile-subtitle {
   font-size: 13px;
-  color: rgba(248, 250, 252, 0.9);
+  color: rgb(var(--rgb-snow) / 0.9);
   margin: 0;
 }
 
@@ -62,7 +62,7 @@
   border: 1px solid var(--slate-200);
   border-radius: 18px;
   padding: 22px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgb(var(--rgb-ink) / 0.08);
 }
 
 .panel-title {

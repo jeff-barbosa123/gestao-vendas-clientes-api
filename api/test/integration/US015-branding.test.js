@@ -78,7 +78,7 @@ describe('Fase 3 - White-Label (API /api/branding)', () => {
     const a = await http.get('/api/branding/theme.css').set(auth(tokenA));
     expect(a.status).to.equal(200);
     expect(a.headers['content-type']).to.match(/text\/css/);
-    expect(a.text).to.include('--accent: #1d4ed8;').and.include('--bg: #1e3a8a;').and.include('--accent-dark:').and.include('--accent-text:');
+    expect(a.text).to.include('--accent: #1d4ed8;').and.include('--bg: #1e3a8a;').and.include('--accent-dark:').and.include('--accent-text:').and.include('--rgb-accent: 29 78 216;');
     const m = a.text.match(/--accent-text: (#[0-9a-f]{6});/);
     const { contrastRatio } = require('../../src/utils/contrast');
     expect(contrastRatio(m[1], '#111c33')).to.be.at.least(4.5);

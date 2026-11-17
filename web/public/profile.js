@@ -59,7 +59,7 @@
     if (meter) {
       const pct = (rules.count / 5) * 100;
       meter.style.width = `${pct}%`;
-      meter.style.background = rules.count <= 2 ? '#ef4444' : (rules.count <= 4 ? '#f59e0b' : '#16a34a');
+      meter.style.background = rules.count <= 2 ? 'var(--danger-500)' : (rules.count <= 4 ? 'var(--amber-500)' : 'var(--success-600)');
     }
     return rules;
   }

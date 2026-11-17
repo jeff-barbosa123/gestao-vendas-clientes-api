@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, var(--bg), var(--bg-dark));
   border-radius: 18px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgb(var(--rgb-white) / 0.3);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -23,7 +23,7 @@
   font-size: 14px;
   max-width: 760px;
   margin: 0;
-  color: rgba(248, 250, 252, 0.9);
+  color: rgb(var(--rgb-snow) / 0.9);
 }
 
 .ord-section-title {
@@ -182,7 +182,7 @@
 }
 
 .ord-day.is-today .ord-day-title {
-  border-bottom-color: #6366f1;
+  border-bottom-color: var(--indigo-500);
 }
 
 .ord-day-count {
@@ -200,7 +200,7 @@
 
 .ord-card {
   border: 1px solid var(--slate-200);
-  border-left: 4px solid #f59e0b;
+  border-left: 4px solid var(--amber-500);
   border-radius: 12px;
   padding: 12px;
   background: var(--white);
@@ -210,7 +210,7 @@
 }
 
 .ord-card.is-ready {
-  border-left-color: #2563eb;
+  border-left-color: var(--blue-600);
 }
 
 .ord-card.is-delivered {
@@ -219,7 +219,7 @@
 }
 
 .ord-card.is-canceled {
-  border-left-color: #94a3b8;
+  border-left-color: var(--slate-500);
   opacity: 0.7;
 }
 
@@ -304,7 +304,7 @@
 .ord-modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgb(var(--rgb-ink) / 0.55);
 }
 
 .ord-modal-card {
@@ -313,7 +313,7 @@
   background: var(--white);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 24px 60px rgb(var(--rgb-ink) / 0.3);
 }
 
 .ord-modal-title {

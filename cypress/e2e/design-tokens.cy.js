@@ -5,6 +5,9 @@ describe('Design tokens (paridade visual)', () => {
     '--surface': '#111c33',
     '--accent-text': '#a5b4fc',
     '--on-accent': '#ffffff',
+    '--rgb-accent': '79 70 229',
+    '--rgb-ink': '15 23 42',
+    '--green-600': '#16a34a',
     '--accent': '#4f46e5',
     '--accent-dark': '#4338ca',
     '--white': '#111c33',
@@ -21,6 +24,18 @@ describe('Design tokens (paridade visual)', () => {
       Object.entries(ROOT_TOKENS).forEach(([name, value]) => {
         expect(cs.getPropertyValue(name).trim().toLowerCase(), name).to.equal(value);
       });
+    });
+  });
+
+  it('transparencias seguem a marca: rgb(var(--rgb-accent) / alfa) usa o canal do tema da empresa', () => {
+    cy.intercept('GET', '**/theme.css', { headers: { 'content-type': 'text/css' }, body: ':root { --accent: #0f766e; --rgb-accent: 15 118 110; }' });
+    cy.visit('/index.html');
+    cy.document().then((doc) => {
+      const probe = doc.createElement('div');
+      probe.style.backgroundColor = 'rgb(var(--rgb-accent) / 0.5)';
+      doc.body.appendChild(probe);
+      expect(getComputedStyle(probe).backgroundColor).to.match(/^rgba\(15, 118, 110, 0\.5\)$|^color\(srgb /);
+      probe.remove();
     });
   });
 

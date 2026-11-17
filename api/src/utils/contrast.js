@@ -55,4 +55,9 @@ function ensureContrastOn(hex, backgrounds, min = AA_NORMAL_TEXT) {
   return "#ffffff";
 }
 
-module.exports = { isHexColor, normalizeHex, luminance, contrastRatio, darken, lighten, ensureContrastOn, AA_NORMAL_TEXT };
+// "r g b" (sintaxe de canal CSS: rgb(var(--rgb-accent) / 0.2))
+function toRgbChannels(hex) {
+  return hexToRgb(hex).join(" ");
+}
+
+module.exports = { toRgbChannels, isHexColor, normalizeHex, luminance, contrastRatio, darken, lighten, ensureContrastOn, AA_NORMAL_TEXT };

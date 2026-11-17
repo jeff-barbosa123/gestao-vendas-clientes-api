@@ -3,7 +3,7 @@
   background: var(--bg-dark);
   border-radius: 18px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgb(var(--rgb-white) / 0.3);
 }
 
 .sim-header {
@@ -18,9 +18,9 @@
 .sim-caption {
   margin-bottom: 16px;
   padding-left: 12px;
-  border-left: 3px solid rgba(248, 250, 252, 0.7);
+  border-left: 3px solid rgb(var(--rgb-snow) / 0.7);
   font-size: 13px;
-  color: rgba(248, 250, 252, 0.85);
+  color: rgb(var(--rgb-snow) / 0.85);
 }
 
 .hint {
@@ -252,7 +252,7 @@
 
 .select select.is-danger {
   border-color: var(--danger-500);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 2px rgb(var(--rgb-danger) / 0.15);
 }
 
 .sim-table thead th {
@@ -274,9 +274,9 @@
 }
 
 .sim-wrapper .button.is-link {
-  box-shadow: 0 10px 18px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 10px 18px rgb(var(--rgb-accent) / 0.2);
 }
 
 .sim-wrapper .button.is-link:hover {
-  box-shadow: 0 12px 22px rgba(79, 70, 229, 0.28);
+  box-shadow: 0 12px 22px rgb(var(--rgb-accent) / 0.28);
 }

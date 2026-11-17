@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, var(--bg), var(--bg-dark));
   border-radius: 18px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgb(var(--rgb-white) / 0.3);
 }
 
 .links-header {
@@ -72,7 +72,7 @@
   border-radius: 14px;
   padding: 12px 14px;
   border: 1px solid var(--slate-200);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgb(var(--rgb-ink) / 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,17 +80,17 @@
 }
 
 .insight-card.is-missing {
-  border-color: #fdba74;
+  border-color: var(--orange-300);
   background: var(--warn-bg);
 }
 
 .insight-card.is-incomplete {
-  border-color: #fda4af;
+  border-color: var(--rose-300);
   background: var(--danger-50);
 }
 
 .insight-card.is-linked {
-  border-color: #86efac;
+  border-color: var(--green-300);
   background: var(--ok-bg);
 }
 
@@ -120,16 +120,16 @@
   border-radius: 14px;
   padding: 12px 14px;
   border: 1px solid var(--slate-200);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 18px rgb(var(--rgb-ink) / 0.08);
 }
 
 .summary-card.is-warning {
-  border-color: #facc15;
+  border-color: var(--yellow-400);
   background: var(--warning-50);
 }
 
 .summary-card.is-alert {
-  border-color: #fb7185;
+  border-color: var(--rose-400);
   background: var(--danger-50);
 }
 
@@ -248,15 +248,15 @@
 }
 
 .status-dot.is-linked {
-  background: #22c55e;
+  background: var(--green-500);
 }
 
 .status-dot.is-missing {
-  background: #f97316;
+  background: var(--orange-500);
 }
 
 .status-dot.is-incomplete {
-  background: #f43f5e;
+  background: var(--rose-500);
 }
 
 .links-count {
@@ -302,7 +302,7 @@
 }
 
 .status-badge.is-linked .status-indicator {
-  background: #22c55e;
+  background: var(--green-500);
 }
 
 .status-badge.is-missing {
@@ -311,7 +311,7 @@
 }
 
 .status-badge.is-missing .status-indicator {
-  background: #f97316;
+  background: var(--orange-500);
 }
 
 .status-badge.is-incomplete {
@@ -320,7 +320,7 @@
 }
 
 .status-badge.is-incomplete .status-indicator {
-  background: #f43f5e;
+  background: var(--rose-500);
 }
 
 .status-badge.is-neutral {
@@ -329,7 +329,7 @@
 }
 
 .status-badge.is-neutral .status-indicator {
-  background: #94a3b8;
+  background: var(--slate-500);
 }
 
 .links-actions-group {

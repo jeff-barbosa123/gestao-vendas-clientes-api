@@ -4,6 +4,9 @@
 import { state } from './state.js';
 import { toggleEmpty } from './core.js';
 
+// Chart.js desenha em canvas (nao resolve var()): le os tokens do tema atual (inclui a marca da empresa)
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 export function renderCharts(data) {
   const chartSection = document.querySelector('[data-chart-section]');
   if (!chartSection || !window.Chart) {
@@ -39,9 +42,9 @@ export function renderCharts(data) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(15, 23, 42, 0.95)',
-        titleColor: '#f8fafc',
-        bodyColor: '#e2e8f0',
+        backgroundColor: `rgb(${cssVar('--rgb-ink')} / 0.95)`,
+        titleColor: cssVar('--slate-900'),
+        bodyColor: cssVar('--slate-800'),
         padding: 10,
         borderWidth: 0,
         displayColors: false,
@@ -67,8 +70,8 @@ export function renderCharts(data) {
             datasets: [
               {
                 data: salesDataArray,
-                backgroundColor: '#4f46e5',
-                borderColor: '#4338ca',
+                backgroundColor: cssVar('--accent'),
+                borderColor: cssVar('--accent-dark'),
                 borderWidth: 1,
                 borderRadius: 14,
                 barThickness: 36,
@@ -104,8 +107,8 @@ export function renderCharts(data) {
             datasets: [
               {
                 data: revenueDataArray,
-                backgroundColor: '#16a34a',
-                borderColor: '#15803d',
+                backgroundColor: cssVar('--green-600'),
+                borderColor: cssVar('--green-700'),
                 borderWidth: 1,
                 borderRadius: 14,
                 barThickness: 36,

@@ -55,6 +55,37 @@
   --danger-bg: #5c1519;
   --danger-fg: #fecdd3;
   --danger-line: #b91c1c;
+  /* Canais RGB para transparencias: rgb(var(--rgb-x) / alfa). --rgb-accent segue a cor da empresa (theme.css) */
+  --rgb-white: 255 255 255;
+  --rgb-black: 0 0 0;
+  --rgb-ink: 15 23 42;
+  --rgb-snow: 248 250 252;
+  --rgb-mist: 226 232 240;
+  --rgb-accent: 79 70 229;
+  --rgb-danger: 239 68 68;
+  --rgb-success: 22 163 74;
+  --rgb-warning: 245 158 11;
+  --rgb-info: 59 130 246;
+  --rgb-orange: 234 88 12;
+  /* Tons de apoio (indicadores, medidores, bordas de status) */
+  --danger-600: #dc2626;
+  --success-100: #bbf7d0;
+  --indigo-500: #6366f1;
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+  --green-500: #22c55e;
+  --green-300: #86efac;
+  --orange-500: #f97316;
+  --orange-300: #fdba74;
+  --rose-500: #f43f5e;
+  --rose-400: #fb7185;
+  --rose-300: #fda4af;
+  --amber-500: #f59e0b;
+  --yellow-400: #facc15;
+  --blue-600: #2563eb;
+  --sky-500: #0ea5e9;
+  --green-600: #16a34a;
+  --green-700: #15803d;
 }
 
 * {
@@ -95,7 +126,7 @@ main {
   position: static;
   text-align: center;
   font-size: 12px;
-  color: rgba(248, 250, 252, 0.8);
+  color: rgb(var(--rgb-snow) / 0.8);
   margin: 24px auto 16px;
   padding: 0 16px;
 }
@@ -107,7 +138,7 @@ main {
   background: var(--white);
   padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgb(var(--rgb-black) / 0.12);
 }
 
 .skip-link:focus {
@@ -159,12 +190,12 @@ main {
 
 .input.is-danger {
   border-color: var(--danger-500);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 2px rgb(var(--rgb-danger) / 0.15);
 }
 
 .input.is-valid {
   border-color: var(--success-600);
-  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+  box-shadow: 0 0 0 2px rgb(var(--rgb-success) / 0.15);
 }
 
 .checkbox input {
@@ -275,7 +306,7 @@ main {
 }
 
 .button.is-danger:hover {
-  background: #dc2626;
+  background: var(--danger-600);
 }
 
 .button.is-loading {
@@ -292,13 +323,13 @@ main {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 2px solid rgb(var(--rgb-white) / 0.5);
   border-top-color: var(--white);
   animation: spin 0.9s linear infinite;
 }
 
 .button.is-light.is-loading::after {
-  border-color: rgba(15, 23, 42, 0.3);
+  border-color: rgb(var(--rgb-ink) / 0.3);
   border-top-color: var(--slate-900);
 }
 
@@ -388,7 +419,7 @@ main {
 .modal-background {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgb(var(--rgb-ink) / 0.6);
 }
 
 .modal-card {
@@ -486,14 +517,14 @@ main {
   transform: translateX(-50%);
   z-index: 30;
   width: min(520px, calc(100% - 32px));
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 10px 24px rgb(var(--rgb-ink) / 0.18);
 }
 
 .panel-card {
   background: var(--white);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 20px 40px rgb(var(--rgb-black) / 0.12);
   color: var(--slate-900);
 }
 
@@ -520,9 +551,9 @@ a:focus-visible {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgb(var(--rgb-ink) / 0.92);
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 2px 12px rgb(var(--rgb-ink) / 0.25);
 }
 
 .app-nav-inner {
@@ -566,7 +597,7 @@ a:focus-visible {
 }
 
 .app-nav-links a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(var(--rgb-white) / 0.1);
   color: var(--on-accent);
 }
 
@@ -584,7 +615,7 @@ a:focus-visible {
   margin-left: auto;
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgb(var(--rgb-white) / 0.4);
   border-radius: 8px;
   background: transparent;
   color: var(--on-accent);

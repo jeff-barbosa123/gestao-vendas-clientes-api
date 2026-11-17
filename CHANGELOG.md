@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-17 - Cores restantes migradas para design tokens (Fase 7)
+
+### Melhoria
+- Todas as cores literais restantes em web/public (rgba, hex, SVG/estilos injetados e JS) viraram tokens: transparencias usam canais RGB (`rgb(var(--rgb-ink) / 0.25)`), tons de apoio (verde, laranja, rosa, etc.) e cores de graficos/medidor de senha leem tokens.
+- White-label: `/theme.css` passa a emitir `--rgb-accent` (canal RGB da cor primaria), entao brilhos, sombras e realces translucidos acompanham a marca da empresa. Os graficos do dashboard (Chart.js, canvas) leem os tokens do tema em tempo de renderizacao (barras na cor da empresa).
+- scripts/design-tokens.js foi simplificado para a guarda `--check`: falha em qualquer cor literal (#hex, rgb/rgba) fora do :root de base.css em CSS, HTML (style/style=) e JS de web/public. Excecoes explicitas: appearance.js (valores padrao e regras de contraste da tela, dados) e sales/print.js (HTML de impressao em janela propria, papel branco). Os modos --apply e --parity da Fase 2 foram removidos (obsoletos com o tema escuro).
+- Paginas internas que ainda usavam cinzas claros fixos (monitoramento de erros, skeleton, infinite scroll) agora seguem o tema escuro.
+
 ## 2026-11-17 - Cache HTTP (ETag) no /theme.css
 
 ### Melhoria

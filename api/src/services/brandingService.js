@@ -1,5 +1,5 @@
 const repo = require("../db/repositories/branding");
-const { isHexColor, normalizeHex, contrastRatio, darken, ensureContrastOn, AA_NORMAL_TEXT } = require("../utils/contrast");
+const { isHexColor, normalizeHex, contrastRatio, darken, ensureContrastOn, toRgbChannels, AA_NORMAL_TEXT } = require("../utils/contrast");
 
 const DEFAULTS = Object.freeze({
   primaryColor: "#4f46e5",
@@ -159,6 +159,7 @@ function buildThemeCss(row) {
     ":root {",
     `  --accent: ${primary};`,
     `  --accent-dark: ${darken(primary, 0.15)};`,
+    `  --rgb-accent: ${toRgbChannels(primary)};`,
     `  --accent-text: ${ensureContrastOn(primary, [SURFACE_DARK, bg])};`,
     `  --bg: ${bg};`,
     `  --bg-dark: ${darken(bg, 0.15)};`,

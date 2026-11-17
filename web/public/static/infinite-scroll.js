@@ -184,7 +184,7 @@
       .infinite-scroll-loading {
         padding: 2rem;
         text-align: center;
-        color: #666;
+        color: var(--slate-500);
       }
       
       .infinite-scroll-loading p {
@@ -193,11 +193,11 @@
       
       .infinite-scroll-error {
         padding: 1rem;
-        background: #fee;
-        border: 1px solid #fcc;
+        background: var(--danger-bg);
+        border: 1px solid var(--danger-line);
         border-radius: 4px;
         margin: 1rem 0;
-        color: #c33;
+        color: var(--danger-fg);
       }
     `;
     document.head.appendChild(style);

@@ -3,8 +3,8 @@
   background: var(--bg-dark);
   border-radius: 20px;
   padding: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgb(var(--rgb-white) / 0.25);
+  box-shadow: 0 24px 60px rgb(var(--rgb-ink) / 0.2);
 }
 
 .sales-header {
@@ -198,7 +198,7 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #34d399;
+  background: var(--emerald-400);
   display: inline-block;
 }
 
@@ -415,7 +415,7 @@
   background: var(--accent);
   color: var(--on-accent);
   border-color: transparent;
-  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.28);
+  box-shadow: 0 10px 22px rgb(var(--rgb-accent) / 0.28);
 }
 .button.is-highlight:hover {
   background: var(--accent-dark);

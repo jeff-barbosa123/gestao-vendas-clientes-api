@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const { randomUUID: uuidv4 } = require("crypto");
 const { query } = require("../index");
 const { runInTx, isUuid, toNumber } = require("./shared");
 

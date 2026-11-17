@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { v4: uuid } = require('uuid');
+const { randomUUID: uuid } = require("crypto");
 const { pool } = require('../../src/db');
 
 const TABLES = ['customers', 'products', 'recipes', 'sales', 'orders', 'ingredients', 'ingredient_stock_movements'];

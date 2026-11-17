@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { v4: uuidv4 } = require("uuid");
+const { randomUUID: uuidv4 } = require("crypto");
 const repo = require("../../db/repository");
 const emailService = require("../emailService");
 const { hashPassword, comparePassword } = require("../../utils/passwordHash");

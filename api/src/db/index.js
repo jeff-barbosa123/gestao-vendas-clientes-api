@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { Pool } = require("pg");
-const { v4: uuidv4 } = require("uuid");
+const { randomUUID: uuidv4 } = require("crypto");
 
 const DATABASE_URL = process.env.DATABASE_URL;
 

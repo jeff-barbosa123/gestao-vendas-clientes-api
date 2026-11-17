@@ -21,7 +21,7 @@
 .login-wrapper {
   width: min(980px, 100%);
   min-height: 520px;
-  background: linear-gradient(120deg, #3f73c8 0%, #3f73c8 46%, #ffffff 46%, #ffffff 100%);
+  background: linear-gradient(120deg, var(--bg) 0%, var(--bg) 46%, var(--white) 46%, var(--white) 100%);
   border-radius: 20px;
   box-shadow: var(--shadow);
   position: relative;
@@ -35,7 +35,7 @@
   position: absolute;
   top: 40px;
   left: 40px;
-  color: #ffffff;
+  color: var(--white);
 }
 
 .brand-mark {
@@ -74,7 +74,7 @@
 
 .login-card {
   width: min(360px, 100%);
-  background: #f8fafc;
+  background: var(--slate-50);
   border-radius: 16px;
   padding: 28px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
@@ -120,7 +120,7 @@
 .login-user {
   text-align: center;
   font-size: 13px;
-  color: #334155;
+  color: var(--slate-700);
   margin-bottom: 14px;
   font-weight: 600;
 }
@@ -128,7 +128,7 @@
 .login-subtitle {
   text-align: center;
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
   margin-top: -8px;
   margin-bottom: 12px;
 }
@@ -146,14 +146,14 @@
 
 .login-error {
   background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  color: var(--danger-700);
+  border: 1px solid var(--danger-300);
 }
 
 .login-success {
-  background: #ecfdf3;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--success-50);
+  color: var(--success-800);
+  border: 1px solid var(--success-200);
 }
 
 .login-error[hidden],
@@ -169,14 +169,14 @@
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  background: #16a34a;
-  color: #ffffff;
+  background: var(--success-600);
+  color: var(--white);
   font-size: 12px;
   font-weight: 700;
 }
 
 .login-error-icon {
-  background: #b91c1c;
+  background: var(--danger-700);
 }
 
 .password-wrapper {
@@ -264,7 +264,7 @@
   width: 100%;
   height: 44px;
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-  color: #ffffff;
+  color: var(--white);
   border: none;
   border-radius: 999px;
   font-weight: 600;
@@ -290,7 +290,7 @@
   height: 16px;
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.5);
-  border-top-color: #ffffff;
+  border-top-color: var(--white);
   animation: spin 0.9s linear infinite;
 }
 
@@ -300,7 +300,7 @@
   margin-top: 10px;
   border-radius: 999px;
   border: 1px solid #d1d5db;
-  background: #ffffff;
+  background: var(--white);
   cursor: pointer;
 }
 
@@ -319,7 +319,7 @@
   margin-top: 14px;
   text-align: center;
   font-size: 12px;
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .register-link {
@@ -348,7 +348,7 @@
   position: absolute;
   top: 24px;
   right: 32px;
-  background: var(--accent, #3f73c8);
+  background: var(--accent, var(--bg));
   color: #fff;
   border: none;
   border-radius: 999px;
@@ -369,7 +369,7 @@
   height: 40px;
   border-radius: 999px;
   background: #eef2ff;
-  color: #4338ca;
+  color: var(--accent-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -379,16 +379,16 @@
 .modal-card-subtitle {
   margin-top: 2px;
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .modal-card-body .input:focus {
-  border-color: #4f46e5;
+  border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
 }
 
 .modal-card-body .input.is-filled {
-  background: #f8fafc;
+  background: var(--slate-50);
 }
 
 .password-strength {
@@ -397,7 +397,7 @@
 }
 
 .password-strength.is-weak {
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .password-strength.is-medium {
@@ -405,13 +405,13 @@
 }
 
 .password-strength.is-strong {
-  color: #16a34a;
+  color: var(--success-600);
 }
 
 .pwd-rules {
   margin-top: 8px;
   font-size: 12px;
-  color: #475569;
+  color: var(--slate-600);
   display: grid;
   gap: 4px;
   border: none;
@@ -422,26 +422,26 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--slate-500);
   padding: 3px 0;
 }
 .pwd-rule .pwd-icon {
   display: inline-block;
   width: 16px;
   text-align: center;
-  color: #ef4444 !important;
+  color: var(--danger-500) !important;
   font-weight: 700;
 }
 .pwd-rule.is-ok {
-  color: #16a34a !important;
+  color: var(--success-600) !important;
 }
 .pwd-rule.is-ok .pwd-icon {
-  color: #16a34a !important;
+  color: var(--success-600) !important;
 }
 .pwd-meter {
   height: 8px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: var(--gray-200);
   margin-top: 10px;
   overflow: hidden;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
@@ -449,7 +449,7 @@
 .pwd-meter-bar {
   height: 100%;
   width: 0%;
-  background: #ef4444; /* vermelho inicial */
+  background: var(--danger-500); /* vermelho inicial */
   transition: width 0.25s ease, background 0.25s ease;
 }
 
@@ -472,7 +472,7 @@
   margin-top: 4px;
   font-size: 11px;
   font-weight: 600;
-  color: #16a34a;
+  color: var(--success-600);
 }
 
 .field-status[hidden] {
@@ -481,16 +481,16 @@
 
 .register-security {
   margin-top: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .modal-close-btn {
-  background: #ffffff;
+  background: var(--white);
 }
 
 @media (max-width: 900px) {
   .login-wrapper {
-    background: #ffffff;
+    background: var(--white);
     padding: 32px;
   }
 
@@ -513,7 +513,7 @@
 
 /* Login/recuperação: rodapé dentro do fundo azul (sem faixa de outra cor) */
 body {
-  background: linear-gradient(135deg, #3f73c8, #2f5fae);
+  background: linear-gradient(135deg, var(--bg), var(--bg-dark));
 }
 
 .background {
@@ -538,11 +538,11 @@ body {
   }
 
   .brand-ring {
-    stroke: #3f73c8;
+    stroke: var(--bg);
   }
 
   .brand-wave {
-    fill: #3f73c8;
+    fill: var(--bg);
   }
 
   .login-card {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-17 - Design tokens (Fase 2)
+
+### Novo
+- Paleta de tokens no :root de web/public/base.css (slate, gray, success, danger, warning, brand) e migracao de cerca de 400 cores fixas de todos os CSS, dos blocos style e dos atributos style dos HTML para var(--token). Marca e fundo reutilizam --accent, --accent-dark, --bg e --bg-dark, que a Fase 3 (White-Label) vai sobrescrever por empresa.
+- scripts/design-tokens.js com --apply, --check (guarda: sem cor mapeada fixa fora do :root) e --parity (CSS resolvido identico ao git HEAD).
+- Testes: DS-design-tokens.test.js (Mocha) e design-tokens.cy.js (3 testes). Cores sem token, rgba e SVG/JS seguem fixas e entram em rodadas seguintes.
+
 ## 2026-11-17 - Estoque, migrações versionadas e login por e-mail ou usuário (Fase 1)
 
 ### Corrigido

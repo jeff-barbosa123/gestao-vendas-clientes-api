@@ -1,6 +1,6 @@
 .reports-wrapper {
   width: min(1100px, 100%);
-  background: #2f5fae;
+  background: var(--bg-dark);
   border-radius: 20px;
   padding: 22px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -13,7 +13,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .reports-title {
@@ -24,7 +24,7 @@
 
 .reports-subtitle {
   font-size: 12px;
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .reports-actions {
@@ -40,22 +40,22 @@
 }
 
 .reports-message.is-danger {
-  background: #fff1f2;
-  color: #7f1d1d;
-  border: 1px solid #fecdd3;
+  background: var(--danger-50);
+  color: var(--danger-900);
+  border: 1px solid var(--danger-200);
 }
 
 .reports-message.is-success {
-  background: #ecfdf3;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--success-50);
+  color: var(--success-800);
+  border: 1px solid var(--success-200);
 }
 
 .reports-section-title {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #475569; /* antes #e2e8f0: quase invisível sobre o cartão branco */
+  color: var(--slate-600); /* antes var(--slate-200): quase invisível sobre o cartão branco */
   margin-bottom: 12px;
 }
 
@@ -92,12 +92,12 @@
 
 .summary-label {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
   margin-bottom: 6px;
 }
 
 .summary-value {
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--slate-900);
 }

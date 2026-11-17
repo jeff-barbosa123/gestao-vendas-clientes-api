@@ -1,6 +1,6 @@
 .sales-wrapper {
   width: min(980px, 100%);
-  background: #2f5fae;
+  background: var(--bg-dark);
   border-radius: 20px;
   padding: 22px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: #f8fafc;
+  color: var(--slate-50);
   margin-bottom: 16px;
 }
 
@@ -24,7 +24,7 @@
 
 .sales-subtitle {
   font-size: 12px;
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .sales-actions {
@@ -37,8 +37,8 @@
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 12px;
-  background: #f8fafc;
-  color: #334155;
+  background: var(--slate-50);
+  color: var(--slate-700);
 }
 
 .sales-summary {
@@ -52,26 +52,26 @@
 }
 
 .sales-message.is-success {
-  background: #ecfdf3;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--success-50);
+  color: var(--success-800);
+  border: 1px solid var(--success-200);
 }
 
 .sales-message.is-warning {
-  background: #fffbeb;
+  background: var(--warning-50);
   border: 1px solid #fcd34d;
-  color: #92400e;
+  color: var(--warning-800);
 }
 
 .sales-message.is-danger {
-  background: #fff1f2;
-  color: #7f1d1d;
-  border: 1px solid #fecdd3;
+  background: var(--danger-50);
+  color: var(--danger-900);
+  border: 1px solid var(--danger-200);
 }
 
 .help.is-warning {
-  background: #fffbeb;
-  color: #92400e;
+  background: var(--warning-50);
+  color: var(--warning-800);
   border: 1px solid #fde68a;
   border-radius: 8px;
   padding: 6px 8px;
@@ -79,9 +79,9 @@
 }
 
 .help.is-success {
-  background: #ecfdf3;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--success-50);
+  color: var(--success-800);
+  border: 1px solid var(--success-200);
   border-radius: 8px;
   padding: 6px 8px;
   display: inline-block;
@@ -98,7 +98,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #0f172a;
+  color: var(--slate-900);
   margin-bottom: 12px;
 }
 
@@ -113,7 +113,7 @@
 
 .sales-total {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
   margin-left: 6px;
 }
 
@@ -149,12 +149,12 @@
 
 .sales-page-ellipsis {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .sales-page-info {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .sales-page-jump {
@@ -165,7 +165,7 @@
 
 .sales-page-jump .label {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
   margin-bottom: 0;
 }
 
@@ -178,7 +178,7 @@
 }
 
 .sales-row:hover {
-  background: #f8fafc;
+  background: var(--slate-50);
 }
 
 .sales-status {
@@ -188,8 +188,8 @@
   font-size: 12px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #ecfdf3;
-  color: #065f46;
+  background: var(--success-50);
+  color: var(--success-800);
   font-weight: 600;
 }
 
@@ -203,16 +203,16 @@
 }
 
 .sales-status.is-canceled {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--danger-100);
+  color: var(--danger-700);
 }
 .sales-status.is-canceled::before {
-  background: #ef4444;
+  background: var(--danger-500);
 }
 
 .sales-items {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .sales-customer-link {
@@ -221,20 +221,20 @@
   padding: 0;
   font: inherit;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--slate-900);
   cursor: pointer;
 }
 .sales-customer-link:hover {
-  color: #4338ca;
+  color: var(--accent-dark);
   text-decoration: underline;
 }
 
 .product-readonly {
   border-radius: 10px;
   padding: 10px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #0f172a;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  color: var(--slate-900);
   font-weight: 600;
 }
 
@@ -248,7 +248,7 @@
 }
 
 .sales-details-hero {
-  background: #f8fafc;
+  background: var(--slate-50);
   border-radius: 16px;
   padding: 18px 20px;
 }
@@ -264,7 +264,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #64748b;
+  color: var(--slate-500);
   margin: 0 0 6px;
 }
 
@@ -272,13 +272,13 @@
   font-size: 18px;
   font-weight: 700;
   margin: 0 0 4px;
-  color: #0f172a;
+  color: var(--slate-900);
 }
 
 .sales-details-hero-sub {
   margin: 0;
   font-size: 13px;
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .sales-details-hero-right {
@@ -289,14 +289,14 @@
   margin: 0 0 6px;
   font-size: 22px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--slate-900);
 }
 
 .sales-details-title {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #475569;
+  color: var(--slate-600);
   margin-bottom: 8px;
 }
 
@@ -309,14 +309,14 @@
 .sales-summary-value {
   font-size: 15px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--slate-900);
   margin: 4px 0 0;
 }
 
 .sales-summary-total {
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--slate-900);
   margin: 4px 0 0;
 }
 
@@ -331,14 +331,14 @@
 .sales-customer-value {
   margin: 4px 0 0;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--slate-900);
 }
 
 .sales-details-customer .help {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .sales-details-address {
@@ -351,7 +351,7 @@
   gap: 6px;
   margin-top: 10px;
   font-size: 12px;
-  color: #4f46e5;
+  color: var(--accent);
   text-decoration: none;
 }
 .sales-customer-link-secondary:hover {
@@ -360,7 +360,7 @@
 
 .sales-details-empty {
   border: 1px solid #fde68a;
-  background: #fffbeb;
+  background: var(--warning-50);
   border-radius: 12px;
   padding: 12px 14px;
 }
@@ -380,12 +380,12 @@
 .sales-details-empty-title {
   font-weight: 700;
   margin: 0;
-  color: #92400e;
+  color: var(--warning-800);
 }
 
 .sales-details-empty-text {
   margin: 0;
-  color: #92400e;
+  color: var(--warning-800);
   font-size: 12px;
 }
 
@@ -397,12 +397,12 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #64748b;
-  border-bottom: 1px solid #e2e8f0;
+  color: var(--slate-500);
+  border-bottom: 1px solid var(--slate-200);
 }
 
 .sales-details-table tbody td {
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--slate-100);
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -412,18 +412,18 @@
 }
 
 .button.is-highlight {
-  background: #4f46e5;
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--white);
   border-color: transparent;
   box-shadow: 0 10px 22px rgba(79, 70, 229, 0.28);
 }
 .button.is-highlight:hover {
-  background: #4338ca;
+  background: var(--accent-dark);
 }
 
 .sales-empty td {
   text-align: center;
-  color: #64748b;
+  color: var(--slate-500);
   font-size: 12px;
-  background: #f8fafc;
+  background: var(--slate-50);
 }

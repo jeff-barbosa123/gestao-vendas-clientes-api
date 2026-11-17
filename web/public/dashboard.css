@@ -6,7 +6,7 @@
 .dashboard {
   width: min(1120px, 100%);
   margin: 0 auto;
-  background: linear-gradient(180deg, #2f5fae 0%, #2b5aa3 100%);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, #2b5aa3 100%);
   border-radius: 22px;
   padding: 28px 28px 32px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -33,9 +33,9 @@
   margin-bottom: 16px;
   padding: 10px 14px;
   border-radius: 10px;
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: var(--danger-100);
+  color: var(--danger-700);
+  border: 1px solid var(--danger-300);
   font-size: 13px;
 }
 
@@ -50,22 +50,22 @@
 }
 
 .dashboard-message.is-danger {
-  background: #fee2e2;
-  color: #b91c1c;
-  border-color: #fecaca;
+  background: var(--danger-100);
+  color: var(--danger-700);
+  border-color: var(--danger-300);
 }
 
 .dashboard-title {
   font-size: 24px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--slate-50);
   margin: 0;
   font-family: "Sora", "Source Sans 3", system-ui, sans-serif;
 }
 
 .dashboard-subtitle {
   font-size: 14px;
-  color: #e2e8f0;
+  color: var(--slate-200);
   margin-bottom: 10px;
 }
 
@@ -86,7 +86,7 @@
   height: 32px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,7 +96,7 @@
 .dashboard-user {
   font-size: 12px;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .dashboard-menu {
@@ -106,7 +106,7 @@
 
 .dashboard-menu .button {
   background: rgba(248, 250, 252, 0.18);
-  color: #f8fafc;
+  color: var(--slate-50);
   border: 1px solid rgba(248, 250, 252, 0.3);
 }
 
@@ -120,12 +120,12 @@
 
 .dashboard-period-form label {
   font-size: 14px;
-  color: #f1f5f9;
+  color: var(--slate-100);
 }
 
 .dashboard-period-form select {
-  background: #f8fafc;
-  color: #1e293b;
+  background: var(--slate-50);
+  color: var(--slate-800);
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 6px 12px;
@@ -137,7 +137,7 @@
 .dashboard-period-note,
 .dashboard-updated {
   font-size: 12px;
-  color: #e2e8f0;
+  color: var(--slate-200);
   margin: 0 0 6px;
 }
 
@@ -193,7 +193,7 @@
 }
 
 .dashboard-value.is-negative {
-  color: #b91c1c;
+  color: var(--danger-700);
 }
 
 .dashboard-grid.secondary .dashboard-card {
@@ -213,7 +213,7 @@
 .dashboard-grid.charts .dashboard-label {
   font-size: 12px;
   letter-spacing: 0.01em;
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .dashboard-grid.charts .kpi-empty {
@@ -236,7 +236,7 @@
 
 .dashboard-grid.primary .dashboard-label,
 .dashboard-grid.secondary .dashboard-label {
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .dashboard-grid.primary .dashboard-helper,
@@ -249,10 +249,10 @@
 
 /* Cards */
 .dashboard-card {
-  background: #ffffff;
+  background: var(--white);
   border-radius: 14px;
   padding: 22px 22px 26px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--slate-200);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -270,8 +270,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--brand-100);
+  color: var(--accent-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +287,7 @@
 .dashboard-value {
   font-size: 30px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--slate-800);
   font-family: "Sora", "Source Sans 3", system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
@@ -295,12 +295,12 @@
 .dashboard-label {
   font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: var(--slate-700);
 }
 
 .dashboard-helper {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .kpi-empty {
@@ -364,13 +364,13 @@
 }
 
 .dashboard-actions .button {
-  background: #4f46e5;
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--white);
 }
 
 .dashboard-actions .button.is-light {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--slate-100);
+  color: var(--slate-800);
 }
 
 .dashboard-actions-block {
@@ -392,10 +392,10 @@
 }
 
 .dashboard-list-card {
-  background: #ffffff;
+  background: var(--white);
   border-radius: 14px;
   padding: 18px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--slate-200);
   box-shadow: none;
   min-height: 220px;
 }
@@ -411,20 +411,20 @@
 .dashboard-list-title {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--slate-800);
   margin: 0;
 }
 
 .dashboard-list-subtitle {
   margin: 2px 0 0;
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .dashboard-list-count {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .dashboard-block.is-alerts {
@@ -446,7 +446,7 @@
   padding: 18px;
   min-height: 210px;
   border: 1px solid rgba(226, 232, 240, 0.6);
-  background: #ffffff;
+  background: var(--white);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -482,11 +482,11 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: #334155;
+  color: var(--slate-700);
 }
 
 .dashboard-alert-list .is-below-cost {
-  color: #b91c1c;
+  color: var(--danger-700);
   font-weight: 600;
 }
 
@@ -505,13 +505,13 @@
 .dashboard-alert-title {
   font-size: 16px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--slate-900);
   margin: 0;
 }
 
 .dashboard-alert-label {
   font-size: 12px;
-  color: #64748b;
+  color: var(--slate-500);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   margin: 0;
@@ -520,19 +520,19 @@
 .dashboard-alert-badge {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: var(--slate-600);
 }
 
 .dashboard-alert-message {
   font-size: 14px;
-  color: #0f172a;
+  color: var(--slate-900);
   margin: 0;
   min-height: 42px;
 }
 
 .dashboard-alert-hint {
   font-size: 12px;
-  color: #475569;
+  color: var(--slate-600);
   margin: 0;
 }
 
@@ -552,9 +552,9 @@
   color: transparent;
   background: linear-gradient(
     90deg,
-    #e2e8f0 0%,
-    #f8fafc 50%,
-    #e2e8f0 100%
+    var(--slate-200) 0%,
+    var(--slate-50) 50%,
+    var(--slate-200) 100%
   );
   background-size: 200% 100%;
   border-radius: 6px;

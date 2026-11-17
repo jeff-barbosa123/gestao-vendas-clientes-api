@@ -37,7 +37,7 @@
           <div class="products-message toast-top" id="edit-message" hidden></div>
 
           <section class="panel-card">
-            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
               Atualize os dados do item que voc&ecirc; vende.
             </p>
             <p class="help products-required-note">Campos com <span class="required">*</span> s&atilde;o obrigat&oacute;rios.</p>
@@ -55,7 +55,7 @@
                   aria-required="true"
                   aria-describedby="edit-name-error"
                 />
-                <p class="help" id="edit-name-help" style="color:#64748b;">
+                <p class="help" id="edit-name-help" style="color:var(--slate-500);">
                   Informe um nome objetivo para identifica&ccedil;&atilde;o r&aacute;pida.
                 </p>
                 <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
@@ -70,7 +70,7 @@
                   autocomplete="off"
                   placeholder="Ex: sabor, tamanho, modelo ou detalhes importantes"
                 />
-                <p class="help" id="edit-description-help" style="color:#64748b;">
+                <p class="help" id="edit-description-help" style="color:var(--slate-500);">
                   Detalhes curtos ajudam na confer&ecirc;ncia e no PDV.
                 </p>
               </div>
@@ -93,7 +93,7 @@
                     </div>
                   </label>
                 </div>
-                <p class="help" style="color:#64748b;">Isso define como o custo e o pre&ccedil;o ser&atilde;o calculados.</p>
+                <p class="help" style="color:var(--slate-500);">Isso define como o custo e o pre&ccedil;o ser&atilde;o calculados.</p>
                 <p class="products-hint" id="edit-flow-hint"></p>
               </div>
               <div class="product-type-section" id="edit-produced-section">
@@ -112,7 +112,7 @@
                     placeholder="Digite parte do nome ou ingrediente"
                     aria-describedby="edit-recipe-search-help"
                   />
-                  <p class="help" id="edit-recipe-search-help" style="color:#64748b;">
+                  <p class="help" id="edit-recipe-search-help" style="color:var(--slate-500);">
                     Ex: bolo, massa, artesanal.
                   </p>
                 </div>
@@ -135,7 +135,7 @@
                     <p class="product-readonly" id="edit-price-suggested">-</p>
                   </div>
                 </div>
-                <p class="help" id="edit-price-suggested-help" style="color:#64748b;"></p>
+                <p class="help" id="edit-price-suggested-help" style="color:var(--slate-500);"></p>
                 <div class="field">
                   <label class="label" for="edit-final-price">Preço final (opcional)</label>
                   <input
@@ -145,7 +145,7 @@
                     inputmode="decimal"
                     placeholder="Ex: 2,60"
                   />
-                  <p class="help" id="edit-final-price-hint" style="color:#64748b;">
+                  <p class="help" id="edit-final-price-hint" style="color:var(--slate-500);">
                     Se deixar vazio, o sistema usa o pre&ccedil;o sugerido.
                   </p>
                 </div>
@@ -173,7 +173,7 @@
                     aria-required="true"
                     aria-describedby="edit-purchase-price-help edit-purchase-price-error"
                   />
-                  <p class="help" id="edit-purchase-price-help" style="color:#64748b;">Quanto este produto custa para voc&ecirc;.</p>
+                  <p class="help" id="edit-purchase-price-help" style="color:var(--slate-500);">Quanto este produto custa para voc&ecirc;.</p>
                   <p class="help is-danger" id="edit-purchase-price-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
@@ -187,8 +187,8 @@
                     aria-required="true"
                     aria-describedby="edit-price-help edit-price-error"
                   />
-                  <p class="help" id="edit-price-help" style="color:#64748b;">Preço final cobrado do cliente.</p>
-                  <p class="help" id="edit-price-suggestion" style="color:#64748b;"></p>
+                  <p class="help" id="edit-price-help" style="color:var(--slate-500);">Preço final cobrado do cliente.</p>
+                  <p class="help" id="edit-price-suggestion" style="color:var(--slate-500);"></p>
                   <p class="help is-danger" id="edit-price-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
@@ -209,15 +209,15 @@
                       </div>
                     </label>
                   </div>
-                  <p class="help" style="color:#64748b;">Escolha a regra para sugerir o pre&ccedil;o automaticamente.</p>
+                  <p class="help" style="color:var(--slate-500);">Escolha a regra para sugerir o pre&ccedil;o automaticamente.</p>
                 </div>
                 <div class="field">
                   <label class="label" for="edit-resale-percent">Percentual</label>
                   <input class="input" id="edit-resale-percent" type="text" inputmode="decimal" placeholder="Ex: 30" />
-                  <p class="help" id="edit-resale-percent-help" style="color:#64748b;">
+                  <p class="help" id="edit-resale-percent-help" style="color:var(--slate-500);">
                     Margem sobre o pre&ccedil;o de venda.
                   </p>
-                  <p class="help" id="edit-resale-percent-hint" style="color:#64748b;">
+                  <p class="help" id="edit-resale-percent-hint" style="color:var(--slate-500);">
                     Refer&ecirc;ncia: 30% costuma ser um bom ponto de partida.
                   </p>
                 </div>
@@ -234,7 +234,7 @@
                     <option value="INATIVO">Inativo</option>
                   </select>
                 </div>
-                <p class="help" style="color:#64748b;">Ativo = disponivel para venda.</p>
+                <p class="help" style="color:var(--slate-500);">Ativo = disponivel para venda.</p>
               </div>
               <div class="buttons">
                 <button class="button is-link" type="submit" id="save-btn">Salvar altera&ccedil;&otilde;es</button>

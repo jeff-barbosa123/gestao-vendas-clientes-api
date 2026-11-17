@@ -43,7 +43,7 @@
           <section class="sim-grid">
             <div class="panel-card">
               <h4 class="sim-section-title">Usar ficha t&eacute;cnica</h4>
-              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Opcional. Use uma ficha j&aacute; cadastrada para calcular o pre&ccedil;o automaticamente.
               </p>
               <form id="by-id-form" novalidate>
@@ -54,7 +54,7 @@
                       <option value="">Selecione uma ficha t&eacute;cnica</option>
                     </select>
                   </div>
-                  <p class="help" id="recipe-id-empty" style="color:#64748b;" hidden></p>
+                  <p class="help" id="recipe-id-empty" style="color:var(--slate-500);" hidden></p>
                   <p class="help is-danger" id="recipe-id-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field grouped">
@@ -73,13 +73,13 @@
                       required
                       aria-describedby="recipe-margin-error"
                     />
-                    <p class="help" style="color:#64748b;">Ex: 30 significa 30% de margem sobre o custo total.</p>
+                    <p class="help" style="color:var(--slate-500);">Ex: 30 significa 30% de margem sobre o custo total.</p>
                     <p class="help is-danger" id="recipe-margin-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
                     <label class="label" for="recipe-fee">Entrega por pedido (R$)</label>
                     <input class="input" id="recipe-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
-                    <p class="help" style="color:#64748b;">Digite o custo médio da entrega. Se não houver, use 0.</p>
+                    <p class="help" style="color:var(--slate-500);">Digite o custo médio da entrega. Se não houver, use 0.</p>
                   </div>
                 </div>
                 <button class="button is-link" type="submit" id="by-id-submit">Simular</button>
@@ -88,10 +88,10 @@
 
             <div class="panel-card">
               <h4 class="sim-section-title">Simula&ccedil;&atilde;o r&aacute;pida</h4>
-              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+              <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Calcule sem ficha t&eacute;cnica informando custos e ingredientes.
               </p>
-              <p class="help" style="margin-top:-4px;margin-bottom:18px;color:#0f172a;font-weight:500;">
+              <p class="help" style="margin-top:-4px;margin-bottom:18px;color:var(--slate-900);font-weight:500;">
                 Os dados inseridos nesta simulação não serão salvos.
               </p>
               <form id="quick-form" novalidate>
@@ -108,7 +108,7 @@
                       required
                       aria-describedby="quick-yield-error"
                     />
-                    <p class="help" style="color:#64748b;">Total de porções ou pedidos que você entrega com essa receita.</p>
+                    <p class="help" style="color:var(--slate-500);">Total de porções ou pedidos que você entrega com essa receita.</p>
                     <p class="help is-danger" id="quick-yield-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -126,25 +126,25 @@
                       required
                       aria-describedby="quick-margin-error"
                     />
-                    <p class="help" style="color:#64748b;">Ex: 35 significa 35% de margem sobre o custo final.</p>
+                    <p class="help" style="color:var(--slate-500);">Ex: 35 significa 35% de margem sobre o custo final.</p>
                     <p class="help is-danger" id="quick-margin-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
                     <label class="label" for="quick-fee">Entrega por pedido (R$)</label>
                     <input class="input" id="quick-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
-                    <p class="help" style="color:#64748b;">Digite o custo médio da entrega. Se não houver, use 0.</p>
+                    <p class="help" style="color:var(--slate-500);">Digite o custo médio da entrega. Se não houver, use 0.</p>
                   </div>
                 </div>
                 <div class="field grouped">
                   <div>
                     <label class="label" for="quick-overhead">Custos fixos e indiretos (R$)</label>
                     <input class="input" id="quick-overhead" type="text" placeholder="Ex: 0,00" />
-                    <p class="help" style="color:#64748b;">G&aacute;s, energia, &aacute;gua, embalagem e outras despesas do dia a dia.</p>
+                    <p class="help" style="color:var(--slate-500);">G&aacute;s, energia, &aacute;gua, embalagem e outras despesas do dia a dia.</p>
                   </div>
                   <div>
                     <label class="label" for="quick-labor">Seu tempo de trabalho (R$)</label>
                     <input class="input" id="quick-labor" type="text" placeholder="Ex: 0,00" />
-                    <p class="help" style="color:#64748b;">Quanto você quer receber pelo tempo investido nessa receita.</p>
+                    <p class="help" style="color:var(--slate-500);">Quanto você quer receber pelo tempo investido nessa receita.</p>
                   </div>
                 </div>
                 <div class="field">
@@ -157,7 +157,7 @@
                       <option value="revenda">Revenda (20% sugerido)</option>
                     </select>
                   </div>
-                  <p class="help" style="color:#64748b;">Selecione para receber uma margem padrão do seu setor.</p>
+                  <p class="help" style="color:var(--slate-500);">Selecione para receber uma margem padrão do seu setor.</p>
                 </div>
                 <div class="field">
                   <label class="label">Ingredientes e custos</label>
@@ -175,7 +175,7 @@
                       <button class="button is-light" type="button" id="add-ingredient">Adicionar</button>
                     </div>
                   </div>
-                  <p class="help" style="color:#64748b;">Informe nome, quantidade e custo estimado de cada ingrediente.</p>
+                  <p class="help" style="color:var(--slate-500);">Informe nome, quantidade e custo estimado de cada ingrediente.</p>
                   <p class="help is-danger" id="ingredient-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">

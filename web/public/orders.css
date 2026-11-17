@@ -1,6 +1,6 @@
 .ord-wrapper {
   width: min(1080px, 100%);
-  background: linear-gradient(135deg, #23458a, #2f5fae);
+  background: linear-gradient(135deg, #23458a, var(--bg-dark));
   border-radius: 18px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -10,7 +10,7 @@
 }
 
 .ord-header {
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .ord-title {
@@ -31,14 +31,14 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #475569;
+  color: var(--slate-600);
   margin: 0 0 12px;
 }
 
 .ord-subtitle-2 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--slate-800);
   margin: 8px 0;
 }
 
@@ -49,8 +49,8 @@
 .ord-shortage {
   padding: 12px 16px;
   border-radius: 12px;
-  border: 1px solid #fecaca;
-  background: #fff1f2;
+  border: 1px solid var(--danger-300);
+  background: var(--danger-50);
   color: #9f1239;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .ord-items-table .is-empty td {
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .ord-totals {
@@ -117,7 +117,7 @@
   flex-direction: column;
   justify-content: flex-end;
   gap: 2px;
-  color: #1e293b;
+  color: var(--slate-800);
 }
 
 .ord-totals p {
@@ -158,7 +158,7 @@
 }
 
 .ord-empty {
-  color: #64748b;
+  color: var(--slate-500);
   margin: 8px 0;
 }
 
@@ -174,9 +174,9 @@
   flex-wrap: wrap;
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--slate-900);
   text-transform: capitalize;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--slate-200);
   padding-bottom: 6px;
   margin: 0 0 10px;
 }
@@ -188,7 +188,7 @@
 .ord-day-count {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--slate-500);
   text-transform: none;
 }
 
@@ -199,11 +199,11 @@
 }
 
 .ord-card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--slate-200);
   border-left: 4px solid #f59e0b;
   border-radius: 12px;
   padding: 12px;
-  background: #ffffff;
+  background: var(--white);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -214,7 +214,7 @@
 }
 
 .ord-card.is-delivered {
-  border-left-color: #16a34a;
+  border-left-color: var(--success-600);
   opacity: 0.85;
 }
 
@@ -232,12 +232,12 @@
 .ord-card-time {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #1e293b;
+  color: var(--slate-800);
 }
 
 .ord-card-customer {
   flex: 1;
-  color: #0f172a;
+  color: var(--slate-900);
 }
 
 .ord-status {
@@ -250,7 +250,7 @@
 
 .ord-status.is-pending {
   background: #fef3c7;
-  color: #92400e;
+  color: var(--warning-800);
 }
 
 .ord-status.is-ready {
@@ -264,19 +264,19 @@
 }
 
 .ord-status.is-canceled {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--slate-100);
+  color: var(--slate-600);
 }
 
 .ord-card p {
   margin: 0;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--slate-700);
 }
 
 .ord-card-notes {
   font-style: italic;
-  color: #64748b !important;
+  color: var(--slate-500) !important;
 }
 
 .ord-card-actions {
@@ -310,7 +310,7 @@
 .ord-modal-card {
   position: relative;
   width: min(460px, 100%);
-  background: #ffffff;
+  background: var(--white);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
@@ -319,7 +319,7 @@
 .ord-modal-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--slate-900);
   margin: 0 0 8px;
 }
 

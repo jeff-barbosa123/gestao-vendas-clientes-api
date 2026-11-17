@@ -1,6 +1,6 @@
 .profile {
   width: min(1040px, 100%);
-  background: linear-gradient(180deg, #2f5fae 0%, #2a569e 100%);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, #2a569e 100%);
   border-radius: 22px;
   padding: 26px 26px 30px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -30,7 +30,7 @@
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 18px;
-  color: #f8fafc;
+  color: var(--slate-50);
 }
 
 .profile-title {
@@ -58,8 +58,8 @@
 }
 
 .panel-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--white);
+  border: 1px solid var(--slate-200);
   border-radius: 18px;
   padding: 22px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
@@ -69,7 +69,7 @@
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: #475569;
+  color: var(--slate-600);
   margin-bottom: 16px;
 }
 
@@ -84,7 +84,7 @@
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px dashed #e2e8f0;
+  border-bottom: 1px dashed var(--slate-200);
 }
 
 .profile-item:last-child {
@@ -96,13 +96,13 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #64748b;
+  color: var(--slate-500);
 }
 
 .profile-value {
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--slate-900);
   text-align: right;
 }
 
@@ -111,15 +111,15 @@
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 12px;
-  background: #ecfdf3;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--success-50);
+  color: var(--success-800);
+  border: 1px solid var(--success-200);
 }
 
 .profile-message.is-error {
-  background: #fff1f2;
-  color: #7f1d1d;
-  border-color: #fecdd3;
+  background: var(--danger-50);
+  color: var(--danger-900);
+  border-color: var(--danger-200);
 }
 
 .profile-message.is-inline {
@@ -129,7 +129,7 @@
 .pwd-rules {
   margin-top: 8px;
   font-size: 12px;
-  color: #475569;
+  color: var(--slate-600);
   display: grid;
   gap: 4px;
 }
@@ -142,23 +142,23 @@
   display: inline-block;
   width: 16px;
   text-align: center;
-  color: #ef4444;
+  color: var(--danger-500);
   font-weight: 700;
 }
 .pwd-rule.is-ok .pwd-icon {
-  color: #16a34a;
+  color: var(--success-600);
 }
 .pwd-meter {
   height: 8px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: var(--gray-200);
   margin-top: 10px;
   overflow: hidden;
 }
 .pwd-meter-bar {
   height: 100%;
   width: 0%;
-  background: #ef4444;
+  background: var(--danger-500);
   transition: width 0.2s ease, background 0.2s ease;
 }
 

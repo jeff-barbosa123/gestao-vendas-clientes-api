@@ -18,10 +18,10 @@
     <link rel="stylesheet" href="/login.css" />
     <style>
     .pwd-rule.is-ok .pwd-icon {
-      color: #16a34a !important;
+      color: var(--success-600) !important;
     }
     .pwd-rule .pwd-icon {
-      color: #ef4444 !important;
+      color: var(--danger-500) !important;
     }
     </style>
     <script src="/config.js" defer></script>
@@ -106,9 +106,9 @@
       })();
     </script>
     <style>
-    .pwd-rule .pwd-icon { color: #ef4444 !important; font-weight: bold; }
-    .pwd-rule.is-ok .pwd-icon { color: #16a34a !important; }
-    .pwd-rule.is-ok { color: #16a34a !important; }
+    .pwd-rule .pwd-icon { color: var(--danger-500) !important; font-weight: bold; }
+    .pwd-rule.is-ok .pwd-icon { color: var(--success-600) !important; }
+    .pwd-rule.is-ok { color: var(--success-600) !important; }
     </style>
   </head>
   <body>
@@ -382,7 +382,7 @@
           </button>
         </footer>
         <div style="padding: 10px 16px 16px;">
-          <p class="help" style="text-align:center;color:#475569;">
+          <p class="help" style="text-align:center;color:var(--slate-600);">
             Ao criar sua conta você concorda com os
             <a href="#" style="color:#3b82f6;text-decoration:none;">Termos de Uso</a>
             e

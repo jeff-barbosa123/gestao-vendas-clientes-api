@@ -36,7 +36,7 @@
           <div class="recipes-message" id="edit-message" hidden></div>
 
           <section class="panel-card">
-            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:#64748b;">
+            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
               Atualize os dados para recalcular o custo e o pre&ccedil;o sugerido.
             </p>
             <form id="edit-form" class="recipes-form" novalidate>
@@ -59,7 +59,7 @@
                     aria-describedby="edit-name-help"
                     required
                   />
-                    <p class="help" id="edit-name-help" style="color:#64748b;">Use um nome f&aacute;cil de reconhecer.</p>
+                    <p class="help" id="edit-name-help" style="color:var(--slate-500);">Use um nome f&aacute;cil de reconhecer.</p>
                   <p class="help is-danger" id="edit-name-error" aria-live="polite" hidden></p>
                 </div>
                 <div class="field">
@@ -71,7 +71,7 @@
                     maxlength="200"
                     placeholder="Ex: bolo simples com recheio"
                   />
-                  <p class="help" style="color:#64748b;">Apenas para organiza&ccedil;&atilde;o interna. O cliente n&atilde;o v&ecirc; isso.</p>
+                  <p class="help" style="color:var(--slate-500);">Apenas para organiza&ccedil;&atilde;o interna. O cliente n&atilde;o v&ecirc; isso.</p>
                 </div>
               </div>
 
@@ -99,7 +99,7 @@
                       aria-describedby="edit-yield-help"
                       required
                     />
-                    <p class="help" id="edit-yield-help" style="color:#64748b;">Use este campo para dizer quantas unidades o preparo gera.</p>
+                    <p class="help" id="edit-yield-help" style="color:var(--slate-500);">Use este campo para dizer quantas unidades o preparo gera.</p>
                     <p class="help is-danger" id="edit-yield-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -111,7 +111,7 @@
                         <option value="L">L</option>
                       </select>
                     </div>
-                    <p class="help" style="color:#64748b;">UN = unidades, KG = quilos, L = litros.</p>
+                    <p class="help" style="color:var(--slate-500);">UN = unidades, KG = quilos, L = litros.</p>
                   </div>
                 </div>
               </div>
@@ -141,8 +141,8 @@
                       placeholder="Ex: 5"
                       aria-describedby="edit-overhead-help edit-overhead-limit edit-overhead-warning"
                     />
-                    <p class="help" id="edit-overhead-help" style="color:#64748b;">Use para gastos como g&aacute;s, energia, &aacute;gua, embalagem ou taxa de app.</p>
-                    <p class="help" id="edit-overhead-limit" style="color:#64748b;">O m&aacute;ximo permitido &eacute; 15%.</p>
+                    <p class="help" id="edit-overhead-help" style="color:var(--slate-500);">Use para gastos como g&aacute;s, energia, &aacute;gua, embalagem ou taxa de app.</p>
+                    <p class="help" id="edit-overhead-limit" style="color:var(--slate-500);">O m&aacute;ximo permitido &eacute; 15%.</p>
                     <p class="help is-warning" id="edit-overhead-warning" aria-live="polite" hidden></p>
                     <div class="quick-suggestions" id="edit-overhead-suggestions">
                       <span class="quick-suggestions-label">Sugest&otilde;es r&aacute;pidas:</span>
@@ -165,7 +165,7 @@
                       <button class="button is-light" type="button" id="edit-overhead-add">Adicionar</button>
                     </div>
                   </div>
-                  <p class="help" style="color:#64748b;">Esses valores somam ao custo final, al&eacute;m do percentual.</p>
+                  <p class="help" style="color:var(--slate-500);">Esses valores somam ao custo final, al&eacute;m do percentual.</p>
                   <p class="help is-danger" id="edit-overhead-error" aria-live="polite" hidden></p>
                   <table class="table is-fullwidth" style="margin-top:8px;">
                     <thead>
@@ -198,7 +198,7 @@
                       Percentual (%)
                     </label>
                   </div>
-                  <p class="help" style="color:#64748b;">Escolha apenas uma op&ccedil;&atilde;o.</p>
+                  <p class="help" style="color:var(--slate-500);">Escolha apenas uma op&ccedil;&atilde;o.</p>
                 </div>
                 <div class="field grouped" id="edit-profit-fixed-section">
                   <div>
@@ -213,7 +213,7 @@
                       placeholder="Ex: 10,00"
                       aria-describedby="edit-profit-fixed-help"
                     />
-                    <p class="help" id="edit-profit-fixed-help" style="color:#64748b;">Esse valor soma ao custo final.</p>
+                    <p class="help" id="edit-profit-fixed-help" style="color:var(--slate-500);">Esse valor soma ao custo final.</p>
                   </div>
                 </div>
                 <div class="field grouped" id="edit-profit-percent-section" hidden>
@@ -223,7 +223,7 @@
                       <span class="info-tip" data-tooltip="Ex: 30 = 30% de lucro sobre o custo." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
                     </label>
                     <input class="input" id="edit-margin" type="text" inputmode="decimal" min="0" step="0.01" placeholder="Ex: 20" aria-describedby="edit-margin-help" />
-                    <p class="help" id="edit-margin-help" style="color:#64748b;">Ex: 20 = 20% sobre o custo.</p>
+                    <p class="help" id="edit-margin-help" style="color:var(--slate-500);">Ex: 20 = 20% sobre o custo.</p>
                     <div class="quick-suggestions" id="edit-margin-suggestions">
                       <span class="quick-suggestions-label">Sugest&otilde;es r&aacute;pidas:</span>
                       <button class="button is-light is-small" type="button" data-target="edit-margin" data-value="20" aria-label="Aplicar 20% de lucro">+20%</button>
@@ -267,8 +267,8 @@
                   <div class="select">
                     <select id="component-select"></select>
                   </div>
-                  <p class="help" style="color:#64748b;">Escolha a parte e adicione os itens.</p>
-                  <p class="help" style="color:#64748b;">Ingredientes principais s&atilde;o obrigat&oacute;rios.</p>
+                  <p class="help" style="color:var(--slate-500);">Escolha a parte e adicione os itens.</p>
+                  <p class="help" style="color:var(--slate-500);">Ingredientes principais s&atilde;o obrigat&oacute;rios.</p>
                 </div>
                 <div class="field has-addons component-rename">
                   <div class="control is-expanded">
@@ -355,10 +355,10 @@
                       </div>
                     </div>
                   </div>
-                  <p class="help" style="color:#64748b;">O sistema calcula o custo automaticamente. Use a mesma unidade da embalagem.</p>
-                  <p class="help" style="color:#64748b;">Se n&atilde;o informar o pre&ccedil;o, o custo do item ser&aacute; R$ 0,00.</p>
-                  <p class="help" style="color:#64748b;">Regra: se compra por unidade (lata/garrafa/caixa), use unidade=un e pacote=1. Se compra por peso/volume, use g/kg/ml/l e informe o tamanho real do pacote.</p>
-                  <p class="help" id="edit-ingredient-unit-help" style="color:#64748b;"></p>
+                  <p class="help" style="color:var(--slate-500);">O sistema calcula o custo automaticamente. Use a mesma unidade da embalagem.</p>
+                  <p class="help" style="color:var(--slate-500);">Se n&atilde;o informar o pre&ccedil;o, o custo do item ser&aacute; R$ 0,00.</p>
+                  <p class="help" style="color:var(--slate-500);">Regra: se compra por unidade (lata/garrafa/caixa), use unidade=un e pacote=1. Se compra por peso/volume, use g/kg/ml/l e informe o tamanho real do pacote.</p>
+                  <p class="help" id="edit-ingredient-unit-help" style="color:var(--slate-500);"></p>
                   <p class="help is-warning" id="edit-ingredient-unit-warning" aria-live="polite" hidden></p>
                   <p class="help is-danger" id="edit-ingredient-error" aria-live="polite" hidden></p>
                   <p class="help is-success" id="edit-ingredient-success" aria-live="polite" hidden></p>

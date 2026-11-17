@@ -6,26 +6,13 @@ import { deleteBtn, deleteConfirm, deleteModal, messageBox } from './dom.js';
 import { state } from './state.js';
 import { buildUrl, apiRequest } from '../shared/http.js';
 import { setFieldError, clearFieldError } from '../shared/form-errors.js';
+import { ensureAuthOrRedirect } from '../shared/auth.js';
+export { ensureAuthOrRedirect };
 export { setFieldError, clearFieldError, apiRequest };
 
 
 
-export async function ensureAuthOrRedirect() {
-  try {
-    const user = await window.apiGetMe();
-    if (!user) {
-      window.location.href = '/';
-      return null;
-    }
-    return user;
-  } catch (_err) {
-    if (_err && _err.name === 'AbortError') {
-      return null;
-    }
-    window.location.href = '/';
-    return null;
-  }
-}
+
 
 export function showMessage(text, type) {
   if (!messageBox) return;

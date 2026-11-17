@@ -4,19 +4,15 @@
 import { API_BASE } from './constants.js';
 import { messageBox } from './dom.js';
 import { state } from './state.js';
+import { apiRequest } from '../shared/http.js';
+import { setFieldError, clearFieldError } from '../shared/form-errors.js';
+export { apiRequest, setFieldError, clearFieldError };
 
 export function escapeHtml(value) {
   return window.SGVC.utils.escapeHtml(value);
 }
 
-function buildUrl(path) {
-  const base = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
-    return `${base}${normalizedPath.slice(4)}`;
-  }
-  return `${base}${normalizedPath}`;
-}
+
 
 export async function ensureAuthOrRedirect() {
   try {
@@ -52,29 +48,11 @@ export function showMessage(text, type) {
   }
 }
 
-export function apiRequest(path, _tokenIgnored, options = {}) {
-  return window.SGVC.api.request(path, { ...options, messageFromServer: true });
-}
 
-export function setFieldError(input, errorEl, message) {
-  if (!input) return;
-  input.classList.add('is-danger');
-  input.setAttribute('aria-invalid', 'true');
-  if (errorEl) {
-    errorEl.textContent = message || '';
-    errorEl.hidden = !message;
-  }
-}
 
-export function clearFieldError(input, errorEl) {
-  if (!input) return;
-  input.classList.remove('is-danger');
-  input.removeAttribute('aria-invalid');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-  }
-}
+
+
+
 
 // Event listeners dos botões principais
 export function handleAuthFailure(err) {

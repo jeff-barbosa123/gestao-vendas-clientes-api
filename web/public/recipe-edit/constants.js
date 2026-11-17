@@ -1,9 +1,10 @@
 /**
  * Constantes da tela de edição de ficha (ingredientes padrão e apelidos de unidade).
  */
-// Preferir same-origin por padrão (evita acidentalmente apontar para localhost em produção)
-export const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || window.location.origin;
 
+
+import { API_BASE } from '../shared/config.js';
+export { API_BASE };
 export const DELETE_FLAG = 'sgvc.recipeDeleted';
 
 export const DEFAULT_COMPONENT_NAME = 'Ingredientes principais';

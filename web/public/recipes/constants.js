@@ -1,9 +1,10 @@
 /**
  * Constantes da tela de fichas de custo (ingredientes padrão e apelidos de unidade).
  */
-// Preferir same-origin por padrão (evita acidentalmente apontar para localhost em produção)
-export const API_BASE = (window.APP_CONFIG && window.APP_CONFIG.API_BASE) || window.location.origin;
 
+
+import { API_BASE } from '../shared/config.js';
+export { API_BASE };
 export const PAGE_SIZE = 10;
 
 export const DELETE_FLAG = 'sgvc.recipeDeleted';

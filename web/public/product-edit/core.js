@@ -4,15 +4,11 @@
 import { API_BASE, CSRF_COOKIE_NAME } from './constants.js';
 import { deleteBtn, deleteConfirm, deleteModal, messageBox } from './dom.js';
 import { state } from './state.js';
+import { buildUrl, apiRequest } from '../shared/http.js';
+import { setFieldError, clearFieldError } from '../shared/form-errors.js';
+export { setFieldError, clearFieldError, apiRequest };
 
-function buildUrl(path) {
-  const base = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
-    return `${base}${normalizedPath.slice(4)}`;
-  }
-  return `${base}${normalizedPath}`;
-}
+
 
 export async function ensureAuthOrRedirect() {
   try {
@@ -51,25 +47,9 @@ export function showMessage(text, type) {
   }
 }
 
-export function setFieldError(input, errorEl, message) {
-  if (!input) return;
-  input.classList.add('is-danger');
-  input.setAttribute('aria-invalid', 'true');
-  if (errorEl) {
-    errorEl.textContent = message || '';
-    errorEl.hidden = !message;
-  }
-}
 
-export function clearFieldError(input, errorEl) {
-  if (!input) return;
-  input.classList.remove('is-danger');
-  input.removeAttribute('aria-invalid');
-  if (errorEl) {
-    errorEl.textContent = '';
-    errorEl.hidden = true;
-  }
-}
+
+
 
 function getCookieValue(name) {
   try {
@@ -107,9 +87,7 @@ async function ensureCsrfCookie() {
   }
 }
 
-export function apiRequest(path, _tokenIgnored, options = {}) {
-  return window.SGVC.api.request(path, { ...options, messageFromServer: true });
-}
+
 
 export function toggleDeleteModal(isOpen) {
   if (!deleteModal) return;

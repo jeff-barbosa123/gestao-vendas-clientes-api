@@ -40,6 +40,8 @@ function rowToEntry(row) {
     expiresAt: new Date(row.expires_at).getTime(),
     revoked: Boolean(row.revoked),
     persistedActivity: new Date(row.last_activity).getTime(),
+    userAgent: row.user_agent || null,
+    pairJti: row.pair_jti || null,
   };
 }
 
@@ -49,8 +51,8 @@ async function save(kind, entry) {
   if (!hasDatabase()) return entryWithMeta;
   try {
     await db.query(
-      `INSERT INTO auth_sessions (jti, kind, user_id, email, issued_at, last_activity, expires_at, revoked)
-       VALUES ($1, $2, $3, $4, to_timestamp($5 / 1000.0), to_timestamp($6 / 1000.0), to_timestamp($7 / 1000.0), $8)
+      `INSERT INTO auth_sessions (jti, kind, user_id, email, issued_at, last_activity, expires_at, revoked, user_agent, pair_jti)
+       VALUES ($1, $2, $3, $4, to_timestamp($5 / 1000.0), to_timestamp($6 / 1000.0), to_timestamp($7 / 1000.0), $8, $9, $10)
        ON CONFLICT (jti) DO NOTHING`,
       [
         entry.jti,
@@ -61,6 +63,8 @@ async function save(kind, entry) {
         entry.lastActivity || entry.issuedAt,
         entry.expiresAt,
         Boolean(entry.revoked),
+        entry.userAgent || null,
+        entry.pairJti || null,
       ]
     );
   } catch (err) {
@@ -120,6 +124,64 @@ function touch(entry, now = Date.now()) {
   ]).catch((err) => logPersistError("atualizar", err));
 }
 
+/**
+ * Sessoes (logins) ativas do usuario: uma por refresh token valido, com a atividade do access token pareado.
+ */
+async function listSessions(userId, currentAccessJti) {
+  if (!hasDatabase()) return [];
+  const result = await db.query(
+    `SELECT r.jti, r.user_agent, r.issued_at, a.last_activity AS access_activity, (a.jti = $2) AS is_current
+       FROM auth_sessions r
+       LEFT JOIN auth_sessions a ON a.jti = r.pair_jti AND a.kind = 'access'
+      WHERE r.user_id = $1 AND r.kind = 'refresh' AND r.revoked = FALSE AND r.expires_at > NOW()
+      ORDER BY (a.jti = $2) DESC NULLS LAST, COALESCE(a.last_activity, r.issued_at) DESC`,
+    [userId, currentAccessJti || null]
+  );
+  return result.rows.map((row) => ({
+    id: row.jti,
+    userAgent: row.user_agent || null,
+    createdAt: new Date(row.issued_at).toISOString(),
+    lastActivity: new Date(row.access_activity || row.issued_at).toISOString(),
+    current: Boolean(row.is_current),
+  }));
+}
+
+/** Encerra uma sessao do usuario (refresh + access pareado). Retorna false se nao for dele. */
+async function revokeSession(userId, refreshJti) {
+  if (!hasDatabase() || !refreshJti) return false;
+  const result = await db.query(
+    "SELECT jti, pair_jti FROM auth_sessions WHERE jti = $1 AND user_id = $2 AND kind = 'refresh'",
+    [refreshJti, userId]
+  );
+  const row = result.rows[0];
+  if (!row) return false;
+  await revoke("refresh", row.jti);
+  if (row.pair_jti) await revoke("access", row.pair_jti);
+  return true;
+}
+
+/** Encerra todas as sessoes do usuario, menos a atual (identificada pelo access jti). */
+async function revokeOthers(userId, currentAccessJti) {
+  if (!hasDatabase()) return 0;
+  const result = await db.query(
+    `SELECT jti, pair_jti FROM auth_sessions
+      WHERE user_id = $1 AND kind = 'refresh' AND revoked = FALSE AND expires_at > NOW()
+        AND pair_jti IS DISTINCT FROM $2`,
+    [userId, currentAccessJti || null]
+  );
+  for (const row of result.rows) {
+    await revoke("refresh", row.jti);
+    if (row.pair_jti) await revoke("access", row.pair_jti);
+  }
+  return result.rows.length;
+}
+
+/** Logout: invalida tambem o refresh token pareado com o access token. */
+async function revokePairedRefresh(accessJti) {
+  const entry = await get("access", accessJti);
+  if (entry && entry.pairJti) await revoke("refresh", entry.pairJti);
+}
+
 async function cleanupExpired() {
   const now = Date.now();
   for (const store of [tokenStore, refreshStore]) {
@@ -144,6 +206,10 @@ module.exports = {
   save,
   get,
   revoke,
+  listSessions,
+  revokeSession,
+  revokeOthers,
+  revokePairedRefresh,
   touch,
   cleanupExpired,
 };

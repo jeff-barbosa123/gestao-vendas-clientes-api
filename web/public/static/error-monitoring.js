@@ -78,6 +78,11 @@ const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyV
         window.location.href = '/';
         return null;
       }
+      const me = user.user || user;
+      if (!me.isPlatformAdmin) {
+        window.location.href = '/dashboard.html';
+        return null;
+      }
       return user;
     } catch (_err) {
       if (_err && _err.name === 'AbortError') {

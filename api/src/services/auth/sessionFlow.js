@@ -16,7 +16,7 @@ function getDummyHash() {
   return dummyHashPromise;
 }
 
-async function login(rawEmail, rawPassword) {
+async function login(rawEmail, rawPassword, meta = {}) {
   const { email, password } = validateCredentials(rawEmail, rawPassword);
 
   if (isBlocked(email)) {
@@ -102,7 +102,7 @@ async function login(rawEmail, rawPassword) {
     }
 
     // Gera tokens - se falhar aqui, propaga o erro (não pode fazer login sem tokens)
-    const { token, refreshToken, exp, jti, refreshJti } = await issueTokens(user);
+    const { token, refreshToken, exp, jti, refreshJti } = await issueTokens(user, meta);
 
     return {
       token,
@@ -129,10 +129,11 @@ async function login(rawEmail, rawPassword) {
 }
 
 async function logout(jti) {
+  await sessionStore.revokePairedRefresh(jti);
   await sessionStore.revoke("access", jti);
 }
 
-async function refresh(refreshTokenRaw) {
+async function refresh(refreshTokenRaw, meta = {}) {
   if (!refreshTokenRaw) {
     const err = new Error(MESSAGES.refreshMissing);
     err.status = 400;
@@ -175,7 +176,7 @@ async function refresh(refreshTokenRaw) {
   // Refresh token é de uso único
   await sessionStore.revoke("refresh", payload.jti);
 
-  return issueTokens(user);
+  return issueTokens(user, meta);
 }
 
 module.exports = {

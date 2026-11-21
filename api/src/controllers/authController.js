@@ -30,6 +30,10 @@ function clearAuthCookies(res) {
 }
 
 const googleAuth = require("../services/auth/googleAuth");
+const sessionStore = require("../services/sessionStore");
+const { describeDevice } = require("../utils/userAgent");
+const { isPlatformAdmin } = require("../middleware/platformAdmin");
+const clientMeta = (req) => ({ userAgent: String(req.get("user-agent") || "").slice(0, 255) });
 const OAUTH_COOKIE = "sgvc_oauth";
 const oauthCookieOptions = () => ({
   httpOnly: true,
@@ -45,6 +49,42 @@ const safeEqual = (a, b) => {
 };
 
 module.exports = {
+  sessions: async (req, res, next) => {
+    try {
+      const items = await sessionStore.listSessions(req.user.id, req.auth && req.auth.jti);
+      return res.status(200).json({
+        sessions: items.map((s) => ({
+          id: s.id,
+          device: describeDevice(s.userAgent),
+          createdAt: s.createdAt,
+          lastActivity: s.lastActivity,
+          current: s.current,
+        })),
+      });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  revokeSession: async (req, res, next) => {
+    try {
+      const ok = await sessionStore.revokeSession(req.user.id, req.params.id);
+      if (!ok) return res.status(404).json({ success: false, code: "NOT_FOUND", message: "Sess\u00e3o n\u00e3o encontrada" });
+      return res.status(204).end();
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  revokeOtherSessions: async (req, res, next) => {
+    try {
+      const revoked = await sessionStore.revokeOthers(req.user.id, req.auth && req.auth.jti);
+      return res.status(200).json({ revoked });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
   providers: (_req, res) => {
     res.setHeader("Cache-Control", "no-store");
     return res.json({ google: googleAuth.isEnabled() });
@@ -66,7 +106,7 @@ module.exports = {
       return googleFail(res, "invalid_state");
     }
     try {
-      const { token, refreshToken, exp } = await googleAuth.signIn({ code: String(req.query.code), verifier, nonce });
+      const { token, refreshToken, exp } = await googleAuth.signIn({ code: String(req.query.code), verifier, nonce, meta: clientMeta(req) });
       setAuthCookies(res, token, refreshToken, exp);
       return res.redirect(302, "/dashboard.html");
     } catch (err) {
@@ -78,7 +118,8 @@ module.exports = {
     try {
       const { token, refreshToken, user, exp, jti, refreshJti } = await authService.login(
         req.body.identifier !== undefined ? req.body.identifier : req.body.email,
-        req.body.password
+        req.body.password,
+        clientMeta(req)
       );
       setAuthCookies(res, token, refreshToken, exp);
       // token/refreshToken no corpo mantidos para clientes de API (Bearer); o frontend usa os cookies HttpOnly
@@ -93,7 +134,8 @@ module.exports = {
     try {
       const refreshTokenFromCookie = req.cookies && req.cookies.sgvc_refresh ? req.cookies.sgvc_refresh : null;
       const { token, refreshToken, user, exp, jti, refreshJti } = await authService.refresh(
-        (req.body && req.body.refreshToken) || refreshTokenFromCookie
+        (req.body && req.body.refreshToken) || refreshTokenFromCookie,
+        clientMeta(req)
       );
       setAuthCookies(res, token, refreshToken, exp);
       // token/refreshToken no corpo mantidos para clientes de API (Bearer); o frontend usa os cookies HttpOnly
@@ -147,6 +189,11 @@ module.exports = {
           email: user.email,
           username: user.username || null,
           name: user.name,
+          hasPassword: Boolean(user.password),
+          authProvider: user.auth_provider || "local",
+          googleLinked: Boolean(user.google_sub),
+          emailVerified: user.email_verified === true,
+          isPlatformAdmin: isPlatformAdmin(user.email),
           statusUsuario: user.status_usuario,
           dataUltimoLogin: user.data_ultimo_login,
           tentativasFalha: user.tentativas_falha,

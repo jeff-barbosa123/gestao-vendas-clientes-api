@@ -169,6 +169,15 @@ async function changePassword(userId, rawCurrentPassword, rawNewPassword) {
     err.status = 404;
     throw err;
   }
+  const accountUser = await getUserById(userId);
+  if (accountUser && !accountUser.password) {
+    const err = new Error(
+      "Sua conta usa login com Google e ainda n\u00e3o tem senha. Use \"Enviar link para definir senha\"."
+    );
+    err.status = 400;
+    err.code = "NO_LOCAL_PASSWORD";
+    throw err;
+  }
   const currentPassword = validatePassword(rawCurrentPassword, false);
   const newPassword = validatePassword(rawNewPassword, true);
   

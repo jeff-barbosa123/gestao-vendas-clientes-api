@@ -43,7 +43,7 @@ function signRefreshToken(user, refreshJti) {
   });
 }
 
-async function issueTokens(user) {
+async function issueTokens(user, meta = {}) {
   try {
     if (!JWT_SECRET || !JWT_REFRESH_SECRET) {
       const err = new Error('JWT_SECRET ou JWT_REFRESH_SECRET não configurado. Configure no arquivo .env.local');
@@ -59,9 +59,12 @@ async function issueTokens(user) {
     const refreshToken = signRefreshToken(user, refreshJti);
 
     const now = Date.now();
+    const userAgent = String((meta && meta.userAgent) || "").slice(0, 255) || null;
     // Sessões gravadas em memória + PostgreSQL (sobrevivem a reinício/deploy da API)
     await sessionStore.save("access", {
       jti: accessJti,
+      pairJti: refreshJti,
+      userAgent,
       userId: user.id,
       email: user.email,
       issuedAt: now,
@@ -72,6 +75,8 @@ async function issueTokens(user) {
 
     await sessionStore.save("refresh", {
       jti: refreshJti,
+      pairJti: accessJti,
+      userAgent,
       userId: user.id,
       email: user.email,
       revoked: false,

@@ -100,6 +100,14 @@ const googleRateLimit = rateLimit({
   max: 20,
   message: "Muitas tentativas de login com Google. Tente novamente em 1 minuto.",
 });
+const sessionsRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: "Muitas tentativas. Tente novamente em 1 minuto.",
+});
+router.get("/sessions", authenticate, authController.sessions);
+router.post("/sessions/revoke-others", authenticate, sessionsRateLimit, authController.revokeOtherSessions);
+router.delete("/sessions/:id", authenticate, sessionsRateLimit, authController.revokeSession);
 router.get("/providers", authController.providers);
 router.get("/google", googleRateLimit, authController.googleStart);
 router.get("/google/callback", googleRateLimit, authController.googleCallback);

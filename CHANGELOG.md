@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-21 - Bloco 1: conta, sessoes e primeiros passos
+
+- Plano de produto em `docs/PLANO-PRODUTO.md` (publico amplo, modulos opcionais, Perfis/Equipe, cobranca depois).
+- Migracao 0008: `auth_sessions.user_agent` e `pair_jti` (sessao = refresh + access pareados).
+- Sessoes ativas: `GET /api/auth/sessions`, `DELETE /api/auth/sessions/:id`, `POST /api/auth/sessions/revoke-others`; logout agora invalida tambem o refresh token.
+- Conta Google sem senha: `/auth/me` expoe `hasPassword`, `authProvider`, `googleLinked`, `emailVerified`, `isPlatformAdmin`; `change-password` retorna `NO_LOCAL_PASSWORD` (400); perfil oferece "Enviar link para definir senha".
+- Perfil: campo `@usuario`, lista de sessoes (encerrar uma/outras) e atalho para empresa/White-Label.
+- Seguranca: `/api/errors/analytics` e `error-monitoring.html` restritos ao admin da plataforma (`PLATFORM_ADMIN_EMAILS`; antes qualquer usuario via erros de todas as empresas).
+- Dashboard: checklist "Primeiros passos" (dispensavel).
+- Testes: Mocha US020 (9) e Cypress bloco1-conta (6).
+
 ## 2026-11-17 - Login social com Google
 
 - Migracao 0007: `users.password` passa a aceitar NULL; novas colunas `google_sub` (unico) e `auth_provider`; CHECK garante senha OU google_sub.

@@ -99,11 +99,11 @@ async function resolveUser(claims) {
   return user;
 }
 
-async function signIn({ code, verifier, nonce }) {
+async function signIn({ code, verifier, nonce, meta = {} }) {
   const claims = await deps.getClaims({ code, verifier, nonce });
   const user = await resolveUser(claims);
   const updated = (await repo.updateUserLogin(user.id, new Date().toISOString(), 0, user.status_usuario || "ATIVO")) || user;
-  const { token, refreshToken, exp, jti, refreshJti } = await issueTokens(updated);
+  const { token, refreshToken, exp, jti, refreshJti } = await issueTokens(updated, meta);
   return {
     token,
     refreshToken,

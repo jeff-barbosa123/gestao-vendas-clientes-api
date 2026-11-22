@@ -31,6 +31,22 @@ function clearAuthCookies(res) {
 
 const googleAuth = require("../services/auth/googleAuth");
 const sessionStore = require("../services/sessionStore");
+const teamService = require("../services/teamService");
+const teamRepo = require("../db/repositories/team");
+const permissions = require("../services/permissions");
+
+async function accessFor(userId) {
+  const ctx = process.env.DATABASE_URL
+    ? await teamRepo.getTenantContext(userId)
+    : { ownerId: userId, role: "owner", modules: {} };
+  return {
+    role: ctx.role,
+    roleLabel: permissions.ROLE_LABELS[ctx.role],
+    permissions: permissions.permissionsOf(ctx.role),
+    modules: permissions.resolveModules(ctx.modules),
+    companyId: ctx.ownerId,
+  };
+}
 const { describeDevice } = require("../utils/userAgent");
 const { isPlatformAdmin } = require("../middleware/platformAdmin");
 const clientMeta = (req) => ({ userAgent: String(req.get("user-agent") || "").slice(0, 255) });
@@ -49,6 +65,29 @@ const safeEqual = (a, b) => {
 };
 
 module.exports = {
+  invitationInfo: async (req, res, next) => {
+    try {
+      const { info } = await teamService.getInvitationInfo(req.params.token);
+      return res.status(200).json(info);
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  acceptInvitation: async (req, res, next) => {
+    try {
+      const { token, refreshToken, user, exp, jti, refreshJti } = await teamService.acceptInvitation(
+        req.params.token,
+        req.body || {},
+        clientMeta(req)
+      );
+      setAuthCookies(res, token, refreshToken, exp);
+      return res.status(201).json({ token, refreshToken, user, exp, jti, refreshJti });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
   sessions: async (req, res, next) => {
     try {
       const items = await sessionStore.listSessions(req.user.id, req.auth && req.auth.jti);
@@ -183,8 +222,10 @@ module.exports = {
         err.code = "NOT_FOUND";
         return next(err);
       }
+      const access = await accessFor(user.id);
       return res.status(200).json({
         user: {
+          ...access,
           id: user.id,
           email: user.email,
           username: user.username || null,

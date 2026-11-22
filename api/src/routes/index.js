@@ -20,28 +20,32 @@ const barcodeRoutes = require('./barcodeRoutes');
 const exportRoutes = require('./exportRoutes');
 const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
 const brandingRoutes = require('./brandingRoutes');
+const { team: teamRoutes, company: companyRoutes } = require('./teamRoutes');
+const { gate, rw } = require('../middleware/tenant');
 
 // Guardas globais de entrada: corpo JSON precisa ser objeto; query sem arrays/objetos aninhados
 router.use(requireObjectBody);
 router.use(rejectNestedQuery);
 
 router.use('/auth', authRoutes);
-router.use('/customers', customersRoutes);
-router.use('/products', productsRoutes);
-router.use('/sales', salesRoutes);
-router.use('/reports', reportsRoutes);
+router.use('/customers', gate(rw('customers:read', 'customers:write')), customersRoutes);
+router.use('/products', gate(rw('products:read', 'products:write')), productsRoutes);
+router.use('/sales', gate(rw('sales:read', 'sales:write')), salesRoutes);
+router.use('/reports', gate(() => ({ perm: 'finance:view' })), reportsRoutes);
 router.use('/docs', docsRoutes);
-router.use('/recipes', recipesRoutes);
-router.use('/ingredients', ingredientsRoutes);
-router.use('/orders', ordersRoutes);
-router.use('/analytics', analyticsRoutes);
-router.use('/simulacao', priceSimulationRoutes);
+router.use('/recipes', gate(rw('recipes:read', 'recipes:write', 'producao')), recipesRoutes);
+router.use('/ingredients', gate(rw('ingredients:read', 'ingredients:write', 'producao')), ingredientsRoutes);
+router.use('/orders', gate(rw('orders:read', 'orders:write', 'encomendas')), ordersRoutes);
+router.use('/analytics', gate(() => ({ perm: 'analytics:read' })), analyticsRoutes);
+router.use('/simulacao', gate(() => ({ perm: 'finance:view' })), priceSimulationRoutes);
 router.use('/cep', cepRoutes);
 router.use('/cnpj', cnpjRoutes);
 router.use('/holidays', holidayRoutes);
 router.use('/barcodes', barcodeRoutes);
-router.use('/export', exportRoutes);
+router.use('/export', gate(() => ({ perm: 'export:use' })), exportRoutes);
 router.use('/errors/analytics', errorAnalyticsRoutes);
-router.use('/branding', brandingRoutes);
+router.use('/branding', gate(rw(null, 'branding:write')), brandingRoutes);
+router.use('/team', gate(() => ({ perm: 'team:manage' })), teamRoutes);
+router.use('/company', gate(rw(null, 'modules:manage')), companyRoutes);
 
 module.exports = router;

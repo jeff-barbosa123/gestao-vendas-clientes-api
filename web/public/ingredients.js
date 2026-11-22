@@ -146,7 +146,7 @@
       render();
     } catch (err) {
       if (err && (err.status === 401 || err.status === 403)) {
-        window.location.href = '/';
+        window.location.href = err.status === 403 ? '/dashboard.html' : '/';
         return;
       }
       els.tbody.innerHTML = `<tr><td colspan="7">${escapeHtml(friendlyError(err))}</td></tr>`;

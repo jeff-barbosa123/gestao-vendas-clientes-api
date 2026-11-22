@@ -332,7 +332,7 @@
       renderAgenda(range);
     } catch (err) {
       if (err && (err.status === 401 || err.status === 403)) {
-        window.location.href = '/';
+        window.location.href = err.status === 403 ? '/dashboard.html' : '/';
         return;
       }
       els.agenda.innerHTML = `<p class="ord-empty">${escapeHtml(friendlyError(err))}</p>`;

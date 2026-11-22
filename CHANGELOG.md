@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-21 - Fase 2: equipe, perfis e modulos opcionais
+
+- Migracao 0009: `memberships` (usuario x empresa x papel; todo usuario existente vira Dono), `team_invitations` (token de uso unico, hash SHA-256, 7 dias) e `company_modules` (JSONB).
+- Papeis: Dono, Gerente, Vendedor/Caixa e Estoquista, com matriz unica em `services/permissions.js` (`finance:view` = CMV/lucro/margem/relatorios/simulacao; `cost:view` = custo de compra).
+- Tenant resolvido nos middlewares de auth (`middleware/tenant.js`, acionado por `gate()` em `routes/index.js`): nas rotas de negocio `req.user.id` passa a ser a empresa (owner_id) e `req.user.userId` o usuario real; permissao e modulo sao checados no backend (403 `FORBIDDEN_ROLE` / `MODULE_DISABLED`).
+- Campos de custo/CMV/margem sao removidos das respostas de quem nao tem a permissao.
+- Equipe: `GET /api/team`, `POST /api/team/invitations`, `DELETE /api/team/invitations/:id`, `PUT|DELETE /api/team/members/:userId`; publico: `GET /api/auth/invitations/:token` e `POST /api/auth/invitations/:token/accept`. E-mail de convite; remover membro encerra as sessoes dele.
+- Modulos opcionais: `GET|PUT /api/company/modules` (producao e encomendas; ausente = ligado). `/api/auth/me` passa a trazer `role`, `permissions`, `modules`.
+- Front: `access.js` (menu, cartoes do painel e guarda de telas por papel/modulo), `team.html` (Equipe), `accept-invite.html`, card "Modulos da empresa" em Aparencia.
+- Testes: Mocha US021 (13), Cypress fase2-equipe (9, incluindo fluxo real de vendedor) e axe em team/accept-invite.
+
 ## 2026-11-21 - Bloco 1: conta, sessoes e primeiros passos
 
 - Plano de produto em `docs/PLANO-PRODUTO.md` (publico amplo, modulos opcionais, Perfis/Equipe, cobranca depois).

@@ -15,7 +15,7 @@ Decisões (Jefferson, nov/2026):
 | `error-monitoring` | Restrito ao admin da plataforma (`PLATFORM_ADMIN_EMAILS`; fora de produção, o admin do seed). Antes qualquer usuário via erros de todas as empresas |
 | Onboarding | Checklist "Primeiros passos" no dashboard (empresa, cliente, produto, ficha opcional, 1ª venda), dispensável |
 
-## Fase 2 — Perfis e Equipe (próxima, após validação do Bloco 1)
+## Fase 2 — Perfis, Equipe e módulos opcionais (entregue)
 - Tabela `memberships` (empresa × usuário × papel) e migração dos usuários atuais como **Dono** da própria empresa (`owner_id` continua sendo a chave de tenant).
 - Papéis: **Dono** (tudo), **Gerente** (tudo exceto equipe/cobrança/empresa), **Vendedor/Caixa** (clientes, vendas, consulta de produtos; sem custo/CMV), **Estoquista** (insumos, estoque, produtos; sem financeiro).
 - Matriz de permissões única (backend) + middleware `authorize(permissão)`; frontend esconde o que não pode, backend é quem decide.
@@ -23,9 +23,15 @@ Decisões (Jefferson, nov/2026):
 - Ocultar custo/CMV/margem para quem não tem permissão; auditoria de ações sensíveis.
 - Testes: matriz papel × endpoint (Mocha) e navegação por papel (Cypress).
 
-## Fase 3 — Módulos opcionais por empresa
-- Flags em `company_settings` (ex.: Produção/Fichas técnicas, Encomendas, Estoque de insumos) — varejo simples não vê o que não usa.
-- Campos extras opcionais em produto/cliente (rótulo + tipo), configuráveis pela empresa.
+## Decisões da Fase 2
+- **Uma conta = uma empresa.** Convite só para e-mail sem conta no SGVC (409 caso contrário); quem sai da equipe mantém a conta, vazia, e perde as sessões.
+- **Permissões** (`services/permissions.js`): Gerente = tudo menos equipe/marca/módulos; Vendedor/Caixa = clientes, vendas, encomendas e leitura de produtos, sem custos; Estoquista = insumos e produtos (com custo de compra), fichas só leitura, sem vendas, clientes nem financeiro.
+- **Backend decide**: 403 por papel/módulo e remoção dos campos de custo/CMV/margem das respostas; a interface só esconde o que não funcionaria.
+- Sem SMTP, o dono copia o link do convite na tela Equipe.
+
+## Fase 3 — Campos extras e novos módulos
+- Módulos opcionais por empresa **entregues na Fase 2** (Produção/fichas e Encomendas; chave ausente = ligado; card em Aparência).
+- Pendente: campos extras opcionais em produto/cliente (rótulo + tipo), configuráveis pela empresa; mais módulos conforme as próximas fases.
 
 ## Fase 4 — Operação do dia a dia
 Caixa/PDV rápido; estoque mínimo com alertas; alerta de margem baixa; CRM leve (histórico, recompra, WhatsApp); financeiro (contas a receber/pagar); PWA.

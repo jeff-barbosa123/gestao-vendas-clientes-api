@@ -68,6 +68,8 @@ describe('Contraste WCAG AA no tema Grafite Noturno', () => {
     '/reports.html',
     '/profile.html',
     '/appearance.html',
+    '/team.html',
+    '/accept-invite.html',
     '/reset-password.html',
   ];
 

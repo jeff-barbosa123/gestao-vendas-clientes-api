@@ -108,6 +108,13 @@ const sessionsRateLimit = rateLimit({
 router.get("/sessions", authenticate, authController.sessions);
 router.post("/sessions/revoke-others", authenticate, sessionsRateLimit, authController.revokeOtherSessions);
 router.delete("/sessions/:id", authenticate, sessionsRateLimit, authController.revokeSession);
+const inviteAcceptLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: "Muitas tentativas. Tente novamente em 15 minutos.",
+});
+router.get("/invitations/:token", inviteAcceptLimit, authController.invitationInfo);
+router.post("/invitations/:token/accept", inviteAcceptLimit, authController.acceptInvitation);
 router.get("/providers", authController.providers);
 router.get("/google", googleRateLimit, authController.googleStart);
 router.get("/google/callback", googleRateLimit, authController.googleCallback);

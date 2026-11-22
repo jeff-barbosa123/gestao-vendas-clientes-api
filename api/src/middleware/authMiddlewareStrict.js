@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const sessionStore = require('../services/sessionStore');
+const { tenantPostAuth } = require('./tenant');
 
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'dev-secret');
 if (!JWT_SECRET) {
@@ -42,6 +43,7 @@ async function authenticateStrict(req, res, next) {
     }
     req.user = { id: entry.userId, email: entry.email };
     req.auth = { jti: payload.jti };
+    if (!(await tenantPostAuth(req, res))) return;
     next();
   } catch (_err) {
     const err = new Error(MSG_TOKEN_MISSING);

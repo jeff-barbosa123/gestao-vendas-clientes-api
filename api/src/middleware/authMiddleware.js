@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const sessionStore = require("../services/sessionStore");
+const { tenantPostAuth } = require("./tenant");
 
 // Validate JWT_SECRET - only allow default in development
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "production" ? null : "dev-secret");
@@ -67,6 +68,7 @@ async function authenticate(req, res, next) {
     sessionStore.touch(entry, now);
     req.user = { id: entry.userId, email: entry.email };
     req.auth = { jti: payload.jti };
+    if (!(await tenantPostAuth(req, res))) return;
     next();
   } catch (err) {
     // Log error without exposing token

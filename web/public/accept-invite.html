@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Aceitar convite</title>
+    <meta name="description" content="Aceite o convite para entrar na equipe no SGVC." />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/theme.css" />
+    <link rel="stylesheet" href="/static/login.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/accept-invite.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Pular para o conte&uacute;do</a>
+    <main id="main">
+      <div class="background">
+        <div class="login-wrapper">
+          <div class="brand">
+            <h1>SGVC</h1>
+            <span>Gest&atilde;o de Vendas e Clientes</span>
+          </div>
+
+          <div class="login-card">
+            <h2 class="login-title">Convite para a equipe</h2>
+            <p class="login-subtitle" id="invite-summary">Verificando convite...</p>
+
+            <div id="invite-error" class="login-error" role="alert" aria-live="assertive" hidden>
+              <span class="login-error-icon" aria-hidden="true">!</span>
+              <span id="invite-error-text"></span>
+            </div>
+
+            <form id="invite-form" novalidate hidden>
+              <div class="field">
+                <label class="label" for="invite-email-view">E-mail</label>
+                <input class="input" id="invite-email-view" type="email" readonly />
+              </div>
+              <div class="field">
+                <label class="label" for="invite-name">Seu nome</label>
+                <input class="input" id="invite-name" type="text" autocomplete="name" required aria-required="true" />
+              </div>
+              <div class="field">
+                <label class="label" for="invite-password">Crie uma senha</label>
+                <input class="input" id="invite-password" type="password" autocomplete="new-password" required aria-required="true" />
+                <p class="help">M&iacute;nimo de 8 caracteres, com letras mai&uacute;sculas, min&uacute;sculas, n&uacute;meros e um caractere especial.</p>
+              </div>
+              <div class="field">
+                <label class="label" for="invite-password2">Confirmar senha</label>
+                <input class="input" id="invite-password2" type="password" autocomplete="new-password" required aria-required="true" />
+              </div>
+              <button class="btn-login" type="submit" id="invite-accept">Aceitar convite e entrar</button>
+            </form>
+
+            <p class="register-link" style="margin-top: 12px">
+              <a class="link-button" href="/index.html">Voltar para o login</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+  </body>
+</html>

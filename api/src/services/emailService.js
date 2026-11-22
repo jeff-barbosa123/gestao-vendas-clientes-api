@@ -241,7 +241,27 @@ async function sendMail(payload) {
   });
 }
 
+const escHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+async function sendTeamInvite({ to, inviterName, companyName, roleLabel, link }) {
+  const company = companyName || 'uma empresa';
+  const who = inviterName || 'Algu\u00e9m';
+  const html = baseHtml({
+    title: 'Convite para a equipe',
+    bodyHtml: `<p><strong>${escHtml(who)}</strong> convidou voc\u00ea para a equipe de <strong>${escHtml(company)}</strong> no SGVC, com o perfil <strong>${escHtml(roleLabel)}</strong>.</p>
+      <p>O convite vale por 7 dias.</p>
+      ${buttonHtml(link, 'Aceitar convite')}`,
+  });
+  return sendWithFallback({
+    to,
+    subject: `Convite para ${company} - SGVC`,
+    html,
+    text: `${who} convidou voc\u00ea para a equipe de ${company} no SGVC (${roleLabel}). Aceite em: ${link}`,
+  });
+}
+
 module.exports = {
+  sendTeamInvite,
   sendMail,
   sendWelcomeEmail,
   sendEmailConfirmation,

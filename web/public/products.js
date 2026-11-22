@@ -37,7 +37,10 @@ ensureAuthOrRedirect().then((user) => {
     if (err && err.name === 'AbortError') {
       return;
     }
-    if (err && (err.status === 401 || err.status === 403)) {
+    if (err && err.status === 403) {
+      return; // sem acesso a fichas técnicas (perfil/módulo): não é erro da tela
+    }
+    if (err && err.status === 401) {
       window.location.href = '/';
       return;
     }

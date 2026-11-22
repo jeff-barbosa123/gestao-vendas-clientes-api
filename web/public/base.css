@@ -702,3 +702,9 @@ a:focus-visible {
 .onboarding-text { flex: 1; color: var(--ink); }
 #profile-sessions .profile-item { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
 #password-google-notice p, #profile-company p { color: var(--muted); margin: 0 0 0.75rem; }
+
+/* Fase 2: equipe */
+#team-members .profile-item, #team-invitations .profile-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+#team-members select.input { width: auto; min-width: 9rem; }
+#invite-link-box { margin-top: 0.75rem; }
+#company-modules-card .field { margin-bottom: 0.75rem; }

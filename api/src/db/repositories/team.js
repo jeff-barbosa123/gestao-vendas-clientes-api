@@ -113,7 +113,7 @@ async function getModules(ownerId) {
 async function setModules(ownerId, modules) {
   await query(
     `INSERT INTO company_modules (owner_id, modules, updated_at) VALUES ($1, $2::jsonb, NOW())
-     ON CONFLICT (owner_id) DO UPDATE SET modules = EXCLUDED.modules, updated_at = NOW()`,
+     ON CONFLICT (owner_id) DO UPDATE SET modules = company_modules.modules || EXCLUDED.modules, updated_at = NOW()`,
     [ownerId, JSON.stringify(modules)]
   );
 }

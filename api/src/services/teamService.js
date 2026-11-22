@@ -140,13 +140,13 @@ async function getModules(ownerId) {
 }
 
 async function setModules(ownerId, input) {
-  const current = await repo.getModules(ownerId);
-  const next = { ...current };
+  // Apenas as chaves enviadas; o merge e atomico no SQL (evita corrida entre alteracoes rapidas).
+  const patch = {};
   Object.keys(perms.MODULES).forEach((key) => {
-    if (input && typeof input[key] === 'boolean') next[key] = input[key];
+    if (input && typeof input[key] === 'boolean') patch[key] = input[key];
   });
-  await repo.setModules(ownerId, next);
-  return perms.resolveModules(next);
+  await repo.setModules(ownerId, patch);
+  return perms.resolveModules(await repo.getModules(ownerId));
 }
 
 module.exports = {

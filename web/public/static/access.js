@@ -30,6 +30,9 @@
     'metric-linked': { perm: 'recipes:read', module: 'producao', card: true },
     'reports-btn': { perm: 'finance:view' },
     'margin-manage-action': { perm: 'finance:view' },
+    'alert-pricing-card': { perm: 'finance:view' },
+    'alert-products-count': { perm: 'recipes:read', module: 'producao', closest: '.dashboard-alert-card' },
+    'alert-stock-card': { perm: 'ingredients:read', module: 'producao' },
   };
 
   const state = { user: null, ready: false };
@@ -70,7 +73,19 @@
     Object.keys(DASHBOARD).forEach((id) => {
       const req = DASHBOARD[id];
       const el = document.getElementById(id);
-      if (el && !allowed(req)) hide(req.card ? el.closest('.dashboard-card') || el : el);
+      if (el && !allowed(req)) hide(req.closest ? el.closest(req.closest) || el : req.card ? el.closest('.dashboard-card') || el : el);
+    });
+  }
+
+  // Formularios de escrita (e seus campos de custo) somem para quem so le.
+  const PAGE_BLOCKS = {
+    '/products.html': [{ sel: '#create-form', perm: 'products:write', closest: '.panel-card' }],
+  };
+
+  function applyBlocks() {
+    (PAGE_BLOCKS[window.location.pathname] || []).forEach((b) => {
+      const el = document.querySelector(b.sel);
+      if (el && !allowed(b)) hide(b.closest ? el.closest(b.closest) || el : el);
     });
   }
 
@@ -91,6 +106,7 @@
     guardPage();
     applyNav();
     applyDashboard();
+    applyBlocks();
     window.dispatchEvent(new CustomEvent('sgvc:access', { detail: state.user }));
   }
 

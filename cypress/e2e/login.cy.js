@@ -569,9 +569,9 @@ describe('Login UI', () => {
     cy.get('#password').type('admin123');
     cy.get('#login-btn').click();
     cy.wait('@loginNoRemember');
-    cy.window().then((win) => {
-      const saved = win.localStorage.getItem('sgvc.rememberEmail');
-      expect(saved).to.be.null;
+    // should() refaz a leitura ate passar: o app limpa o storage apos a resposta do login.
+    cy.window().should((win) => {
+      expect(win.localStorage.getItem('sgvc.rememberEmail')).to.be.null;
     });
   });
 

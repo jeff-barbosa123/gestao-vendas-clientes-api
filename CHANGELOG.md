@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-22 - Fase 8: PWA e Mobile
+
+- Manifesto (`/manifest.webmanifest`: standalone, tema Grafite, atalhos para PDV/Vendas/Financeiro), icones 192/512/maskable/apple-touch gerados sem dependencias, `/offline.html` e service worker `/sw.js` (escopo `/`): navegacao rede-primeiro com fallback offline; so arquivos estaticos do mesmo dominio entram em cache (stale-while-revalidate); **`/api`, requisicoes nao-GET e outros dominios nunca sao guardados** (sessao e dados sempre na rede).
+- `static/pwa.js` registra o SW (https ou localhost) e expoe `SGVC.installApp()`; tags de manifesto/tema/apple-touch injetadas em todas as paginas.
+- Mobile (`base.css`): alvos de toque >= 44px, campos a 16px (sem zoom no iOS), paddings menores, safe-area, campos com addon quebram linha.
+- Testes: Cypress fase8-pwa-mobile (3): manifesto/icones/SW, registro do SW e, em 375x667, sem rolagem horizontal/alvos >= 44px/campos >= 16px em 8 telas.
+
+## 2026-11-22 - Fase 7: Financeiro
+
+- Migracao 0015: `financial_entries` (A PAGAR/A RECEBER, vencimento, parcelas, categoria, fornecedor, cliente, baixa).
+- API `/api/finance` (leitura: `finance:view`; escrita: nova `finance:manage` = Dono/Gerente; modulo opcional `financeiro`): lancamentos (ate 24 parcelas, centavos na 1a parcela), editar (so em aberto), pagar, cancelar, reabrir, `summary`, `cashflow` (dia/mes: vendas, recebidos, pagos, saldo, acumulado e previsto) e `dre` (receita bruta/liquida, descontos, CMV das vendas/PDV, lucro bruto, outras receitas, despesas por categoria, resultado). Vendedor/Estoquista = 403.
+- Front: `/finance.html` (cards, contas com filtros e acoes, fluxo de caixa e DRE), item "Financeiro" no menu e card do modulo em Aparencia.
+- Testes: Mocha US026 (6) e Cypress fase7-financeiro (2).
+
 ## 2026-11-22 - Fase 6: CRM leve
 
 - Migracao 0014: `customer_interactions` (anotacoes e contatos por WhatsApp, por cliente e empresa).

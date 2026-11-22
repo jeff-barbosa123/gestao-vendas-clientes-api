@@ -49,12 +49,41 @@ async function describe(user, register) {
     pdv.registerTotals(user.id, register.id),
     pdv.listMovements(user.id, register.id),
   ]);
-  return summarize(register, totals, movements);
+  const out = summarize(register, totals, movements);
+  // Fechamento cego: enquanto o caixa esta aberto, quem nao tem pdv:manage nao recebe o valor esperado.
+  if (register.status === "OPEN" && !seesAll(user)) delete out.expectedCash;
+  return out;
+}
+
+async function discountInfo(user) {
+  const unlimited = permissions.can(user.role || "owner", "pdv:discount");
+  const limitPct = await pdv.getDiscountLimit(user.id);
+  return { unlimited, limitPct, allowed: unlimited || limitPct > 0 };
+}
+
+async function getSettings(user) {
+  return { discount: await discountInfo(user),
+    can: { manage: seesAll(user), configure: permissions.can(user.role || "owner", "modules:manage") },
+  };
+}
+
+async function setSettings(user, data) {
+  if (!permissions.can(user.role || "owner", "modules:manage")) throw fail(403, "Seu perfil não tem permissão para esta ação.");
+  const pct = Number(data.discountLimitPct);
+  if (data.discountLimitPct === "" || data.discountLimitPct == null || !Number.isFinite(pct) || pct < 0 || pct > 100) {
+    throw fail(422, "Limite de desconto inválido (0 a 100%)");
+  }
+  await pdv.setDiscountLimit(user.id, Math.round(pct * 100) / 100);
+  return getSettings(user);
 }
 
 async function getSession(user) {
   const register = await pdv.getOpenRegister(user.id, operatorOf(user));
-  return { register: register ? await describe(user, register) : null };
+  return {
+    register: register ? await describe(user, register) : null,
+    discount: await discountInfo(user),
+    can: { manage: seesAll(user), configure: permissions.can(user.role || "owner", "modules:manage") },
+  };
 }
 
 async function open(user, data) {
@@ -163,7 +192,21 @@ async function createSale(user, data) {
     items.push({ productId: product.id, quantity });
   }
   if (totalCents <= 0) throw fail(422, "Total da venda inválido");
-  const rows = buildPayments(data.payments, totalCents);
+  let discountCents = 0;
+  if (data.discount != null && data.discount !== "") {
+    discountCents = parseAmount(data.discount, "Desconto", { allowZero: true });
+  }
+  if (discountCents > 0) {
+    const info = await discountInfo(user);
+    if (!info.unlimited) {
+      if (info.limitPct <= 0) throw fail(403, "Seu perfil não tem permissão para dar desconto.", "DISCOUNT_NOT_ALLOWED");
+      if (discountCents > Math.floor((totalCents * info.limitPct) / 100)) {
+        throw fail(403, `Desconto acima do limite de ${info.limitPct}%.`, "DISCOUNT_LIMIT");
+      }
+    }
+    if (discountCents >= totalCents) throw fail(422, "Desconto maior ou igual ao total");
+  }
+  const rows = buildPayments(data.payments, totalCents - discountCents);
 
   const sale = await salesService.create(
     {
@@ -173,7 +216,7 @@ async function createSale(user, data) {
       paymentMethod: rows.length === 1 ? rows[0].method : "OTHER",
     },
     user,
-    { afterCreate: (client, created) => pdv.insertPayments(user.id, created.id, register.id, rows, client) }
+    { discountCents, afterCreate: (client, created) => pdv.insertPayments(user.id, created.id, register.id, rows, client) }
   );
   const cash = rows.find((r) => r.method === "CASH");
   return {
@@ -209,6 +252,8 @@ module.exports = {
   list,
   getRegisterById,
   createSale,
+  getSettings,
+  setSettings,
   searchProducts,
   setBarcode,
 };

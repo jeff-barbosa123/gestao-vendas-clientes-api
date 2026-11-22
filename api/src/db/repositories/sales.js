@@ -13,6 +13,7 @@ function normalizeSale(row) {
     customer_name: rest.customer_name || registeredName || null,
     total: toNumber(row.total),
     cmv: toNumber(row.cmv),
+    discount: toNumber(row.discount) || 0,
   };
 }
 
@@ -91,8 +92,8 @@ async function createSale(sale, items, externalClient = null) {
   return runInTx(externalClient, async (client) => {
     await client.query(
       `INSERT INTO sales
-        (id, customer_id, customer_name, owner_id, total, cmv, date, status, status_venda, canceled_at, payment_method, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())`,
+        (id, customer_id, customer_name, owner_id, total, cmv, date, status, status_venda, canceled_at, payment_method, discount, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW())`,
       [
         sale.id,
         sale.customerId,
@@ -105,6 +106,7 @@ async function createSale(sale, items, externalClient = null) {
         sale.statusVenda,
         sale.canceledAt,
         sale.paymentMethod ?? null,
+        sale.discount ?? 0,
       ]
     );
 

@@ -34,10 +34,14 @@ describe('SGVC - Fase 5: Caixa/PDV', () => {
       cy.get('#pdv-k-profit').should('contain', '15,00');
 
       cy.get('#pdv-close-toggle').click();
+      // Fechamento cego: o esperado some enquanto o operador conta.
+      cy.get('#pdv-k-cash-cell').should('not.be.visible');
       cy.get('#pdv-counted').type('125');
       cy.get('#pdv-close-form button[type="submit"]').click();
       cy.get('#pdv-closed-card', { timeout: 10000 }).should('be.visible').and('contain', 'sem diferença');
       cy.get('#pdv-open-card').should('be.visible');
+      // Historico (pdv:manage) mostra esperado, contado e diferenca.
+      cy.get('#pdv-history-body', { timeout: 10000 }).should('contain', '125,00').and('contain', 'Sem diferença');
     });
   });
 
@@ -68,19 +72,50 @@ describe('SGVC - Fase 5: Caixa/PDV', () => {
     });
   });
 
+  it('FASE5-E2E-004 | desconto no PDV: dono aplica em R$ e em %, total e troco usam o valor liquido (API real)', () => {
+    cy.createRealUser('f5desc').then((dono) => {
+      cy.loginReal(dono);
+      const nome = `Desc ${Date.now()}`;
+      cy.apiReal('POST', '/api/products', { name: nome, price: 25, purchase_price: 10, stock: 5 });
+      cy.apiReal('POST', '/api/pdv/registers/open', { openingAmount: 0 });
+      cy.visit('/pdv.html');
+      cy.get('#pdv-search', { timeout: 10000 }).type(`${nome}{enter}`);
+      cy.get('#pdv-discount-box').should('be.visible');
+      cy.get('#pdv-discount').type('5');
+      cy.get('#pdv-total').should('contain', '20,00');
+      cy.get('#pdv-discount-line').should('contain', '5,00');
+      cy.get('#pdv-discount-type').select('PERCENT');
+      cy.get('#pdv-discount').clear().type('10');
+      cy.get('#pdv-total').should('contain', '22,50');
+      cy.get('#pdv-pays [data-field="amount"]').type('30');
+      cy.get('#pdv-balance').should('contain', 'Troco').and('contain', '7,50');
+      cy.get('#pdv-finish').click();
+      cy.get('#pdv-message', { timeout: 10000 }).should('contain', 'Venda registrada').and('contain', '22,50');
+      cy.apiReal('GET', '/api/sales').then((r) => {
+        const sale = (r.body.items || r.body).find((x) => x.total === 22.5);
+        expect(sale.discount).to.eq(2.5);
+        expect(sale.cmv).to.eq(10);
+      });
+    });
+  });
+
   it('FASE5-FE-003 | vendedor usa o PDV sem ver CMV/lucro; estoquista nao ve o menu do PDV', () => {
     const base = { id: 'u1', email: 'x@negocio.com', name: 'Op', modules: { producao: true, encomendas: true, pdv: true } };
     const seller = { ...base, role: 'seller', permissions: ['customers:read', 'products:read', 'sales:read', 'sales:write', 'pdv:use', 'analytics:read'] };
     cy.stubAuthenticated(seller);
     cy.intercept('GET', '**/api/pdv/session', {
       statusCode: 200,
-      body: { register: { id: 'r1', status: 'OPEN', openedAt: new Date().toISOString(), openingAmount: 20, salesCount: 2, salesTotal: 80, expectedCash: 70, payments: [{ method: 'CASH', amount: 50 }] } },
+      body: { register: { id: 'r1', status: 'OPEN', openedAt: new Date().toISOString(), openingAmount: 20, salesCount: 2, salesTotal: 80, payments: [{ method: 'CASH', amount: 50 }] }, discount: { allowed: false, unlimited: false, limitPct: 0 }, can: { manage: false, configure: false } },
     }).as('session');
     cy.visit('/pdv.html');
     cy.wait('@session');
     cy.get('#pdv-register-card').should('be.visible');
     cy.get('#pdv-k-total').should('contain', '80,00');
     cy.get('#pdv-k-cmv').should('not.be.visible');
+    // Fechamento cego (sem expectedCash) e sem desconto liberado para este vendedor.
+    cy.get('#pdv-k-cash-cell').should('not.be.visible');
+    cy.get('#pdv-discount-box').should('not.be.visible');
+    cy.get('#pdv-history-card').should('not.be.visible');
     cy.get('#pdv-k-profit').should('not.be.visible');
     navItem('/pdv.html').should('not.have.attr', 'hidden');
 

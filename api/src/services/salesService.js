@@ -351,7 +351,16 @@ async function create(data, user, opts = {}) {
   );
   await validateSaleInput(data, user, productMap);
 
-  const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap);
+  const { items, total: grossTotal, cmv } = normalizeItemsWithCosts(data.items, productMap);
+  // Desconto (PDV): o total gravado ja e liquido; o desconto fica em sales.discount.
+  const discountCents = Math.max(0, Math.round(Number(opts.discountCents || 0)));
+  const grossCents = Math.round(grossTotal * 100);
+  if (discountCents >= grossCents && discountCents > 0) {
+    const err = new Error("Desconto maior ou igual ao total");
+    err.status = 422;
+    throw err;
+  }
+  const total = fromCents(grossCents - discountCents);
   const saleDate = data.date ? parseIsoDate(data.date, "date") : new Date();
   const customerName =
     typeof data.customerName === "string"
@@ -371,6 +380,7 @@ async function create(data, user, opts = {}) {
     items,
     cmv,
     total,
+    discount: fromCents(discountCents),
     status: "ACTIVE",
     statusVenda: "ativa",
     ownerId: user ? user.id : null,
@@ -443,7 +453,10 @@ async function update(id, data, user) {
     };
   }
 
-  const { items, total, cmv } = normalizeItemsWithCosts(data.items, productMap, oldSale.items);
+  const { items, total: grossTotal, cmv } = normalizeItemsWithCosts(data.items, productMap, oldSale.items);
+  const grossCents = Math.round(grossTotal * 100);
+  const keptDiscount = Math.min(Math.round(Number(oldSale.discount || 0) * 100), Math.max(0, grossCents - 1));
+  const total = fromCents(grossCents - keptDiscount);
   const updatedDate = data.date ? parseIsoDate(data.date, "date").toISOString() : oldSale.date;
 
   await withTransaction(async (client) => {

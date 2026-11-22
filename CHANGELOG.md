@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-22 - Fase 5b: desconto no PDV e fechamento cego
+
+- Migracao 0013: `sales.discount` (o total gravado e o liquido; CMV nao muda, entao o lucro cai pelo desconto) e `company_modules.pdv_discount_limit` (% maximo do Vendedor/Caixa).
+- Desconto no PDV (`discount` em R$; a tela aceita R$ ou %): permissao `pdv:discount` (Dono/Gerente) = sem limite; sem ela vale o limite % da empresa (padrao 0 = sem desconto): 403 `DISCOUNT_NOT_ALLOWED`/`DISCOUNT_LIMIT`. Desconto >= total = 422; o pagamento e validado contra o total liquido. `GET/PUT /api/pdv/settings` (o PUT exige `modules:manage`). Editar itens de uma venda mantem o desconto.
+- Fechamento cego: enquanto o caixa esta aberto, quem nao tem `pdv:manage` nao recebe `expectedCash`, e a tela esconde o esperado de todos enquanto o formulario de fechamento esta aberto. Depois de confirmar aparecem esperado, contado e diferenca. Quem tem `pdv:manage` ve o historico de caixas (operador, esperado, contado, diferenca) na propria tela.
+- Testes: Mocha US024 (12) e Cypress fase5-pdv (4).
+
 ## 2026-11-22 - Fase 5: Caixa/PDV
 
 - Migracao 0012: `cash_registers` (abertura/fechamento com esperado, contado e diferenca), `cash_movements` (sangria/suprimento), `sale_payments` (varias formas por venda, com recebido e troco no dinheiro), `sales.register_id` e `products.barcode` (unico por empresa).

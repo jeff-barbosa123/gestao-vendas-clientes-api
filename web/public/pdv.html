@@ -63,7 +63,7 @@
             <dl class="pdv-kpis" id="pdv-kpis">
               <div><dt>Vendas</dt><dd id="pdv-k-count">0</dd></div>
               <div><dt>Total vendido</dt><dd id="pdv-k-total">R$ 0,00</dd></div>
-              <div><dt>Dinheiro esperado</dt><dd id="pdv-k-cash">R$ 0,00</dd></div>
+              <div id="pdv-k-cash-cell"><dt>Dinheiro esperado</dt><dd id="pdv-k-cash">R$ 0,00</dd></div>
               <div data-finance><dt>CMV</dt><dd id="pdv-k-cmv">-</dd></div>
               <div data-finance><dt>Lucro</dt><dd id="pdv-k-profit">-</dd></div>
             </dl>
@@ -130,7 +130,20 @@
                   <tbody id="pdv-cart-body"><tr class="is-empty"><td colspan="5">Nenhum item ainda.</td></tr></tbody>
                 </table>
               </div>
+              <p class="pdv-muted has-text-right" id="pdv-discount-line" hidden></p>
               <p class="pdv-total">Total: <strong id="pdv-total">R$ 0,00</strong></p>
+
+              <div id="pdv-discount-box" hidden>
+                <h3 class="pdv-subtitle-2">Desconto</h3>
+                <div class="pdv-pay-row">
+                  <div class="select"><select id="pdv-discount-type" aria-label="Tipo de desconto">
+                    <option value="VALUE">R$</option>
+                    <option value="PERCENT">%</option>
+                  </select></div>
+                  <input class="input" id="pdv-discount" type="text" inputmode="decimal" placeholder="0,00" aria-label="Desconto" />
+                </div>
+                <p class="help" id="pdv-discount-help"></p>
+              </div>
 
               <h3 class="pdv-subtitle-2">Pagamento</h3>
               <div id="pdv-pays"></div>
@@ -145,6 +158,30 @@
               </div>
             </section>
           </div>
+
+          <section class="panel-card" id="pdv-settings-card" hidden>
+            <h2 class="pdv-section-title">Configurações do PDV</h2>
+            <form id="pdv-settings-form" novalidate>
+              <div class="pdv-row">
+                <div class="field">
+                  <label class="label" for="pdv-limit">Desconto máximo do Vendedor/Caixa (% do total)</label>
+                  <input class="input" id="pdv-limit" type="text" inputmode="decimal" placeholder="0" />
+                  <p class="help">0 = vendedor não dá desconto. Dono e Gerente não têm limite.</p>
+                </div>
+                <div class="field pdv-end"><button class="button is-light" type="submit">Salvar limite</button></div>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-card" id="pdv-history-card" hidden>
+            <h2 class="pdv-section-title">Histórico de caixas</h2>
+            <div class="table-container">
+              <table class="table is-fullwidth">
+                <thead><tr><th>Operador</th><th>Abertura</th><th>Status</th><th class="has-text-right">Esperado</th><th class="has-text-right">Contado</th><th class="has-text-right">Diferença</th></tr></thead>
+                <tbody id="pdv-history-body"></tbody>
+              </table>
+            </div>
+          </section>
         </section>
       </div>
     </main>

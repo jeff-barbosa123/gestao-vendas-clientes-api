@@ -107,13 +107,11 @@ async function registerTotals(ownerId, registerId, client = null) {
 }
 
 async function listRegisters(ownerId, operatorId, limit = 30) {
+  const base = "SELECT r.*, u.name AS operator_name FROM cash_registers r LEFT JOIN users u ON u.id = r.operator_id WHERE r.owner_id = $1";
   const res = operatorId
-    ? await query(
-        "SELECT * FROM cash_registers WHERE owner_id = $1 AND operator_id = $2 ORDER BY opened_at DESC LIMIT $3",
-        [ownerId, operatorId, limit]
-      )
-    : await query("SELECT * FROM cash_registers WHERE owner_id = $1 ORDER BY opened_at DESC LIMIT $2", [ownerId, limit]);
-  return res.rows.map(mapRegister);
+    ? await query(base + " AND r.operator_id = $2 ORDER BY r.opened_at DESC LIMIT $3", [ownerId, operatorId, limit])
+    : await query(base + " ORDER BY r.opened_at DESC LIMIT $2", [ownerId, limit]);
+  return res.rows.map((r) => ({ ...mapRegister(r), operatorName: r.operator_name || null }));
 }
 
 async function insertPayments(ownerId, saleId, registerId, rows, client) {
@@ -138,6 +136,19 @@ async function listSalePayments(ownerId, saleId) {
     received: num(r.received),
     change: num(r.change_amount),
   }));
+}
+
+async function getDiscountLimit(ownerId) {
+  const res = await query("SELECT pdv_discount_limit FROM company_modules WHERE owner_id = $1", [ownerId]);
+  return res.rows[0] ? Number(res.rows[0].pdv_discount_limit) : 0;
+}
+
+async function setDiscountLimit(ownerId, pct) {
+  await query(
+    `INSERT INTO company_modules (owner_id, modules, pdv_discount_limit) VALUES ($1, '{}'::jsonb, $2)
+     ON CONFLICT (owner_id) DO UPDATE SET pdv_discount_limit = EXCLUDED.pdv_discount_limit, updated_at = NOW()`,
+    [ownerId, pct]
+  );
 }
 
 async function searchProducts(ownerId, term) {
@@ -172,4 +183,6 @@ module.exports = {
   listSalePayments,
   searchProducts,
   setProductBarcode,
+  getDiscountLimit,
+  setDiscountLimit,
 };

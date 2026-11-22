@@ -16,6 +16,8 @@ const created = (fn) => Object.assign((req) => fn(req), { status: 201 });
 const router = express.Router();
 router.use(authenticate);
 
+router.get('/settings', wrap((req) => svc.getSettings(req.user)));
+router.put('/settings', wrap((req) => svc.setSettings(req.user, req.body || {})));
 router.get('/session', wrap((req) => svc.getSession(req.user)));
 router.get('/registers', wrap((req) => svc.list(req.user)));
 router.post('/registers/open', wrap(created((req) => svc.open(req.user, req.body || {}))));

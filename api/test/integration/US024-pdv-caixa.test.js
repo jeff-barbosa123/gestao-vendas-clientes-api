@@ -210,4 +210,61 @@ describe('US024 - Fase 5: Caixa/PDV', () => {
     await send('put', owner.token, '/api/company/modules', { pdv: true });
     expect((await get(seller.token, '/api/pdv/session')).status).to.equal(200);
   });
+
+  it('PDV-011 | desconto: dono sem limite; vendedor so dentro do limite % da empresa', async () => {
+    // Dono: sem restricao. 25 - 5 = 20; CMV continua 10; lucro 10.
+    const own = await send('post', owner.token, '/api/pdv/sales', {
+      items: [{ productId: prod.id, quantity: 1 }],
+      discount: 5,
+      payments: [{ method: 'PIX', amount: 20 }],
+    });
+    expect(own.status, JSON.stringify(own.body)).to.equal(201);
+    expect(own.body.sale).to.include({ total: 20, cmv: 10, profit: 10, discount: 5 });
+    const saved = await get(owner.token, `/api/sales/${own.body.sale.id}`);
+    expect(saved.body).to.include({ total: 20, discount: 5 });
+    const tooBig = await send('post', owner.token, '/api/pdv/sales', {
+      items: [{ productId: prod.id, quantity: 1 }],
+      discount: 25,
+      payments: [{ method: 'PIX', amount: 25 }],
+    });
+    expect(tooBig.status).to.equal(422);
+
+    // Vendedor: limite 0 (padrao) = sem desconto.
+    const items = [{ productId: prodNoStock.id, quantity: 4 }]; // 20
+    const denied = await send('post', seller.token, '/api/pdv/sales', { items, discount: 1, payments: [{ method: 'PIX', amount: 19 }] });
+    expect(denied.status).to.equal(403);
+    expect(denied.body.code).to.equal('DISCOUNT_NOT_ALLOWED');
+    const noSet = await send('put', seller.token, '/api/pdv/settings', { discountLimitPct: 50 });
+    expect(noSet.status).to.equal(403);
+    const set = await send('put', owner.token, '/api/pdv/settings', { discountLimitPct: 10 });
+    expect(set.status, JSON.stringify(set.body)).to.equal(200);
+    expect(set.body.discount).to.include({ limitPct: 10, unlimited: true });
+    expect((await send('put', owner.token, '/api/pdv/settings', { discountLimitPct: 150 })).status).to.equal(422);
+    expect((await get(seller.token, '/api/pdv/settings')).body.discount).to.include({ limitPct: 10, unlimited: false, allowed: true });
+
+    const over = await send('post', seller.token, '/api/pdv/sales', { items, discount: 2.01, payments: [{ method: 'PIX', amount: 17.99 }] });
+    expect(over.status).to.equal(403);
+    expect(over.body.code).to.equal('DISCOUNT_LIMIT');
+    const ok = await send('post', seller.token, '/api/pdv/sales', { items, discount: 2, payments: [{ method: 'PIX', amount: 18 }] });
+    expect(ok.status, JSON.stringify(ok.body)).to.equal(201);
+    expect(ok.body.sale.total).to.equal(18);
+    expect(JSON.stringify(ok.body)).to.not.match(/cmv|profit/i);
+    // Pagamento e validado contra o total liquido
+    const short = await send('post', seller.token, '/api/pdv/sales', { items, discount: 2, payments: [{ method: 'PIX', amount: 19 }] });
+    expect(short.status).to.equal(422);
+  });
+
+  it('PDV-012 | fechamento cego: operador nao ve o esperado ate confirmar; gerente ve no historico', async () => {
+    const session = (await get(seller.token, '/api/pdv/session')).body.register;
+    expect(session).to.not.have.property('expectedCash');
+    const asOwner = await get(owner.token, `/api/pdv/registers/${session.id}`);
+    expect(asOwner.body.register).to.have.property('expectedCash', 0);
+    const closed = await send('post', seller.token, `/api/pdv/registers/${session.id}/close`, { countedAmount: 3 });
+    expect(closed.status, JSON.stringify(closed.body)).to.equal(200);
+    expect(closed.body.register).to.include({ status: 'CLOSED', expectedAmount: 0, countedAmount: 3, difference: 3 });
+    const hist = await get(owner.token, '/api/pdv/registers');
+    const row = hist.body.registers.find((r) => r.id === session.id);
+    expect(row).to.include({ difference: 3, expectedAmount: 0 });
+    expect(row.operatorName).to.be.a('string');
+  });
 });

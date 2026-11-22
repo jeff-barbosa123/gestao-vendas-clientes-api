@@ -51,12 +51,24 @@
     saleError: $('pdv-sale-error'),
     finish: $('pdv-finish'),
     clear: $('pdv-clear'),
+    kCashCell: $('pdv-k-cash-cell'),
+    discountBox: $('pdv-discount-box'),
+    discountType: $('pdv-discount-type'),
+    discount: $('pdv-discount'),
+    discountHelp: $('pdv-discount-help'),
+    discountLine: $('pdv-discount-line'),
+    settingsCard: $('pdv-settings-card'),
+    settingsForm: $('pdv-settings-form'),
+    limit: $('pdv-limit'),
+    historyCard: $('pdv-history-card'),
+    historyBody: $('pdv-history-body'),
   };
 
   const api = (path, method = 'GET', body) =>
     window.apiRequest(path, { method, ...(body ? { body: JSON.stringify(body) } : {}) });
 
   let register = null;
+  let discountInfo = { allowed: false, unlimited: false, limitPct: 0 };
   let cart = []; // { id, name, price, qty, stock }
   let pays = [{ method: 'CASH', amount: '' }];
 
@@ -76,7 +88,8 @@
     els.since.textContent = `Aberto em ${new Date(register.openedAt).toLocaleString('pt-BR')} · troco inicial ${money(register.openingAmount)}`;
     els.kCount.textContent = String(register.salesCount);
     els.kTotal.textContent = money(register.salesTotal);
-    els.kCash.textContent = money(register.expectedCash);
+    els.kCash.textContent = register.expectedCash == null ? '-' : money(register.expectedCash);
+    syncCashKpi();
     const hasFinance = register.cmv != null;
     document.querySelectorAll('[data-finance]').forEach((el) => { el.hidden = !hasFinance; });
     if (hasFinance) {
@@ -89,9 +102,41 @@
       : '';
   }
 
+  function syncCashKpi() {
+    els.kCashCell.hidden = !register || register.expectedCash == null || !els.closeForm.hidden;
+  }
+
+  const fmtDiff = (d) => (d == null ? '-' : d === 0 ? 'Sem diferença' : d > 0 ? `Sobra ${money(d)}` : `Falta ${money(Math.abs(d))}`);
+
+  async function loadHistory() {
+    try {
+      const { registers } = await api('/api/pdv/registers');
+      els.historyBody.innerHTML = registers.length
+        ? registers.map((r) => `<tr>
+            <td>${escapeHtml(r.operatorName || '-')}</td>
+            <td>${new Date(r.openedAt).toLocaleString('pt-BR')}</td>
+            <td>${r.status === 'OPEN' ? 'Aberto' : 'Fechado'}</td>
+            <td class="has-text-right">${r.expectedAmount == null ? '-' : money(r.expectedAmount)}</td>
+            <td class="has-text-right">${r.countedAmount == null ? '-' : money(r.countedAmount)}</td>
+            <td class="has-text-right">${escapeHtml(fmtDiff(r.difference))}</td></tr>`).join('')
+        : '<tr class="is-empty"><td colspan="6">Nenhum caixa ainda.</td></tr>';
+    } catch (_e) { /* historico e opcional */ }
+  }
+
+  function applyDiscountInfo() {
+    els.discountBox.hidden = !discountInfo.allowed;
+    els.discountHelp.textContent = discountInfo.unlimited ? 'Sem limite para o seu perfil.' : `Seu limite: ${discountInfo.limitPct}% do total da venda.`;
+  }
+
   async function loadSession() {
     const res = await api('/api/pdv/session');
     register = res.register;
+    discountInfo = res.discount || discountInfo;
+    applyDiscountInfo();
+    els.settingsCard.hidden = !(res.can && res.can.configure);
+    if (res.can && res.can.configure) els.limit.value = String(discountInfo.limitPct).replace('.', ',');
+    els.historyCard.hidden = !(res.can && res.can.manage);
+    if (res.can && res.can.manage) loadHistory();
     renderRegister();
     if (register) els.search.focus();
   }
@@ -113,8 +158,8 @@
     }
   });
 
-  els.moveToggle.addEventListener('click', () => { els.moveForm.hidden = !els.moveForm.hidden; els.closeForm.hidden = true; });
-  els.closeToggle.addEventListener('click', () => { els.closeForm.hidden = !els.closeForm.hidden; els.moveForm.hidden = true; });
+  els.moveToggle.addEventListener('click', () => { els.moveForm.hidden = !els.moveForm.hidden; els.closeForm.hidden = true; syncCashKpi(); });
+  els.closeToggle.addEventListener('click', () => { els.closeForm.hidden = !els.closeForm.hidden; els.moveForm.hidden = true; syncCashKpi(); });
 
   els.moveForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -150,6 +195,7 @@
       els.closeForm.reset();
       els.closeForm.hidden = true;
       register = null;
+      loadHistory();
       cart = [];
       renderCart();
       renderRegister();
@@ -204,7 +250,26 @@
     }
   });
 
-  const cartTotal = () => cart.reduce((sum, l) => sum + Math.round(cents(l.price) * l.qty), 0);
+  const grossTotal = () => cart.reduce((sum, l) => sum + Math.round(cents(l.price) * l.qty), 0);
+  function discountCents() {
+    if (!discountInfo.allowed) return 0;
+    const n = parseMoney(els.discount.value);
+    if (!Number.isFinite(n) || n <= 0) return 0;
+    const gross = grossTotal();
+    const c = els.discountType.value === 'PERCENT' ? Math.round((gross * n) / 100) : cents(n);
+    return Math.min(c, gross);
+  }
+  const cartTotal = () => grossTotal() - discountCents();
+
+  function refreshTotals() {
+    const d = discountCents();
+    els.discountLine.hidden = d <= 0;
+    if (d > 0) els.discountLine.textContent = `Subtotal ${money(grossTotal() / 100)} · desconto -${money(d / 100)}`;
+    els.total.textContent = money(cartTotal() / 100);
+    updateBalance();
+  }
+  els.discount.addEventListener('input', refreshTotals);
+  els.discountType.addEventListener('change', refreshTotals);
 
   function renderCart() {
     els.cartBody.innerHTML = cart.length
@@ -219,7 +284,7 @@
           <td><button type="button" class="button is-light is-small" data-act="rm" data-id="${escapeHtml(l.id)}" aria-label="Remover ${escapeHtml(l.name)}">✕</button></td>
         </tr>`).join('')
       : '<tr class="is-empty"><td colspan="5">Nenhum item ainda.</td></tr>';
-    els.total.textContent = money(cartTotal() / 100);
+    refreshTotals();
     renderPays();
   }
 
@@ -289,6 +354,7 @@
   function resetSale() {
     cart = [];
     pays = [{ method: 'CASH', amount: '' }];
+    els.discount.value = '';
     els.saleError.hidden = true;
     renderCart();
   }
@@ -301,7 +367,9 @@
       const payments = pays
         .map((p) => ({ method: p.method, amount: parseMoney(p.amount) }))
         .filter((p) => Number.isFinite(p.amount) && p.amount > 0);
-      const res = await api('/api/pdv/sales', 'POST', { items: cart.map((l) => ({ productId: l.id, quantity: l.qty })), payments });
+      const body = { items: cart.map((l) => ({ productId: l.id, quantity: l.qty })), payments };
+      if (discountCents() > 0) body.discount = discountCents() / 100;
+      const res = await api('/api/pdv/sales', 'POST', body);
       const change = res.change > 0 ? ` Troco: ${money(res.change)}.` : '';
       say(`Venda registrada: ${money(res.sale.total)}.${change}`, 'is-success');
       resetSale();
@@ -311,6 +379,20 @@
       els.saleError.textContent = err.message || 'Não foi possível finalizar a venda.';
       els.saleError.hidden = false;
       updateBalance();
+    }
+  });
+
+  els.settingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pct = parseMoney(els.limit.value || '0');
+    if (!Number.isFinite(pct) || pct < 0 || pct > 100) return say('Informe um limite entre 0 e 100%.', 'is-danger');
+    try {
+      const res = await api('/api/pdv/settings', 'PUT', { discountLimitPct: pct });
+      discountInfo = res.discount;
+      applyDiscountInfo();
+      say('Limite de desconto salvo.', 'is-success');
+    } catch (err) {
+      say(err.message || 'Não foi possível salvar.', 'is-danger');
     }
   });
 

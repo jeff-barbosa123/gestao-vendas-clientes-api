@@ -17,6 +17,7 @@ const ALL_PERMISSIONS = [
   'orders:read', 'orders:write',
   'pdv:use', // vender no Caixa/PDV, abrir/fechar o proprio caixa, sangria/suprimento
   'pdv:manage', // ver o historico de caixas de todos os operadores
+  'pdv:discount', // desconto sem limite no PDV (sem ela, vale o limite % da empresa; 0 = sem desconto)
   'recipes:read', 'recipes:write',
   'ingredients:read', 'ingredients:write',
   'analytics:read',

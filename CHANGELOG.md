@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-22 - Ajustes pre-producao
+
+- Botao discreto "Instalar app" no menu (`#pwa-install`): oculto ate o navegador disparar `beforeinstallprompt`; um clique chama `SGVC.installApp()` e some apos o prompt/instalacao. Cypress FASE8-PWA-004.
+- Service worker v2: CSS/JS agora rede-primeiro (cache so offline), icones cache-primeiro; deploys novos chegam sem esperar segunda visita.
+- `docs/CHECKLIST-DEPLOY.md`: variaveis obrigatorias de producao, rotacao do `GOOGLE_CLIENT_SECRET`, validacao pos-deploy e rollback.
+
 ## 2026-11-22 - Fase 8: PWA e Mobile
 
 - Manifesto (`/manifest.webmanifest`: standalone, tema Grafite, atalhos para PDV/Vendas/Financeiro), icones 192/512/maskable/apple-touch gerados sem dependencias, `/offline.html` e service worker `/sw.js` (escopo `/`): navegacao rede-primeiro com fallback offline; so arquivos estaticos do mesmo dominio entram em cache (stale-while-revalidate); **`/api`, requisicoes nao-GET e outros dominios nunca sao guardados** (sessao e dados sempre na rede).

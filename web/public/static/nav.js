@@ -77,6 +77,19 @@
     profile.appendChild(profileLink);
     list.appendChild(profile);
 
+    // Botao discreto de instalar o PWA: fica oculto ate o navegador disparar beforeinstallprompt (static/pwa.js).
+    const install = document.createElement('li');
+    install.className = 'app-nav-install';
+    install.hidden = true;
+    const installBtn = document.createElement('button');
+    installBtn.type = 'button';
+    installBtn.id = 'pwa-install';
+    installBtn.className = 'app-nav-install-btn';
+    installBtn.textContent = 'Instalar app';
+    installBtn.hidden = true;
+    install.appendChild(installBtn);
+    list.appendChild(install);
+
     inner.appendChild(list);
     nav.appendChild(inner);
 

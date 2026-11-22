@@ -738,3 +738,18 @@ img, video, canvas, svg { max-width: 100%; }
 @media (display-mode: standalone) {
   .app-footer { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
 }
+/* Botao discreto "Instalar app" (so aparece quando o navegador permite instalar o PWA) */
+.app-nav-install[hidden], .app-nav-install-btn[hidden] { display: none !important; }
+.app-nav-install-btn {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 32px;
+}
+.app-nav-install-btn:hover, .app-nav-install-btn:focus-visible { background: rgb(var(--rgb-white) / 0.12); }
+@media (max-width: 720px) { .app-nav-install-btn { min-height: 44px; width: 100%; } }

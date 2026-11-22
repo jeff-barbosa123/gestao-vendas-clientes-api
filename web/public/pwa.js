@@ -10,25 +10,41 @@
   }
 
   let deferred = null;
-  window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault();
-    deferred = event;
-    window.SGVC = window.SGVC || {};
-    window.SGVC.canInstall = true;
-    const btn = document.getElementById('pwa-install');
-    if (btn) btn.hidden = false;
-  });
-  window.addEventListener('appinstalled', () => {
-    deferred = null;
-    const btn = document.getElementById('pwa-install');
-    if (btn) btn.hidden = true;
-  });
+  const button = () => document.getElementById('pwa-install');
+  // Mostra/oculta o botao (e o <li> que o envolve) conforme haja prompt de instalacao disponivel.
+  const sync = () => {
+    const btn = button();
+    if (!btn) return;
+    const show = !!deferred;
+    btn.hidden = !show;
+    if (btn.parentElement) btn.parentElement.hidden = !show;
+  };
+
   window.SGVC = window.SGVC || {};
   window.SGVC.installApp = async () => {
     if (!deferred) return false;
-    deferred.prompt();
-    const choice = await deferred.userChoice;
+    const prompt = deferred;
     deferred = null;
-    return choice && choice.outcome === 'accepted';
+    sync();
+    prompt.prompt();
+    const choice = await prompt.userChoice;
+    return !!choice && choice.outcome === 'accepted';
   };
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferred = event;
+    window.SGVC.canInstall = true;
+    sync();
+  });
+  window.addEventListener('appinstalled', () => {
+    deferred = null;
+    window.SGVC.canInstall = false;
+    sync();
+  });
+  document.addEventListener('click', (event) => {
+    if (event.target && event.target.closest && event.target.closest('#pwa-install')) window.SGVC.installApp();
+  });
+  // O menu (nav.js) pode ser montado depois do evento: sincroniza de novo quando a pagina termina de carregar.
+  window.addEventListener('load', sync);
 })();

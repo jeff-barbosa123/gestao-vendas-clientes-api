@@ -60,4 +60,22 @@ describe('SGVC - Fase 8: PWA e Mobile', () => {
       });
     });
   });
+
+  it('FASE8-PWA-004 | botao "Instalar app" so aparece com beforeinstallprompt e dispara o prompt', () => {
+    cy.viewport(1280, 720); // acima de 1000px o menu fica aberto (abaixo vira hamburguer)
+    cy.stubAuthenticated({ id: 'u1', email: 'x@negocio.com', name: 'Op', role: 'owner', permissions: ['customers:read', 'sales:read'], modules: {} });
+    cy.stubDashboardMetrics();
+    cy.intercept('GET', '**/api/analytics/overview*', { statusCode: 200, body: { customers: 0, products: 0, recipes: 0, linkedProducts: 0, salesCount: 0, stockAlerts: [] } });
+    cy.visit('/dashboard.html', { onBeforeLoad: (win) => win.localStorage.setItem('sgvc.onboarding.dismissed', '1') });
+    cy.get('#pwa-install').should('exist').and('not.be.visible');
+    cy.window().then((win) => {
+      const ev = new win.Event('beforeinstallprompt', { cancelable: true });
+      ev.prompt = cy.stub().as('prompt').resolves();
+      ev.userChoice = Promise.resolve({ outcome: 'accepted' });
+      win.dispatchEvent(ev);
+    });
+    cy.get('#pwa-install').should('be.visible').and('contain', 'Instalar app').click();
+    cy.get('@prompt').should('have.been.calledOnce');
+    cy.get('#pwa-install').should('not.be.visible');
+  });
 });

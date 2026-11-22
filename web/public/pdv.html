@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Caixa/PDV</title>
+    <meta name="description" content="Caixa/PDV: abertura e fechamento de caixa, venda rápida com código de barras, várias formas de pagamento e troco." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/theme.css" />
+    <link rel="stylesheet" href="/static/pdv.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/access.js" defer></script>
+    <script src="/static/utils.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="pdv-wrapper">
+          <header class="pdv-header">
+            <h1 class="pdv-title">Caixa/PDV</h1>
+            <p class="pdv-subtitle">Abra o caixa, venda pelo código de barras ou pelo nome, receba em várias formas de pagamento e feche conferindo o dinheiro.</p>
+          </header>
+
+          <div class="notification is-light pdv-message" id="pdv-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="panel-card" id="pdv-open-card" hidden>
+            <h2 class="pdv-section-title">Abrir caixa</h2>
+            <form id="pdv-open-form" novalidate>
+              <div class="pdv-row">
+                <div class="field">
+                  <label class="label" for="pdv-opening">Troco inicial em dinheiro (R$)</label>
+                  <input class="input" id="pdv-opening" type="text" inputmode="decimal" placeholder="0,00" />
+                </div>
+                <div class="field pdv-grow">
+                  <label class="label" for="pdv-open-note">Observação (opcional)</label>
+                  <input class="input" id="pdv-open-note" type="text" maxlength="200" />
+                </div>
+                <div class="field pdv-end">
+                  <button class="button is-link" type="submit" id="pdv-open-btn">Abrir caixa</button>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-card" id="pdv-register-card" hidden>
+            <div class="pdv-register-head">
+              <div>
+                <h2 class="pdv-section-title">Caixa aberto</h2>
+                <p class="pdv-muted" id="pdv-register-since">-</p>
+              </div>
+              <div class="pdv-actions">
+                <button class="button is-light is-small" type="button" id="pdv-move-toggle">Sangria / suprimento</button>
+                <button class="button is-light is-small" type="button" id="pdv-close-toggle">Fechar caixa</button>
+              </div>
+            </div>
+            <dl class="pdv-kpis" id="pdv-kpis">
+              <div><dt>Vendas</dt><dd id="pdv-k-count">0</dd></div>
+              <div><dt>Total vendido</dt><dd id="pdv-k-total">R$ 0,00</dd></div>
+              <div><dt>Dinheiro esperado</dt><dd id="pdv-k-cash">R$ 0,00</dd></div>
+              <div data-finance><dt>CMV</dt><dd id="pdv-k-cmv">-</dd></div>
+              <div data-finance><dt>Lucro</dt><dd id="pdv-k-profit">-</dd></div>
+            </dl>
+            <p class="pdv-muted" id="pdv-k-methods"></p>
+
+            <form id="pdv-move-form" class="pdv-inline-form" novalidate hidden>
+              <div class="pdv-row">
+                <div class="field">
+                  <label class="label" for="pdv-move-type">Tipo</label>
+                  <div class="select is-fullwidth">
+                    <select id="pdv-move-type">
+                      <option value="SUPRIMENTO">Suprimento (entrada)</option>
+                      <option value="SANGRIA">Sangria (retirada)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="pdv-move-amount">Valor (R$)</label>
+                  <input class="input" id="pdv-move-amount" type="text" inputmode="decimal" placeholder="0,00" />
+                </div>
+                <div class="field pdv-grow">
+                  <label class="label" for="pdv-move-reason">Motivo</label>
+                  <input class="input" id="pdv-move-reason" type="text" maxlength="200" />
+                </div>
+                <div class="field pdv-end"><button class="button is-link" type="submit">Registrar</button></div>
+              </div>
+            </form>
+
+            <form id="pdv-close-form" class="pdv-inline-form" novalidate hidden>
+              <div class="pdv-row">
+                <div class="field">
+                  <label class="label" for="pdv-counted">Dinheiro contado no caixa (R$)</label>
+                  <input class="input" id="pdv-counted" type="text" inputmode="decimal" placeholder="0,00" />
+                </div>
+                <div class="field pdv-grow">
+                  <label class="label" for="pdv-close-note">Observação (opcional)</label>
+                  <input class="input" id="pdv-close-note" type="text" maxlength="200" />
+                </div>
+                <div class="field pdv-end"><button class="button is-link" type="submit">Confirmar fechamento</button></div>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-card" id="pdv-closed-card" hidden>
+            <h2 class="pdv-section-title">Caixa fechado</h2>
+            <p id="pdv-closed-summary" aria-live="polite">-</p>
+          </section>
+
+          <div class="pdv-sale" id="pdv-sale" hidden>
+            <section class="panel-card pdv-products">
+              <h2 class="pdv-section-title">Produtos</h2>
+              <div class="field">
+                <label class="label" for="pdv-search">Código de barras ou nome</label>
+                <input class="input" id="pdv-search" type="text" autocomplete="off" maxlength="80" placeholder="Passe o leitor ou digite e tecle Enter" />
+              </div>
+              <ul class="pdv-results" id="pdv-results"></ul>
+            </section>
+
+            <section class="panel-card pdv-cart">
+              <h2 class="pdv-section-title">Venda atual</h2>
+              <div class="table-container">
+                <table class="table is-fullwidth">
+                  <thead><tr><th>Produto</th><th class="has-text-right">Qtd</th><th class="has-text-right">Preço</th><th class="has-text-right">Total</th><th></th></tr></thead>
+                  <tbody id="pdv-cart-body"><tr class="is-empty"><td colspan="5">Nenhum item ainda.</td></tr></tbody>
+                </table>
+              </div>
+              <p class="pdv-total">Total: <strong id="pdv-total">R$ 0,00</strong></p>
+
+              <h3 class="pdv-subtitle-2">Pagamento</h3>
+              <div id="pdv-pays"></div>
+              <div class="pdv-actions">
+                <button class="button is-light is-small" type="button" id="pdv-pay-add">Dividir em outra forma</button>
+              </div>
+              <p class="pdv-balance" id="pdv-balance" aria-live="polite">Falta: R$ 0,00</p>
+              <p class="help is-danger" id="pdv-sale-error" aria-live="polite" hidden></p>
+              <div class="pdv-actions">
+                <button class="button is-link" type="button" id="pdv-finish" disabled>Finalizar venda</button>
+                <button class="button is-light" type="button" id="pdv-clear">Limpar</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/static/pdv.js" defer></script>
+  </body>
+</html>

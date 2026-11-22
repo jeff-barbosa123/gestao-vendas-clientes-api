@@ -6,6 +6,7 @@
 
   const PAGES = {
     '/sales.html': { perm: 'sales:read' },
+    '/pdv.html': { perm: 'pdv:use', module: 'pdv' },
     '/orders.html': { perm: 'orders:read', module: 'encomendas' },
     '/clients.html': { perm: 'customers:read' },
     '/client-edit.html': { perm: 'customers:read' },

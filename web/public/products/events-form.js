@@ -122,10 +122,11 @@ export function initEventsForm() {
         let extraError = null;
         try {
           if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('product', created && created.id, createForm);
+          if (window.SGVC && window.SGVC.stockFields) await window.SGVC.stockFields.saveBarcode(createForm, created && created.id);
         } catch (e) {
           extraError = e;
         }
-        if (extraError) showMessage('Produto criado, mas os campos extras não foram salvos: ' + extraError.message, 'is-danger');
+        if (extraError) showMessage('Produto criado, mas os campos extras ou o código de barras não foram salvos: ' + extraError.message, 'is-danger');
         else showMessage('Produto criado com sucesso.', 'is-success');
         createForm.reset();
         setProductType(getSelectedProductType());

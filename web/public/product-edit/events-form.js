@@ -96,7 +96,10 @@ export function initEventsForm() {
           body: JSON.stringify(payload),
         });
         if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('product', productId, document.getElementById('edit-form'));
-        if (window.SGVC && window.SGVC.stockFields) window.SGVC.stockFields.rebase(document.getElementById('edit-form'));
+        if (window.SGVC && window.SGVC.stockFields) {
+          await window.SGVC.stockFields.saveBarcode(document.getElementById('edit-form'), productId);
+          window.SGVC.stockFields.rebase(document.getElementById('edit-form'));
+        }
         showMessage('Produto atualizado.', 'is-success');
         sessionStorage.setItem(UPDATED_FLAG, 'true');
         state.original = {

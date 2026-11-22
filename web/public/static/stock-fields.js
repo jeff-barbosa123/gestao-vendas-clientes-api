@@ -10,7 +10,7 @@
   }
 
   const field = (form, name) => form.querySelector(`[data-stock-field="${name}"]`);
-  const snapshot = (form) => JSON.stringify([field(form, 'stock') && field(form, 'stock').value, field(form, 'min') && field(form, 'min').value]);
+  const snapshot = (form) => JSON.stringify([field(form, 'stock') && field(form, 'stock').value, field(form, 'min') && field(form, 'min').value, field(form, 'barcode') && field(form, 'barcode').value]);
 
   async function mount(form, id) {
     if (!form || !canWrite() || form.querySelector('[data-stock-block]')) return;
@@ -29,7 +29,10 @@
       `<input class="input" id="stock-field-stock" data-stock-field="stock" type="number" min="0" step="1" inputmode="numeric" value="${val(current.stock)}" /></div>` +
       '<div class="field"><label class="label" for="stock-field-min">Estoque mínimo (para o alerta)</label>' +
       `<input class="input" id="stock-field-min" data-stock-field="min" type="number" min="0" step="1" inputmode="numeric" value="${val(current.minStock != null ? current.minStock : current.min_stock)}" />` +
-      '<p class="help">Deixe vazio para não controlar o estoque deste produto.</p></div>';
+      '<p class="help">Deixe vazio para não controlar o estoque deste produto.</p></div>' +
+      '<div class="field"><label class="label" for="stock-field-barcode">Código de barras (Caixa/PDV)</label>' +
+      `<input class="input" id="stock-field-barcode" data-stock-field="barcode" type="text" maxlength="64" autocomplete="off" value="${val(current.barcode).replace(/"/g, '&quot;')}" />` +
+      '<p class="help">Opcional. Com o código, o leitor adiciona o produto direto na venda.</p></div>';
     const onEdit = () => {
       const btn = form.querySelector('button[type="submit"]');
       if (btn && form.id === 'edit-form' && isDirty(form)) btn.disabled = false;
@@ -41,6 +44,7 @@
     if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(block, anchor);
     else form.appendChild(block);
     form.__stockBase = snapshot(form);
+    form.__barcodeBase = val(current.barcode);
   }
 
   function isDirty(form) {
@@ -59,12 +63,22 @@
     return out;
   }
 
+  // Codigo de barras tem rota propria (/api/pdv/products/:id/barcode); so envia se mudou ou se e produto novo com valor.
+  async function saveBarcode(form, id) {
+    const input = form && field(form, 'barcode');
+    if (!input || !id) return;
+    const value = input.value.trim();
+    if (value === (form.__barcodeBase || '')) return;
+    await request('/api/pdv/products/' + encodeURIComponent(id) + '/barcode', { method: 'PUT', body: JSON.stringify({ barcode: value || null }) });
+    form.__barcodeBase = value;
+  }
+
   function rebase(form) {
     if (form && field(form, 'stock')) form.__stockBase = snapshot(form);
   }
 
   window.SGVC = window.SGVC || {};
-  window.SGVC.stockFields = { mount, read, isDirty, rebase };
+  window.SGVC.stockFields = { mount, read, isDirty, rebase, saveBarcode };
 
   function autoMount() {
     const form = document.querySelector('form#create-form, form#edit-form');

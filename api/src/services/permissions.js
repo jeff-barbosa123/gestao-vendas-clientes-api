@@ -15,6 +15,8 @@ const ALL_PERMISSIONS = [
   'products:read', 'products:write',
   'sales:read', 'sales:write',
   'orders:read', 'orders:write',
+  'pdv:use', // vender no Caixa/PDV, abrir/fechar o proprio caixa, sangria/suprimento
+  'pdv:manage', // ver o historico de caixas de todos os operadores
   'recipes:read', 'recipes:write',
   'ingredients:read', 'ingredients:write',
   'analytics:read',
@@ -34,6 +36,7 @@ const MATRIX = {
     'products:read',
     'sales:read', 'sales:write',
     'orders:read', 'orders:write',
+    'pdv:use',
     'analytics:read',
   ],
   stockist: [
@@ -50,6 +53,10 @@ const MODULES = {
   producao: {
     label: 'Produção e fichas técnicas',
     description: 'Insumos, fichas técnicas e vínculo com produtos. Ideal para alimentação e produção artesanal.',
+  },
+  pdv: {
+    label: 'Caixa/PDV',
+    description: 'Abertura e fechamento de caixa, venda rápida com código de barras, várias formas de pagamento e troco.',
   },
   encomendas: {
     label: 'Encomendas',

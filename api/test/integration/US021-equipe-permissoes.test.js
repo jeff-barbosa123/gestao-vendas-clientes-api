@@ -51,14 +51,14 @@ describe('US021 - Fase 2: equipe, perfis, permissoes e modulos', () => {
     expect(perms.can('seller', 'sales:write')).to.equal(true);
     expect(perms.can('stockist', 'ingredients:write')).to.equal(true);
     expect(perms.can('stockist', 'finance:view')).to.equal(false);
-    expect(perms.resolveModules({ producao: false })).to.deep.equal({ producao: false, encomendas: true });
+    expect(perms.resolveModules({ producao: false })).to.deep.equal({ producao: false, pdv: true, encomendas: true });
   });
 
   it('EQ-002 | dono existente aparece como Dono em /me e na equipe', async () => {
     const me = await get(owner.token, `${AUTH}/me`);
     expect(me.body.user.role).to.equal('owner');
     expect(me.body.user.permissions).to.include('team:manage');
-    expect(me.body.user.modules).to.deep.equal({ producao: true, encomendas: true });
+    expect(me.body.user.modules).to.deep.equal({ producao: true, pdv: true, encomendas: true });
     const list = await get(owner.token, '/api/team');
     expect(list.status).to.equal(200);
     expect(list.body.members[0]).to.include({ email: owner.email, role: 'owner', isOwner: true });
@@ -144,7 +144,7 @@ describe('US021 - Fase 2: equipe, perfis, permissoes e modulos', () => {
   it('EQ-009 | modulos opcionais: desligar producao bloqueia insumos e fichas', async () => {
     const off = await send('put', owner.token, '/api/company/modules', { producao: false, invalido: true });
     expect(off.status).to.equal(200);
-    expect(off.body.modules).to.deep.equal({ producao: false, encomendas: true });
+    expect(off.body.modules).to.deep.equal({ producao: false, pdv: true, encomendas: true });
     for (const p of ['/api/ingredients', '/api/recipes']) {
       const res = await get(owner.token, p);
       expect(res.status, p).to.equal(403);

@@ -36,7 +36,11 @@ describe('SGVC - Fase 4: alertas de estoque e margem (API real)', () => {
         cy.apiReal('PUT', `/api/products/${id}`, { purchase_price: 80 }).its('status').should('eq', 200);
         cy.visit('/dashboard.html');
         cy.get('#alert-pricing-list', { timeout: 10000 }).should('contain', nome).and('contain', 'Preço sugerido');
+        cy.intercept('PUT', `**/api/products/${id}`).as('applyPrice');
         cy.get('#alert-pricing-list .alert-apply').first().click();
+        cy.wait('@applyPrice').its('response.statusCode').should('eq', 200);
+        cy.apiReal('GET', `/api/products/${id}`).its('body.price').should('be.gt', 100);
+        cy.reload();
         cy.get('#alert-pricing-list', { timeout: 10000 }).should('not.contain', nome);
         cy.apiReal('GET', `/api/products/${id}`).its('body.price').should('be.gt', 100);
       });

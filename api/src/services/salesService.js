@@ -344,7 +344,7 @@ async function getById(id, user) {
   return formatSale(sale);
 }
 
-async function create(data, user) {
+async function create(data, user, opts = {}) {
   const productMap = await loadProductsByIds(
     // items ausente/inválido não pode estourar aqui (500): o validateSaleInput responde 422
     Array.isArray(data.items) ? data.items.map((it) => it && it.productId) : []
@@ -382,9 +382,12 @@ async function create(data, user) {
   const lowStock = await withTransaction(async (client) => {
     await repo.createSale(sale, items, client);
     await reserveStock(sale.id, items, productMap, client);
-    return safeStock("venda", client, () =>
+    const low = await safeStock("venda", client, () =>
       stockService.applySale(sale.id, items, productMap, user, client)
     );
+    // Gancho opcional (ex.: PDV grava pagamentos/caixa na mesma transacao da venda)
+    if (typeof opts.afterCreate === "function") await opts.afterCreate(client, sale);
+    return low;
   });
 
   await logAudit(sale.id, "CREATED", user ? user.id : null);

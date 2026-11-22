@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-22 - Fase 5: Caixa/PDV
+
+- Migracao 0012: `cash_registers` (abertura/fechamento com esperado, contado e diferenca), `cash_movements` (sangria/suprimento), `sale_payments` (varias formas por venda, com recebido e troco no dinheiro), `sales.register_id` e `products.barcode` (unico por empresa).
+- API `/api/pdv` (permissao `pdv:use`, modulo opcional `pdv`): `GET /session`, `POST /registers/open`, `POST /registers/:id/movements`, `POST /registers/:id/close`, `GET /registers` (`pdv:manage` ve todos os operadores), `GET /products?q=` (codigo de barras ou nome, sem custo), `PUT /products/:id/barcode` (`products:write`) e `POST /sales`.
+- Venda no PDV exige caixa aberto do operador, usa o preco do cadastro e passa por `salesService.create` (mesma transacao: baixa de estoque, baixa de insumos pela ficha, **CMV gravado por item** a partir do custo do produto, que a ficha tecnica sincroniza) e grava os pagamentos. Troco so sai de dinheiro; pagamentos sem dinheiro nao podem exceder o total. Venda cancelada sai do caixa.
+- Sangria nao pode passar do dinheiro em caixa; caixa fechado nao aceita movimentos nem novo fechamento (409). Um caixa aberto por operador.
+- Perfis: Dono/Gerente (`pdv:use` + `pdv:manage`) e Vendedor/Caixa (`pdv:use`). CMV/lucro (`cmv`, `profit`) saem das respostas e da tela para quem nao tem `finance:view`.
+- Front: `/pdv.html` (Grafite Noturno) com abertura, leitor/busca, carrinho, pagamento dividido com troco, sangria/suprimento e fechamento; item "Caixa/PDV" no menu; campo "Codigo de barras" no cadastro de produto; card do modulo em Aparencia.
+- Testes: Mocha US024 (10), US021 ajustado para o novo modulo, Cypress fase5-pdv (3).
+
 ## 2026-11-22 - Fase 4: estoque minimo e queda de margem
 
 - Migracao 0011: `products.min_stock` (estoque minimo, opcional) e `products.margin_ref` (margem de referencia; backfill a partir de preco e custo).

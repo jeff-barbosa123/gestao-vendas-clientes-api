@@ -35,7 +35,7 @@ Decisões (Jefferson, nov/2026):
 - Próximos módulos entram pelo mesmo catálogo de módulos (`services/permissions.js` + card em Aparência) conforme as próximas fases (estoque mínimo, PDV, financeiro).
 
 ## Fase 4 — Operação do dia a dia
-**Entregue:** estoque mínimo de produtos com alertas (selo na lista e card no dashboard) e alerta de queda de margem com preço de venda sugerido (aplicar ou manter margem). **Pendente:** Caixa/PDV rápido; CRM leve (histórico, recompra, WhatsApp); financeiro (contas a receber/pagar); PWA.
+**Entregue:** estoque mínimo de produtos com alertas (selo na lista e card no dashboard) e alerta de queda de margem com preço de venda sugerido (aplicar ou manter margem). **Caixa/PDV entregue (Fase 5):** abertura/fechamento de caixa, sangria/suprimento, pagamento em várias formas com troco, venda rápida por código de barras e CMV gravado por venda. **Pendente:** CRM leve (histórico, recompra, WhatsApp); financeiro (contas a receber/pagar); PWA.
 
 ## Fase 5 — Cobrança (posterior)
 Planos e assinatura após validar com os primeiros clientes.

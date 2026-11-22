@@ -10,6 +10,7 @@
     { href: '/pdv.html', label: 'Caixa/PDV' },
     { href: '/orders.html', label: 'Encomendas' },
     { href: '/clients.html', label: 'Clientes', match: ['/client-edit.html'] },
+    { href: '/crm.html', label: 'CRM' },
     { href: '/products.html', label: 'Produtos', match: ['/product-edit.html'] },
     { href: '/ingredients.html', label: 'Insumos' },
     { href: '/recipes.html', label: 'Fichas técnicas', match: ['/recipe-edit.html'] },

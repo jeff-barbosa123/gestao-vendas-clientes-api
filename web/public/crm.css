@@ -1,0 +1,47 @@
+.crm-wrapper {
+  width: min(1180px, 100%);
+  background: linear-gradient(135deg, var(--bg), var(--bg-dark));
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgb(var(--rgb-white) / 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crm-header { color: var(--slate-900); }
+.crm-title { font-size: 24px; font-weight: 700; margin: 0 0 4px; }
+.crm-subtitle { font-size: 14px; max-width: 760px; margin: 0; color: rgb(var(--rgb-snow) / 0.9); }
+.crm-message { margin: 0; }
+
+.crm-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--slate-600);
+  margin: 0 0 12px;
+}
+.crm-subtitle-2 { font-size: 0.95rem; font-weight: 700; margin: 14px 0 8px; }
+
+.crm-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.crm-filters button[aria-pressed="true"] { border-color: var(--slate-600); font-weight: 700; }
+
+.crm-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; background: var(--slate-200); color: var(--slate-900); }
+.crm-badge.is-recompra { background: var(--warn-bg, var(--slate-200)); color: var(--warn-fg, var(--slate-900)); }
+.crm-badge.is-inativo { background: var(--danger-50); color: var(--danger-700); }
+.crm-badge.is-em_dia { background: var(--success-50); color: var(--success-800); }
+
+.crm-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.crm-muted { color: var(--slate-600); font-size: 0.85rem; }
+
+.crm-detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.crm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 8px 0; }
+.crm-kpis div { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 10px; padding: 8px 12px; }
+.crm-kpis dt { font-size: 0.75rem; color: var(--slate-600); text-transform: uppercase; letter-spacing: 0.06em; }
+.crm-kpis dd { margin: 2px 0 0; font-size: 1.05rem; font-weight: 700; color: var(--slate-900); }
+
+.crm-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 860px) { .crm-columns { grid-template-columns: 1fr; } }
+.crm-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.crm-list li { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }

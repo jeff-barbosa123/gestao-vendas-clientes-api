@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | CRM</title>
+    <meta name="description" content="CRM leve: histórico do cliente, lista de recompra, anotações e contato por WhatsApp." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/theme.css" />
+    <link rel="stylesheet" href="/static/crm.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/access.js" defer></script>
+    <script src="/static/utils.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="crm-wrapper">
+          <header class="crm-header">
+            <h1 class="crm-title">CRM</h1>
+            <p class="crm-subtitle">Veja quem está na hora de comprar de novo, chame pelo WhatsApp e guarde o histórico de cada cliente.</p>
+          </header>
+
+          <div class="notification is-light crm-message" id="crm-message" role="status" aria-live="polite" hidden></div>
+
+          <section class="panel-card">
+            <h2 class="crm-section-title">Clientes</h2>
+            <div class="crm-filters" id="crm-filters" role="group" aria-label="Filtrar por situação"></div>
+            <div class="field">
+              <label class="label" for="crm-template">Mensagem de WhatsApp (use {nome})</label>
+              <textarea class="textarea" id="crm-template" rows="2" maxlength="500"></textarea>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth">
+                <thead>
+                  <tr>
+                    <th>Cliente</th><th>Situação</th><th>Última compra</th>
+                    <th class="has-text-right">Intervalo médio</th><th class="has-text-right">Total gasto</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="crm-body"><tr class="is-empty"><td colspan="6">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel-card" id="crm-detail" hidden>
+            <div class="crm-detail-head">
+              <h2 class="crm-section-title" id="crm-detail-title">Cliente</h2>
+              <button class="button is-light is-small" type="button" id="crm-detail-close">Fechar</button>
+            </div>
+            <dl class="crm-kpis" id="crm-detail-kpis"></dl>
+            <div class="crm-columns">
+              <div>
+                <h3 class="crm-subtitle-2">Últimas compras</h3>
+                <ul class="crm-list" id="crm-sales"></ul>
+                <h3 class="crm-subtitle-2">Mais comprados</h3>
+                <ul class="crm-list" id="crm-products"></ul>
+              </div>
+              <div>
+                <h3 class="crm-subtitle-2">Anotações e contatos</h3>
+                <form id="crm-note-form" novalidate>
+                  <div class="field">
+                    <label class="label" for="crm-note">Nova anotação</label>
+                    <textarea class="textarea" id="crm-note" rows="2" maxlength="1000"></textarea>
+                  </div>
+                  <button class="button is-link is-small" type="submit">Salvar anotação</button>
+                </form>
+                <ul class="crm-list" id="crm-interactions"></ul>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/static/crm.js" defer></script>
+  </body>
+</html>

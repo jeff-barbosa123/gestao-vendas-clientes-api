@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-22 - Fase 6: CRM leve
+
+- Migracao 0014: `customer_interactions` (anotacoes e contatos por WhatsApp, por cliente e empresa).
+- API `/api/crm` (leitura: `customers:read`; anotar/registrar contato: `customers:write`; modulo opcional `crm`): `GET /customers?status=` (situacao por cliente a partir das vendas nao canceladas), `GET /customers/:id` (compras recentes, produtos mais comprados, interacoes) e `POST /customers/:id/interactions` (NOTE ou WHATSAPP).
+- Regra de recompra: intervalo medio entre compras (cliente com uma compra so usa 30 dias). Dias desde a ultima compra / intervalo: < 1 = em dia, ate 3x = recompra, acima de 3x = inativo; sem vendas = sem compras. Lista ordenada por prioridade (recompra, inativo, em dia, sem compras). Telefone vira `whatsappPhone` (55 + DDD + numero) ou nulo.
+- Front: `/crm.html` com filtros por situacao, mensagem de WhatsApp editavel ({nome}, guardada no navegador), botao WhatsApp (abre wa.me e registra o contato), historico do cliente e anotacoes; item "CRM" no menu e card do modulo em Aparencia. Sem CMV/lucro na tela.
+- Testes: Mocha US025 (6) e Cypress fase6-crm (2).
+
 ## 2026-11-22 - Fase 5b: desconto no PDV e fechamento cego
 
 - Migracao 0013: `sales.discount` (o total gravado e o liquido; CMV nao muda, entao o lucro cai pelo desconto) e `company_modules.pdv_discount_limit` (% maximo do Vendedor/Caixa).

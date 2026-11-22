@@ -55,6 +55,10 @@ const MODULES = {
     label: 'Produção e fichas técnicas',
     description: 'Insumos, fichas técnicas e vínculo com produtos. Ideal para alimentação e produção artesanal.',
   },
+  crm: {
+    label: 'CRM leve',
+    description: 'Histórico do cliente, lista de recompra, anotações e contato por WhatsApp.',
+  },
   pdv: {
     label: 'Caixa/PDV',
     description: 'Abertura e fechamento de caixa, venda rápida com código de barras, várias formas de pagamento e troco.',

@@ -21,6 +21,14 @@ const exportRoutes = require('./exportRoutes');
 const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
 const brandingRoutes = require('./brandingRoutes');
 const { team: teamRoutes, company: companyRoutes } = require('./teamRoutes');
+// Valores extras exigem escrita no cadastro dono do registro; definicoes exigem modules:manage.
+function customFieldsGate(req) {
+  if (req.method === 'GET') return {};
+  const m = req.url.match(/^\/(product|customer)\/[^/]+\/values/);
+  if (m) return { perm: m[1] === 'product' ? 'products:write' : 'customers:write' };
+  return { perm: 'modules:manage' };
+}
+const customFieldsRoutes = require('./customFieldsRoutes');
 const { gate, rw } = require('../middleware/tenant');
 
 // Guardas globais de entrada: corpo JSON precisa ser objeto; query sem arrays/objetos aninhados
@@ -47,5 +55,6 @@ router.use('/errors/analytics', errorAnalyticsRoutes);
 router.use('/branding', gate(rw(null, 'branding:write')), brandingRoutes);
 router.use('/team', gate(() => ({ perm: 'team:manage' })), teamRoutes);
 router.use('/company', gate(rw(null, 'modules:manage')), companyRoutes);
+router.use('/custom-fields', gate(customFieldsGate), customFieldsRoutes);
 
 module.exports = router;

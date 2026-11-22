@@ -214,7 +214,7 @@ export function initFormSubmit() {
           return digits ? digits : null;
         })();
         const notesPayload = buildNotesWithMeta(createNotes ? createNotes.value : '', state.createMeta);
-        await apiRequest('/api/customers', session.token, {
+        const created = await apiRequest('/api/customers', session.token, {
           method: 'POST',
           body: JSON.stringify({
             name,
@@ -231,7 +231,14 @@ export function initFormSubmit() {
             notes: notesPayload,
           }),
         });
-        showMessage('Cliente criado com sucesso.', 'is-success');
+        let extraError = null;
+        try {
+          if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('customer', created && created.id, createForm);
+        } catch (e) {
+          extraError = e;
+        }
+        if (extraError) showMessage('Cliente criado, mas os campos extras não foram salvos: ' + extraError.message, 'is-danger');
+        else showMessage('Cliente criado com sucesso.', 'is-success');
         createForm.reset();
         state.createMeta = { type: '', tradeName: '', complement: '' };
         if (createType) {

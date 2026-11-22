@@ -94,6 +94,7 @@ export function initEventsForm() {
           method: 'PUT',
           body: JSON.stringify(payload),
         });
+        if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('product', productId, document.getElementById('edit-form'));
         showMessage('Produto atualizado.', 'is-success');
         sessionStorage.setItem(UPDATED_FLAG, 'true');
         state.original = {

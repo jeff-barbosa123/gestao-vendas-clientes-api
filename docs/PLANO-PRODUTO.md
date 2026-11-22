@@ -31,7 +31,8 @@ Decisões (Jefferson, nov/2026):
 
 ## Fase 3 — Campos extras e novos módulos
 - Módulos opcionais por empresa **entregues na Fase 2** (Produção/fichas e Encomendas; chave ausente = ligado; card em Aparência).
-- Pendente: campos extras opcionais em produto/cliente (rótulo + tipo), configuráveis pela empresa; mais módulos conforme as próximas fases.
+- **Entregue na Fase 3:** campos extras opcionais em produto e cliente (rótulo + tipo: texto, número, data, sim/não, lista; obrigatório opcional; até 15 por entidade), configuráveis em Aparência e gravados em `extra` (JSONB). Valores exigem permissão de escrita do cadastro.
+- Próximos módulos entram pelo mesmo catálogo de módulos (`services/permissions.js` + card em Aparência) conforme as próximas fases (estoque mínimo, PDV, financeiro).
 
 ## Fase 4 — Operação do dia a dia
 Caixa/PDV rápido; estoque mínimo com alertas; alerta de margem baixa; CRM leve (histórico, recompra, WhatsApp); financeiro (contas a receber/pagar); PWA.

@@ -114,11 +114,18 @@ export function initEventsForm() {
         if (productType === 'produced') {
           payload.fichaTecnicaId = createRecipeId ? createRecipeId.value : null;
         }
-        await apiRequest('/api/products', null, {
+        const created = await apiRequest('/api/products', null, {
           method: 'POST',
           body: JSON.stringify(payload),
         });
-        showMessage('Produto criado com sucesso.', 'is-success');
+        let extraError = null;
+        try {
+          if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('product', created && created.id, createForm);
+        } catch (e) {
+          extraError = e;
+        }
+        if (extraError) showMessage('Produto criado, mas os campos extras não foram salvos: ' + extraError.message, 'is-danger');
+        else showMessage('Produto criado com sucesso.', 'is-success');
         createForm.reset();
         setProductType(getSelectedProductType());
         updateProducedPricing();

@@ -56,5 +56,5 @@ export function updateDirtyState() {
     current.tradeName !== state.original.tradeName ||
     current.complement !== state.original.complement ||
     current.notes !== state.original.notes;
-  saveBtn.disabled = !isDirty;
+  saveBtn.disabled = !(isDirty || (window.SGVC && window.SGVC.customFields && window.SGVC.customFields.isDirty(document.getElementById('edit-form'))));
 }

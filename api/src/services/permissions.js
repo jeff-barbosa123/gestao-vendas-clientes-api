@@ -80,7 +80,8 @@ function resolveModules(stored) {
 
 // Campos que somem das respostas de quem nao tem a permissao (defesa no backend; a UI so esconde o resto).
 const FINANCE_KEY = /(cmv|profit|lucro|margem|margin|preco_minimo|pricingalerts)/i;
-const COST_KEY = /^(purchase_?price|custo|cost)/i;
+// custo/cost so como palavra inteira ou prefixo de composto (custo_x, custoX, costPrice); nao pega "customer".
+const COST_KEY = { test: (k) => /^purchase_?price/i.test(k) || /^(custo|cost)($|[_A-Z0-9])/.test(k) };
 
 function stripKeys(value, drop, depth = 0) {
   if (value == null || depth > 8) return value;

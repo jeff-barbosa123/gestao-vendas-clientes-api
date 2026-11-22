@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-22 - Fase 3: campos extras por empresa
+
+- Migracao 0010: `custom_fields` (definicao por empresa e entidade: rotulo, tipo texto/numero/data/sim-nao/lista, opcoes, obrigatorio, ordem) e coluna `extra` (JSONB) em `products` e `customers`.
+- API: `GET /api/custom-fields` (qualquer membro), `PUT /api/custom-fields/:entity` (definicoes; `modules:manage`, ate 15 por entidade) e `PUT /api/custom-fields/:entity/:id/values` (valores; exige `products:write`/`customers:write`; merge atomico em SQL, validado por tipo, isolado por empresa).
+- Front: card "Campos extras" em Aparencia; `custom-fields.js` monta os campos nos formularios de produto e cliente (criar/editar) e grava depois do cadastro principal; `extra` volta nos GET de produto/cliente.
+- Correcao: o filtro de custos da Fase 2 (`COST_KEY`) removia qualquer chave iniciada por "custo", inclusive `customer`/`customer_id`, das respostas de vendedor/estoquista.
+- Testes: Mocha US022 (8) e Cypress fase3-campos-extras (2, API real).
+
 ## 2026-11-21 - Fase 2: equipe, perfis e modulos opcionais
 
 - Migracao 0009: `memberships` (usuario x empresa x papel; todo usuario existente vira Dono), `team_invitations` (token de uso unico, hash SHA-256, 7 dias) e `company_modules` (JSONB).

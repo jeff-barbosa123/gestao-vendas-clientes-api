@@ -35,5 +35,6 @@ export function updateDirtyState() {
     current.recipeId !== state.original.recipeId ||
     current.finalPrice !== state.original.finalPrice ||
     current.productType !== state.original.productType;
-  saveBtn.disabled = !(isDirty || (window.SGVC && window.SGVC.customFields && window.SGVC.customFields.isDirty(document.getElementById('edit-form'))));
+  const stockDirty = window.SGVC && window.SGVC.stockFields && window.SGVC.stockFields.isDirty(document.getElementById('edit-form'));
+  saveBtn.disabled = !(isDirty || stockDirty || (window.SGVC && window.SGVC.customFields && window.SGVC.customFields.isDirty(document.getElementById('edit-form'))));
 }

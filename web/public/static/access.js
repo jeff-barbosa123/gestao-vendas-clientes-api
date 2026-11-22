@@ -33,6 +33,7 @@
     'alert-pricing-card': { perm: 'finance:view' },
     'alert-products-count': { perm: 'recipes:read', module: 'producao', closest: '.dashboard-alert-card' },
     'alert-stock-card': { perm: 'ingredients:read', module: 'producao' },
+    'alert-product-stock-card': { perm: 'products:read' },
   };
 
   const state = { user: null, ready: false };

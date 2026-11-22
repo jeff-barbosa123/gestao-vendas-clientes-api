@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-22 - Fase 4: estoque minimo e queda de margem
+
+- Migracao 0011: `products.min_stock` (estoque minimo, opcional) e `products.margin_ref` (margem de referencia; backfill a partir de preco e custo).
+- API: `min_stock` em criar/editar produto (vazio limpa; valida inteiro >= 0); `POST /api/products/:id/margin-baseline` (`products:write`) aceita a margem atual como nova referencia. O overview do dashboard traz `productStockAlerts` (estoque <= minimo, produtos ativos) e `pricingAlerts` com nivel `margin_drop` (margem caiu >= 5 pontos da referencia, p. ex. custo da ficha subiu), `referenceMargin` e `suggestedPrice` (preco que recupera a margem de referencia, no minimo 30%).
+- A referencia so muda quando o usuario altera o preco; mudancas de custo (inclusive pela ficha tecnica) nao a movem, e assim a queda e detectada.
+- Front: campos "Estoque atual/minimo" nos formularios de produto, selo "Estoque baixo" na lista, card "Produtos para repor" e, nos alertas de margem, preco sugerido com "Aplicar preco" e "Manter margem atual" (so com `products:write`). Vendedor nao ve margem nem sugestao (sem `finance:view`).
+- Testes: Mocha US023 (7) e Cypress fase4-alertas (2, API real).
+
 ## 2026-11-22 - Fase 3: campos extras por empresa
 
 - Migracao 0010: `custom_fields` (definicao por empresa e entidade: rotulo, tipo texto/numero/data/sim-nao/lista, opcoes, obrigatorio, ordem) e coluna `extra` (JSONB) em `products` e `customers`.

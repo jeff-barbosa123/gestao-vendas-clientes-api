@@ -19,6 +19,7 @@ router.post('/', validate({ body: productBody }), productsController.create);
 router.get('/:id', productsController.getById);
 router.put('/:id', validate({ body: productBody }), productsController.update);
 router.delete('/:id', productsController.remove);
+router.post('/:id/margin-baseline', productsController.rebaseMargin);
 router.post('/:id/vincular-ficha', linkRateLimit, productsController.linkFichaTecnica);
 router.delete('/:id/remover-ficha', linkRateLimit, productsController.removerFichaTecnica);
 router.get('/:id/ficha-tecnica', linkRateLimit, productsController.obterFichaTecnica);

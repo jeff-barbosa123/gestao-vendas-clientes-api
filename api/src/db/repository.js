@@ -1,7 +1,7 @@
 const { runInTx, isUuid, toNumber } = require("./repositories/shared");
 const { getUserByGoogleSub, linkGoogleAccount, getUserByEmail, getUserByUsername, getUserByIdentifier, getUserById, createUser, setEmailVerificationToken, verifyEmailByTokenHash, updateUserLogin, updateUserPassword, updateUserProfile, createPasswordReset, getPasswordResetByTokenHash, markPasswordResetUsed } = require("./repositories/users");
 const { listCustomers, getCustomerById, customerEmailExists, customerCpfExists, customerCnpjExists, createCustomer, updateCustomer, deleteCustomer } = require("./repositories/customers");
-const { listProducts, getProductById, createProduct, updateProduct, deleteProduct, adjustProductStock } = require("./repositories/products");
+const { listProducts, getProductById, createProduct, updateProduct, deleteProduct, adjustProductStock, rebaseMarginRef, listLowStockProducts } = require("./repositories/products");
 const { listRecipes, getRecipeById, createRecipe, updateRecipe, softDeleteRecipe } = require("./repositories/recipes");
 const { listSales, getSaleById, createSale, updateSale, addSaleAudit, listSaleAudit, saveSaleProductStock, releaseSaleProductStock } = require("./repositories/sales");
 const { baseUnitOf, listIngredients, getIngredientById, ingredientNameExists, createIngredient, updateIngredient, addIngredientPriceHistory, listIngredientPriceHistory, deleteIngredient, getRecipeConsumptionRows, moveIngredientStock, getRecipeIdsByLinkedProducts, setIngredientMinStock, disableIngredientStock, listStockMovements, getSaleStockBalance, listLowStockIngredients, listRecipeIdsByIngredient } = require("./repositories/ingredients");
@@ -25,6 +25,8 @@ module.exports = {
   listStockMovements,
   getSaleStockBalance,
   adjustProductStock,
+  rebaseMarginRef,
+  listLowStockProducts,
   saveSaleProductStock,
   releaseSaleProductStock,
   addSaleAudit,

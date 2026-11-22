@@ -81,6 +81,25 @@ async function getById(id, user) {
   return product;
 }
 
+function marginOf(price, cost) {
+  const p = Number(price);
+  const c = Number(cost);
+  return p > 0 && c > 0 ? Number(((p - c) / p).toFixed(4)) : null;
+}
+
+// Estoque/estoque minimo: inteiro >= 0; undefined = nao informado; null/'' = limpar.
+function parseStockInt(value, label) {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 0) {
+    const err = new Error(`${label} deve ser um número inteiro maior ou igual a zero`);
+    err.status = 422;
+    throw err;
+  }
+  return n;
+}
+
 async function create(data, user) {
   if (!data.name || data.price == null) {
     const err = new Error("Nome e preço do produto são obrigatórios");
@@ -128,8 +147,14 @@ async function create(data, user) {
     throw err;
   }
 
+  const stock = parseStockInt(data.stock, "Estoque");
+  const minStock = parseStockInt(data.minStock !== undefined ? data.minStock : data.min_stock, "Estoque mínimo");
+
   return repo.createProduct({
     ...data,
+    stock: stock === undefined ? null : stock,
+    min_stock: minStock === undefined ? null : minStock,
+    margin_ref: marginOf(price, purchase_price),
     description,
     price,
     purchase_price,
@@ -220,6 +245,18 @@ async function update(id, data, user) {
     throw err;
   }
 
+  const stock = parseStockInt(data.stock, "Estoque");
+  if (stock !== undefined) data.stock = stock;
+  const minStock = parseStockInt(data.minStock !== undefined ? data.minStock : data.min_stock, "Estoque mínimo");
+  if (minStock !== undefined) data.min_stock = minStock;
+  // Preco alterado pelo usuario = nova margem de referencia. Custo vindo da ficha NAO altera a referencia
+  // (e justamente essa diferenca que dispara o alerta de queda de margem).
+  const priceChanged = data.price != null && Number(current.price) !== Number(data.price);
+  if (priceChanged || current.margin_ref == null) {
+    const ref = marginOf(data.price != null ? data.price : current.price, data.purchase_price != null ? data.purchase_price : current.purchase_price);
+    if (ref != null) data.margin_ref = ref;
+  }
+
   const payload = {
     ...data,
     updatedAt: new Date().toISOString(),
@@ -227,6 +264,22 @@ async function update(id, data, user) {
   };
 
   return repo.updateProduct(id, payload);
+}
+
+// "Manter margem atual": aceita o custo de hoje como novo padrao e some o alerta de queda de margem.
+async function rebaseMargin(id, user) {
+  const current = await repo.getProductById(id);
+  if (!current) {
+    const err = new Error("Produto não encontrado");
+    err.status = 404;
+    throw err;
+  }
+  if (current.owner_id && user && current.owner_id !== user.id) {
+    const err = new Error("Acesso negado ao produto solicitado");
+    err.status = 403;
+    throw err;
+  }
+  return repo.rebaseMarginRef(id);
 }
 
 async function remove(id, user) {
@@ -413,6 +466,7 @@ async function syncProductFromRecipe(recipe) {
 }
 
 module.exports = {
+  rebaseMargin,
   getAll,
   getById,
   create,

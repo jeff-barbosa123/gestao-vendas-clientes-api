@@ -604,3 +604,20 @@ a.dashboard-alert-button:hover {
   font-weight: 700;
   margin-right: 8px;
 }
+
+.dashboard-alert-list li.alert-pricing-item {
+  flex-wrap: wrap;
+}
+
+.dashboard-alert-list .alert-actions {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-alert-list .alert-suggestion {
+  color: var(--slate-500);
+  font-size: 0.8rem;
+}

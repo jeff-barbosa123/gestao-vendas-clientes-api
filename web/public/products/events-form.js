@@ -114,6 +114,7 @@ export function initEventsForm() {
         if (productType === 'produced') {
           payload.fichaTecnicaId = createRecipeId ? createRecipeId.value : null;
         }
+        if (window.SGVC && window.SGVC.stockFields) Object.assign(payload, window.SGVC.stockFields.read(createForm));
         const created = await apiRequest('/api/products', null, {
           method: 'POST',
           body: JSON.stringify(payload),

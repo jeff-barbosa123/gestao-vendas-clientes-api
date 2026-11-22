@@ -48,6 +48,14 @@ async function update(req, res, next) {
   }
 }
 
+async function rebaseMargin(req, res, next) {
+  try {
+    res.json(await productsService.rebaseMargin(req.params.id, req.user));
+  } catch (e) {
+    next(e);
+  }
+}
+
 async function remove(req, res, next) {
   try {
     res.json(await productsService.remove(req.params.id, req.user));
@@ -81,6 +89,7 @@ async function obterFichaTecnica(req, res, next) {
 }
 
 module.exports = {
+  rebaseMargin,
   list,
   getById,
   create,

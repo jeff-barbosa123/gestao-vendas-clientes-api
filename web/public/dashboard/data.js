@@ -8,6 +8,7 @@ import { renderCharts } from './charts.js';
 import {
   renderPricingAlerts,
   renderStockAlerts,
+  renderProductStockAlerts,
   updateClientAlert,
   updateProductAlert,
   updateRevenueAlert,
@@ -55,6 +56,7 @@ export async function loadUpcomingOrders() {
 export function updateMetrics(data) {
   renderPricingAlerts(data);
   renderStockAlerts(data);
+  renderProductStockAlerts(data);
   const customersValue = Number(data.customers ?? 0);
   const salesValue = Number(data.salesCount ?? 0);
   const revenueValue = Number(data.revenueTotal ?? 0);

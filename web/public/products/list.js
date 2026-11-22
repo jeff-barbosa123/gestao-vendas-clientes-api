@@ -38,6 +38,14 @@ function updateSortLabel() {
   }
 }
 
+function lowStockBadge(product) {
+  const stock = product.stock;
+  const min = product.minStock != null ? product.minStock : product.min_stock;
+  if (stock == null || min == null || Number(stock) > Number(min)) return '';
+  const title = `Estoque ${Number(stock)} (mínimo ${Number(min)})`;
+  return `<span class="products-stock-low" title="${escapeHtml(title)}">Estoque baixo</span>`;
+}
+
 export function getFilteredItems() {
   const query = String(searchInput ? searchInput.value : '').toLowerCase();
   const typeValue = String(filterType ? filterType.value : '').toLowerCase();
@@ -192,6 +200,7 @@ function renderTable(items) {
           >
             ${escapeHtml(safeName)}
           </button>
+          ${lowStockBadge(product)}
         </td>
         <td>${escapeHtml(product.description || '-')}</td>
         <td><span class="${typeClass}">${typeLabel}</span></td>

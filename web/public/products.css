@@ -357,3 +357,15 @@
   color: var(--slate-500);
   font-size: 12px;
 }
+
+.products-stock-low {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--danger-50);
+  color: var(--danger-700);
+  font-weight: 600;
+}

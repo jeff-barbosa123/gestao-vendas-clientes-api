@@ -66,7 +66,7 @@ async function overviewCounts(ownerId) {
 // Produtos so com os campos usados no alerta de precificacao (evita carregar a linha inteira).
 async function productsForPricingAlerts(ownerId) {
   const result = await query(
-    `SELECT id, name, price, purchase_price FROM products WHERE ($1::uuid IS NULL OR owner_id = $1) AND purchase_price > 0`,
+    `SELECT id, name, price, purchase_price, margin_ref FROM products WHERE ($1::uuid IS NULL OR owner_id = $1) AND purchase_price > 0`,
     [ownerId || null]
   );
   return result.rows;

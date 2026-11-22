@@ -23,23 +23,93 @@ export function renderPricingAlerts(data) {
   const alerts = Array.isArray(data.pricingAlerts) ? data.pricingAlerts : [];
   const threshold = Math.round(Number(data.lowMarginThreshold ?? 0.3) * 100);
   const below = alerts.filter((a) => a.level === 'below_cost').length;
+  const drops = alerts.filter((a) => a.level === 'margin_drop').length;
+  const low = alerts.length - below - drops;
   listEl.textContent = '';
   if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';
   if (!alerts.length) {
-    msgEl.textContent = `Todos os produtos com custo informado têm margem de pelo menos ${threshold}%.`;
+    msgEl.textContent = `Todos os produtos com custo informado mantêm a margem (mínimo de ${threshold}%).`;
     return;
   }
-  msgEl.textContent = below
-    ? `${below} produto(s) vendido(s) abaixo do custo e ${alerts.length - below} com margem abaixo de ${threshold}%.`
-    : `${alerts.length} produto(s) com margem abaixo de ${threshold}%.`;
+  const parts = [];
+  if (below) parts.push(`${below} produto(s) vendido(s) abaixo do custo`);
+  if (drops) parts.push(`${drops} com queda de margem`);
+  if (low) parts.push(`${low} com margem abaixo de ${threshold}%`);
+  msgEl.textContent = parts.join(', ') + '.';
+  const canApply = !(window.SGVC && window.SGVC.access) || window.SGVC.access.can('products:write');
+  alerts.slice(0, 4).forEach((a) => {
+    const li = document.createElement('li');
+    li.className = 'alert-pricing-item';
+    const name = document.createElement('span');
+    name.textContent = a.name;
+    const value = document.createElement('span');
+    value.className = a.level === 'below_cost' ? 'is-below-cost' : 'is-low-margin';
+    if (a.level === 'below_cost') value.textContent = 'abaixo do custo';
+    else if (a.level === 'margin_drop' && a.referenceMargin != null) value.textContent = `${Math.round(a.referenceMargin * 100)}% → ${Math.round(a.margin * 100)}%`;
+    else value.textContent = `${Math.round(a.margin * 100)}%`;
+    value.title = a.message || '';
+    li.append(name, value);
+    if (a.suggestedPrice != null) {
+      const actions = document.createElement('div');
+      actions.className = 'alert-actions';
+      const hint = document.createElement('span');
+      hint.className = 'alert-suggestion';
+      hint.textContent = `Preço sugerido: ${money(a.suggestedPrice)} (hoje ${money(a.price)})`;
+      actions.appendChild(hint);
+      if (canApply) {
+        const apply = document.createElement('button');
+        apply.type = 'button';
+        apply.className = 'button is-link is-small alert-apply';
+        apply.textContent = 'Aplicar preço';
+        apply.addEventListener('click', () => runPricingAction(apply, msgEl, `/api/products/${a.productId}`, 'PUT', { price: a.suggestedPrice }));
+        actions.appendChild(apply);
+        if (a.level === 'margin_drop') {
+          const keep = document.createElement('button');
+          keep.type = 'button';
+          keep.className = 'button is-light is-small alert-keep';
+          keep.textContent = 'Manter margem atual';
+          keep.addEventListener('click', () => runPricingAction(keep, msgEl, `/api/products/${a.productId}/margin-baseline`, 'POST', {}));
+          actions.appendChild(keep);
+        }
+      }
+      li.appendChild(actions);
+    }
+    listEl.appendChild(li);
+  });
+}
+
+async function runPricingAction(btn, msgEl, path, method, body) {
+  btn.disabled = true;
+  try {
+    await window.apiRequest(path, null, { method, body: JSON.stringify(body) });
+    window.location.reload();
+  } catch (err) {
+    msgEl.textContent = (err && err.message) || 'Não foi possível concluir a ação.';
+    btn.disabled = false;
+  }
+}
+
+export function renderProductStockAlerts(data) {
+  const countEl = document.getElementById('alert-product-stock-count');
+  const msgEl = document.getElementById('alert-product-stock-message');
+  const listEl = document.getElementById('alert-product-stock-list');
+  if (!msgEl || !listEl) return;
+  const alerts = Array.isArray(data.productStockAlerts) ? data.productStockAlerts : [];
+  listEl.textContent = '';
+  if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';
+  if (!alerts.length) {
+    msgEl.textContent = 'Nenhum produto abaixo do estoque mínimo. Defina o mínimo no cadastro do produto para receber o aviso.';
+    return;
+  }
+  msgEl.textContent = `${alerts.length} produto(s) no estoque mínimo ou abaixo.`;
   alerts.slice(0, 4).forEach((a) => {
     const li = document.createElement('li');
     const name = document.createElement('span');
     name.textContent = a.name;
     const value = document.createElement('span');
-    value.className = a.level === 'below_cost' ? 'is-below-cost' : 'is-low-margin';
-    value.textContent = a.level === 'below_cost' ? 'abaixo do custo' : `${Math.round(a.margin * 100)}%`;
-    value.title = a.message || '';
+    value.className = 'is-below-cost';
+    value.textContent = `${a.stock} un.`;
+    value.title = `Mínimo: ${a.minStock} un.`;
     li.append(name, value);
     listEl.appendChild(li);
   });

@@ -16,6 +16,9 @@ function normalizeProduct(row) {
     cmv_previsto: toNumber(row.cmv_previsto),
     cmv_futuro: toNumber(row.cmv_futuro),
     stock: row.stock == null ? null : Number(row.stock),
+    min_stock: row.min_stock == null ? null : Number(row.min_stock),
+    minStock: row.min_stock == null ? null : Number(row.min_stock),
+    margin_ref: row.margin_ref == null ? null : Number(row.margin_ref),
   };
 }
 
@@ -75,14 +78,16 @@ async function createProduct(data) {
     data_vinculo: data.data_vinculo || null,
     status_produto: data.statusProduto || "ATIVO",
     stock: data.stock != null ? data.stock : null,
+    min_stock: data.min_stock != null ? data.min_stock : null,
+    margin_ref: data.margin_ref != null ? data.margin_ref : null,
   };
 
   const result = await query(
     `INSERT INTO products
       (id, name, description, price, purchase_price, product_type, owner_id, ficha_tecnica_id,
        custo_por_unidade, preco_minimo, preco_minimo_sugerido, cmv_previsto, cmv_futuro,
-       data_vinculo, status_produto, stock, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,NOW())
+       data_vinculo, status_produto, stock, min_stock, margin_ref, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,NOW())
      RETURNING *`,
     [
       payload.id,
@@ -101,6 +106,8 @@ async function createProduct(data) {
       payload.data_vinculo,
       payload.status_produto,
       payload.stock,
+      payload.min_stock,
+      payload.margin_ref,
     ]
   );
   return normalizeProduct(result.rows[0]);
@@ -138,6 +145,8 @@ async function updateProduct(id, payload) {
            data_vinculo = CASE WHEN $23::boolean THEN NULL ELSE COALESCE($14, data_vinculo) END,
            status_produto = COALESCE($15, status_produto),
            stock = COALESCE($16, stock),
+           min_stock = CASE WHEN $24::boolean THEN NULL ELSE COALESCE($25, min_stock) END,
+           margin_ref = COALESCE($26, margin_ref),
            updated_at = NOW()
      WHERE id = $1
      RETURNING *`,
@@ -161,9 +170,37 @@ async function updateProduct(id, payload) {
       // Flags de limpeza: null explícito no payload zera o campo (ex.: remover ficha técnica).
       // Sem isso o COALESCE mantinha o valor antigo e o produto continuava vinculado.
       ...LINK_FIELDS.map((field) => isExplicitNull(payload, field)),
+      isExplicitNull(payload, "min_stock"),
+      payload.min_stock ?? null,
+      payload.margin_ref ?? null,
     ]
   );
   return normalizeProduct(result.rows[0] || null);
+}
+
+// Margem de referencia = margem atual (o usuario aceita o custo/preco de hoje como novo padrao).
+async function rebaseMarginRef(id) {
+  const result = await query(
+    `UPDATE products
+        SET margin_ref = CASE WHEN price > 0 AND purchase_price > 0 THEN ROUND((price - purchase_price) / price, 4) ELSE NULL END,
+            updated_at = NOW()
+      WHERE id = $1 RETURNING *`,
+    [id]
+  );
+  return normalizeProduct(result.rows[0] || null);
+}
+
+// Produtos ativos com estoque controlado e quantidade no minimo ou abaixo.
+async function listLowStockProducts(ownerId) {
+  const result = await query(
+    `SELECT id, name, stock, min_stock FROM products
+      WHERE ($1::uuid IS NULL OR owner_id = $1)
+        AND stock IS NOT NULL AND min_stock IS NOT NULL AND stock <= min_stock
+        AND status_produto <> 'INATIVO'
+      ORDER BY (stock - min_stock), lower(name)`,
+    [ownerId || null]
+  );
+  return result.rows.map((r) => ({ productId: r.id, name: r.name, stock: Number(r.stock), minStock: Number(r.min_stock) }));
 }
 
 async function deleteProduct(id) {
@@ -199,4 +236,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   adjustProductStock,
+  rebaseMarginRef,
+  listLowStockProducts,
 };

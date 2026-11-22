@@ -50,6 +50,7 @@ export function initEventsForm() {
         statusProduto: statusSelect.value,
         productType,
       };
+      if (window.SGVC && window.SGVC.stockFields) Object.assign(payload, window.SGVC.stockFields.read(document.getElementById('edit-form'), { editing: true }));
       if (!validateName(payload.name)) {
         setFieldError(nameInput, nameError, 'Nome deve ter 3 a 120 caracteres.');
         return;
@@ -95,6 +96,7 @@ export function initEventsForm() {
           body: JSON.stringify(payload),
         });
         if (window.SGVC && window.SGVC.customFields) await window.SGVC.customFields.save('product', productId, document.getElementById('edit-form'));
+        if (window.SGVC && window.SGVC.stockFields) window.SGVC.stockFields.rebase(document.getElementById('edit-form'));
         showMessage('Produto atualizado.', 'is-success');
         sessionStorage.setItem(UPDATED_FLAG, 'true');
         state.original = {

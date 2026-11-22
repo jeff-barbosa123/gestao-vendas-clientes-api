@@ -22,6 +22,7 @@ const ALL_PERMISSIONS = [
   'ingredients:read', 'ingredients:write',
   'analytics:read',
   'finance:view', // CMV, lucro, margem, preco minimo, relatorios e simulacao de preco
+  'finance:manage', // lancar, pagar, cancelar e reabrir contas a pagar/receber
   'cost:view', // custo de compra / custo por unidade
   'export:use',
   'branding:write',
@@ -54,6 +55,10 @@ const MODULES = {
   producao: {
     label: 'Produção e fichas técnicas',
     description: 'Insumos, fichas técnicas e vínculo com produtos. Ideal para alimentação e produção artesanal.',
+  },
+  financeiro: {
+    label: 'Financeiro',
+    description: 'Contas a pagar e a receber, fluxo de caixa e DRE simples com o CMV das vendas.',
   },
   crm: {
     label: 'CRM leve',

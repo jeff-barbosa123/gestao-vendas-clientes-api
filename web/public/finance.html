@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGVC | Financeiro</title>
+    <meta name="description" content="Contas a pagar e a receber, fluxo de caixa e DRE simples." />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap"
+    />
+    <link rel="stylesheet" href="/static/base.css" />
+    <link rel="stylesheet" href="/theme.css" />
+    <link rel="stylesheet" href="/finance.css" />
+    <script src="/config.js" defer></script>
+    <script src="/static/nav.js" defer></script>
+    <script src="/static/error-handler.js" defer></script>
+    <script src="/static/api-client.js" defer></script>
+    <script src="/static/access.js" defer></script>
+    <script src="/static/utils.js" defer></script>
+  </head>
+  <body>
+    <main id="main">
+      <div class="background">
+        <section class="fin-wrapper">
+          <header class="fin-header">
+            <h1 class="fin-title">Financeiro</h1>
+            <p class="fin-subtitle">Contas a pagar e a receber, fluxo de caixa e DRE simples com o CMV das vendas.</p>
+          </header>
+
+          <div class="notification is-light fin-message" id="fin-message" role="status" aria-live="polite" hidden></div>
+
+          <dl class="fin-kpis" id="fin-kpis"></dl>
+
+          <nav class="fin-tabs" role="tablist" aria-label="Seções do financeiro">
+            <button type="button" class="button is-light is-small" role="tab" data-tab="entries" aria-pressed="true">Contas</button>
+            <button type="button" class="button is-light is-small" role="tab" data-tab="cashflow" aria-pressed="false">Fluxo de caixa</button>
+            <button type="button" class="button is-light is-small" role="tab" data-tab="dre" aria-pressed="false">DRE</button>
+          </nav>
+
+          <section class="panel-card" id="tab-entries">
+            <form class="fin-form" id="fin-form" novalidate hidden>
+              <h2 class="fin-section-title">Novo lançamento</h2>
+              <div class="fin-grid">
+                <div class="field"><label class="label" for="f-kind">Tipo</label>
+                  <select class="input" id="f-kind"><option value="PAYABLE">A pagar</option><option value="RECEIVABLE">A receber</option></select></div>
+                <div class="field"><label class="label" for="f-desc">Descrição</label>
+                  <input class="input" id="f-desc" maxlength="160" required /></div>
+                <div class="field"><label class="label" for="f-amount">Valor (R$)</label>
+                  <input class="input" id="f-amount" type="number" step="0.01" min="0.01" inputmode="decimal" required /></div>
+                <div class="field"><label class="label" for="f-due">Vencimento</label>
+                  <input class="input" id="f-due" type="date" required /></div>
+                <div class="field"><label class="label" for="f-inst">Parcelas</label>
+                  <input class="input" id="f-inst" type="number" min="1" max="24" value="1" inputmode="numeric" /></div>
+                <div class="field"><label class="label" for="f-cat">Categoria</label>
+                  <input class="input" id="f-cat" maxlength="60" /></div>
+              </div>
+              <button class="button is-link" type="submit">Lançar</button>
+            </form>
+
+            <h2 class="fin-section-title">Lançamentos</h2>
+            <div class="fin-filters">
+              <select class="input" id="flt-kind" aria-label="Tipo">
+                <option value="">Todos os tipos</option><option value="PAYABLE">A pagar</option><option value="RECEIVABLE">A receber</option>
+              </select>
+              <select class="input" id="flt-status" aria-label="Situação">
+                <option value="">Todas as situações</option><option value="OPEN">Em aberto</option><option value="OVERDUE">Vencidas</option>
+                <option value="PAID">Pagas</option><option value="CANCELED">Canceladas</option>
+              </select>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth">
+                <thead><tr><th>Vencimento</th><th>Descrição</th><th>Tipo</th><th class="has-text-right">Valor</th><th>Situação</th><th></th></tr></thead>
+                <tbody id="fin-body"><tr class="is-empty"><td colspan="6">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel-card" id="tab-cashflow" hidden>
+            <div class="fin-filters">
+              <input class="input" type="date" id="cf-from" aria-label="De" />
+              <input class="input" type="date" id="cf-to" aria-label="Até" />
+              <select class="input" id="cf-group" aria-label="Agrupar"><option value="day">Por dia</option><option value="month">Por mês</option></select>
+              <button class="button is-link is-small" type="button" id="cf-go">Atualizar</button>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth">
+                <thead><tr><th>Período</th><th class="has-text-right">Vendas</th><th class="has-text-right">Recebidos</th><th class="has-text-right">Pagos</th>
+                  <th class="has-text-right">Saldo</th><th class="has-text-right">Acumulado</th><th class="has-text-right">Previsto +</th><th class="has-text-right">Previsto −</th></tr></thead>
+                <tbody id="cf-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel-card" id="tab-dre" hidden>
+            <div class="fin-filters">
+              <input class="input" type="date" id="dre-from" aria-label="De" />
+              <input class="input" type="date" id="dre-to" aria-label="Até" />
+              <button class="button is-link is-small" type="button" id="dre-go">Atualizar</button>
+            </div>
+            <div class="table-container">
+              <table class="table is-fullwidth"><tbody id="dre-body"></tbody></table>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">&copy; SGVC &middot; Vers&atilde;o 1.0.0</footer>
+
+    <script src="/finance.js" defer></script>
+  </body>
+</html>

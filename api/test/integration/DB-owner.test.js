@@ -19,7 +19,7 @@ describe('DB - isolamento multiempresa (owner_id NOT NULL + FK)', () => {
       `SELECT conrelid::regclass::text AS tbl FROM pg_constraint
         WHERE contype='f' AND confrelid='users'::regclass AND conname LIKE '%_owner_id_fkey'`
     );
-    expect(rows.map((r) => r.tbl).sort()).to.deep.equal([...TABLES, 'company_settings', 'company_modules','custom_fields', 'cash_registers', 'cash_movements', 'sale_payments', 'customer_interactions', 'memberships', 'team_invitations'].sort());
+    expect(rows.map((r) => r.tbl).sort()).to.deep.equal([...TABLES, 'company_settings', 'company_modules','custom_fields', 'cash_registers', 'cash_movements', 'sale_payments', 'customer_interactions', 'financial_entries', 'memberships', 'team_invitations'].sort());
   });
 
   it('DB-OWN-003 | Inserir cliente sem dono ou com dono inexistente e rejeitado', async () => {

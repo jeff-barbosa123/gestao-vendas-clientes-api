@@ -10,6 +10,7 @@
     '/orders.html': { perm: 'orders:read', module: 'encomendas' },
     '/clients.html': { perm: 'customers:read' },
     '/crm.html': { perm: 'customers:read', module: 'crm' },
+    '/finance.html': { perm: 'finance:view', module: 'financeiro' },
     '/client-edit.html': { perm: 'customers:read' },
     '/products.html': { perm: 'products:read' },
     '/product-edit.html': { perm: 'products:read' },

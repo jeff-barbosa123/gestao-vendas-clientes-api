@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-23 - Logotipo White-Label na navbar
+
+- O logotipo da empresa agora aparece no canto esquerdo da navbar (`static/nav.js`), no lugar do texto "SGVC": altura 32px, `object-fit: contain`, largura automatica (max 160px) e chip claro atras para logos escuros/transparentes. Sem logo (ou falha da API) o texto "SGVC" permanece. A navbar existe nas telas internas (nao em login/Aparencia).
+- Removida a miniatura espremida ao lado do avatar no dashboard (`branding.js` so mostra o nome da empresa; CSS `.brand-logo` removido).
+- Persistencia confirmada: o logo e gravado no PostgreSQL (`company_settings.logo_data BYTEA` + `logo_mime`, ate 512 KB, PNG/JPG/WebP; WebP vira PNG) e servido por `GET /api/branding/logo?v=<versao>`. Nada em disco local: sobrevive a restart/redeploy no Render gratuito (so se perde se o proprio banco gratuito expirar, em 30 dias).
+- Cypress appearance: +2 testes (altura 28-36px, proporcao 4:1 preservada, object-fit contain, fallback SGVC).
+
 ## 2026-11-23 - Preparacao para o Render (plano gratuito)
 
 - `render.yaml` (Blueprint): PostgreSQL + API + Web; build da API pelo lockfile da raiz (`npm ci --workspace=api --omit=dev`), `db:init` (idempotente) antes de subir, segredos JWT gerados pelo Render, `/health` como health check.

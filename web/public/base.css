@@ -577,6 +577,20 @@ a:focus-visible {
   text-decoration: none;
 }
 
+.app-nav-brand.has-logo { display: inline-flex; align-items: center; flex: none; letter-spacing: 0; }
+.app-nav-logo {
+  display: block;
+  height: 32px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  flex: none;
+  /* fundo claro garante leitura de logos escuros ou com transparencia sobre a navbar */
+  background: rgb(var(--rgb-white) / 0.92);
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
 .app-nav-links {
   display: flex;
   flex-wrap: wrap;

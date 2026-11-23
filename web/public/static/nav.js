@@ -4,6 +4,34 @@
  * destacando a tela atual. Não depende de nenhuma outra biblioteca.
  */
 (() => {
+
+  // Logotipo White-Label da empresa no canto esquerdo da navbar (no lugar do texto "SGVC").
+  // Sem logo (ou se a API falhar) o texto "SGVC" permanece. A imagem vem do banco via /api/branding/logo.
+  function applyCompanyLogo(brand) {
+    const run = async () => {
+      try {
+        const api = window.SGVC && window.SGVC.api;
+        if (!api) return;
+        const dto = await api.request('/api/branding', { method: 'GET', skipAuth: true });
+        if (!dto || !dto.hasLogo || !dto.logoUrl) return;
+        const name = dto.companyName || 'SGVC';
+        const img = document.createElement('img');
+        img.id = 'brand-logo';
+        img.className = 'app-nav-logo';
+        img.alt = 'Logotipo ' + name;
+        img.decoding = 'async';
+        img.src = dto.logoUrl;
+        brand.textContent = '';
+        brand.classList.add('has-logo');
+        brand.setAttribute('aria-label', name);
+        brand.appendChild(img);
+      } catch (_err) {
+        // identidade e opcional: o menu continua com o texto SGVC
+      }
+    };
+    if (document.readyState === 'complete') run();
+    else window.addEventListener('load', run, { once: true });
+  }
   const ITEMS = [
     { href: '/dashboard.html', label: 'Painel' },
     { href: '/sales.html', label: 'Vendas' },
@@ -40,6 +68,7 @@
     brand.href = '/dashboard.html';
     brand.textContent = 'SGVC';
     inner.appendChild(brand);
+    applyCompanyLogo(brand);
 
     const toggle = document.createElement('button');
     toggle.type = 'button';

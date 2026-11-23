@@ -122,9 +122,36 @@ describe('Aparência (White-Label)', () => {
     cy.intercept('GET', '**/api/branding', { statusCode: 200, body: { ...DEFAULT_DTO, companyName: 'Doces da Ana', hasLogo: true, logoUrl: '/api/branding/logo?v=1' } });
     cy.visit('/dashboard.html');
     cy.get('#brand-name').should('contain', 'Doces da Ana');
-    cy.get('#brand-logo').should('have.attr', 'src', '/api/branding/logo?v=1');
+    // o logotipo mora na navbar (canto esquerdo), nunca ao lado do avatar do usuario
+    cy.get('.app-nav-brand #brand-logo').should('have.attr', 'src', '/api/branding/logo?v=1');
+    cy.get('.dashboard-userbox #brand-logo').should('not.exist');
     cy.get('#appearance-btn').click();
     cy.location('pathname').should('eq', '/appearance.html');
+  });
+
+  it('logotipo na navbar: 32-36px de altura, object-fit contain, sem distorcer', () => {
+    cy.intercept('GET', '**/api/branding', { statusCode: 200, body: { ...DEFAULT_DTO, companyName: 'Doces da Ana', hasLogo: true, logoUrl: '/api/branding/logo?v=1' } });
+    // imagem larga (200x50) para provar que a proporcao e preservada
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50"><rect width="200" height="50" fill="#2563eb"/></svg>';
+    cy.intercept('GET', '**/api/branding/logo*', { statusCode: 200, headers: { 'content-type': 'image/svg+xml' }, body: svg });
+    ['/dashboard.html'].forEach((page) => {
+      cy.visit(page);
+      cy.get('.app-nav-brand #brand-logo').should(($img) => {
+        const r = $img[0].getBoundingClientRect();
+        expect(r.height, 'altura').to.be.within(28, 36);
+        expect($img[0].naturalWidth, 'carregou').to.be.greaterThan(0);
+        expect(r.width / r.height, 'proporcao 4:1').to.be.closeTo(4, 0.15);
+        expect(getComputedStyle($img[0]).objectFit).to.eq('contain');
+      });
+      cy.get('.app-nav-brand').should('not.contain', 'SGVC').and('have.attr', 'aria-label', 'Doces da Ana');
+    });
+  });
+
+  it('sem logotipo a navbar mantem o texto SGVC', () => {
+    cy.intercept('GET', '**/api/branding', { statusCode: 200, body: DEFAULT_DTO });
+    cy.visit('/dashboard.html');
+    cy.get('.app-nav-brand').should('contain', 'SGVC');
+    cy.get('#brand-logo').should('not.exist');
   });
 
   it('o servidor web entrega /theme.css como CSS (tema padrão para visitante)', () => {

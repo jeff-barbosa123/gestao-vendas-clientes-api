@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-23 - Preparacao para o Render (plano gratuito)
+
+- `render.yaml` (Blueprint): PostgreSQL + API + Web; build da API pelo lockfile da raiz (`npm ci --workspace=api --omit=dev`), `db:init` (idempotente) antes de subir, segredos JWT gerados pelo Render, `/health` como health check.
+- Correcao: `dotenv` passou de devDependencies para dependencies (o `loadEnv` o usa em runtime; o build de producao omite dev e a API nao subia).
+- Web: `/config.js` agora tem prioridade sobre `public/config.js` (que apontava para localhost:4000) e, em producao, devolve `API_BASE` vazio (mesma origem via proxy `/api`; cookies SameSite=strict e CSRF exigem isso) e timeout de 60 s para o "acordar" do plano gratuito. Opcionais: `PUBLIC_API_BASE`, `REQUEST_TIMEOUT_MS`.
+- API: o redirect HTTP->HTTPS de producao nao se aplica ao `/health` (o health check do Render chega por HTTP). Mocha US027 (3).
+- `docs/CHECKLIST-DEPLOY.md`: secao 7 com limites do plano gratuito, cliques no painel, variaveis, validacao e problemas comuns.
+
 ## 2026-11-22 - Ajustes pre-producao
 
 - Botao discreto "Instalar app" no menu (`#pwa-install`): oculto ate o navegador disparar `beforeinstallprompt`; um clique chama `SGVC.installApp()` e some apos o prompt/instalacao. Cypress FASE8-PWA-004.

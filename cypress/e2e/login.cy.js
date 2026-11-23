@@ -349,7 +349,8 @@ describe('Login UI', () => {
     cy.get('#login-btn').click();
     cy.wait('@loginRemember');
 
-    cy.window().then((win) => {
+    // should() refaz a leitura ate passar (o app grava/limpa o storage depois da resposta do login)
+    cy.window().should((win) => {
       // Email ainda salva em localStorage (não é sensível)
       const saved = win.localStorage.getItem('sgvc.rememberEmail');
       expect(saved).to.equal('admin@negocio.com');
@@ -373,7 +374,7 @@ describe('Login UI', () => {
     cy.get('#login-btn').click();
     cy.wait('@loginNoRemember');
 
-    cy.window().then((win) => {
+    cy.window().should((win) => {
       const saved = win.localStorage.getItem('sgvc.rememberEmail');
       expect(saved).to.be.null;
       expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;

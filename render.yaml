@@ -1,0 +1,80 @@
+# Blueprint do Render (plano gratuito): PostgreSQL + API + Web.
+# Guia de cliques: docs/CHECKLIST-DEPLOY.md (secao "Render").
+#
+# ATENCAO aos nomes: o subdominio *.onrender.com e unico no mundo. Se "sgvc-web"/"sgvc-api" ja estiverem
+# em uso, o Render acrescenta um sufixo; nesse caso ajuste ALLOWED_ORIGINS, WEB_BASE_URL (API) e API_BASE (Web)
+# para as URLs reais e faca "Manual Deploy" nos dois servicos.
+
+databases:
+  - name: sgvc-db
+    plan: free # expira em 30 dias (limite do plano gratuito do Render)
+    region: virginia
+    databaseName: sgvc
+    user: sgvc
+
+services:
+  # ---------- API (Node/Express) ----------
+  - type: web
+    name: sgvc-api
+    runtime: node
+    plan: free
+    region: virginia
+    # Usa o package-lock.json da raiz (workspace "api"), o mesmo dos testes.
+    buildCommand: npm ci --workspace=api --omit=dev
+    # db:init e idempotente (schema.sql + migracoes pendentes); depois sobe a API em producao.
+    startCommand: npm run db:init --workspace=api && npm start --workspace=api
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sgvc-db
+          property: connectionString # URL interna (rede privada do Render, sem SSL)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: RESET_TOKEN_SECRET
+        generateValue: true
+      - key: EMAIL_VERIFY_TOKEN_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: https://sgvc-web.onrender.com
+      - key: WEB_BASE_URL
+        value: https://sgvc-web.onrender.com
+      # Quantos proxies existem na frente da API: Web (proxy do SGVC) + balanceador do Render.
+      - key: TRUST_PROXY_HOPS
+        value: 2
+      # Preencher no painel na criacao (nao vai para o Git): e-mails (virgula) com acesso a /error-monitoring.html.
+      - key: PLATFORM_ADMIN_EMAILS
+        sync: false
+      # Validacao sem SMTP: e-mails vao para uma caixa de teste (Ethereal) e o link de pré-visualizacao aparece
+      # nos logs da API. Quando configurar SMTP real, APAGUE esta variavel (ela tem prioridade sobre o SMTP).
+      - key: EMAIL_USE_ETHEREAL
+        value: "true"
+      # Adicione depois, na aba Environment, quando precisar: SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER,
+      # SMTP_PASS, SMTP_FROM (e-mail real) e GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI (login Google).
+
+  # ---------- Web (front + proxy /api) ----------
+  - type: web
+    name: sgvc-web
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: web
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      # Servico gratuito nao recebe trafego da rede privada: o Web chama a API pela URL publica.
+      - key: API_BASE
+        value: https://sgvc-api.onrender.com

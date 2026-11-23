@@ -48,7 +48,8 @@ function securityHeaders(req, res, next) {
   // Force HTTPS in production
   if (isProduction) {
     const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-    if (protocol === 'http') {
+    // /health fica fora do redirect: o health check do Render chega por HTTP, direto na porta do servico.
+    if (protocol === 'http' && req.path !== '/health') {
       const httpsUrl = `https://${req.get('host')}${req.originalUrl}`;
       return res.redirect(301, httpsUrl);
     }

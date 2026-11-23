@@ -4,8 +4,8 @@
  * - Icones/fontes: cache primeiro.
  * - NUNCA guarda /api, requisicoes que nao sejam GET, nem outros dominios (dados e sessao ficam sempre na rede).
  */
-const VERSION = 'sgvc-v2';
-const SHELL = ['/offline.html', '/icons/icon-192.png', '/static/base.css'];
+const VERSION = 'sgvc-v3';
+const SHELL = ['/offline.html', '/offline.css', '/offline.js', '/icons/icon-192.png', '/static/base.css'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

@@ -89,6 +89,17 @@ app.get('/theme.css', (req, res) => {
   proxyToApi(req, res);
 });
 
+// Em producao o navegador fala com a API pela mesma origem (/api, via proxy acima): cookies de sessao e CSRF
+// funcionam sem CORS (sgvc-web.onrender.com e sgvc-api.onrender.com seriam "cross-site"). Para apontar o
+// navegador direto para outra URL, defina PUBLIC_API_BASE. Fica ANTES do express.static para ter
+// prioridade sobre o arquivo public/config.js (que aponta para localhost:4000, so valido em dev). O timeout maior cobre o "acordar" do plano gratis.
+const PUBLIC_API_BASE = process.env.PUBLIC_API_BASE !== undefined ? process.env.PUBLIC_API_BASE : (isProd ? '' : `http://localhost:${PORT}`);
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS) || (isProd ? 60000 : 10000);
+app.get('/config.js', (_req, res) => {
+  res.type('application/javascript');
+  res.send(`window.APP_CONFIG = ${JSON.stringify({ API_BASE: PUBLIC_API_BASE, REQUEST_TIMEOUT_MS })};`);
+});
+
 app.disable('x-powered-by');
 // Producao: ETag + revalidacao (304) em vez de no-store; dev/testes mantem no-store.
 const IS_PROD = process.env.NODE_ENV === 'production';
@@ -128,11 +139,6 @@ app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   next();
-});
-
-app.get('/config.js', (_req, res) => {
-  res.type('application/javascript');
-  res.send(`window.APP_CONFIG = { API_BASE: "${API_BASE}" };`);
 });
 
 app.get('/', (_req, res) => {

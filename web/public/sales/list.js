@@ -108,7 +108,16 @@ function updatePagination(total) {
 function renderTable(itemsList) {
   tableBody.innerHTML = '';
   if (!itemsList || !itemsList.length) {
-    tableBody.innerHTML = '<tr class="sales-empty"><td colspan="6">Nenhuma venda encontrada.</td></tr>';
+    tableBody.innerHTML = window.SGVC.emptyRow(6, {
+      cls: 'sales-empty',
+      hasData: state.salesCache.length > 0,
+      none: 'Nenhuma venda registrada ainda.',
+      hint: 'Registre a primeira venda no formulário acima ou pelo Caixa/PDV.',
+      filtered: 'Nenhuma venda encontrada para esta busca ou filtro.',
+      cta: { label: 'Registrar primeira venda', focus: '#create-customer' },
+      clear: '#search-input',
+      click: '#filter-clear',
+    });
     return;
   }
   itemsList.forEach((sale) => {

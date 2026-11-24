@@ -110,6 +110,6 @@ describe('SGVC - Navegacao e dashboard', () => {
     cy.loginAsAdmin();
     cy.openClientsFromDashboard();
     cy.wait('@emptyList');
-    cy.get('#clients-body').should('contain', 'Nenhum cliente encontrado');
+    cy.get('#clients-body').should('contain', 'Nenhum cliente cadastrado ainda');
   });
 });

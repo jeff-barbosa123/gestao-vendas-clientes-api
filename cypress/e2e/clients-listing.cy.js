@@ -56,6 +56,8 @@ describe('Listagem, filtros e ordenacao de clientes', () => {
     });
 
     it('Permite scroll vertical', () => {
+      // 10 linhas ja cabem em ~420px (max-height): forca um limite menor para testar a rolagem de forma deterministica
+      cy.get('.table-container').invoke('css', 'max-height', '150px');
       cy.get('.table-container').scrollTo('bottom');
       cy.get('.table-container').should(($el) => {
         expect($el[0].scrollTop).to.be.greaterThan(0);

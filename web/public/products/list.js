@@ -171,8 +171,16 @@ function updatePagination(total) {
 function renderTable(items) {
   tableBody.innerHTML = '';
   if (!items || !items.length) {
-    tableBody.innerHTML =
-      '<tr class="products-empty"><td colspan="7">Nenhum produto encontrado. Tente buscar por outro nome.</td></tr>';
+    tableBody.innerHTML = window.SGVC.emptyRow(7, {
+      cls: 'products-empty',
+      hasData: state.productsCache.length > 0,
+      none: 'Nenhum produto cadastrado ainda.',
+      hint: 'Cadastre o primeiro produto para usá-lo em vendas e fichas técnicas.',
+      filtered: 'Nenhum produto encontrado para esta busca ou filtro.',
+      cta: { label: 'Cadastrar primeiro produto', focus: '#create-name' },
+      clear: '#search-input',
+      click: '#filter-clear',
+    });
     return;
   }
   items.forEach((product) => {

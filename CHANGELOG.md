@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-24 - Estados vazios padronizados
+
+- Novo helper `static/empty-state.js` (`SGVC.emptyRow`) usado em Clientes, Produtos, Fichas tecnicas, Vendas, Financeiro (lancamentos) e Insumos.
+- "Nada cadastrado ainda": mensagem + dica + botao de acao que leva ao formulario (ex.: "Cadastrar primeiro cliente"; o botao some se o formulario estiver oculto por permissao). "Busca/filtro sem resultado": mensagem propria + "Limpar busca e filtros". Criterio: lista de origem vazia x filtro que zerou os resultados.
+- Ids e classes das linhas vazias mantidos (`clients-body`, `products-empty`, `empty-row`, `sales-empty`, `is-empty`). Estilo so com design tokens.
+- Cypress: `empty-states.cy.js` (4); texto do estado vazio ajustado em `dashboard.cy.js`; `clients-listing.cy.js` "Permite scroll vertical" agora forca um `max-height` menor (10 linhas ja cabiam em 420px, o teste dependia de altura de linha).
+
 ## 2026-11-24 - Sidebar com grupos recolhiveis
 
 - Os grupos com mais de um item (Operacao, Catalogo & Custos, Clientes & Financeiro) viraram botoes que recolhem/expandem os links (clique, Enter, Espaco; `aria-expanded`). Painel e Conta nao recolhem: o rodape segue sempre visivel.

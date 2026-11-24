@@ -114,7 +114,15 @@ function renderTable(items) {
   if (!tableBody) return;
   tableBody.innerHTML = '';
   if (!items || !items.length) {
-    tableBody.innerHTML = '<tr class="empty-row"><td colspan="7">Nenhuma ficha t\u00e9cnica encontrada. Cadastre a primeira acima.</td></tr>';
+    tableBody.innerHTML = window.SGVC.emptyRow(7, {
+      cls: 'empty-row',
+      hasData: state.recipesCache.length > 0,
+      none: 'Nenhuma ficha técnica cadastrada ainda.',
+      hint: 'A ficha técnica calcula o custo e o preço ideal de cada receita.',
+      filtered: 'Nenhuma ficha técnica encontrada para esta busca.',
+      cta: { label: 'Cadastrar primeira ficha', focus: '#create-name' },
+      clear: '#search-input',
+    });
     return;
   }
   items.forEach((recipe) => {

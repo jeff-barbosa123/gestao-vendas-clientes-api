@@ -208,13 +208,16 @@ function updatePagination(total) {
 function renderTable(items) {
   tableBody.innerHTML = '';
   if (!items || !items.length) {
-    const emptyRow = document.createElement('tr');
-    emptyRow.className = 'empty-row';
-    const emptyCell = document.createElement('td');
-    emptyCell.colSpan = 8;
-    emptyCell.textContent = 'Nenhum cliente encontrado. Tente buscar por outro nome ou e-mail.';
-    emptyRow.appendChild(emptyCell);
-    tableBody.appendChild(emptyRow);
+    tableBody.innerHTML = window.SGVC.emptyRow(8, {
+      cls: 'empty-row',
+      hasData: state.customersCache.length > 0,
+      none: 'Nenhum cliente cadastrado ainda.',
+      hint: 'Cadastre o primeiro cliente para acompanhar compras e aniversários.',
+      filtered: 'Nenhum cliente encontrado para esta busca ou filtro.',
+      cta: { label: 'Cadastrar primeiro cliente', focus: '#create-name' },
+      clear: '#search-input',
+      click: '[data-filter="all"]',
+    });
     return;
   }
   items.forEach((customer) => {

@@ -113,9 +113,15 @@
     const list = term ? items.filter((i) => i.name.toLowerCase().includes(term)) : items;
     els.count.textContent = `(${items.length})`;
     if (!list.length) {
-      els.tbody.innerHTML = `<tr><td colspan="7">${
-        items.length ? 'Nenhum insumo encontrado para a busca.' : 'Nenhum insumo cadastrado ainda. Comece pelo formulário acima.'
-      }</td></tr>`;
+      els.tbody.innerHTML = window.SGVC.emptyRow(7, {
+        cls: 'is-empty',
+        hasData: items.length > 0,
+        none: 'Nenhum insumo cadastrado ainda.',
+        hint: 'Cadastre os insumos para calcular o custo das fichas técnicas e controlar o estoque.',
+        filtered: 'Nenhum insumo encontrado para a busca.',
+        cta: { label: 'Cadastrar primeiro insumo', focus: '#ing-name' },
+        clear: '#ing-search',
+      });
       return;
     }
     els.tbody.innerHTML = list

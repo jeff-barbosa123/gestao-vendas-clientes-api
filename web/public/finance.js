@@ -59,7 +59,15 @@
   function renderEntries() {
     const body = $('fin-body');
     if (!entries.length) {
-      body.innerHTML = '<tr class="is-empty"><td colspan="6">Nenhum lançamento encontrado.</td></tr>';
+      body.innerHTML = window.SGVC.emptyRow(6, {
+        cls: 'is-empty',
+        hasData: !!($('flt-kind').value || $('flt-status').value),
+        none: 'Nenhum lançamento cadastrado ainda.',
+        hint: 'Lance contas a pagar e a receber para acompanhar vencimentos e o fluxo de caixa.',
+        filtered: 'Nenhum lançamento encontrado para este filtro.',
+        cta: { label: 'Criar primeiro lançamento', focus: '#f-desc' },
+        clear: '#flt-kind,#flt-status',
+      });
       return;
     }
     body.innerHTML = entries.map((e) => {

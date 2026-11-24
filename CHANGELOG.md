@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-23 - Ajustes de UX da sidebar
+
+- `profile.html` agora carrega `static/access.js`: o Perfil passa a mostrar Equipe ao dono e a filtrar o menu por permissao/modulo, como as demais telas.
+- Rodape "Conta" (Perfil, Equipe, Aparencia, Sair) fixo no fim da coluna; so a lista principal rola (`.app-nav-panel` + `ul.app-nav-footer`). Espacamento um pouco mais compacto.
+- Menu mobile fecha com Esc (devolvendo o foco ao botao), ao clicar em um link e ao tocar fora.
+- Foco por teclado com contorno proprio (distinto do hover), tambem sobre o item ativo.
+- Corrigida regressao de contraste da sidebar anterior: os links usavam `--slate-200` (escuro no tema Grafite, contraste 1,37:1); voltaram a `--slate-800`. A spec `accessibility.cy.js` voltou a passar (25/25).
+- Cypress: `sidebar-nav.cy.js` ganhou 4 testes (altura baixa, Esc/fora/link, foco, Perfil com permissoes).
+
 ## 2026-11-23 - Sidebar lateral fixa
 
 - A barra horizontal do topo virou uma sidebar fixa a esquerda (240px, tema escuro, design tokens) em todas as telas internas (`static/nav.js` + `base.css`). Em < 768px vira barra superior com botao "Menu" (abre/fecha a lista).

@@ -59,7 +59,7 @@
       if (req && !allowed(req)) hide(a.closest('li') || a);
     });
     const list = document.querySelector('.app-nav-links');
-    if (list && allowed({ perm: 'team:manage' }) && state.user && Array.isArray(state.user.permissions) && !list.querySelector('a[href="/team.html"]')) {
+    if (list && allowed({ perm: 'team:manage' }) && state.user && Array.isArray(state.user.permissions) && !document.querySelector('.app-nav a[href="/team.html"]')) {
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = '/team.html';
@@ -69,8 +69,8 @@
         a.setAttribute('aria-current', 'page');
       }
       li.appendChild(a);
-      const appearanceLi = list.querySelector('.app-nav-appearance');
-      if (appearanceLi) list.insertBefore(li, appearanceLi);
+      const appearanceLi = document.querySelector('.app-nav-appearance');
+      if (appearanceLi && appearanceLi.parentNode) appearanceLi.parentNode.insertBefore(li, appearanceLi);
       else list.appendChild(li);
     }
   }

@@ -68,11 +68,69 @@ describe('SGVC - Sidebar de navegação', () => {
     });
   });
 
+  it('SIDEBAR-005 | desktop baixo (1280x560): rodapé Conta e Sair visíveis sem rolar; só o miolo rola', () => {
+    cy.viewport(1280, 560);
+    cy.visit('/dashboard.html');
+    cy.get('.app-nav-links a[href="/team.html"]').should('exist');
+    cy.get('#nav-logout').should('be.visible').then(($b) => {
+      expect($b[0].getBoundingClientRect().bottom).to.be.at.most(560);
+    });
+    cy.get('.app-nav-footer a[href="/profile.html"]').should('be.visible');
+    cy.get('.app-nav-links:not(.app-nav-footer)').should(($l) => {
+      expect($l[0].scrollHeight).to.be.greaterThan($l[0].clientHeight);
+    });
+  });
+
+  it('SIDEBAR-006 | celular: Esc, clique fora e clique em link fecham o menu', () => {
+    cy.viewport(375, 667);
+    cy.visit('/dashboard.html');
+    const toggle = () => cy.get('.app-nav-toggle');
+    toggle().click().should('have.attr', 'aria-expanded', 'true');
+    cy.get('body').type('{esc}');
+    toggle().should('have.attr', 'aria-expanded', 'false');
+    toggle().click().should('have.attr', 'aria-expanded', 'true');
+    cy.get('main').click('bottom', { force: true });
+    toggle().should('have.attr', 'aria-expanded', 'false');
+    toggle().click().should('have.attr', 'aria-expanded', 'true');
+    cy.get('.app-nav-links a[href="/sales.html"]').then(($a) => {
+      $a[0].addEventListener('click', (e) => e.preventDefault());
+    }).click();
+    toggle().should('have.attr', 'aria-expanded', 'false');
+  });
+
+  it('SIDEBAR-007 | foco por teclado tem contorno próprio (diferente do hover)', () => {
+    cy.viewport(1280, 720);
+    cy.visit('/dashboard.html');
+    cy.get('.app-nav-links a[href="/sales.html"]').focus().should(($a) => {
+      const cs = getComputedStyle($a[0]);
+      expect(cs.outlineStyle).to.eq('solid');
+      expect(parseFloat(cs.outlineWidth)).to.be.at.least(2);
+    });
+  });
+
   it('SIDEBAR-004 | Sair pede confirmação e volta ao login', () => {
     cy.viewport(1280, 720);
     cy.visit('/dashboard.html');
     cy.on('window:confirm', () => true);
     cy.get('#nav-logout').scrollIntoView().click();
     cy.location('pathname').should('be.oneOf', ['/', '/index.html']);
+  });
+
+  it('SIDEBAR-008 | Perfil também filtra o menu por permissão e mostra Equipe ao dono', () => {
+    cy.viewport(1280, 720);
+    const base = { id: 'u1', email: 'x@negocio.com', name: 'Usuário', modules: { producao: true, encomendas: true } };
+    const seller = { ...base, role: 'seller', permissions: ['customers:read', 'products:read', 'sales:read', 'sales:write', 'orders:read'] };
+    const owner = { ...base, role: 'owner', permissions: [...seller.permissions, 'recipes:read', 'ingredients:read', 'finance:view', 'branding:write', 'team:manage'] };
+    cy.stubAuthenticated(seller);
+    cy.visit('/profile.html');
+    cy.get('.app-nav-links a[href="/ingredients.html"]').parent('li').should('have.attr', 'hidden');
+    cy.get('.app-nav-links a[href="/team.html"]').should('not.exist');
+    cy.stubAuthenticated(owner);
+    cy.visit('/profile.html');
+    cy.get('.app-nav-links a[href="/team.html"]').should('exist').parent('li').should('not.have.attr', 'hidden');
+    cy.get('.app-nav-footer li').then(($li) => {
+      const hrefs = [...$li].map((li) => (li.querySelector('a') || {}).getAttribute?.('href')).filter(Boolean);
+      expect(hrefs).to.deep.equal(['/profile.html', '/team.html', '/appearance.html']);
+    });
   });
 });

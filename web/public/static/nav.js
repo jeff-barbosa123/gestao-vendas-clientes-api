@@ -143,9 +143,15 @@
     toggle.textContent = 'Menu';
     inner.appendChild(toggle);
 
+    // Painel recolhível no celular (#app-nav-links): lista rolável + rodapé "Conta" sempre visível.
+    const panel = document.createElement('div');
+    panel.className = 'app-nav-panel';
+    panel.id = 'app-nav-links';
+
     const list = document.createElement('ul');
     list.className = 'app-nav-links';
-    list.id = 'app-nav-links';
+    const footer = document.createElement('ul');
+    footer.className = 'app-nav-links app-nav-footer';
 
     GROUPS.forEach((group) => {
       list.appendChild(heading(group.title, false));
@@ -166,9 +172,9 @@
     list.appendChild(install);
 
     // Rodapé da sidebar: Perfil, Equipe (access.js), Aparência e Sair.
-    list.appendChild(heading('Conta', true));
-    list.appendChild(link({ href: '/profile.html', label: 'Perfil' }, path, 'app-nav-profile'));
-    list.appendChild(link({ href: '/appearance.html', label: 'Aparência' }, path, 'app-nav-appearance'));
+    footer.appendChild(heading('Conta', true));
+    footer.appendChild(link({ href: '/profile.html', label: 'Perfil' }, path, 'app-nav-profile'));
+    footer.appendChild(link({ href: '/appearance.html', label: 'Aparência' }, path, 'app-nav-appearance'));
     const logoutLi = document.createElement('li');
     logoutLi.className = 'app-nav-logout-item';
     const logoutBtn = document.createElement('button');
@@ -178,14 +184,30 @@
     logoutBtn.textContent = 'Sair';
     logoutBtn.addEventListener('click', logout);
     logoutLi.appendChild(logoutBtn);
-    list.appendChild(logoutLi);
+    footer.appendChild(logoutLi);
 
-    inner.appendChild(list);
+    panel.appendChild(list);
+    panel.appendChild(footer);
+    inner.appendChild(panel);
     nav.appendChild(inner);
 
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
+    const setOpen = (open) => {
+      nav.classList.toggle('is-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+    };
+    toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+    // Fecha com Esc (devolvendo o foco ao botão), ao escolher um link ou ao tocar fora do menu aberto.
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && nav.classList.contains('is-open')) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    panel.addEventListener('click', (ev) => {
+      if (ev.target.closest && ev.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('click', (ev) => {
+      if (nav.classList.contains('is-open') && !nav.contains(ev.target)) setOpen(false);
     });
 
     const skip = document.querySelector('.skip-link');
@@ -197,8 +219,9 @@
     document.body.classList.add('has-sidebar');
 
     // Permissões/módulos (access.js) ocultam <li>s depois do build: mantém os títulos dos grupos coerentes.
-    syncHeadings(list);
-    new MutationObserver(() => syncHeadings(list)).observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+    const syncAll = () => { syncHeadings(list); syncHeadings(footer); };
+    syncAll();
+    new MutationObserver(syncAll).observe(panel, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
   }
 
   if (document.readyState === 'loading') {

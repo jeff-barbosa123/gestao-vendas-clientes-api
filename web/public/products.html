@@ -20,6 +20,7 @@
     <script src="/static/error-handler.js" defer></script>
     <script src="/static/api-client.js" defer></script>
     <script src="/static/access.js" defer></script>
+    <script src="/static/sheet-tools.js" defer></script>
   <script src="/static/custom-fields.js" defer></script>
   <script src="/static/stock-fields.js" defer></script>
     <script src="/static/utils.js" defer></script>
@@ -262,6 +263,7 @@
               <h4 class="products-section-title">
                 Lista de produtos <span class="products-total" id="products-total"></span>
               </h4>
+              <div data-sheet-tools data-entity="products" data-prefix="products" data-import data-label="produtos" data-filters="search-input" data-export-perm="products:read" data-import-perm="products:write"></div>
               <div class="field products-search">
                 <label class="label" for="search-input">Buscar</label>
                   <input

@@ -17,6 +17,7 @@
     <script src="/static/error-handler.js" defer></script>
     <script src="/static/api-client.js" defer></script>
     <script src="/static/access.js" defer></script>
+    <script src="/static/sheet-tools.js" defer></script>
     <script src="/static/utils.js" defer></script>
       <meta name="theme-color" content="#0f172a" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -66,6 +67,7 @@
             </form>
 
             <h2 class="fin-section-title">Lançamentos</h2>
+            <div data-sheet-tools data-entity="finance" data-prefix="finance" data-label="lancamentos" data-module="financeiro" data-export-perm="finance:view"></div>
             <div class="fin-filters">
               <select class="input" id="flt-kind" aria-label="Tipo">
                 <option value="">Todos os tipos</option><option value="PAYABLE">A pagar</option><option value="RECEIVABLE">A receber</option>

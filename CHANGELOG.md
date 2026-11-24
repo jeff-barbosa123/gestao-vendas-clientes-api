@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-23 - Importacao/exportacao de planilhas (CSV e XLSX)
+
+- Exportacao de Clientes corrigida: `format=excel` era rejeitado (400), o "XLSX" era CSV com mimetype de Excel, lista vazia dava 404 e o navegador nao lia `Content-Disposition` (CORS). Agora CSV (UTF-8 com BOM, `;`, datas dd/mm/aaaa, numeros pt-BR) e XLSX reais (`exceljs`), arquivo so com cabecalho quando vazio.
+- Utilitarios reutilizaveis: `api/src/utils/spreadsheet.js` (gerar/ler CSV e XLSX, modelo, importacao linha a linha), `api/src/services/spreadsheetEntities.js` (colunas por entidade) e `web/public/static/sheet-tools.js` (widget exportar / baixar modelo / importar com resumo).
+- Novas rotas: `GET /api/export/:entity?format=csv|xlsx|excel`, `GET /api/import/:entity/template`, `POST /api/import/:entity` (JSON `{filename, contentBase64}`, ate 2000 linhas; erros por linha nao abortam o lote).
+- Importar + exportar + modelo: Clientes, Produtos, Insumos. Apenas exportar: Vendas, Encomendas, Financeiro. Isolamento por empresa, permissoes por perfil, modulos desativados (403) e colunas de custo ocultas para quem nao pode ver.
+- Corrigido: `birth_date` (Date do pg) era descartado na normalizacao de clientes.
+- Testes: `US028-import-export.test.js` (24) e `cypress/e2e/import-export.cy.js` (4).
+
 ## 2026-11-23 - Ajustes de UX da sidebar
 
 - `profile.html` agora carrega `static/access.js`: o Perfil passa a mostrar Equipe ao dono e a filtrar o menu por permissao/modulo, como as demais telas.

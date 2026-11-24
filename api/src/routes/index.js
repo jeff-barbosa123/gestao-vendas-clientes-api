@@ -21,6 +21,7 @@ const cnpjRoutes = require('./cnpjRoutes');
 const holidayRoutes = require('./holidayRoutes');
 const barcodeRoutes = require('./barcodeRoutes');
 const exportRoutes = require('./exportRoutes');
+const importRoutes = require('./importRoutes');
 const errorAnalyticsRoutes = require('./errorAnalyticsRoutes');
 const brandingRoutes = require('./brandingRoutes');
 const { team: teamRoutes, company: companyRoutes } = require('./teamRoutes');
@@ -57,6 +58,8 @@ router.use('/cnpj', cnpjRoutes);
 router.use('/holidays', holidayRoutes);
 router.use('/barcodes', barcodeRoutes);
 router.use('/export', gate(() => ({ perm: 'export:use' })), exportRoutes);
+// Importacao/modelo: perfil e modulo de cada cadastro sao conferidos no controller (spreadsheetController).
+router.use('/import', gate(() => ({})), importRoutes);
 router.use('/errors/analytics', errorAnalyticsRoutes);
 router.use('/branding', gate(rw(null, 'branding:write')), brandingRoutes);
 router.use('/team', gate(() => ({ perm: 'team:manage' })), teamRoutes);

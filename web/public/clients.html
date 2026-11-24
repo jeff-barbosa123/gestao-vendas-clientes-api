@@ -20,6 +20,7 @@
     <script src="/static/error-handler.js" defer></script>
     <script src="/static/api-client.js" defer></script>
     <script src="/static/access.js" defer></script>
+    <script src="/static/sheet-tools.js" defer></script>
   <script src="/static/custom-fields.js" defer></script>
     <script src="/static/utils.js" defer></script>
     <script src="/static/skeleton-loading.js" defer></script>
@@ -427,23 +428,7 @@
                 <p class="help" id="search-input-hint" hidden>Busque por nome, e-mail, telefone ou CNPJ</p>
               </div>
               <div class="clients-export-group" style="margin-top: 12px;">
-                <label class="label" for="clients-export-format">Exportar</label>
-                <div class="field has-addons">
-                  <div class="control">
-                    <div class="select">
-                      <select id="clients-export-format" aria-label="Formato de exportação">
-                        <option value="csv">CSV</option>
-                        <option value="excel">Excel (XLSX)</option>
-                        <option value="pdf">PDF</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="control">
-                    <button class="button is-light is-small" id="clients-export-btn" type="button" aria-label="Baixar lista de clientes">
-                      <span>Baixar</span>
-                    </button>
-                  </div>
-                </div>
+                <div data-sheet-tools data-entity="customers" data-prefix="clients" data-import data-pdf data-label="clientes" data-filters="search-input" data-export-perm="customers:read" data-import-perm="customers:write"></div>
               </div>
             </div>
             <div class="clients-insight-row">

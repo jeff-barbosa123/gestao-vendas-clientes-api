@@ -849,3 +849,14 @@ img, video, canvas, svg { max-width: 100%; }
 }
 .app-nav-install-btn:hover, .app-nav-install-btn:focus-visible { background: rgb(var(--rgb-white) / 0.12); }
 @media (max-width: 720px) { .app-nav-install-btn { min-height: 44px; width: 100%; } }
+/* Planilhas (CSV/XLSX): exportar, modelo e importar (static/sheet-tools.js) */
+.sheet-tools { margin: 8px 0; }
+.sheet-tools[hidden] { display: none; }
+.sheet-tools-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sheet-tools-bar .label { margin: 0; }
+.sheet-tools-bar select { min-height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--slate-800); padding: 0 8px; }
+.sheet-summary { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--success-200); border-radius: 8px; background: var(--success-50); color: var(--success-800); }
+.sheet-summary.has-errors { border-color: var(--danger-200); background: var(--danger-50); color: var(--danger-900); }
+.sheet-summary-title { margin: 0; font-weight: 600; }
+.sheet-summary-errors { margin: 6px 0 0; padding-left: 18px; max-height: 180px; overflow: auto; }
+.sheet-summary-more { margin: 6px 0 0; font-size: 0.85rem; color: var(--slate-600); }

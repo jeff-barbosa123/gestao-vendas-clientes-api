@@ -80,7 +80,7 @@ async function getAllPagesForExport(paginatedData, columns, fetchAllFn) {
  * @returns {boolean} Se é válido
  */
 function validateExportFormat(format) {
-  const validFormats = ['csv', 'pdf', 'xlsx', 'json'];
+  const validFormats = ['csv', 'pdf', 'xlsx', 'excel', 'json'];
   return validFormats.includes(format ? format.toLowerCase() : '');
 }
 

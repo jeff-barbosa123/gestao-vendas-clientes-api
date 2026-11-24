@@ -33,6 +33,11 @@ function safeCustomerString(value) {
   if (value == null) return "";
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    // pg devolve DATE como Date em meia-noite local
+    const p = (n) => String(n).padStart(2, "0");
+    return `${value.getFullYear()}-${p(value.getMonth() + 1)}-${p(value.getDate())}`;
+  }
   return "";
 }
 

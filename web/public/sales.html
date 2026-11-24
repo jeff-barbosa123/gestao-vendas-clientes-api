@@ -20,6 +20,7 @@
     <script src="/static/error-handler.js" defer></script>
     <script src="/static/api-client.js" defer></script>
     <script src="/static/access.js" defer></script>
+    <script src="/static/sheet-tools.js" defer></script>
     <script src="/static/utils.js" defer></script>
       <meta name="theme-color" content="#0f172a" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -165,6 +166,7 @@
               <h4 class="sales-section-title">
                 Lista de vendas <span class="sales-total" id="sales-total"></span>
               </h4>
+              <div data-sheet-tools data-entity="sales" data-prefix="sales" data-label="vendas" data-export-perm="sales:read"></div>
               <div class="field sales-search">
                 <label class="label" for="search-input">Buscar</label>
                 <input class="input" id="search-input" type="text" placeholder="Ex: Evaldo, ativa, cancelada" />

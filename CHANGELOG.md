@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-24 - Simulacao em dois modos
+
+- `simulacao.html`: os dois formularios lado a lado viraram abas: "Usar ficha tecnica" (recomendada, padrao) e "Simulacao rapida" ("do zero, nada e salvo"). So um formulario aparece por vez; sem fichas cadastradas, abre direto na rapida.
+- Textos mais claros (select sem "(opcional)" indevido, dicas apontando para a outra aba). Abas acessiveis (`role=tablist`, setas do teclado); ids e funcionalidades preservados; so design tokens.
+- Cypress: `simulacao-modos.cy.js` (3 testes).
+
 ## 2026-11-24 - Remove navegacao duplicada (sidebar e a unica navegacao)
 
 - Painel: removidos `Relatorios`, `Aparencia`, `Perfil` e `Sair` do cabecalho (ficam so na sidebar).

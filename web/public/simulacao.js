@@ -266,7 +266,7 @@
     placeholder.value = '';
     const hasItems = list.length > 0;
     placeholder.textContent = hasItems
-      ? 'Selecione uma ficha t\u00e9cnica (opcional)'
+      ? 'Selecione uma ficha t\u00e9cnica'
       : 'Nenhuma ficha t\u00e9cnica cadastrada';
     placeholder.disabled = !hasItems;
     placeholder.selected = true;
@@ -277,8 +277,8 @@
     }
     if (recipeIdEmpty) {
       recipeIdEmpty.textContent = hasItems
-        ? 'Se preferir, siga sem ficha t\u00e9cnica usando a simula\u00e7\u00e3o r\u00e1pida.'
-        : 'Sem fichas t\u00e9cnicas cadastradas. Cadastre uma ficha ou use a simula\u00e7\u00e3o r\u00e1pida.';
+        ? 'Sem ficha? Use a aba Simula\u00e7\u00e3o r\u00e1pida.'
+        : 'Voc\u00ea ainda n\u00e3o tem fichas t\u00e9cnicas. Cadastre uma ou use a Simula\u00e7\u00e3o r\u00e1pida.';
       recipeIdEmpty.hidden = false;
     }
     list.forEach((recipe) => {
@@ -502,12 +502,37 @@
     calcularPrecoFinal();
   }
 
+
+  // Modos: ficha tecnica (padrao) x simulacao rapida. Sem fichas, abre a rapida.
+  let modeChosen = false;
+  const modeTabs = Array.from(document.querySelectorAll('.sim-mode'));
+  function setMode(mode) {
+    modeTabs.forEach((tab) => {
+      const on = tab.dataset.mode === mode;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      const panel = document.getElementById(tab.getAttribute('aria-controls'));
+      if (panel) panel.hidden = !on;
+    });
+  }
+  modeTabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => { modeChosen = true; setMode(tab.dataset.mode); });
+    tab.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const next = modeTabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + modeTabs.length) % modeTabs.length];
+      modeChosen = true;
+      setMode(next.dataset.mode);
+      next.focus();
+    });
+  });
+
   ensureAuthOrRedirect().then((user) => {
     if (!user) return;
     apiRequest('/api/recipes', null)
       .then((data) => {
         recipes = Array.isArray(data) ? data : data.items || [];
         fillRecipeSelect(recipes);
+        if (!recipes.length && !modeChosen) setMode('quick');
         if (preselectedRecipeId && recipeId) {
           const exists = recipes.some((recipe) => String(getRecipeId(recipe)) === String(preselectedRecipeId));
           if (exists) {
@@ -517,6 +542,7 @@
       })
       .catch(() => {
         fillRecipeSelect([]);
+        if (!modeChosen) setMode('quick');
       });
   });
 

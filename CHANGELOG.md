@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-23 - Sidebar lateral fixa
+
+- A barra horizontal do topo virou uma sidebar fixa a esquerda (240px, tema escuro, design tokens) em todas as telas internas (`static/nav.js` + `base.css`). Em < 768px vira barra superior com botao "Menu" (abre/fecha a lista).
+- Logotipo (ou "SGVC") no topo da coluna, alinhado com os links, `object-fit: contain` e chip claro discreto.
+- Grupos: Principal (Painel); Operacao (Caixa/PDV, Vendas, Encomendas); Catalogo & Custos (Produtos, Insumos, Fichas tecnicas, Vinculos, Simulacao); Clientes & Financeiro (Clientes, CRM, Financeiro, Relatorios); rodape "Conta" (Perfil, Equipe, Aparencia, Sair). Titulos de grupo somem quando todos os itens estao ocultos por permissao/modulo (`access.js`); Equipe e inserida antes de Aparencia.
+- Mantidos href, IDs e seletores (`.app-nav-links a`, `#brand-logo`, `#pwa-install`, `.app-nav-toggle`). Novo botao `#nav-logout` (confirma e encerra a sessao).
+- Cypress: nova spec `sidebar-nav.cy.js` (4 testes).
+
 ## 2026-11-23 - Logotipo White-Label na navbar
 
 - O logotipo da empresa agora aparece no canto esquerdo da navbar (`static/nav.js`), no lugar do texto "SGVC": altura 32px, `object-fit: contain`, largura automatica (max 160px) e chip claro atras para logos escuros/transparentes. Sem logo (ou falha da API) o texto "SGVC" permanece. A navbar existe nas telas internas (nao em login/Aparencia).

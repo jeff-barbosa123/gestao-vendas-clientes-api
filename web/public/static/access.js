@@ -69,7 +69,9 @@
         a.setAttribute('aria-current', 'page');
       }
       li.appendChild(a);
-      list.appendChild(li);
+      const appearanceLi = list.querySelector('.app-nav-appearance');
+      if (appearanceLi) list.insertBefore(li, appearanceLi);
+      else list.appendChild(li);
     }
   }
 

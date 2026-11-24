@@ -1,11 +1,12 @@
 /**
  * Menu de navegação comum a todas as telas logadas.
- * Injeta uma barra no topo da página com acesso direto às áreas do sistema,
- * destacando a tela atual. Não depende de nenhuma outra biblioteca.
+ * Barra lateral fixa à esquerda (>= 768px) com o logotipo da empresa no topo e os links agrupados;
+ * em telas menores vira uma barra superior com botão "Menu" que abre/fecha a lista.
+ * Os href, IDs e classes usados pelos testes (.app-nav-links a[href], #brand-logo, #pwa-install) são mantidos.
+ * Não depende de nenhuma outra biblioteca.
  */
 (() => {
-
-  // Logotipo White-Label da empresa no canto esquerdo da navbar (no lugar do texto "SGVC").
+  // Logotipo White-Label da empresa no topo da sidebar (no lugar do texto "SGVC").
   // Sem logo (ou se a API falhar) o texto "SGVC" permanece. A imagem vem do banco via /api/branding/logo.
   function applyCompanyLogo(brand) {
     const run = async () => {
@@ -32,24 +33,88 @@
     if (document.readyState === 'complete') run();
     else window.addEventListener('load', run, { once: true });
   }
-  const ITEMS = [
-    { href: '/dashboard.html', label: 'Painel' },
-    { href: '/sales.html', label: 'Vendas' },
-    { href: '/pdv.html', label: 'Caixa/PDV' },
-    { href: '/orders.html', label: 'Encomendas' },
-    { href: '/clients.html', label: 'Clientes', match: ['/client-edit.html'] },
-    { href: '/crm.html', label: 'CRM' },
-    { href: '/finance.html', label: 'Financeiro' },
-    { href: '/products.html', label: 'Produtos', match: ['/product-edit.html'] },
-    { href: '/ingredients.html', label: 'Insumos' },
-    { href: '/recipes.html', label: 'Fichas técnicas', match: ['/recipe-edit.html'] },
-    { href: '/vinculos.html', label: 'Vínculos' },
-    { href: '/reports.html', label: 'Relatórios' },
-    { href: '/simulacao.html', label: 'Simulação' },
+
+  // Grupos da sidebar. Equipe (team:manage) é inserida por static/access.js antes de "Aparência".
+  const GROUPS = [
+    { title: 'Principal', items: [{ href: '/dashboard.html', label: 'Painel' }] },
+    {
+      title: 'Operação',
+      items: [
+        { href: '/pdv.html', label: 'Caixa/PDV' },
+        { href: '/sales.html', label: 'Vendas' },
+        { href: '/orders.html', label: 'Encomendas' },
+      ],
+    },
+    {
+      title: 'Catálogo & Custos',
+      items: [
+        { href: '/products.html', label: 'Produtos', match: ['/product-edit.html'] },
+        { href: '/ingredients.html', label: 'Insumos' },
+        { href: '/recipes.html', label: 'Fichas técnicas', match: ['/recipe-edit.html'] },
+        { href: '/vinculos.html', label: 'Vínculos' },
+        { href: '/simulacao.html', label: 'Simulação' },
+      ],
+    },
+    {
+      title: 'Clientes & Financeiro',
+      items: [
+        { href: '/clients.html', label: 'Clientes', match: ['/client-edit.html'] },
+        { href: '/crm.html', label: 'CRM' },
+        { href: '/finance.html', label: 'Financeiro' },
+        { href: '/reports.html', label: 'Relatórios' },
+      ],
+    },
   ];
 
   function isCurrent(item, path) {
     return path === item.href || (item.match || []).includes(path);
+  }
+
+  function link(item, path, extraClass) {
+    const li = document.createElement('li');
+    if (extraClass) li.className = extraClass;
+    const a = document.createElement('a');
+    a.href = item.href;
+    a.textContent = item.label;
+    if (isCurrent(item, path)) {
+      a.classList.add('is-active');
+      a.setAttribute('aria-current', 'page');
+    }
+    li.appendChild(a);
+    return li;
+  }
+
+  function heading(text, isFooter) {
+    const li = document.createElement('li');
+    li.className = 'app-nav-heading' + (isFooter ? ' is-footer' : '');
+    li.setAttribute('role', 'presentation');
+    li.textContent = text;
+    return li;
+  }
+
+  // Esconde o título de um grupo quando todos os links dele estão ocultos pelas permissões/módulos.
+  function syncHeadings(list) {
+    const children = Array.from(list.children);
+    children.forEach((el, i) => {
+      if (!el.classList.contains('app-nav-heading')) return;
+      let anyVisible = false;
+      for (let j = i + 1; j < children.length && !children[j].classList.contains('app-nav-heading'); j += 1) {
+        if (!children[j].hidden) anyVisible = true;
+      }
+      if (el.hidden === anyVisible) el.hidden = !anyVisible;
+    });
+  }
+
+  function logout() {
+    if (!window.confirm('Deseja sair da sua conta agora?')) return;
+    const call = typeof window.apiRequest === 'function'
+      ? window.apiRequest('/api/auth/logout', { method: 'POST', skipAuth: true })
+      : Promise.resolve();
+    Promise.resolve(call)
+      .catch(() => {})
+      .finally(() => {
+        window.location.href = '/index.html';
+      });
   }
 
   function build() {
@@ -81,32 +146,13 @@
     const list = document.createElement('ul');
     list.className = 'app-nav-links';
     list.id = 'app-nav-links';
-    ITEMS.forEach((item) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = item.href;
-      a.textContent = item.label;
-      if (isCurrent(item, path)) {
-        a.classList.add('is-active');
-        a.setAttribute('aria-current', 'page');
-      }
-      li.appendChild(a);
-      list.appendChild(li);
+
+    GROUPS.forEach((group) => {
+      list.appendChild(heading(group.title, false));
+      group.items.forEach((item) => list.appendChild(link(item, path)));
     });
 
-    const profile = document.createElement('li');
-    profile.className = 'app-nav-profile';
-    const profileLink = document.createElement('a');
-    profileLink.href = '/profile.html';
-    profileLink.textContent = 'Perfil';
-    if (path === '/profile.html') {
-      profileLink.classList.add('is-active');
-      profileLink.setAttribute('aria-current', 'page');
-    }
-    profile.appendChild(profileLink);
-    list.appendChild(profile);
-
-    // Botao discreto de instalar o PWA: fica oculto ate o navegador disparar beforeinstallprompt (static/pwa.js).
+    // Botão discreto de instalar o PWA: fica oculto até o navegador disparar beforeinstallprompt (static/pwa.js).
     const install = document.createElement('li');
     install.className = 'app-nav-install';
     install.hidden = true;
@@ -118,6 +164,21 @@
     installBtn.hidden = true;
     install.appendChild(installBtn);
     list.appendChild(install);
+
+    // Rodapé da sidebar: Perfil, Equipe (access.js), Aparência e Sair.
+    list.appendChild(heading('Conta', true));
+    list.appendChild(link({ href: '/profile.html', label: 'Perfil' }, path, 'app-nav-profile'));
+    list.appendChild(link({ href: '/appearance.html', label: 'Aparência' }, path, 'app-nav-appearance'));
+    const logoutLi = document.createElement('li');
+    logoutLi.className = 'app-nav-logout-item';
+    const logoutBtn = document.createElement('button');
+    logoutBtn.type = 'button';
+    logoutBtn.id = 'nav-logout';
+    logoutBtn.className = 'app-nav-logout';
+    logoutBtn.textContent = 'Sair';
+    logoutBtn.addEventListener('click', logout);
+    logoutLi.appendChild(logoutBtn);
+    list.appendChild(logoutLi);
 
     inner.appendChild(list);
     nav.appendChild(inner);
@@ -133,6 +194,11 @@
     } else {
       document.body.insertBefore(nav, document.body.firstChild);
     }
+    document.body.classList.add('has-sidebar');
+
+    // Permissões/módulos (access.js) ocultam <li>s depois do build: mantém os títulos dos grupos coerentes.
+    syncHeadings(list);
+    new MutationObserver(() => syncHeadings(list)).observe(list, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
   }
 
   if (document.readyState === 'loading') {

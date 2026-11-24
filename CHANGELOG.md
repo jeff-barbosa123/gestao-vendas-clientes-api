@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-24 - Financeiro mais claro
+
+- Formulario de lancamento com placeholders e ajudas curtas (`aria-describedby`): valor e o total dividido em partes iguais; vencimento e o da 1a parcela e as demais vencem a cada mes; parcelas 1 = a vista (max. 24).
+- Categoria: sugestoes (`datalist`) com as ja usadas + padrao; ao sair do campo/ao lancar a grafia e unificada (sem diferenca de caixa, acento ou espacos extras; a grafia ja existente vence). So no frontend: `#f-cat`, payload e DRE inalterados.
+- Abas Contas / Fluxo de caixa / DRE usam `aria-selected` (como na Simulacao) em vez de `aria-pressed`; CSS ajustado.
+- Cypress: `financeiro-clareza.cy.js` (3).
+
 ## 2026-11-24 - Estados vazios padronizados
 
 - Novo helper `static/empty-state.js` (`SGVC.emptyRow`) usado em Clientes, Produtos, Fichas tecnicas, Vendas, Financeiro (lancamentos) e Insumos.

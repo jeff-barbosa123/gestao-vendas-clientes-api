@@ -22,7 +22,7 @@
 .fin-kpis dd { margin: 2px 0 0; font-size: 1.05rem; font-weight: 700; color: var(--slate-900); }
 .fin-kpis .is-neg dd { color: var(--danger-700); }
 .fin-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-.fin-tabs button[aria-pressed="true"] { border-color: var(--slate-600); font-weight: 700; }
+.fin-tabs button[aria-selected="true"] { border-color: var(--slate-600); font-weight: 700; }
 .fin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 10px; }
 .fin-form { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--slate-200); }
 .fin-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -37,3 +37,5 @@
   .fin-wrapper { padding: 12px; }
   .fin-filters .input { flex: 1 1 140px; }
 }
+
+.fin-help { margin: 4px 0 0; font-size: 0.8rem; color: var(--slate-600); }

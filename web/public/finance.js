@@ -24,8 +24,33 @@
   let canManage = false;
   let entries = [];
 
+  // Categoria: sugere as ja usadas e reaproveita a grafia existente (sem diferenca de caixa, acento ou espacos),
+  // para o DRE nao se fragmentar em "energia", "Energia " e "Energía".
+  const DEFAULT_CATEGORIES = ['Aluguel', 'Água', 'Energia', 'Internet', 'Salários', 'Impostos', 'Fornecedores', 'Embalagens', 'Marketing', 'Outros'];
+  const catKey = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const knownCats = new Map();
+  function addCategory(label) {
+    const clean = String(label || '').replace(/\s+/g, ' ').trim();
+    if (clean && !knownCats.has(catKey(clean))) knownCats.set(catKey(clean), clean);
+  }
+  function renderCategoryOptions() {
+    $('f-cat-list').innerHTML = Array.from(knownCats.values()).sort((a, b) => a.localeCompare(b, 'pt-BR')).map((c) => `<option value="${esc(c)}"></option>`).join('');
+  }
+  function canonicalCategory(raw) {
+    const clean = String(raw || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return '';
+    return knownCats.get(catKey(clean)) || clean.charAt(0).toUpperCase() + clean.slice(1);
+  }
+  async function seedCategories() {
+    // Primeiro as categorias ja usadas (a grafia delas vence), depois as sugestoes padrao.
+    try { (await api('/api/finance/entries')).entries.forEach((e) => addCategory(e.category)); } catch (_e) { /* so as sugestoes padrao */ }
+    DEFAULT_CATEGORIES.forEach(addCategory);
+    renderCategoryOptions();
+  }
+  $('f-cat').addEventListener('blur', () => { $('f-cat').value = canonicalCategory($('f-cat').value); });
+
   function showTab(name) {
-    document.querySelectorAll('.fin-tabs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tab === name)));
+    document.querySelectorAll('.fin-tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
     ['entries', 'cashflow', 'dre'].forEach((t) => { $(`tab-${t}`).hidden = t !== name; });
     if (name === 'cashflow') loadCashflow();
     if (name === 'dre') loadDre();
@@ -103,10 +128,11 @@
         amount: $('f-amount').value,
         dueDate: $('f-due').value,
         installments: $('f-inst').value || 1,
-        category: $('f-cat').value,
+        category: canonicalCategory($('f-cat').value),
       });
       ev.target.reset();
       $('f-inst').value = 1;
+      addCategory($('f-cat').value);
       say('Lançamento criado.', 'is-success is-light');
       await refresh();
     } catch (e) { say(errText(e), 'is-danger is-light'); }
@@ -174,6 +200,7 @@
     const access = window.SGVC && window.SGVC.access;
     canManage = !!(access && access.can && access.can('finance:manage'));
     $('fin-form').hidden = !canManage;
+    if (canManage) seedCategories();
     refresh();
   }
   if (window.SGVC && window.SGVC.access && window.SGVC.access.user && window.SGVC.access.user()) start();

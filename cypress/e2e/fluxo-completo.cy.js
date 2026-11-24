@@ -50,6 +50,7 @@ describe('SGVC - Fluxo Completo End-to-End (backend real)', () => {
   it('cadastra produto de revenda e vende no Pix', () => {
     apiLogin();
     cy.visit('/products.html');
+    cy.openProductForm();
     cy.get('#product-type-resale').check({ force: true });
     cy.get('#create-name').type(produto);
     cy.get('#create-purchase-price').type('3,00');

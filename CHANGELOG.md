@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-24 - Cadastro de produto recolhivel
+
+- `products.html`: botao "Novo produto" / "Fechar cadastro" (`#products-form-toggle`, `aria-expanded`/`aria-controls`) abre e fecha o painel de cadastro (`#products-create-panel`). Sem produtos o formulario fica aberto; com produtos nasce recolhido, e abrir leva o foco para o campo Nome. A escolha do usuario nao e sobrescrita ao recarregar a lista.
+- Ids, campos e fluxo de criacao inalterados; o botao some para quem nao tem `products:write` (access.js). Classe `.panel-card.is-collapsed` (tokens, sem `hidden` para nao conflitar com permissoes).
+- Cypress: novo comando `cy.openProductForm()`; `products.cy.js`, `products-flows.cy.js` e `fluxo-completo.cy.js` o usam; `products-form-toggle.cy.js` (3).
+
 ## 2026-11-24 - Financeiro mais claro
 
 - Formulario de lancamento com placeholders e ajudas curtas (`aria-describedby`): valor e o total dividido em partes iguais; vencimento e o da 1a parcela e as demais vencem a cada mes; parcelas 1 = a vista (max. 24).

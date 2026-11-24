@@ -23,6 +23,7 @@ import {
 import { state } from './state.js';
 import { apiRequest, escapeHtml } from './core.js';
 import { formatPrice, parsePrice } from './money.js';
+import { syncFormToggle } from './form-toggle.js';
 
 function updateSortLabel() {
   if (!nameHeader) return;
@@ -241,6 +242,7 @@ export async function loadProducts(token) {
     const data = await apiRequest('/api/products', token);
     state.productsCache = Array.isArray(data) ? data : (data && data.items && Array.isArray(data.items) ? data.items : []);
     state.currentPage = 1;
+    syncFormToggle(state.productsCache.length > 0);
     renderPage();
   } catch (err) {
     if (err && err.name === 'AbortError') {
@@ -248,6 +250,7 @@ export async function loadProducts(token) {
     }
     // Em caso de erro, garante que productsCache seja um array vazio
     state.productsCache = [];
+    syncFormToggle(false);
     if (err && (err.status === 401 || err.status === 403)) {
       // Erro de autenticação - redireciona para login
       window.location.href = '/';

@@ -140,3 +140,12 @@ Cypress.Commands.add('apiReal', (method, url, body) =>
       cy.request({ method, url, body, headers: { 'X-CSRF-Token': cookie ? cookie.value : '' } })
     )
 );
+
+// Produtos: abre o cadastro (recolhido quando ja ha produtos) depois que a lista carregou.
+Cypress.Commands.add('openProductForm', () => {
+  cy.get('#products-body tr', { timeout: 10000 }).should('exist');
+  cy.get('#products-form-toggle').then(($b) => {
+    if ($b.attr('aria-expanded') !== 'true') cy.wrap($b).click();
+  });
+  cy.get('#create-name').should('be.visible');
+});

@@ -22,6 +22,7 @@ describe('SGVC - Gerenciamento de Produtos', () => {
 
   it('valida nome obrigatorio ao criar produto', () => {
     cy.intercept('POST', '**/api/products', cy.spy().as('createSpy'));
+    cy.openProductForm();
     cy.get('#product-type-resale').check({ force: true });
     cy.get('#create-submit').click();
     cy.get('#create-name-error').should('be.visible');
@@ -30,6 +31,7 @@ describe('SGVC - Gerenciamento de Produtos', () => {
 
   it('produto produzido sem ficha tecnica nao e enviado', () => {
     cy.intercept('POST', '**/api/products', cy.spy().as('createSpy'));
+    cy.openProductForm();
     cy.get('#product-type-produced').check({ force: true });
     cy.get('#create-name').type('Torta de Limão');
     cy.get('#create-submit').click();
@@ -46,6 +48,8 @@ describe('SGVC - Gerenciamento de Produtos', () => {
       expect(req.body.price).to.eq(6);
       req.reply({ statusCode: 201, body: { id: 'product-9', ...req.body } });
     }).as('createProduct');
+
+    cy.openProductForm();
 
     cy.get('#product-type-resale').check({ force: true });
     cy.get('#create-name').type('Refrigerante Lata');

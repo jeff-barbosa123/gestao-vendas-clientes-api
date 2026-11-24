@@ -43,6 +43,7 @@
               <p class="products-subtitle">Gerencie seu cat&aacute;logo de produtos</p>
             </div>
             <div class="products-actions">
+              <button class="button is-link is-small" id="products-form-toggle" type="button" aria-expanded="false" aria-controls="products-create-panel">Novo produto</button>
               <button class="button is-link is-small" id="refresh-list">Atualizar lista</button>
             </div>
           </header>
@@ -50,7 +51,7 @@
           <div class="products-message" id="products-message" hidden></div>
 
           <section class="products-grid">
-            <div class="panel-card">
+            <div class="panel-card is-collapsed" id="products-create-panel">
               <h4 class="products-section-title">Cadastrar produto</h4>
               <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Preencha os dados do item que voc&ecirc; vende.

@@ -46,6 +46,7 @@ describe('SGVC - Produtos: fluxos complementares', () => {
 
   it('alterna entre produzido e revenda exibindo a secao de revenda', () => {
     visit();
+    cy.openProductForm();
     cy.get('#product-type-resale').check({ force: true });
     cy.get('#resale-section').should('be.visible');
     cy.get('#product-type-produced').check({ force: true });
@@ -54,6 +55,7 @@ describe('SGVC - Produtos: fluxos complementares', () => {
 
   it('calcula o preco de venda a partir da margem na revenda', () => {
     visit();
+    cy.openProductForm();
     cy.get('#product-type-resale').check({ force: true });
     cy.get('#create-purchase-price').type('10,00');
     cy.get('#resale-percent').clear().type('50');

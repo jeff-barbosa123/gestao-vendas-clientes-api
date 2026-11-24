@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-24 - Sidebar com grupos recolhiveis
+
+- Os grupos com mais de um item (Operacao, Catalogo & Custos, Clientes & Financeiro) viraram botoes que recolhem/expandem os links (clique, Enter, Espaco; `aria-expanded`). Painel e Conta nao recolhem: o rodape segue sempre visivel.
+- Padrao: tudo aberto. O estado recolhido fica salvo no navegador (`sgvc.nav.collapsed`); o grupo da pagina ativa sempre abre, com o item destacado.
+- Somente design tokens; ids, hrefs e `hidden` de permissoes preservados. Cypress: `sidebar-collapse.cy.js` (4 testes).
+
 ## 2026-11-24 - Simulacao em dois modos
 
 - `simulacao.html`: os dois formularios lado a lado viraram abas: "Usar ficha tecnica" (recomendada, padrao) e "Simulacao rapida" ("do zero, nada e salvo"). So um formulario aparece por vez; sem fichas cadastradas, abre direto na rapida.

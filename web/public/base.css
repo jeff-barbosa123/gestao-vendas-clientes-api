@@ -860,3 +860,19 @@ img, video, canvas, svg { max-width: 100%; }
 .sheet-summary-title { margin: 0; font-weight: 600; }
 .sheet-summary-errors { margin: 6px 0 0; padding-left: 18px; max-height: 180px; overflow: auto; }
 .sheet-summary-more { margin: 6px 0 0; font-size: 0.85rem; color: var(--slate-600); }
+
+/* Grupos recolhiveis da sidebar (static/nav.js) */
+.app-nav-links li.is-collapsed { display: none; }
+.app-nav-heading .app-nav-group-toggle {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  padding: 0; border: 0; background: transparent; color: inherit; font: inherit;
+  letter-spacing: inherit; text-transform: inherit; text-align: left; cursor: pointer;
+}
+.app-nav-heading .app-nav-group-toggle::after {
+  content: ""; width: 6px; height: 6px; margin-right: 4px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg); transition: transform 0.15s;
+}
+.app-nav-heading .app-nav-group-toggle[aria-expanded="false"]::after { transform: rotate(-45deg); }
+.app-nav-heading .app-nav-group-toggle:hover { color: var(--on-accent); }
+.app-nav-heading .app-nav-group-toggle:focus-visible { outline: 2px solid var(--on-accent); outline-offset: 2px; border-radius: 4px; }

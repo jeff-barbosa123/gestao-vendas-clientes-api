@@ -84,6 +84,46 @@
     return li;
   }
 
+  const COLLAPSE_KEY = 'sgvc.nav.collapsed';
+
+  function readCollapsed() {
+    try {
+      const v = JSON.parse(window.localStorage.getItem(COLLAPSE_KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (_e) {
+      return [];
+    }
+  }
+
+  function saveCollapsed(title, collapsed) {
+    try {
+      const set = new Set(readCollapsed());
+      if (collapsed) set.add(title); else set.delete(title);
+      window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(Array.from(set)));
+    } catch (_e) { /* sem armazenamento: so nao lembra */ }
+  }
+
+  // Transforma o titulo do grupo em botao (clique/Enter/Espaco) que recolhe ou expande os links.
+  function makeCollapsible(head, title, items, hasActive) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'app-nav-group-toggle';
+    btn.textContent = title;
+    head.textContent = '';
+    head.removeAttribute('role');
+    head.appendChild(btn);
+    const apply = (collapsed) => {
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      items.forEach((li) => li.classList.toggle('is-collapsed', collapsed));
+    };
+    apply(!hasActive && readCollapsed().includes(title));
+    btn.addEventListener('click', () => {
+      const collapsed = btn.getAttribute('aria-expanded') === 'true';
+      apply(collapsed);
+      saveCollapsed(title, collapsed);
+    });
+  }
+
   function heading(text, isFooter) {
     const li = document.createElement('li');
     li.className = 'app-nav-heading' + (isFooter ? ' is-footer' : '');
@@ -153,9 +193,13 @@
     const footer = document.createElement('ul');
     footer.className = 'app-nav-links app-nav-footer';
 
+    // Grupos recolhiveis (com mais de 1 item): estado salvo por titulo; o grupo da pagina ativa sempre abre.
     GROUPS.forEach((group) => {
-      list.appendChild(heading(group.title, false));
-      group.items.forEach((item) => list.appendChild(link(item, path)));
+      const head = heading(group.title, false);
+      list.appendChild(head);
+      const lis = group.items.map((item) => link(item, path));
+      lis.forEach((li) => list.appendChild(li));
+      if (group.items.length > 1) makeCollapsible(head, group.title, lis, group.items.some((item) => isCurrent(item, path)));
     });
 
     // Botão discreto de instalar o PWA: fica oculto até o navegador disparar beforeinstallprompt (static/pwa.js).

@@ -86,6 +86,7 @@
   // Formularios de escrita (e seus campos de custo) somem para quem so le.
   const PAGE_BLOCKS = {
     '/products.html': [{ sel: '#create-form', perm: 'products:write', closest: '.panel-card' }, { sel: '#products-form-toggle', perm: 'products:write' }],
+    '/clients.html': [{ sel: '#create-form', perm: 'customers:write', closest: '.panel-card' }, { sel: '#clients-form-toggle', perm: 'customers:write' }],
   };
 
   function applyBlocks() {

@@ -4,6 +4,7 @@ const openSecurityClientsForm = () => {
   cy.loginAsAdmin();
   cy.openClientsFromDashboard();
   cy.wait('@customersList');
+  cy.openClientForm();
 };
 
 describe('Seguranca basica', () => {

@@ -41,6 +41,7 @@ import {
   normalizeQuery,
   parseNotesMeta,
 } from './formatters.js';
+import { syncFormToggle } from './form-toggle.js';
 
 function updateBirthdayInsight() {
   if (!birthdayInsight) return;
@@ -366,6 +367,7 @@ export async function loadCustomers(token, showSkeleton = true) {
       // Dados paginados do servidor
       state.customersCache = data.items || [];
       const total = data.pagination.total || 0;
+      syncFormToggle(total > 0);
       if (clientsTotal) {
         clientsTotal.textContent = `(${total})`;
       }
@@ -385,6 +387,7 @@ export async function loadCustomers(token, showSkeleton = true) {
     } else {
       // Formato antigo (array simples) - usa paginação client-side
       state.customersCache = Array.isArray(data) ? data : (data && data.items && Array.isArray(data.items) ? data.items : []);
+      syncFormToggle(state.customersCache.length > 0);
       if (typeof state.currentPage !== 'undefined') {
         state.currentPage = 1;
       }
@@ -397,6 +400,7 @@ export async function loadCustomers(token, showSkeleton = true) {
     }
     
     if (handleAuthFailure(err)) throw err;
+    syncFormToggle(false);
     const friendlyMessage = normalizeError(err);
     throw new Error(friendlyMessage);
   } finally {

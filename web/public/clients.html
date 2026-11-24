@@ -43,6 +43,7 @@
               <p class="clients-subtitle">Gerencie sua base de clientes</p>
             </div>
             <div class="clients-actions">
+              <button class="button is-link is-small" id="clients-form-toggle" type="button" aria-expanded="false" aria-controls="clients-create-panel">Novo cliente</button>
               <button class="button is-link is-small" id="refresh-list" data-testid="refresh-list-btn" tabindex="-1">
                 Atualizar lista
               </button>
@@ -59,7 +60,7 @@
           ></div>
 
           <section class="clients-grid">
-            <div class="panel-card">
+            <div class="panel-card is-collapsed" id="clients-create-panel">
               <h4 class="clients-section-title">Cadastrar cliente</h4>
               <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Preencha os dados abaixo para criar o cliente.

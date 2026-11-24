@@ -36,6 +36,7 @@ const openClientsPage = (options = {}) => {
 };
 
 const fillBasicClientData = (overrides = {}) => {
+  cy.openClientForm();
   const base = {
     type: 'PF',
     name: 'Regressao Flow',

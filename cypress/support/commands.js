@@ -149,3 +149,12 @@ Cypress.Commands.add('openProductForm', () => {
   });
   cy.get('#create-name').should('be.visible');
 });
+
+// Clientes: abre o cadastro (recolhido quando ja ha clientes) depois que a lista foi desenhada.
+Cypress.Commands.add('openClientForm', () => {
+  cy.get('#clients-body tr.clients-row, #clients-body [data-empty-state]', { timeout: 10000 }).should('exist');
+  cy.get('#clients-form-toggle').then(($b) => {
+    if ($b.attr('aria-expanded') !== 'true') cy.wrap($b).click();
+  });
+  cy.get('#create-name').should('be.visible');
+});

@@ -6,6 +6,7 @@ const openClientsForm = () => {
   cy.loginAsAdmin();
   cy.openClientsFromDashboard();
   cy.wait('@customersList');
+  cy.openClientForm();
 };
 
 const fillIdentification = ({

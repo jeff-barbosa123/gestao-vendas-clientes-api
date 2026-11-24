@@ -4,6 +4,7 @@ const openAccessibilityClients = () => {
   cy.loginAsAdmin();
   cy.openClientsFromDashboard();
   cy.wait('@customersList');
+  cy.openClientForm(); // cadastro recolhido quando ja ha clientes
 };
 
 describe('Acessibilidade basica', () => {
@@ -12,8 +13,8 @@ describe('Acessibilidade basica', () => {
   });
 
   it('Navegacao por teclado percorre os principais campos', () => {
-    cy.realPress('Tab');
-    cy.focused().should('have.attr', 'id', 'create-type');
+    // ordem dos campos do formulario: parte do primeiro campo (o botao Novo cliente vem antes no DOM)
+    cy.get('#create-type').focus();
     cy.realPress('Tab');
     cy.focused().should('have.attr', 'id', 'create-name');
     cy.realPress('Tab');

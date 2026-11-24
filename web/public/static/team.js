@@ -96,7 +96,8 @@
 
   function init() {
     if (!$('team-members') || !window.SGVC || !window.SGVC.api) return;
-    $('team-back-dashboard').addEventListener('click', () => { window.location.href = '/dashboard.html'; });
+    const backEl = $('team-back-dashboard');
+  if (backEl) backEl.addEventListener('click', () => { window.location.href = '/dashboard.html'; });
     $('team-invite-form').addEventListener('submit', invite);
     document.addEventListener('click', onClick);
     document.addEventListener('change', onChange);

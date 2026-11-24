@@ -125,7 +125,7 @@ describe('Aparência (White-Label)', () => {
     // o logotipo mora na navbar (canto esquerdo), nunca ao lado do avatar do usuario
     cy.get('.app-nav-brand #brand-logo').should('have.attr', 'src', '/api/branding/logo?v=1');
     cy.get('.dashboard-userbox #brand-logo').should('not.exist');
-    cy.get('#appearance-btn').click();
+    cy.get('.app-nav a[href="/appearance.html"]').click();
     cy.location('pathname').should('eq', '/appearance.html');
   });
 

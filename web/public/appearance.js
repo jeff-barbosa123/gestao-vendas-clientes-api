@@ -212,7 +212,8 @@
     }
   });
 
-  $('appearance-back').addEventListener('click', () => {
+  const backEl = $('appearance-back');
+  if (backEl) backEl.addEventListener('click', () => {
     window.location.href = '/dashboard.html';
   });
 

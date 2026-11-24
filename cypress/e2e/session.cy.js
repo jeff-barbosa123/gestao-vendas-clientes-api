@@ -57,9 +57,10 @@ describe('SGVC - Login e sessao', () => {
     cy.loginAsAdmin();
     cy.wait('@dashboardOverview');
     cy.intercept({ method: 'POST', url: '**/api/auth/logout' }, { statusCode: 204 }).as('logout');
-    cy.get('#logout-btn').click();
+    cy.on('window:confirm', () => true);
+    cy.get('#nav-logout').scrollIntoView().click();
     cy.wait('@logout');
-    cy.location('pathname').should('eq', '/');
+    cy.location('pathname').should('be.oneOf', ['/', '/index.html']);
     cy.window().then((win) => {
       // Verificar que sessionStorage foi limpo
       expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;

@@ -64,7 +64,7 @@ describe('SGVC - Navegacao e dashboard', () => {
 
   it('Retorno seguro ao dashboard depois de visitar clientes', () => {
     loginAndOpenClients();
-    cy.get('#back-dashboard').click();
+    cy.get('.app-nav-links a[href="/dashboard.html"]').click();
     cy.location('pathname').should('eq', '/dashboard.html');
     cy.get('#metric-customers').should('contain', '14');
   });

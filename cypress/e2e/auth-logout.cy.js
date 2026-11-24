@@ -17,9 +17,10 @@ describe('Auth - Logout', () => {
     cy.wait('@me');
     cy.wait('@overview');
 
-    cy.get('#logout-btn').click();
+    cy.on('window:confirm', () => true);
+    cy.get('#nav-logout').scrollIntoView().click();
     cy.wait('@logout');
-    cy.location('pathname', { timeout: 10000 }).should('eq', '/');
+    cy.location('pathname', { timeout: 10000 }).should('be.oneOf', ['/', '/index.html']);
   });
 });
 

@@ -36,7 +36,8 @@ describe('SGVC - Fase 2: equipe, perfis e modulos', () => {
     cy.get('#metric-cmv').should('not.be.visible');
     cy.get('#metric-profit').should('not.be.visible');
     cy.get('#metric-margin').should('not.be.visible');
-    cy.get('#reports-btn').should('not.be.visible');
+    navHidden('/reports.html');
+    cy.get('#reports-btn').should('not.exist');
     cy.get('#metric-customers').should('be.visible');
     cy.get('#dashboard-message').should('have.class', 'is-hidden');
   });
@@ -44,7 +45,8 @@ describe('SGVC - Fase 2: equipe, perfis e modulos', () => {
   it('FASE2-FE-002 | dono ve tudo e o atalho de Equipe', () => {
     visitDashboard(owner, { ...overviewSeller, cmvTotal: 10, profitTotal: 5, margin: 0.3, revenueTotal: 15 });
     cy.get('#metric-cmv').should('be.visible');
-    cy.get('#reports-btn').should('be.visible');
+    navShown('/reports.html');
+    cy.get('#reports-btn').should('not.exist');
     navShown('/team.html');
     cy.get('.app-nav-links a[href="/team.html"]').should('contain', 'Equipe');
   });

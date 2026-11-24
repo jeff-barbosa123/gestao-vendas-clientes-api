@@ -48,8 +48,9 @@ describe('SGVC - Dashboard: fluxos complementares', () => {
   });
 
   [
-    ['#reports-btn', '/reports.html'],
-    ['#profile-btn', '/profile.html'],
+    ['.app-nav-links a[href="/reports.html"]', '/reports.html'],
+    ['.app-nav a[href="/profile.html"]', '/profile.html'],
+    ['.app-nav a[href="/appearance.html"]', '/appearance.html'],
     ['#sales-manage-action', '/sales.html'],
     ['#products-manage-action', '/products.html'],
     ['#recipes-manage-action', '/recipes.html'],

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-24 - Remove navegacao duplicada (sidebar e a unica navegacao)
+
+- Painel: removidos `Relatorios`, `Aparencia`, `Perfil` e `Sair` do cabecalho (ficam so na sidebar).
+- Removidos `Voltar ao dashboard` de Clientes, Produtos, Fichas, Relatorios, Vendas, Simulacao, Vinculos, Aparencia e Equipe, e `Voltar` + `Sair` de Perfil.
+- `appearance.js` e `team.js` passaram a tolerar a ausencia desses botoes.
+- Cypress: specs migradas para a sidebar (`.app-nav-links a[href]`, `#nav-logout` com confirmacao; logout agora termina em `/index.html`).
+
 ## 2026-11-23 - Importacao/exportacao de planilhas (CSV e XLSX)
 
 - Exportacao de Clientes corrigida: `format=excel` era rejeitado (400), o "XLSX" era CSV com mimetype de Excel, lista vazia dava 404 e o navegador nao lia `Content-Disposition` (CORS). Agora CSV (UTF-8 com BOM, `;`, datas dd/mm/aaaa, numeros pt-BR) e XLSX reais (`exceljs`), arquivo so com cabecalho quando vazio.

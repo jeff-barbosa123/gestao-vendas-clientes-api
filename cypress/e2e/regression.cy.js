@@ -92,7 +92,7 @@ describe('Regressao completa', () => {
     cy.get('#clients-body .clients-name-link').first().click();
     cy.wait('@loadFirst');
     cy.go('back');
-    cy.get('#back-dashboard').click();
+    cy.get('.app-nav-links a[href="/dashboard.html"]').click();
     cy.location('pathname').should('eq', '/dashboard.html');
     cy.get('#clients-manage-action').should('be.visible').click();
     cy.location('pathname').should('eq', '/clients.html');
@@ -111,11 +111,12 @@ describe('Regressao completa', () => {
 
   it('Logout e login acontecem sem quebrar o fluxo', () => {
     openClientsPage();
-    cy.get('#back-dashboard').click();
+    cy.get('.app-nav-links a[href="/dashboard.html"]').click();
     cy.intercept('POST', '**/api/auth/logout', { statusCode: 204 }).as('logout');
-    cy.get('#logout-btn').click();
+    cy.on('window:confirm', () => true);
+    cy.get('#nav-logout').scrollIntoView().click();
     cy.wait('@logout');
-    cy.location('pathname').should('eq', '/');
+    cy.location('pathname').should('be.oneOf', ['/', '/index.html']);
     cy.window().then((win) => {
       // Verificar que sessionStorage foi limpo
       expect(win.sessionStorage.getItem('sgvc.session')).to.be.null;

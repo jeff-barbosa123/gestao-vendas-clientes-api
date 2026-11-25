@@ -45,16 +45,12 @@
           <div class="recipes-message" id="edit-message" hidden></div>
 
           <section class="panel-card">
-            <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
-              Atualize os dados para recalcular o custo e o pre&ccedil;o sugerido.
-            </p>
             <form id="edit-form" class="recipes-form" novalidate>
               <div class="recipes-step-block">
                 <div class="recipes-step-header">
                   <span class="recipes-step-index">1</span>
                   <div>
                     <p class="recipes-step-title">Identifica&ccedil;&atilde;o do produto</p>
-                    <p class="recipes-step-subtitle">Use um nome simples para identificar depois.</p>
                   </div>
                 </div>
                 <div class="field">
@@ -108,7 +104,7 @@
                       aria-describedby="edit-yield-help"
                       required
                     />
-                    <p class="help" id="edit-yield-help" style="color:var(--slate-500);">Use este campo para dizer quantas unidades o preparo gera.</p>
+                    <p class="help" id="edit-yield-help" style="color:var(--slate-500);">Quantas unidades o preparo gera no total.</p>
                     <p class="help is-danger" id="edit-yield-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -276,8 +272,7 @@
                   <div class="select">
                     <select id="component-select"></select>
                   </div>
-                  <p class="help" style="color:var(--slate-500);">Escolha a parte e adicione os itens.</p>
-                  <p class="help" style="color:var(--slate-500);">Ingredientes principais s&atilde;o obrigat&oacute;rios.</p>
+                  <p class="help" style="color:var(--slate-500);">Escolha a parte e adicione os itens. Ingredientes principais s&atilde;o obrigat&oacute;rios.</p>
                 </div>
                 <div class="field has-addons component-rename">
                   <div class="control is-expanded">
@@ -364,9 +359,8 @@
                       </div>
                     </div>
                   </div>
-                  <p class="help" style="color:var(--slate-500);">O sistema calcula o custo automaticamente. Use a mesma unidade da embalagem.</p>
-                  <p class="help" style="color:var(--slate-500);">Se n&atilde;o informar o pre&ccedil;o, o custo do item ser&aacute; R$ 0,00.</p>
-                  <p class="help" style="color:var(--slate-500);">Regra: se compra por unidade (lata/garrafa/caixa), use unidade=un e pacote=1. Se compra por peso/volume, use g/kg/ml/l e informe o tamanho real do pacote.</p>
+                  <p class="help" style="color:var(--slate-500);">Custo = (qtd usada &divide; pacote) &times; pre&ccedil;o, na mesma unidade da embalagem. Sem pre&ccedil;o, o item custa R$ 0,00.</p>
+                  <p class="help" style="color:var(--slate-500);">Compra por unidade (lata, caixa): use un e pacote 1. Por peso ou volume: g, kg, ml ou l e o tamanho do pacote.</p>
                   <p class="help" id="edit-ingredient-unit-help" style="color:var(--slate-500);"></p>
                   <p class="help is-warning" id="edit-ingredient-unit-warning" aria-live="polite" hidden></p>
                   <p class="help is-danger" id="edit-ingredient-error" aria-live="polite" hidden></p>

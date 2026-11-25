@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-25 - Ajudas da ficha tecnica mais enxutas
+
+- `recipe-edit.html` e `recipes.html`: removidos textos de ajuda duplicados (cabecalho que repetia o subtitulo, subtitulo do nome que repetia a ajuda do campo) e encurtadas as ajudas de rendimento e de partes.
+- Ingredientes: quatro linhas de ajuda (custo automatico, preco vazio, formula, regra de unidade/pacote) viraram duas, curtas.
+- Somente texto: ids, campos, classes e seletores inalterados; so tokens. Unidades (item 2) e zeros (item 3) ficam para depois.
+
 ## 2026-11-24 - Cadastro de ficha tecnica recolhivel
 
 - `recipes.html`: botao "Nova ficha" / "Fechar cadastro" (`#recipes-form-toggle`) abre e fecha o painel de cadastro (`#recipes-create-panel`), no mesmo padrao de Produtos e Clientes. Sem fichas o formulario ja nasce aberto (o botao do estado vazio continua levando ao Nome); com fichas nasce recolhido e, ao abrir, o foco vai para o Nome. A escolha manual nao e sobrescrita ao recarregar a lista; se a lista falhar, o cadastro abre.

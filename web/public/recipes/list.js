@@ -19,6 +19,7 @@ import {
 import { state } from './state.js';
 import { apiRequest, buildUrl, ensureAuthOrRedirect, showMessage } from './core.js';
 import { formatMoney } from './calc.js';
+import { syncFormToggle } from './form-toggle.js';
 
 function updatePagination(total) {
   if (!pagination) return;
@@ -216,8 +217,15 @@ function renderPage() {
 }
 
 export async function loadRecipes(token) {
-  const data = await apiRequest('/api/recipes', token);
+  let data;
+  try {
+    data = await apiRequest('/api/recipes', token);
+  } catch (err) {
+    syncFormToggle(false); // sem lista, o cadastro nao fica bloqueado
+    throw err;
+  }
   state.recipesCache = Array.isArray(data) ? data : data.items || [];
+  syncFormToggle(state.recipesCache.length > 0);
   state.currentPage = 1;
   renderPage();
 }

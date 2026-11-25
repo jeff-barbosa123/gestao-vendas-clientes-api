@@ -158,3 +158,12 @@ Cypress.Commands.add('openClientForm', () => {
   });
   cy.get('#create-name').should('be.visible');
 });
+
+// Fichas tecnicas: abre o cadastro (recolhido quando ja ha fichas) depois que a lista foi desenhada.
+Cypress.Commands.add('openRecipeForm', () => {
+  cy.get('#recipes-body tr', { timeout: 10000 }).should('exist');
+  cy.get('#recipes-form-toggle').then(($b) => {
+    if ($b.attr('aria-expanded') !== 'true') cy.wrap($b).click();
+  });
+  cy.get('#create-name').should('be.visible');
+});

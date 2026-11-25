@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-24 - Cadastro de ficha tecnica recolhivel
+
+- `recipes.html`: botao "Nova ficha" / "Fechar cadastro" (`#recipes-form-toggle`) abre e fecha o painel de cadastro (`#recipes-create-panel`), no mesmo padrao de Produtos e Clientes. Sem fichas o formulario ja nasce aberto (o botao do estado vazio continua levando ao Nome); com fichas nasce recolhido e, ao abrir, o foco vai para o Nome. A escolha manual nao e sobrescrita ao recarregar a lista; se a lista falhar, o cadastro abre.
+- Botao e painel somem sem `recipes:write` (access.js). Ids, campos e fluxo de criacao inalterados; so tokens.
+- Cypress: comando `cy.openRecipeForm()` (usado em `recipes.cy.js`); `recipes-form-toggle.cy.js` (3).
+
 ## 2026-11-24 - Cadastro de cliente recolhivel
 
 - `clients.html`: botao "Novo cliente" / "Fechar cadastro" (`#clients-form-toggle`) abre e fecha o painel de cadastro (`#clients-create-panel`), no mesmo padrao de Produtos. Sem clientes o formulario ja nasce aberto (o botao do estado vazio continua levando ao Nome); com clientes nasce recolhido e, ao abrir, o foco vai para o Nome. A escolha manual nao e sobrescrita ao recarregar a lista (vale para a lista paginada pelo servidor e para o formato antigo).

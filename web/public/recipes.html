@@ -42,6 +42,7 @@
               <p class="recipes-subtitle">Veja quanto custa produzir e quanto cobrar para vender.</p>
             </div>
             <div class="recipes-actions">
+              <button class="button is-link is-small" id="recipes-form-toggle" type="button" aria-expanded="false" aria-controls="recipes-create-panel">Nova ficha</button>
               <button class="button is-link is-small" id="refresh-list">Atualizar lista</button>
             </div>
           </header>
@@ -49,7 +50,7 @@
           <div class="recipes-message" id="recipes-message" hidden></div>
 
           <section class="recipes-grid">
-            <div class="panel-card">
+            <div class="panel-card is-collapsed" id="recipes-create-panel">
               <h4 class="recipes-section-title">Cadastrar ficha de custo</h4>
               <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Preencha os dados abaixo para calcular o custo e o pre&#231;o de venda.

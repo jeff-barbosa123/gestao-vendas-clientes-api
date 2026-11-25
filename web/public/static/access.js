@@ -87,6 +87,7 @@
   const PAGE_BLOCKS = {
     '/products.html': [{ sel: '#create-form', perm: 'products:write', closest: '.panel-card' }, { sel: '#products-form-toggle', perm: 'products:write' }],
     '/clients.html': [{ sel: '#create-form', perm: 'customers:write', closest: '.panel-card' }, { sel: '#clients-form-toggle', perm: 'customers:write' }],
+    '/recipes.html': [{ sel: '#create-form', perm: 'recipes:write', closest: '.panel-card' }, { sel: '#recipes-form-toggle', perm: 'recipes:write' }],
   };
 
   function applyBlocks() {

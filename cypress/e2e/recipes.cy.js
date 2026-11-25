@@ -25,6 +25,7 @@ describe('SGVC - Fichas de custo', () => {
     }).as('createRecipe');
     cy.visitWithSession('/recipes.html');
     cy.wait('@fetchRecipes');
+    cy.openRecipeForm(); // cadastro recolhido quando ja ha fichas
   });
 
   it('mantém o resumo com placeholder até que os dados estejam completos', () => {

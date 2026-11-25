@@ -138,7 +138,7 @@ export function updateCostSummary() {
     summaryUnit.textContent = `R$ ${formatMoney(costPerUnit)}`;
     summarySuggested.textContent = `R$ ${formatMoney(suggestedUnit)}`;
     summaryProfit.textContent = `R$ ${formatMoney(profit)}`;
-    summaryYield.textContent = `${formatQuantity(yieldValue)} ${yieldTypeInput.value || ''}`.trim();
+    summaryYield.textContent = `${formatQuantity(yieldValue)} ${(yieldTypeInput.value || '').toLowerCase()}`.trim();
   } else {
     const placeholder = 'Preencha os dados acima';
     summaryUnit.textContent = placeholder;

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-25 - Unidades padronizadas em minusculas
+
+- Ficha tecnica (`recipe-edit.html` e `recipes.html`): o seletor de rendimento mostra `un (unidades)`, `kg (quilos)` e `l (litros)`; o de ingredientes segue o mesmo formato de Insumos (`g (gramas)`, `kg (quilos)`, `l (litros)`, `ml (mililitros)`, `un (unidades)`).
+- Rendimento exibido em minusculas no resumo da ficha, na lista de fichas e em Vinculos (`10 un`, `2 kg`).
+- Removida a dica "UN = unidades, KG = quilos, L = litros.", agora redundante.
+- Somente exibicao: valores internos e payload (`UN`/`KG`/`L`, `g`/`kg`/`ml`/`l`/`un`) inalterados; ids e seletores iguais; so tokens.
+
 ## 2026-11-25 - Ajudas da ficha tecnica mais enxutas
 
 - `recipe-edit.html` e `recipes.html`: removidos textos de ajuda duplicados (cabecalho que repetia o subtitulo, subtitulo do nome que repetia a ajuda do campo) e encurtadas as ajudas de rendimento e de partes.

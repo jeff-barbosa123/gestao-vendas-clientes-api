@@ -145,7 +145,7 @@ function renderTable(items) {
 
     const tdYield = document.createElement('td');
     tdYield.className = 'has-text-right';
-    tdYield.textContent = `${String(recipe.yield ?? '-')}${recipe.yieldType ? ` ${recipe.yieldType}` : ''}`;
+    tdYield.textContent = `${String(recipe.yield ?? '-')}${recipe.yieldType ? ` ${String(recipe.yieldType).toLowerCase()}` : ''}`;
 
     const tdUnitCost = document.createElement('td');
     tdUnitCost.className = 'has-text-right';

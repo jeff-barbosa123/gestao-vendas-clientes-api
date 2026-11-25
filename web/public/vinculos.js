@@ -304,7 +304,7 @@
       row.innerHTML = `
         <td data-label="Produto">${escapeHtml(getProductName(product))}</td>
         <td data-label="Ficha t\u00e9cnica">${escapeHtml(recipe ? getRecipeName(recipe) : 'Sem ficha')}</td>
-        <td class="has-text-right" data-label="Rendimento">${yieldValue != null ? `${formatQuantity(yieldValue)} ${yieldType}`.trim() : '-'}</td>
+        <td class="has-text-right" data-label="Rendimento">${yieldValue != null ? `${formatQuantity(yieldValue)} ${String(yieldType).toLowerCase()}`.trim() : '-'}</td>
       <td class="has-text-right" data-label="Custo unit\u00e1rio">${costUnit != null ? formatCurrency(costUnit) : '-'}</td>
         <td class="has-text-right" data-label="Pre\u00e7o sugerido">${suggested != null ? formatCurrency(suggested) : '-'}</td>
         <td data-label="Status">

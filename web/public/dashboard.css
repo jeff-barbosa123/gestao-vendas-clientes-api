@@ -43,6 +43,24 @@
   display: none;
 }
 
+.dashboard-message-retry {
+  margin-left: 12px;
+  vertical-align: middle;
+}
+
+/* Base vazia: indicadores e alertas recolhidos (nunca quando há erro de carga) */
+.dashboard.is-guide-focus:not([data-load-error]) > .dashboard-block {
+  display: none;
+}
+
+.dashboard[data-load-error] #onboarding-show-metrics {
+  display: none;
+}
+
+.dashboard-alert-button.is-hidden {
+  display: none;
+}
+
 .dashboard-message.is-success {
   background: var(--ok-bg);
   color: var(--ok-fg);

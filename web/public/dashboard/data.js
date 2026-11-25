@@ -53,6 +53,31 @@ export async function loadUpcomingOrders() {
   }
 }
 
+// Falha nos indicadores: mostra "—" em vez de zeros e nenhum aviso tranquilizador.
+export function showMetricsUnavailable() {
+  Object.values(els).forEach((el) => {
+    if (!el) return;
+    el.textContent = '—';
+    el.classList.remove('is-negative');
+  });
+  ['customers', 'sales', 'revenue', 'cmv', 'profit', 'products', 'recipes', 'linked', 'margin']
+    .forEach((key) => toggleEmpty(key, false));
+  const unavailable = { alertsUnavailable: true };
+  renderPricingAlerts(unavailable);
+  renderStockAlerts(unavailable);
+  renderProductStockAlerts(unavailable);
+  renderCharts({ salesCount: 0, revenueTotal: 0 });
+}
+
+// Quando nem a sessão pôde ser conferida, os demais cartões também não ficam em "Carregando...".
+export function showSecondaryUnavailable() {
+  updateRevenueAlert(null, null);
+  const orders = document.getElementById('alert-orders-message');
+  if (orders) orders.textContent = 'Não foi possível carregar as encomendas.';
+  const list = document.getElementById('alert-orders-list');
+  if (list) list.textContent = '';
+}
+
 export function updateMetrics(data) {
   renderPricingAlerts(data);
   renderStockAlerts(data);
@@ -99,40 +124,72 @@ export function updateMetrics(data) {
   });
 }
 
-export async function loadClients(token) {
+// Estado de erro de um cartão: mensagem clara e "Tentar novamente", sem parecer base vazia.
+function setAlertCardError(prefix, message) {
+  const messageEl = document.getElementById(`${prefix}-message`);
+  if (!messageEl) return;
+  const card = messageEl.closest('.dashboard-alert-card');
+  if (!card) return;
+  const failed = Boolean(message);
+  card.classList.toggle('is-load-error', failed);
+  const retry = card.querySelector('[data-retry]');
+  if (retry) {
+    retry.hidden = !failed;
+    retry.disabled = false;
+  }
+  const action = document.getElementById(`${prefix}-action`);
+  if (action) action.classList.toggle('is-hidden', failed);
+  if (!failed) return;
+  messageEl.textContent = message;
+  const hint = document.getElementById(`${prefix}-hint`);
+  if (hint) hint.textContent = '';
+  const count = document.getElementById(`${prefix}-count`);
+  if (count) count.textContent = '';
+}
+
+export function showClientsError() {
+  setAlertCardError('alert-clients', 'Não foi possível carregar os clientes.');
+}
+
+export function showProductsError() {
+  setAlertCardError('alert-products', 'Não foi possível carregar os produtos.');
+}
+
+// Sem permissão (403): o cartão some, sem tirar a pessoa do painel.
+function hideAlertCard(prefix) {
+  const card = document.getElementById(`${prefix}-message`)?.closest('.dashboard-alert-card');
+  if (card) card.hidden = true;
+}
+
+async function loadAlertList(path, prefix, render, showError) {
   try {
-    const data = await fetchJson("/api/customers", token);
+    const data = await fetchJson(path, null);
     // Suporta formato paginado e não paginado
-    const list = Array.isArray(data) 
-      ? data 
+    const list = Array.isArray(data)
+      ? data
       : (data.items && Array.isArray(data.items) ? data.items : []);
-    updateClientAlert(list);
-    return list;
+    setAlertCardError(prefix, '');
+    render(list);
+    return { list };
   } catch (err) {
-    if (handleAuthFailure(err)) return [];
+    if (err && err.status === 403) {
+      hideAlertCard(prefix);
+      return { list: [] };
+    }
+    if (handleAuthFailure(err)) return { list: [] };
     const friendlyMessage = normalizeError(err);
-    console.error("Clients list:", friendlyMessage);
-    updateClientAlert([]);
-    return [];
+    console.error(`${path}:`, friendlyMessage);
+    showError();
+    return { list: [], error: friendlyMessage };
   }
 }
 
-export async function loadProducts(token) {
-  try {
-    const data = await fetchJson("/api/products", token);
-    // Suporta formato paginado e não paginado
-    const list = Array.isArray(data) 
-      ? data 
-      : (data.items && Array.isArray(data.items) ? data.items : []);
-    updateProductAlert(list);
-    return list;
-  } catch (err) {
-    if (handleAuthFailure(err)) return [];
-    const friendlyMessage = normalizeError(err);
-    console.error("Products list:", friendlyMessage);
-    updateProductAlert([]);
-    return [];
-  }
+export function loadClients() {
+  return loadAlertList('/api/customers', 'alert-clients', updateClientAlert, showClientsError);
+}
+
+export function loadProducts() {
+  return loadAlertList('/api/products', 'alert-products', updateProductAlert, showProductsError);
 }
 
 export async function loadRevenueInsights(token, period) {
@@ -186,6 +243,10 @@ export async function loadFallbackMetrics(token, period) {
       revenueTotal: financial && Number.isFinite(financial.revenue) ? financial.revenue : 0,
       salesCount: financial && Number.isFinite(financial.salesCount) ? financial.salesCount : 0,
       margin: financial && Number.isFinite(financial.margin) ? financial.margin : 0,
+      cmvTotal: financial && Number.isFinite(financial.cmv) ? financial.cmv : undefined,
+      profitTotal: financial && Number.isFinite(financial.profit) ? financial.profit : undefined,
+      // O caminho alternativo não traz avisos de preço e estoque: eles ficam como "não verificados".
+      alertsUnavailable: true,
     };
   } catch (err) {
     console.error("Fallback metrics failed:", err);

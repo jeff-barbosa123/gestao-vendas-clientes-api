@@ -12,9 +12,23 @@ export const money = (v) =>
     currency: 'BRL',
   });
 
-export function showDashboardMessage(text, type = 'is-danger') {
+export function showDashboardMessage(text, type = 'is-danger', onRetry = null) {
   if (!dashboardMessage) return;
-  dashboardMessage.textContent = text || '';
+  dashboardMessage.textContent = '';
+  if (text) {
+    const message = document.createElement('span');
+    message.textContent = text;
+    dashboardMessage.appendChild(message);
+  }
+  if (text && onRetry) {
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.id = 'dashboard-retry';
+    retry.className = 'button is-light is-small dashboard-message-retry';
+    retry.textContent = 'Tentar novamente';
+    retry.addEventListener('click', onRetry);
+    dashboardMessage.appendChild(retry);
+  }
   dashboardMessage.classList.remove('is-danger', 'is-success', 'is-hidden');
   dashboardMessage.classList.add(type);
   dashboardMessage.hidden = !text;
@@ -50,8 +64,8 @@ export async function ensureAuthenticated() {
       }
       return null;
     }
-    // Falha de rede/etc: mantém na tela mas mostra fallback
-    return null;
+    // Falha de conexão ou do servidor não é sessão expirada: quem chamou mostra o erro.
+    throw err;
   }
 }
 

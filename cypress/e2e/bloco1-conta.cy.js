@@ -75,7 +75,7 @@ describe('SGVC - Bloco 1: conta e primeiros passos', () => {
     cy.stubDashboardMetrics();
     cy.intercept('GET', '**/api/analytics/overview*', {
       statusCode: 200,
-      body: { customers: 0, products: 0, recipes: 0, linkedProducts: 0, sales: 0, lowStock: [] },
+      body: { customers: 0, products: 0, recipes: 0, linkedProducts: 0, salesCount: 0 },
     });
     cy.visit('/dashboard.html', { onBeforeLoad: (win) => win.localStorage.removeItem('sgvc.onboarding.dismissed') });
     cy.get('#onboarding-card').should('contain', 'Primeiros passos').and('contain', 'primeiro cliente');

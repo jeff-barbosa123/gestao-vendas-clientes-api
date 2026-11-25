@@ -1,7 +1,6 @@
 /**
  * Orquestração da carga do dashboard.
  */
-import { FALLBACK_METRICS } from './constants.js';
 import { periodSelect } from './dom.js';
 import { state } from './state.js';
 import {
@@ -20,54 +19,98 @@ import {
   loadRevenueInsights,
   loadUpcomingOrders,
   renderUserName,
+  showClientsError,
+  showMetricsUnavailable,
+  showProductsError,
+  showSecondaryUnavailable,
   updateMetrics,
 } from './data.js';
 
+// Marca o painel com falha: com ela, nada fica recolhido pelo guia de primeiros passos.
+function setLoadError(hasError) {
+  const dashboard = document.querySelector('.dashboard');
+  if (dashboard) dashboard.toggleAttribute('data-load-error', hasError);
+}
+
+// Recarrega os dados sem recarregar a página.
+function retryLoad() {
+  document.querySelectorAll('[data-retry]').forEach((button) => { button.disabled = true; });
+  const retry = document.getElementById('dashboard-retry');
+  if (retry) retry.disabled = true;
+  window.dispatchEvent(new CustomEvent('sgvc:dashboard-retry'));
+  return carregarDashboard();
+}
+
+document.querySelectorAll('[data-retry]').forEach((button) => button.addEventListener('click', retryLoad));
+
 export async function carregarDashboard() {
-  const user = await ensureAuthenticated();
-  if (!user) {
-    // Não redirecionar se estiver navegando (clique em botão)
+  let user;
+  try {
+    user = await ensureAuthenticated();
+  } catch (err) {
     if (state.isNavigating) return;
-    showDashboardMessage('Sessão expirada. Faça login novamente.', 'is-danger');
-    updateMetrics(FALLBACK_METRICS);
+    const reason = normalizeError(err);
+    showMetricsUnavailable();
+    showSecondaryUnavailable();
+    showClientsError();
+    showProductsError();
+    setLoadError(true);
+    showDashboardMessage(`Não foi possível carregar o painel. ${reason}`, 'is-danger', retryLoad);
     return;
   }
-  clearDashboardMessage();
+  // Sessão expirada (401): ensureAuthenticated já redireciona para o login.
+  if (!user) return;
   renderUserName(user);
   const period = buildPeriodQuery(periodSelect ? periodSelect.value : null);
+  let metricsError = null;
+  let metrics = null;
 
   try {
     const data = await fetchJson('/api/analytics/overview', null, {
       start: period.start,
       end: period.end,
     });
-    updateMetrics(data || {});
+    metrics = data || {};
   } catch (err) {
     if (handleAuthFailure(err)) return;
-    
-    const friendlyMessage = normalizeError(err);
-    
+
+    metricsError = normalizeError(err);
+
     try {
       const fallback = await loadFallbackMetrics(null, period);
       if (fallback) {
-        clearDashboardMessage();
-        updateMetrics(fallback);
-        return;
+        metrics = fallback;
+        metricsError = null;
       }
     } catch (fallbackErr) {
-      const fallbackFriendly = normalizeError(fallbackErr);
-      console.error('Fallback dashboard:', fallbackFriendly);
+      console.error('Fallback dashboard:', normalizeError(fallbackErr));
     }
-    
-    showDashboardMessage(friendlyMessage || 'Não foi possível carregar os indicadores. Tente novamente mais tarde.', 'is-danger');
-    updateMetrics(FALLBACK_METRICS);
-    console.error('Dashboard error:', friendlyMessage);
-  } finally {
-    await Promise.all([
-      loadUpcomingOrders(),
-      loadRevenueInsights(null, period),
-      loadClients(null),
-      loadProducts(null),
-    ]);
   }
+
+  if (metrics) {
+    updateMetrics(metrics);
+  } else {
+    showMetricsUnavailable();
+    console.error('Dashboard error:', metricsError);
+  }
+
+  const [, , clients, products] = await Promise.all([
+    loadUpcomingOrders(),
+    loadRevenueInsights(null, period),
+    loadClients(null),
+    loadProducts(null),
+  ]);
+
+  const failed = [];
+  if (!metrics) failed.push('os indicadores');
+  if (clients && clients.error) failed.push('os clientes');
+  if (products && products.error) failed.push('os produtos');
+  setLoadError(failed.length > 0);
+  if (!failed.length) {
+    clearDashboardMessage();
+    return;
+  }
+  const names = failed.length > 1 ? `${failed.slice(0, -1).join(', ')} e ${failed[failed.length - 1]}` : failed[0];
+  const reason = metricsError || (clients && clients.error) || (products && products.error);
+  showDashboardMessage(`Não foi possível carregar ${names}. ${reason}`, 'is-danger', retryLoad);
 }

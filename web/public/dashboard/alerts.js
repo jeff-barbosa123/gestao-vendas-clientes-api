@@ -20,6 +20,12 @@ export function renderPricingAlerts(data) {
   const msgEl = document.getElementById('alert-pricing-message');
   const listEl = document.getElementById('alert-pricing-list');
   if (!msgEl || !listEl) return;
+  if (data.alertsUnavailable) {
+    listEl.textContent = '';
+    if (countEl) countEl.textContent = '';
+    msgEl.textContent = 'Não foi possível verificar as margens dos produtos agora.';
+    return;
+  }
   const alerts = Array.isArray(data.pricingAlerts) ? data.pricingAlerts : [];
   const threshold = Math.round(Number(data.lowMarginThreshold ?? 0.3) * 100);
   const below = alerts.filter((a) => a.level === 'below_cost').length;
@@ -97,6 +103,12 @@ export function renderProductStockAlerts(data) {
   const msgEl = document.getElementById('alert-product-stock-message');
   const listEl = document.getElementById('alert-product-stock-list');
   if (!msgEl || !listEl) return;
+  if (data.alertsUnavailable) {
+    listEl.textContent = '';
+    if (countEl) countEl.textContent = '';
+    msgEl.textContent = 'Não foi possível verificar o estoque dos produtos agora.';
+    return;
+  }
   const alerts = Array.isArray(data.productStockAlerts) ? data.productStockAlerts : [];
   listEl.textContent = '';
   if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';
@@ -130,6 +142,12 @@ export function renderStockAlerts(data) {
   const msgEl = document.getElementById('alert-stock-message');
   const listEl = document.getElementById('alert-stock-list');
   if (!msgEl || !listEl) return;
+  if (data.alertsUnavailable) {
+    listEl.textContent = '';
+    if (countEl) countEl.textContent = '';
+    msgEl.textContent = 'Não foi possível verificar o estoque dos insumos agora.';
+    return;
+  }
   const alerts = Array.isArray(data.stockAlerts) ? data.stockAlerts : [];
   listEl.textContent = '';
   if (countEl) countEl.textContent = alerts.length ? String(alerts.length) : '';

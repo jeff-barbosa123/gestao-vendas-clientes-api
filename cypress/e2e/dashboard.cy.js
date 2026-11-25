@@ -56,10 +56,13 @@ describe('SGVC - Navegacao e dashboard', () => {
 
   it('Erro da API nao deixa cair a pagina', () => {
     cy.stubDashboardMetrics({ statusCode: 500, alias: 'dashboardError' });
+    // O caminho alternativo tambem falha: sem dado confiavel, nada de zeros.
+    cy.intercept({ method: 'GET', pathname: '/api/recipes' }, { statusCode: 500, body: {} });
     cy.loginAsAdmin();
     cy.wait('@dashboardError');
     cy.location('pathname').should('eq', '/dashboard.html');
-    cy.get('#metric-customers').should('contain', '0');
+    cy.get('#metric-customers').should('have.text', '—');
+    cy.get('#dashboard-retry').should('be.visible');
   });
 
   it('Retorno seguro ao dashboard depois de visitar clientes', () => {

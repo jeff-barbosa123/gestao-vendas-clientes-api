@@ -101,6 +101,7 @@
         <div class="dashboard-card">
           <p class="dashboard-value" id="metric-cmv">R$ 0,00</p>
           <p class="dashboard-label">CMV (custo do que foi vendido)</p>
+          <p class="term-help">Quanto custaram os produtos que você vendeu.</p>
           <p class="kpi-empty is-hidden" data-empty="cmv">Sem dados no período.</p>
           <span class="kpi-spacer" aria-hidden="true"></span>
         </div>
@@ -152,6 +153,7 @@
         <div class="dashboard-card">
           <p class="dashboard-value" id="metric-recipes">--</p>
           <p class="dashboard-label">Fichas técnicas</p>
+          <p class="term-help">A receita do produto: ingredientes, quantidades e custos.</p>
           <p class="kpi-empty is-hidden" data-empty="recipes">Sem dados no período.</p>
           <button class="button is-link is-small" id="recipes-manage-action">Ver fichas</button>
         </div>
@@ -166,6 +168,7 @@
         <div class="dashboard-card">
           <p class="dashboard-value" id="metric-margin">0%</p>
           <p class="dashboard-label">Margem média</p>
+          <p class="term-help">Quanto sobra da venda após o custo do produto. 40% são R$ 40 a cada R$ 100, antes das outras despesas.</p>
           <p class="kpi-empty is-hidden" data-empty="margin">Sem dados no período.</p>
           <button class="button is-light is-small" id="margin-manage-action">Simular preço</button>
         </div>
@@ -190,6 +193,9 @@
           <p class="dashboard-alert-hint" id="alert-clients-hint"></p>
           <button class="button is-link is-small dashboard-alert-button" id="alert-clients-action">
             Ver clientes
+          </button>
+          <button class="button is-light is-small dashboard-alert-button" type="button" id="alert-clients-retry" data-retry hidden>
+            Tentar novamente
           </button>
         </article>
 
@@ -224,6 +230,9 @@
           <p class="dashboard-alert-hint" id="alert-products-hint"></p>
           <button class="button is-link is-small dashboard-alert-button" id="alert-products-action">
             Resolver agora
+          </button>
+          <button class="button is-light is-small dashboard-alert-button" type="button" id="alert-products-retry" data-retry hidden>
+            Tentar novamente
           </button>
         </article>
 

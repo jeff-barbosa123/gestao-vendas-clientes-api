@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-25 - Zeros sem dados trocados por traco
+
+- Ficha tecnica (`recipe-edit.html` e `recipes.html`): o total de custos extras mostra `—` enquanto nao ha itens; com itens o calculo e o formato (`R$ x,xx`) seguem iguais.
+- PDV (`pdv.html`/`pdv.js`): com o carrinho vazio o saldo mostra `Falta: —` em vez de `R$ 0,00`; com itens, `Troco`/`Falta` e o botao de finalizar nao mudam.
+- Somente exibicao: ids, calculos e payload inalterados; so tokens.
+
 ## 2026-11-25 - Unidades padronizadas em minusculas
 
 - Ficha tecnica (`recipe-edit.html` e `recipes.html`): o seletor de rendimento mostra `un (unidades)`, `kg (quilos)` e `l (litros)`; o de ingredientes segue o mesmo formato de Insumos (`g (gramas)`, `kg (quilos)`, `l (litros)`, `ml (mililitros)`, `un (unidades)`).

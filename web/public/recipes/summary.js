@@ -88,7 +88,7 @@ export function renderOverheadItems() {
   }
   const itemsTotal = state.overheadItems.reduce((sum, item) => sum + (toNumber(item.value, 0) || 0), 0);
   if (overheadTotalEl) {
-    overheadTotalEl.textContent = `R$ ${formatMoney(itemsTotal)}`;
+    overheadTotalEl.textContent = state.overheadItems.length ? `R$ ${formatMoney(itemsTotal)}` : '—';
   }
   updateCostSummary();
   updateSubmitState();

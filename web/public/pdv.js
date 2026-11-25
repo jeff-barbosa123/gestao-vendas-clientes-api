@@ -325,7 +325,7 @@
     const diff = paid - total;
     els.balance.classList.toggle('is-ok', total > 0 && diff >= 0);
     els.balance.classList.toggle('is-missing', total > 0 && diff < 0);
-    els.balance.textContent = diff >= 0 ? `Troco: ${money(diff / 100)}` : `Falta: ${money(-diff / 100)}`;
+    els.balance.textContent = total === 0 ? 'Falta: —' : diff >= 0 ? `Troco: ${money(diff / 100)}` : `Falta: ${money(-diff / 100)}`;
     els.finish.disabled = !(total > 0 && diff >= 0);
   }
 

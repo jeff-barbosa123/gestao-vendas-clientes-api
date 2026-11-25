@@ -85,7 +85,7 @@ export function renderOverheadItems() {
     });
   }
   const total = state.overheadItems.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
-  if (overheadTotalEl) overheadTotalEl.textContent = `R$ ${formatMoney(total)}`;
+  if (overheadTotalEl) overheadTotalEl.textContent = state.overheadItems.length ? `R$ ${formatMoney(total)}` : '—';
   updateCostSummary();
 }
 

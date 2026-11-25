@@ -503,7 +503,13 @@
   display: block;
   font-size: 11px;
   color: var(--slate-500);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.field.has-addons.ingredient-row {
+  align-items: flex-end;
 }
 
 .select.small-select select {

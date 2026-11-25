@@ -85,13 +85,12 @@
                   <span class="recipes-step-index">2</span>
                   <div>
                     <p class="recipes-step-title">Produção / rendimento</p>
-                      <p class="recipes-step-subtitle">Quantas unidades esse preparo gera no total.</p>
                   </div>
                 </div>
                 <div class="field grouped">
                   <div>
                     <label class="label" for="edit-yield">
-                      Quantas unidades esse preparo gera?
+                      Quantas unidades este item rende?
                       <span class="info-tip" data-tooltip="Total produzido por este produto." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
                     </label>
                     <input
@@ -104,7 +103,7 @@
                       aria-describedby="edit-yield-help"
                       required
                     />
-                    <p class="help" id="edit-yield-help" style="color:var(--slate-500);">Quantas unidades o preparo gera no total.</p>
+                    <p class="help" id="edit-yield-help" style="color:var(--slate-500);">Quanto a produ&ccedil;&atilde;o rende de uma vez.</p>
                     <p class="help is-danger" id="edit-yield-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -249,7 +248,7 @@
                 <div class="component-toolbar">
                   <div class="field has-addons component-add">
                     <div class="control is-expanded">
-                      <input class="input" id="component-name" type="text" placeholder="Ex: Massa, Cobertura, Embalagem" aria-label="Nome da parte do produto" />
+                      <input class="input" id="component-name" type="text" placeholder="Ex: Base, Embalagem, M&atilde;o de obra" aria-label="Nome da parte do produto" />
                     </div>
                     <div class="control">
                       <button class="button is-light" type="button" id="component-add">Adicionar parte</button>
@@ -257,11 +256,11 @@
                   </div>
                   <div class="component-quick">
                     <span class="component-quick-label">Atalhos:</span>
-                    <button class="button is-light is-small" type="button" id="component-add-massa">Massa</button>
-                    <button class="button is-light is-small" type="button" id="component-add-cobertura">Cobertura</button>
+                    <button class="button is-light is-small" type="button" id="component-add-massa">Base</button>
+                    <button class="button is-light is-small" type="button" id="component-add-cobertura">Complemento</button>
                     <button class="button is-light is-small" type="button" id="component-add-embalagem">Embalagem</button>
                     <button class="button is-light is-small" type="button" id="component-add-mao-obra">M&atilde;o de obra</button>
-                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Recheio</button>
+                    <button class="button is-light is-small" type="button" id="component-add-aviamentos">Acess&oacute;rios</button>
                     <button class="button is-light is-small" type="button" id="component-add-materia-prima">Mat&eacute;ria-prima</button>
                     <button class="button is-light is-small" type="button" id="component-add-acabamento">Acabamento</button>
                   </div>
@@ -299,7 +298,7 @@
                     Itens da parte
                     <span class="info-tip" data-tooltip="Informe quanto usou e quanto vem no pacote que voc&ecirc; compra." tabindex="0" role="img" aria-label="Ajuda">&#9432;</span>
                   </label>
-                  <div class="field has-addons">
+                  <div class="field has-addons ingredient-row">
                     <div class="control is-expanded">
                       <input class="input" id="edit-ingredient-name" type="text" placeholder="Ex: Farinha de trigo" list="edit-ingredient-suggestions" aria-label="Nome do item" aria-describedby="edit-ingredient-error edit-ingredient-unit-warning edit-ingredient-unit-help" />
                     </div>
@@ -358,8 +357,7 @@
                       </div>
                     </div>
                   </div>
-                  <p class="help" style="color:var(--slate-500);">Custo = (qtd usada &divide; pacote) &times; pre&ccedil;o, na mesma unidade da embalagem. Sem pre&ccedil;o, o item custa R$ 0,00.</p>
-                  <p class="help" style="color:var(--slate-500);">Compra por unidade (lata, caixa): use un e pacote 1. Por peso ou volume: g, kg, ml ou l e o tamanho do pacote.</p>
+                  <p class="help" style="color:var(--slate-500);">Custo = (qtd usada &divide; pacote) &times; pre&ccedil;o. Sem pre&ccedil;o, o item custa R$ 0,00.</p>
                   <p class="help" id="edit-ingredient-unit-help" style="color:var(--slate-500);"></p>
                   <p class="help is-warning" id="edit-ingredient-unit-warning" aria-live="polite" hidden></p>
                   <p class="help is-danger" id="edit-ingredient-error" aria-live="polite" hidden></p>

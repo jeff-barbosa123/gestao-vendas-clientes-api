@@ -391,11 +391,11 @@ export function initEvents() {
   }
 
   if (componentAddMassa) {
-    componentAddMassa.addEventListener('click', () => addComponent('Massa'));
+    componentAddMassa.addEventListener('click', () => addComponent('Base'));
   }
 
     if (componentAddCobertura) {
-      componentAddCobertura.addEventListener('click', () => addComponent('Cobertura'));
+      componentAddCobertura.addEventListener('click', () => addComponent('Complemento'));
     }
 
     if (componentAddEmbalagem) {
@@ -407,7 +407,7 @@ export function initEvents() {
   }
 
   if (componentAddAviamentos) {
-    componentAddAviamentos.addEventListener('click', () => addComponent('Recheio'));
+    componentAddAviamentos.addEventListener('click', () => addComponent('Acess\u00f3rios'));
   }
 
   if (componentAddMateriaPrima) {

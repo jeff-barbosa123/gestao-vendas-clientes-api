@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-25 - Ficha de custo neutra e itens da parte mais limpos
+
+- Linguagem neutra em `recipe-edit.html` e `recipes.html`: rendimento fala em "este item" e "a producao" (sem "preparo"); subtitulo repetido do rendimento removido. Atalhos de partes: Massa/Cobertura/Recheio viram Base/Complemento/Acessorios (a parte criada ao clicar usa o mesmo nome); placeholder do nome da parte atualizado. Ids, campos e fluxos inalterados; o exemplo preenchido continua o mesmo.
+- Itens da parte: o rotulo "Unidade" ganhou espacamento proprio e a linha (`.ingredient-row`) alinha pela base, sem encostar no seletor.
+- Ajudas abaixo de "Informar preco do item": regra de unidade/pacote repetida removida da linha fixa (ja vinha na ajuda dinamica, que tambem ficou mais curta).
+- So tokens; sem mudanca em API ou payload.
+
 ## 2026-11-25 - Zeros sem dados trocados por traco
 
 - Ficha tecnica (`recipe-edit.html` e `recipes.html`): o total de custos extras mostra `—` enquanto nao ha itens; com itens o calculo e o formato (`R$ x,xx`) seguem iguais.

@@ -227,12 +227,12 @@ export function updateIngredientUnitHints() {
   if (ingredientUnitHelp) {
     ingredientUnitHelp.textContent =
       unit === 'kg'
-        ? 'Use kg para itens comprados por peso. Informe o tamanho do pacote em kg (ex: 1). Para itens por unidade, use un e pacote = 1.'
+        ? 'Informe o tamanho do pacote em kg (ex: 1).'
         : unit === 'l'
-        ? 'Use l para itens comprados por volume. Informe o tamanho do pacote em litros (ex: 1). Para itens por unidade, use un e pacote = 1.'
+        ? 'Informe o tamanho do pacote em litros (ex: 1).'
         : unit === 'un'
-        ? 'Comprou por unidade (lata/garrafa/caixa)? Use pacote = 1. Se o item tem peso/volume, troque a unidade para g/ml e informe o tamanho do pacote.'
-        : 'Use g/ml quando comprar por peso/volume. Informe o tamanho real do pacote. Para itens por unidade, use un e pacote = 1.';
+        ? 'Compra por unidade (lata, caixa)? Use pacote = 1.'
+        : 'Informe o tamanho real do pacote.';
   }
   updatePackUnitHints();
   updatePackQuantityWarning();

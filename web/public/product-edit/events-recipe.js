@@ -64,6 +64,10 @@ export function initEventsRecipe() {
 
   if (unlinkRecipeBtn) {
     unlinkRecipeBtn.addEventListener('click', async () => {
+      const productLabel = state.original.name ? `"${state.original.name}"` : 'este produto';
+      const recipeName = state.linkedRecipe && (state.linkedRecipe.name || state.linkedRecipe.nomeReceita);
+      const recipeLabel = recipeName ? `a ficha "${recipeName}"` : 'a ficha técnica';
+      if (!window.confirm(`Remover o vínculo de ${productLabel} com ${recipeLabel}? O produto passa a ser de revenda, e o custo por unidade, os preços mínimos e o CMV calculados pela ficha serão apagados. A ficha não será excluída.`)) return;
       if (recipeError) {
         recipeError.textContent = '';
         recipeError.hidden = true;

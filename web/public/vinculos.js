@@ -445,6 +445,17 @@
     });
   }
 
+  // Remover o vinculo muda o produto (vira revenda e perde os custos da ficha): sempre pergunta antes.
+  function confirmUnlink(productId) {
+    const product = products.find((item) => String(item.id) === String(productId));
+    const recipe = product ? recipesById.get(String(getProductRecipeId(product))) : null;
+    const productLabel = product ? `"${getProductName(product)}"` : 'este produto';
+    const recipeLabel = recipe ? `a ficha "${getRecipeName(recipe)}"` : 'a ficha t\u00e9cnica';
+    return window.confirm(
+      `Remover o v\u00ednculo de ${productLabel} com ${recipeLabel}? O produto passa a ser de revenda, e o custo por unidade, os pre\u00e7os m\u00ednimos e o CMV calculados pela ficha ser\u00e3o apagados. A ficha n\u00e3o ser\u00e1 exclu\u00edda.`
+    );
+  }
+
   if (unlinkBtn) {
     unlinkBtn.addEventListener('click', async () => {
       const productId = linkProduct ? linkProduct.value : '';
@@ -452,6 +463,12 @@
         showMessage('Selecione um produto.', 'is-danger');
         return;
       }
+      const selected = products.find((item) => String(item.id) === String(productId));
+      if (!selected || !getProductRecipeId(selected)) {
+        showMessage('Este produto n\u00e3o tem ficha vinculada.', 'is-danger');
+        return;
+      }
+      if (!confirmUnlink(productId)) return;
       unlinkBtn.classList.add('is-loading');
       unlinkBtn.disabled = true;
       try {
@@ -499,6 +516,7 @@
       if (!btn) return;
       const productId = btn.dataset.unlinkId;
       if (!productId) return;
+      if (!confirmUnlink(productId)) return;
       btn.disabled = true;
       try {
         await apiRequest(`/api/products/${productId}/remover-ficha`, null, {

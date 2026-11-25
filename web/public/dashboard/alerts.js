@@ -61,7 +61,10 @@ export function renderPricingAlerts(data) {
         apply.type = 'button';
         apply.className = 'button is-link is-small alert-apply';
         apply.textContent = 'Aplicar preço';
-        apply.addEventListener('click', () => runPricingAction(apply, msgEl, `/api/products/${a.productId}`, 'PUT', { price: a.suggestedPrice }));
+        apply.addEventListener('click', () => {
+          if (!window.confirm(`Alterar o preço de "${a.name}" de ${money(a.price)} para ${money(a.suggestedPrice)}? O novo preço passa a valer no cadastro do produto.`)) return;
+          runPricingAction(apply, msgEl, `/api/products/${a.productId}`, 'PUT', { price: a.suggestedPrice });
+        });
         actions.appendChild(apply);
         if (a.level === 'margin_drop') {
           const keep = document.createElement('button');

@@ -63,6 +63,7 @@
               <p class="help" style="margin-top:-6px;margin-bottom:12px;color:var(--slate-500);">
                 Escolha uma ficha j&aacute; cadastrada: o custo dos ingredientes &eacute; calculado automaticamente.
               </p>
+              <p class="term-help"><strong>Ficha técnica:</strong> A receita do produto: ingredientes, quantidades e custos.</p>
               <form id="by-id-form" novalidate>
                 <div class="field">
                   <label class="label" for="recipe-id">Ficha t&eacute;cnica</label>
@@ -78,7 +79,6 @@
                   <div>
                     <label class="label" for="recipe-margin">
                       Quanto você quer ganhar (%)?
-                      <span class="hint" title="Margem é o quanto sobra depois de pagar todos os custos.">?</span>
                     </label>
                     <input
                       class="input"
@@ -90,7 +90,7 @@
                       required
                       aria-describedby="recipe-margin-error"
                     />
-                    <p class="help" style="color:var(--slate-500);">Ex: 30 significa 30% de margem sobre o custo total.</p>
+                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. Exemplo sem entrega.</p>
                     <p class="help is-danger" id="recipe-margin-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -131,7 +131,6 @@
                   <div>
                     <label class="label" for="quick-margin">
                       Quanto você quer ganhar (%)?
-                      <span class="hint" title="Margem é o quanto sobra depois de pagar todos os custos.">?</span>
                     </label>
                     <input
                       class="input"
@@ -143,7 +142,7 @@
                       required
                       aria-describedby="quick-margin-error"
                     />
-                    <p class="help" style="color:var(--slate-500);">Ex: 35 significa 35% de margem sobre o custo final.</p>
+                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. Exemplo sem entrega.</p>
                     <p class="help is-danger" id="quick-margin-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -168,13 +167,13 @@
                   <label class="label" for="quick-segment">Tipo do seu negócio (opcional)</label>
                   <div class="select is-fullwidth">
                     <select id="quick-segment">
-                      <option value="">Prefiro definir minha margem</option>
+                      <option value="">Prefiro definir meu percentual</option>
                       <option value="alimentacao">Alimentação (30% sugerido)</option>
                       <option value="confeitaria">Confeitaria artesanal (35% sugerido)</option>
                       <option value="revenda">Revenda (20% sugerido)</option>
                     </select>
                   </div>
-                  <p class="help" style="color:var(--slate-500);">Selecione para receber uma margem padrão do seu setor.</p>
+                  <p class="help" style="color:var(--slate-500);">Selecione para receber um acréscimo padrão do seu setor.</p>
                 </div>
                 <div class="field">
                   <label class="label">Ingredientes e custos</label>
@@ -210,8 +209,8 @@
                 </div>
                 <div class="sim-tip-grid">
                   <article class="tip-card">
-                    <p class="tip-title">O que é margem?</p>
-                    <p class="tip-copy">Margem mostra quanto sobra depois de pagar ingredientes, entrega e custos fixos.</p>
+                    <p class="tip-title">Acréscimo ou margem?</p>
+                    <p class="tip-copy">Aqui você informa um acréscimo sobre o custo. A margem do painel é a parte da venda que sobra após o custo do produto.</p>
                   </article>
                   <article class="tip-card">
                     <p class="tip-title">Custo x lucro</p>
@@ -243,13 +242,13 @@
                 <p class="result-value" id="result-profit">R$ --</p>
               </div>
               <div>
-                <p class="result-label">Margem</p>
+                <p class="result-label">Acréscimo sobre o custo</p>
                 <p class="result-value" id="result-margin">--%</p>
               </div>
             </div>
             <div class="margin-feedback">
               <div class="margin-strength">
-                <span class="margin-pill is-empty" id="margin-health">Informe uma margem para ver o resultado.</span>
+                <span class="margin-pill is-empty" id="margin-health">Informe o percentual para ver o resultado.</span>
               </div>
               <p class="margin-context" id="margin-context">Informe os dados para visualizar o resultado.</p>
             </div>
@@ -257,7 +256,7 @@
               <article class="detail-card">
                 <p class="detail-label">Custo total</p>
                 <p class="detail-value" id="result-total-cost">R$ --</p>
-                <p class="detail-note">Inclui ingredientes, entrega, custos fixos e sua m&atilde;o de obra.</p>
+                <p class="detail-note">Inclui ingredientes, custos fixos e sua m&atilde;o de obra.</p>
               </article>
               <article class="detail-card">
                 <p class="detail-label">Pre&ccedil;o m&iacute;nimo</p>
@@ -267,7 +266,7 @@
               <article class="detail-card">
                 <p class="detail-label">Pre&ccedil;o ideal</p>
                 <p class="detail-value" id="result-ideal-price">R$ --</p>
-                <p class="detail-note">Pre&ccedil;o sugerido aplicando a margem informada.</p>
+                <p class="detail-note">Pre&ccedil;o sugerido aplicando o acréscimo informado.</p>
               </article>
               <article class="detail-card">
                 <p class="detail-label">Lucro estimado</p>

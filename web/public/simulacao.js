@@ -191,21 +191,21 @@
     marginHealth.classList.remove('is-low', 'is-ok', 'is-high', 'is-empty');
     const numeric = Number.isFinite(marginValue) ? marginValue : 0;
     if (!numeric) {
-      marginHealth.textContent = 'Informe uma margem para ver o resultado.';
+      marginHealth.textContent = 'Informe o percentual para ver o resultado.';
       marginHealth.classList.add('is-empty');
       return;
     }
     if (numeric < 20) {
-      marginHealth.textContent = 'Margem baixa (reavalie o preço).';
+      marginHealth.textContent = 'Acréscimo baixo (reavalie o preço).';
       marginHealth.classList.add('is-low');
       return;
     }
     if (numeric <= 40) {
-      marginHealth.textContent = 'Margem saudável';
+      marginHealth.textContent = 'Acréscimo saudável';
       marginHealth.classList.add('is-ok');
       return;
     }
-    marginHealth.textContent = 'Margem alta (observe a concorrência).';
+    marginHealth.textContent = 'Acréscimo alto (observe a concorrência).';
     marginHealth.classList.add('is-high');
   }
 
@@ -347,8 +347,9 @@
     updateMarginHealth(normalizedMargin);
     const totalCost = resolveValue(data, ['custo_total', 'custoTotal']);
     if (marginContext) {
-      marginContext.textContent = Number.isFinite(normalizedMargin) && totalCost != null
-        ? `Margem de ${normalizedMargin.toFixed(1).replace(".", ",")}% aplicada sobre um custo total de R$ ${formatPrice(totalCost)}.`
+      const unitCost = resolveValue(data, ['custo_por_unidade', 'custoUnitario']);
+      marginContext.textContent = Number.isFinite(normalizedMargin) && unitCost != null
+        ? `Acréscimo de ${normalizedMargin.toFixed(1).replace(".", ",")}% sobre o custo por unidade de R$ ${formatPrice(unitCost)}.`
         : 'Informe os dados para visualizar o resultado.';
     }
     formatCurrencyField(resultTotalCost, totalCost);
@@ -583,7 +584,7 @@
         hasError = true;
       }
       if (margem == null) {
-        setInputError(recipeMargin, recipeMarginError, 'Informe a margem em porcentagem.');
+        setInputError(recipeMargin, recipeMarginError, 'Informe o percentual de acréscimo.');
         hasError = true;
       }
       if (hasError) {
@@ -624,12 +625,12 @@
   [recipeMargin, quickYield, quickMargin, quickFee, quickOverhead, quickLabor, ingredientQty, ingredientCost].forEach(preventNegative);
   [recipeFee, quickFee, quickOverhead, quickLabor, ingredientCost].forEach(formatCurrencyInput);
   attachBlurValidation(quickYield, quickYieldError, 'Informe o rendimento.', 0.01);
-  attachBlurValidation(quickMargin, quickMarginError, 'Informe a margem em porcentagem.', 0);
+  attachBlurValidation(quickMargin, quickMarginError, 'Informe o percentual de acréscimo.', 0);
   [quickYield, quickMargin, quickFee, quickOverhead, quickLabor].forEach((input) => {
     if (!input) return;
     input.addEventListener('input', calcularPrecoFinal);
   });
-  attachBlurValidation(recipeMargin, recipeMarginError, 'Informe a margem em porcentagem.', 0);
+  attachBlurValidation(recipeMargin, recipeMarginError, 'Informe o percentual de acréscimo.', 0);
   if (quickSegment) {
     quickSegment.addEventListener('change', applyMarginSuggestion);
     applyMarginSuggestion();

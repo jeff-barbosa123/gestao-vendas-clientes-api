@@ -15,7 +15,7 @@ const PERIOD_KEYS = {
 
 function buildWhere(ownerId, startDate, endDate) {
   const params = [ownerId || null, startDate || null, endDate || null];
-  const where = `($1::uuid IS NULL OR s.owner_id = $1) AND ($2::timestamptz IS NULL OR s.date >= $2) AND ($3::timestamptz IS NULL OR s.date <= $3) AND ${NOT_CANCELED}`;
+  const where = `($1::uuid IS NULL OR s.owner_id = $1) AND ($2::timestamptz IS NULL OR s.date >= $2) AND ($3::timestamptz IS NULL OR s.date < $3::timestamptz + INTERVAL '1 day') AND ${NOT_CANCELED}`;
   return { where, params };
 }
 

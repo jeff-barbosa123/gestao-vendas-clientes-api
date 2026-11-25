@@ -10,6 +10,9 @@ const {
   toMonthKeyUTC,
 } = require('../../src/utils/dateValidation');
 
+// A data final do filtro vale o dia inteiro (UTC): a venda entra se for anterior ao dia seguinte.
+const beforeNextDay = (date, endDate) => date.getTime() < endDate.getTime() + 24 * 60 * 60 * 1000;
+
 // Implementacao de referencia (a antiga, em JS): carrega as vendas e agrega em memoria.
 function referenceAggregate(sales) {
   const revenue = sales.reduce((s, x) => s + (x.total || 0), 0);
@@ -30,7 +33,7 @@ function referenceTimeseries(rows, breakdown, filters) {
   const sales = rows
     .filter((s) => s.status !== 'CANCELED' && s.status_venda !== 'cancelada')
     .map((s) => ({ ...s, total: Number(s.total), cmv: s.cmv == null ? null : Number(s.cmv) }))
-    .filter((s) => (!startDate || s.date >= startDate) && (!endDate || s.date <= endDate));
+    .filter((s) => (!startDate || s.date >= startDate) && (!endDate || beforeNextDay(s.date, endDate)));
   if (breakdown === 'total') return [{ period: 'total', ...referenceAggregate(sales) }];
   const keyOf = {
     day: toIsoDay,
@@ -141,7 +144,7 @@ describe('Fase 6 - Dashboard com agregacao em SQL', () => {
     const { startDate, endDate } = resolveTemporalRange(RANGE_1);
     const expected = referenceAggregate(
       (await allRows())
-        .filter((s) => s.status !== 'CANCELED' && s.status_venda !== 'cancelada' && s.date >= startDate && s.date <= endDate)
+        .filter((s) => s.status !== 'CANCELED' && s.status_venda !== 'cancelada' && s.date >= startDate && beforeNextDay(s.date, endDate))
         .map((s) => ({ total: Number(s.total), cmv: s.cmv == null ? null : Number(s.cmv) }))
     );
     expect(r.body).to.include({
@@ -178,6 +181,61 @@ describe('Fase 6 - Dashboard com agregacao em SQL', () => {
       [ownerA, '2026-01-01']
     );
     expect(plan.rows.length).to.be.greaterThan(0);
+  });
+
+  describe('Limites da data final (dia inteiro)', () => {
+    let token;
+    let owner;
+
+    // Empresa propria para os casos de limite nao dependerem das vendas dos outros testes.
+    // Totais distintos (potencias de 2) mostram exatamente quais vendas entraram na soma.
+    const EDGE_SALES = [
+      ['2026-11-29T23:59:59.999Z', 1, 'ACTIVE', 'ativa'],
+      ['2026-11-30T00:00:00.000Z', 2, 'ACTIVE', 'ativa'],
+      ['2026-11-30T15:00:00.000Z', 4, 'ACTIVE', 'ativa'],
+      ['2026-11-30T23:59:59.000Z', 8, 'ACTIVE', 'ativa'],
+      ['2026-11-30T23:59:59.999Z', 16, 'ACTIVE', 'ativa'],
+      ['2026-12-01T00:00:00.000Z', 32, 'ACTIVE', 'ativa'],
+      ['2026-11-30T16:00:00.000Z', 64, 'CANCELED', 'cancelada'],
+      ['2026-11-30T17:00:00.000Z', 128, 'ACTIVE', 'cancelada'],
+    ];
+
+    before(async () => {
+      const email = `dash-edge-${stamp}@teste.com`;
+      const r = await http.post('/api/auth/register').send({ email, password: 'Senha@12345', name: 'Dash edge' });
+      expect(r.status, JSON.stringify(r.body)).to.equal(201);
+      const l = await http.post('/api/auth/login').send({ email, password: 'Senha@12345' });
+      token = l.body.token;
+      owner = (await pool.query('SELECT id FROM users WHERE email = $1', [email])).rows[0].id;
+      for (const [date, total, status, statusVenda] of EDGE_SALES) {
+        await pool.query(
+          'INSERT INTO sales (id, owner_id, total, cmv, date, status, status_venda) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+          [crypto.randomUUID(), owner, total, 0, date, status, statusVenda]
+        );
+      }
+    });
+
+    it('DSH-013 | Periodo inclui o ultimo dia inteiro e exclui o dia seguinte', async () => {
+      const r = await get(token, '/api/analytics/overview?start=2026-11-01&end=2026-11-30');
+      expect(r.status, JSON.stringify(r.body)).to.equal(200);
+      expect(r.body).to.include({ salesCount: 5, revenueTotal: 1 + 2 + 4 + 8 + 16 });
+      expect(new Date(r.body.lastSaleAt).toISOString()).to.equal('2026-11-30T23:59:59.999Z');
+    });
+
+    it('DSH-014 | Filtro de um unico dia (start = end e day) pega o dia inteiro', async () => {
+      for (const query of ['start=2026-11-30&end=2026-11-30', 'day=2026-11-30']) {
+        const r = await get(token, `/api/analytics/overview?${query}`);
+        expect(r.status, JSON.stringify(r.body)).to.equal(200);
+        expect(r.body, query).to.include({ salesCount: 4, revenueTotal: 2 + 4 + 8 + 16 });
+      }
+    });
+
+    it('DSH-015 | Canceladas no ultimo dia ficam fora tambem na evolucao diaria', async () => {
+      const r = await get(token, '/api/analytics/timeseries?breakdown=day&start=2026-11-30&end=2026-11-30');
+      expect(r.status, JSON.stringify(r.body)).to.equal(200);
+      const rows = Array.isArray(r.body) ? r.body : r.body.data || r.body.series;
+      expect(rows.map((x) => [x.period, x.salesCount, x.revenueTotal])).to.deep.equal([['2026-11-30', 4, 30]]);
+    });
   });
 
   it('DSH-012 | Alto volume: 20.000 vendas agregadas no banco respondem rapido e corretas', async function () {

@@ -1,6 +1,7 @@
 /**
  * Parsing de valores e datas, status e filtros de período.
  */
+import { formatDateInput } from './formatters.js';
 export function parsePrice(value) {
   const raw = String(value || '').trim();
   if (!raw) return null;
@@ -55,33 +56,39 @@ export function getSaleDate(sale) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function isSameDay(a, b) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+// "Hoje" no fuso padrao da empresa; nao depende do fuso do navegador.
+function businessToday() {
+  return new Date()
+    .toLocaleDateString('pt-BR', { timeZone: 'America/Fortaleza', day: '2-digit', month: '2-digit', year: 'numeric' })
+    .split('/')
+    .reverse()
+    .join('-');
 }
 
+function quarterOf(day) {
+  return Math.floor((Number(day.slice(5, 7)) - 1) / 3);
+}
+
+// Compara dias "YYYY-MM-DD": o da venda segue a mesma regra da data exibida (formatDateInput).
 export function isWithinPeriod(date, period) {
   if (!period || !date) return true;
-  const now = new Date();
+  const day = formatDateInput(date.toISOString());
+  const today = businessToday();
   if (period === 'today') {
-    return isSameDay(date, now);
+    return day === today;
   }
   if (period === 'month') {
-    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+    return day.slice(0, 7) === today.slice(0, 7);
   }
   if (period === 'year') {
-    return date.getFullYear() === now.getFullYear();
+    return day.slice(0, 4) === today.slice(0, 4);
   }
   if (period === 'quarter') {
-    const quarter = Math.floor(now.getMonth() / 3);
-    const startMonth = quarter * 3;
-    return date.getFullYear() === now.getFullYear() && date.getMonth() >= startMonth && date.getMonth() <= startMonth + 2;
+    return day.slice(0, 4) === today.slice(0, 4) && quarterOf(day) === quarterOf(today);
   }
   const days = Number(period);
   if (!Number.isFinite(days) || days <= 0) return true;
-  const start = new Date(now);
-  start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() - (days - 1));
-  const end = new Date(now);
-  end.setHours(23, 59, 59, 999);
-  return date >= start && date <= end;
+  const start = new Date(`${today}T00:00:00.000Z`);
+  start.setUTCDate(start.getUTCDate() - (days - 1));
+  return day >= start.toISOString().slice(0, 10) && day <= today;
 }

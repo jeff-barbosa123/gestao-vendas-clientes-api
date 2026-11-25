@@ -7,6 +7,8 @@
   const escapeHtml = (s) => window.SGVC.utils.escapeHtml(s);
   const money = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('pt-BR') : '-');
+  // Datas de venda: meia-noite UTC e "so data" (mantem o dia); com horario vale o dia em America/Fortaleza.
+  const fmtSaleDate = (d) => (d ? new Date(d).toLocaleDateString('pt-BR', { timeZone: new Date(d).getTime() % 86400000 === 0 ? 'UTC' : 'America/Fortaleza' }) : '-');
   const fmtDateTime = (d) => (d ? new Date(d).toLocaleString('pt-BR') : '-');
   const api = (path, method = 'GET', body) => window.apiRequest(path, { method, ...(body ? { body: JSON.stringify(body) } : {}) });
 
@@ -65,7 +67,7 @@
       ? customers.map((c) => `<tr>
           <td>${escapeHtml(c.name)}<br /><span class="crm-muted">${escapeHtml(c.phone || 'sem telefone')}</span></td>
           <td><span class="crm-badge is-${c.status}">${STATUS_LABEL[c.status]}</span></td>
-          <td>${c.lastPurchaseAt ? `${fmtDate(c.lastPurchaseAt)}<br /><span class="crm-muted">há ${c.daysSinceLast} dia(s)</span>` : '-'}</td>
+          <td>${c.lastPurchaseAt ? `${fmtSaleDate(c.lastPurchaseAt)}<br /><span class="crm-muted">há ${c.daysSinceLast} dia(s)</span>` : '-'}</td>
           <td class="has-text-right">${c.avgIntervalDays != null ? `${String(c.avgIntervalDays).replace('.', ',')} dias` : '-'}</td>
           <td class="has-text-right">${money(c.spent)}</td>
           <td><div class="crm-actions">
@@ -127,7 +129,7 @@
         ['Último contato', c.lastContactAt ? fmtDate(c.lastContactAt) : 'nenhum'],
       ].map(([k, v]) => `<div><dt>${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join('');
       els.sales.innerHTML = d.sales.length
-        ? d.sales.map((s) => `<li><span>${fmtDate(s.date)}${s.status === 'CANCELED' ? ' (cancelada)' : ''}</span><span>${s.units} un. · ${money(s.total)}</span></li>`).join('')
+        ? d.sales.map((s) => `<li><span>${fmtSaleDate(s.date)}${s.status === 'CANCELED' ? ' (cancelada)' : ''}</span><span>${s.units} un. · ${money(s.total)}</span></li>`).join('')
         : '<li class="crm-muted">Sem compras.</li>';
       els.products.innerHTML = d.topProducts.length
         ? d.topProducts.map((p) => `<li><span>${escapeHtml(p.name)}</span><span>${p.units} un.</span></li>`).join('')

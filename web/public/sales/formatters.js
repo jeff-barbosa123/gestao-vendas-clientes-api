@@ -7,8 +7,15 @@ export function formatPrice(value) {
   return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Datas de venda são "só data" e chegam da API como meia-noite UTC.
-// Exibir em UTC evita mostrar o dia anterior no fuso do Brasil (UTC-3).
+// Fuso padrao da empresa (o mesmo de api/src/utils/businessDate.js).
+const BUSINESS_TIME_ZONE = 'America/Fortaleza';
+
+// Meia-noite UTC exata é venda "só data" (mantém o dia gravado, sem virar o dia anterior no Brasil).
+// Qualquer outro horário (PDV, encomenda entregue) vale o dia no fuso da empresa.
+function saleTimeZone(date) {
+  return date.getTime() % 86400000 === 0 ? 'UTC' : BUSINESS_TIME_ZONE;
+}
+
 export function formatDateInput(value) {
   if (!value) return '';
   if (value instanceof Date) {
@@ -20,14 +27,18 @@ export function formatDateInput(value) {
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
-  return date.toISOString().slice(0, 10);
+  return date
+    .toLocaleDateString('pt-BR', { timeZone: saleTimeZone(date), day: '2-digit', month: '2-digit', year: 'numeric' })
+    .split('/')
+    .reverse()
+    .join('-');
 }
 
 export function formatDateDisplay(value) {
   if (!value) return '-';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
-  return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+  return date.toLocaleDateString('pt-BR', { timeZone: saleTimeZone(date) });
 }
 
 export function formatBirthDate(value) {

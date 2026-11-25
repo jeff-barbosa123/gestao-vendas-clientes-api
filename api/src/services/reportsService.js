@@ -9,6 +9,7 @@ const {
   toMonthKeyUTC,
   buildError,
 } = require("../utils/dateValidation");
+const { saleDayDate } = require("../utils/businessDate");
 
 function summarize(sales, granularity = "total") {
   if (granularity === "total") {
@@ -18,7 +19,7 @@ function summarize(sales, granularity = "total") {
   }
   const buckets = {};
   for (const s of sales) {
-    const d = new Date(s.date);
+    const d = saleDayDate(s.date);
     let key = "";
     if (granularity === "day") {
       key = toIsoDay(d);
@@ -54,6 +55,13 @@ function resolveUserId(requestedUserId, user) {
   return user.id;
 }
 
+// Compara o dia da venda (ver businessDate) com os dias do filtro; a data final vale o dia inteiro.
+function isInPeriod(sale, startDate, endDate) {
+  if (!startDate && !endDate) return true;
+  const day = saleDayDate(sale.date);
+  return (!startDate || day >= startDate) && (!endDate || day <= endDate);
+}
+
 // Venda cancelada não entra em faturamento/relatórios
 function isActiveSale(sale) {
   return sale && sale.status !== "CANCELED" && sale.status_venda !== "cancelada";
@@ -66,11 +74,8 @@ async function getRevenue({ start, end, day, week, month, year, breakdown, userI
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
     if (!isActiveSale(s)) return false;
-    const dx = new Date(s.date);
-    // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
-    const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
     // Sem filtro de período ("Sem filtro" na tela) = considera todas as vendas
-    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
+    return isInPeriod(s, startDate, endDate);
   });
   if (normalizedBreakdown === "total") return summarize(sales, "total");
   if (!["day", "week", "month", "year"].includes(normalizedBreakdown)) {
@@ -95,11 +100,9 @@ async function getPaymentMethods({ start, end, day, week, month, year, userId, u
   const { startDate, endDate } = resolveTemporalRange({ start, end, day, week, month, year });
   const ownerId = resolveUserId(userId, user);
   const salesAll = await repo.listSales(ownerId);
-  const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
   const sales = salesAll.filter((s) => {
     if (!isActiveSale(s)) return false;
-    const dx = new Date(s.date);
-    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
+    return isInPeriod(s, startDate, endDate);
   });
 
   const buckets = {};
@@ -247,11 +250,8 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
   const salesAll = await repo.listSales(ownerId);
   const sales = salesAll.filter((s) => {
     if (!isActiveSale(s)) return false;
-    const dx = new Date(s.date);
-    // Ajusta endDate para incluir todo o dia (até 23:59:59.999)
-    const endOfDay = endDate ? new Date(endDate.getTime() + 24 * 60 * 60 * 1000 - 1) : endDate;
     // Sem filtro de período ("Sem filtro" na tela) = considera todas as vendas
-    return (!startDate || dx >= startDate) && (!endOfDay || dx <= endOfDay);
+    return isInPeriod(s, startDate, endDate);
   });
   const total = sales.reduce(
     (acc, sale) => {
@@ -295,7 +295,7 @@ async function getFinancialPerformance({ start, end, day, week, month, year, bre
   const buckets = {};
 
   sales.forEach((sale) => {
-    const d = new Date(sale.date);
+    const d = saleDayDate(sale.date);
     let key = "";
     if (normalizedBreakdown === "day") key = toIsoDay(d);
     else if (normalizedBreakdown === "week") key = toWeekKeyUTC(d);

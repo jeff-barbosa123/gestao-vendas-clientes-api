@@ -1,21 +1,25 @@
 const { query } = require("../index");
+const { saleDaySql, saleFromSql, saleToSql } = require("../../utils/businessDate");
 
 // Agregacoes do dashboard feitas no PostgreSQL: o banco devolve so as linhas ja somadas
 // (uma por periodo) em vez de todas as vendas e itens carregados em memoria.
 // Venda cancelada nao entra em faturamento/dashboard (mesma regra do filtro em JS anterior).
 const NOT_CANCELED = "s.status <> 'CANCELED' AND s.status_venda <> 'cancelada'";
 
-// Chaves de periodo em UTC, no mesmo formato de toIsoDay/toWeekKeyUTC/toMonthKeyUTC (semana ISO 8601).
+// Chaves de periodo sobre o dia da venda (ver businessDate), no mesmo formato de toIsoDay/toWeekKeyUTC/toMonthKeyUTC (semana ISO 8601).
+const SALE_DAY = `${saleDaySql("s.date")}::timestamp`;
 const PERIOD_KEYS = {
-  day: "to_char(s.date AT TIME ZONE 'UTC', 'YYYY-MM-DD')",
-  week: "to_char(s.date AT TIME ZONE 'UTC', 'IYYY-\"W\"IW')",
-  month: "to_char(s.date AT TIME ZONE 'UTC', 'YYYY-MM')",
-  year: "to_char(s.date AT TIME ZONE 'UTC', 'YYYY')",
+  day: `to_char(${SALE_DAY}, 'YYYY-MM-DD')`,
+  week: `to_char(${SALE_DAY}, 'IYYY-"W"IW')`,
+  month: `to_char(${SALE_DAY}, 'YYYY-MM')`,
+  year: `to_char(${SALE_DAY}, 'YYYY')`,
 };
 
 function buildWhere(ownerId, startDate, endDate) {
-  const params = [ownerId || null, startDate || null, endDate || null];
-  const where = `($1::uuid IS NULL OR s.owner_id = $1) AND ($2::timestamptz IS NULL OR s.date >= $2) AND ($3::timestamptz IS NULL OR s.date < $3::timestamptz + INTERVAL '1 day') AND ${NOT_CANCELED}`;
+  // Os filtros vao como "YYYY-MM-DD": um Date seria convertido pelo fuso da maquina que roda a API.
+  const asDay = (d) => (d ? d.toISOString().slice(0, 10) : null);
+  const params = [ownerId || null, asDay(startDate), asDay(endDate)];
+  const where = `($1::uuid IS NULL OR s.owner_id = $1) AND ($2::date IS NULL OR ${saleFromSql("s.date", "$2")}) AND ($3::date IS NULL OR ${saleToSql("s.date", "$3")}) AND ${NOT_CANCELED}`;
   return { where, params };
 }
 

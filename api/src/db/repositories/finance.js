@@ -1,6 +1,7 @@
 const { randomUUID: uuidv4 } = require("crypto");
 const { query, withTransaction } = require("../index");
 const { isUuid } = require("./shared");
+const { saleDaySql, saleFromSql, saleToSql } = require("../../utils/businessDate");
 
 const num = (v) => (v == null ? null : Number(v));
 
@@ -123,11 +124,11 @@ async function summary(ownerId) {
 const keyOf = (group, col) => (group === "month" ? `to_char(${col},'YYYY-MM')` : `to_char(${col},'YYYY-MM-DD')`);
 
 async function cashflowRows(ownerId, from, to, group) {
-  const saleKey = keyOf(group, "(s.date AT TIME ZONE 'UTC')");
+  const saleKey = keyOf(group, `${saleDaySql("s.date")}::timestamp`);
   const sales = await query(
     `SELECT ${saleKey} AS k, COALESCE(SUM(s.total),0) AS v FROM sales s
       WHERE s.owner_id = $1 AND s.status <> 'CANCELED' AND s.status_venda <> 'cancelada'
-        AND s.date >= $2::date AND s.date < ($3::date + 1) GROUP BY k`,
+        AND ${saleFromSql("s.date", "$2")} AND ${saleToSql("s.date", "$3")} GROUP BY k`,
     [ownerId, from, to]
   );
   const paidKey = keyOf(group, "e.paid_at");
@@ -149,7 +150,7 @@ async function dreRows(ownerId, from, to) {
   const sales = await query(
     `SELECT COUNT(*) AS n, COALESCE(SUM(s.total),0) AS net, COALESCE(SUM(s.discount),0) AS discounts, COALESCE(SUM(s.cmv),0) AS cmv
        FROM sales s WHERE s.owner_id = $1 AND s.status <> 'CANCELED' AND s.status_venda <> 'cancelada'
-        AND s.date >= $2::date AND s.date < ($3::date + 1)`,
+        AND ${saleFromSql("s.date", "$2")} AND ${saleToSql("s.date", "$3")}`,
     [ownerId, from, to]
   );
   const paid = await query(

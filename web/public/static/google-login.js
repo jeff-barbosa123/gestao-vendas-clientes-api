@@ -8,7 +8,7 @@
     blocked: 'Este usuario esta bloqueado.',
     disabled: 'Login com Google indisponivel no momento.',
   };
-  var FALLBACK = 'Nao foi possivel entrar com o Google. Tente novamente.';
+  var FALLBACK = 'N\u00e3o foi poss\u00edvel entrar com o Google. Tente novamente.';
 
   function showError(code) {
     var box = document.getElementById('login-error');

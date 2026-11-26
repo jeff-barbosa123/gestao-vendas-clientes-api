@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-25 - Acessibilidade: skip link, h1, contraste de borda e alternadores
+
+- Link "Pular para o conteudo" injetado por `static/nav.js` nas telas internas (primeiro elemento do body) e `#main` com `tabindex=-1`; cor, peso e z-index no foco ajustados em `base.css`.
+- Um `<h1>` por tela: o titulo principal das 15 telas sem h1 passou a `h1`, mantendo classe e id.
+- Novo token `--border-control` (`#64748b`, >= 3:1) nas bordas de campos (`.input`, `.select select`, selects de planilha, periodo do dashboard, input de cor, `.sim-mode`). Cards e divisores seguem com `--border`.
+- `.app-nav-group-toggle` com `min-height: 24px` e margem compensada (sidebar nao cresce).
+- Acentos: exemplo de ficha, PDF de vendas e mensagens de Google login/planilha.
+- Cypress: `A11Y-001` a `A11Y-004` em `accessibility.cy.js`; `google-login.cy.js` com o texto acentuado.
+
 ## 2026-11-25 - Estados do painel: carregando, falha, sem faturamento e comparacao
 
 - Indicadores sem valor confirmado mostram sempre `—` com o motivo ("Carregando..." ou "Nao foi possivel carregar."); acabaram os `--`, `R$ 0,00` e `0%` iniciais.

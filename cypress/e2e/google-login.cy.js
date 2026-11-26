@@ -48,7 +48,7 @@ describe('Login com Google - tela de login', () => {
   it('GL-005 | Codigo de erro desconhecido usa a mensagem generica', () => {
     mockProviders(true);
     cy.visit('/?google_error=algo_inesperado');
-    cy.get('#login-error-text').should('contain.text', 'Nao foi possivel entrar com o Google');
+    cy.get('#login-error-text').should('contain.text', 'Não foi possível entrar com o Google');
   });
 
   it('GL-006 | Login por senha continua funcionando com o botao visivel', () => {

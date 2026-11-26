@@ -82,7 +82,7 @@
         const result = String(reader.result || '');
         resolve(result.slice(result.indexOf(',') + 1));
       };
-      reader.onerror = () => reject(new Error('Nao foi possivel ler o arquivo.'));
+      reader.onerror = () => reject(new Error('N\u00e3o foi poss\u00edvel ler o arquivo.'));
       reader.readAsDataURL(file);
     });
   }

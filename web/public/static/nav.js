@@ -254,7 +254,16 @@
       if (nav.classList.contains('is-open') && !nav.contains(ev.target)) setOpen(false);
     });
 
-    const skip = document.querySelector('.skip-link');
+    let skip = document.querySelector('.skip-link');
+    const mainEl = document.getElementById('main');
+    if (!skip && mainEl) {
+      skip = document.createElement('a');
+      skip.className = 'skip-link';
+      skip.href = '#main';
+      skip.textContent = 'Pular para o conte\u00fado';
+      document.body.insertBefore(skip, document.body.firstChild);
+    }
+    if (mainEl && !mainEl.hasAttribute('tabindex')) mainEl.setAttribute('tabindex', '-1');
     if (skip && skip.parentNode === document.body) {
       skip.insertAdjacentElement('afterend', nav);
     } else {

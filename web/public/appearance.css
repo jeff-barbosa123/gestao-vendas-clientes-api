@@ -9,7 +9,7 @@
   width: 44px;
   height: 40px;
   padding: 2px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: 8px;
   background: var(--white);
   cursor: pointer;

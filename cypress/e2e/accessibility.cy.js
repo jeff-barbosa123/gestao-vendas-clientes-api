@@ -118,3 +118,61 @@ describe('Contraste WCAG AA no tema Grafite Noturno', () => {
     });
   });
 });
+
+describe('Acessibilidade estrutural (skip link, h1, borda dos campos, alternadores)', () => {
+  const lum = (rgb) => {
+    const [r, g, b] = rgb.map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const parse = (css) => css.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
+
+  it('A11Y-001 | Link "Pular para o conteudo" existe nas telas internas e leva o foco ao main', () => {
+    openAccessibilityClients();
+    cy.get('body').children().first().should('have.class', 'skip-link').and('have.attr', 'href', '#main');
+    cy.get('.skip-link').should('contain.text', 'Pular para o conte').focus().should('be.visible');
+    cy.get('.skip-link').click();
+    cy.focused().should('have.attr', 'id', 'main');
+  });
+
+  it('A11Y-002 | Cada tela interna tem exatamente um h1', () => {
+    cy.stubDashboardMetrics();
+    cy.loginAsAdmin();
+    [
+      'dashboard', 'clients', 'client-edit', 'products', 'product-edit', 'recipes', 'recipe-edit', 'ingredients',
+      'sales', 'orders', 'finance', 'crm', 'pdv', 'reports', 'simulacao', 'vinculos', 'profile', 'appearance', 'team',
+    ].forEach((page) => {
+      cy.visit(`/${page}.html`);
+      cy.get('main h1').should('have.length', 1);
+    });
+  });
+
+  it('A11Y-003 | Borda dos campos tem contraste >= 3:1 com o fundo do campo', () => {
+    openAccessibilityClients();
+    cy.get('#create-name').then(($el) => {
+      const cs = window.getComputedStyle($el[0]);
+      expect(ratio(parse(cs.borderTopColor), parse(cs.backgroundColor))).to.be.at.least(3);
+    });
+    cy.get('#create-type').then(($el) => {
+      const cs = window.getComputedStyle($el[0]);
+      expect(ratio(parse(cs.borderTopColor), parse(cs.backgroundColor))).to.be.at.least(3);
+    });
+  });
+
+  it('A11Y-004 | Alternadores do menu tem pelo menos 24px de altura (desktop e celular)', () => {
+    openAccessibilityClients();
+    cy.get('.app-nav-group-toggle').should('have.length.at.least', 1).each(($b) => {
+      expect($b[0].getBoundingClientRect().height).to.be.at.least(24);
+    });
+    cy.viewport(375, 700);
+    cy.get('.app-nav-toggle').should('be.visible').then(($b) => {
+      expect($b[0].getBoundingClientRect().height).to.be.at.least(24);
+    });
+  });
+});

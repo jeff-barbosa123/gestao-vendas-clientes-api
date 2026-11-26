@@ -481,7 +481,7 @@ export function initEvents() {
           name: 'Massa',
           items: [
             { name: 'Farinha de trigo', quantity: 200, packageQuantity: 1000, cost: 6, unit: 'g', component: 'Massa' },
-            { name: 'Acucar', quantity: 150, packageQuantity: 1000, cost: 5, unit: 'g', component: 'Massa' },
+            { name: 'A\u00e7\u00facar', quantity: 150, packageQuantity: 1000, cost: 5, unit: 'g', component: 'Massa' },
             { name: 'Ovos', quantity: 3, packageQuantity: 30, cost: 18, unit: 'un', component: 'Massa' },
           ],
         },

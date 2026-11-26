@@ -151,7 +151,7 @@ export function openPdf(details) {
   doc.setTextColor(gray[0], gray[1], gray[2]);
   doc.text('Produto', colProduct, y);
   doc.text('Qtd', colQty, y, { align: 'right' });
-  doc.text('Preco', colPrice, y, { align: 'right' });
+  doc.text('Pre\u00e7o', colPrice, y, { align: 'right' });
   doc.text('Total', colTotal, y, { align: 'right' });
   y += 12;
   doc.setFont('helvetica', 'normal');

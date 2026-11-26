@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-26 - Seguranca: /metrics fechado por padrao em producao
+
+- `api/src/app.js`: em producao `/metrics` agora responde 404 quando `METRICS_ALLOWED_IPS` esta vazio ou o IP nao esta na lista (antes, lista vazia deixava a rota aberta a qualquer IP). Fora de producao nada muda.
+- `api/test/integration/US028-metrics-producao.test.js`: 3 cenarios (lista vazia, IP fora da lista, IP liberado e ambiente nao produtivo).
+- `docs/VARIAVEIS_DE_AMBIENTE.md`: nova variavel `METRICS_ALLOWED_IPS`; item 11 do `docs/CHECKLIST-DEPLOY.md` reescrito. `render.yaml` sem mudanca (variavel ausente = fechado).
+
 ## 2026-11-25 - Perfis: telas de edicao somente leitura e trava de seed em producao
 
 - `static/access.js` (`READ_ONLY`): em `product-edit`, `client-edit`, `recipe-edit` e `vinculos`, quem nao tem a permissao de escrita (`products:write`, `customers:write`, `recipes:write`; `vinculos` usa `products:write`) ve o aviso "Seu perfil permite apenas visualizar esta tela...", campos desabilitados e botoes de salvar/remover/vincular ocultos (linhas criadas depois tambem nascem travadas). Antes o Vendedor via "Remover produto" e o Estoquista editava a ficha e levava 403 ao salvar.

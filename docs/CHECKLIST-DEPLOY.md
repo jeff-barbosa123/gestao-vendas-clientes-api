@@ -66,7 +66,7 @@ Variáveis do **Web**: `API_BASE` (ex.: `http://sgvc-api:3000`), `PORT`, `NODE_E
 8. **Módulos:** em Aparência desligar/ligar Financeiro, PDV e CRM e conferir o menu.
 9. **Fluxo de negócio:** cadastrar produto → abrir caixa (PDV) → vender → fechar caixa cego → ver venda em Vendas → lançar conta a pagar e ver no Fluxo de caixa/DRE.
 10. **Painel de erros:** com e-mail de `PLATFORM_ADMIN_EMAILS` abrir `/error-monitoring.html`; com outro e-mail deve negar.
-11. **Segurança de borda:** resposta de erro 500 sem stack; cookies com `Secure`/`HttpOnly`; `/metrics` restrito (`METRICS_ALLOWED_IPS`).
+11. **Segurança de borda:** resposta de erro 500 sem stack; cookies com `Secure`/`HttpOnly`; `/metrics` responde 404 em producao (so libera IPs listados em `METRICS_ALLOWED_IPS`; vazio = fechado).
 12. **PWA:** no Chrome/Android abrir o site → botão **Instalar app** aparece no menu → instalar → abre em janela própria; DevTools → Application: manifesto válido, service worker ativo, nenhum cache de `/api`; desligar a rede e recarregar mostra `/offline.html`.
 13. **Mobile:** no celular, sem rolagem horizontal nas telas de PDV, Vendas, Clientes e Financeiro.
 14. **Logs e alertas:** ver logs da primeira hora, sem 5xx; configurar alerta de indisponibilidade em `/health`.

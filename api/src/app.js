@@ -88,7 +88,8 @@ app.get("/metrics", (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     const allowed = (process.env.METRICS_ALLOWED_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
     const ip = (req.ip || '').replace('::ffff:', '');
-    if (allowed.length && !allowed.includes(ip)) {
+    // Negar por padrao: com METRICS_ALLOWED_IPS vazio, ninguem le /metrics em producao.
+    if (!allowed.includes(ip)) {
       return res.status(404).end();
     }
   }

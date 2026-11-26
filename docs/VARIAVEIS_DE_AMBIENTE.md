@@ -52,6 +52,7 @@ NODE_ENV=production                    # development | production
 PORT=3000                              # Porta da API
 WEB_BASE_URL=https://yourdomain.com    # URL base do frontend
 ENABLE_SWAGGER_UI=false                # Habilitar Swagger UI (padrão: true, deve ser false em produção)
+METRICS_ALLOWED_IPS=                  # IPs (virgula) que podem ler /metrics em producao; vazio = /metrics responde 404
 ```
 
 ## Usuários Padrão (apenas para seed inicial)

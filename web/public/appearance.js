@@ -34,6 +34,27 @@
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
+  // Mistura com preto (escurece) ou branco (clareia); mesma ideia do backend (utils/contrast.js)
+  function mix(hex, target, amount) {
+    return '#' + [1, 3, 5].map((i) => {
+      const v = parseInt(hex.slice(i, i + 2), 16);
+      const out = Math.round(v + (target - v) * amount);
+      return Math.max(0, Math.min(255, out)).toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  // Texto precisa clarear (sobre superficie escura); primaria e fundo precisam escurecer (contra o branco)
+  const needsLighter = (f) => f.against !== '#ffffff';
+
+  function adjustToPass(f, hex) {
+    const target = needsLighter(f) ? 255 : 0;
+    for (let i = 1; i <= 20; i += 1) {
+      const out = mix(hex, target, i * 0.05);
+      if (contrastRatio(out, f.against) >= MIN_RATIO) return out;
+    }
+    return needsLighter(f) ? '#ffffff' : '#000000';
+  }
+
   function contrastRatio(a, b) {
     const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
     return (hi + 0.05) / (lo + 0.05);
@@ -75,6 +96,13 @@
     if (v.textColor) preview.style.setProperty('--pv-text', v.textColor);
     $('preview-name').textContent = $('company-name').value.trim() || 'Sua empresa';
     $('appearance-save').disabled = !allOk;
+    $('appearance-blocked').hidden = allOk;
+    const fixable = FIELDS.filter((f) => v[f.key] && contrastRatio(v[f.key], f.against) < MIN_RATIO);
+    const fixBtn = $('appearance-fix');
+    fixBtn.hidden = fixable.length === 0;
+    const lighter = fixable.some(needsLighter);
+    const darker = fixable.some((f) => !needsLighter(f));
+    fixBtn.textContent = lighter && darker ? 'Ajustar at\u00e9 passar' : lighter ? 'Clarear at\u00e9 passar' : 'Escurecer at\u00e9 passar';
     return allOk;
   }
 
@@ -132,6 +160,15 @@
     });
   });
   $('company-name').addEventListener('input', refreshBadges);
+
+  $('appearance-fix').addEventListener('click', () => {
+    const v = values();
+    FIELDS.forEach((f) => {
+      if (v[f.key] && contrastRatio(v[f.key], f.against) < MIN_RATIO) setColor(f, adjustToPass(f, v[f.key]));
+    });
+    refreshBadges();
+    $('appearance-save').focus();
+  });
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();

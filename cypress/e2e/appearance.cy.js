@@ -172,4 +172,50 @@ describe('Aparência (White-Label)', () => {
       });
     });
   });
+
+  it('botao bloqueado fica visivel como desabilitado e explica o motivo', () => {
+    cy.get('#appearance-blocked').should('not.be.visible');
+    cy.get('#primary-color-hex').clear().type('#e5d848');
+    cy.get('#appearance-save').should('be.disabled').and('have.css', 'opacity', '0.5').and('have.css', 'cursor', 'not-allowed');
+    cy.get('#appearance-save').should('have.attr', 'aria-describedby', 'appearance-blocked');
+    cy.get('#appearance-blocked').should('be.visible').and('contain', 'Salvar bloqueado: ajuste as cores em vermelho para atingir 4,5:1');
+    cy.get('#primary-color-hex').clear().type('#4f46e5');
+    cy.get('#appearance-blocked').should('not.be.visible');
+    cy.get('#appearance-save').should('not.be.disabled');
+  });
+
+  it('a ajuda explica que primaria e fundo sao comparados com o branco', () => {
+    cy.get('#contrast-help').should('be.visible').and('contain', 'branco');
+  });
+
+  it('Escurecer ate passar corrige primaria e fundo claros e libera o salvamento', () => {
+    cy.get('#appearance-fix').should('not.be.visible');
+    cy.get('#primary-color-hex').clear().type('#e5d848');
+    cy.get('#background-color-hex').clear().type('#e7ebf4');
+    cy.get('#appearance-fix').should('be.visible').and('have.text', 'Escurecer até passar').click();
+    cy.get('#primary-color-badge').should('contain', 'AA aprovado');
+    cy.get('#background-color-badge').should('contain', 'AA aprovado');
+    cy.get('#primary-color-hex').invoke('val').should('match', /^#[0-9a-f]{6}$/).and('not.eq', '#e5d848');
+    cy.get('#appearance-save').should('not.be.disabled').and('have.focus');
+    cy.get('#appearance-fix').should('not.be.visible');
+    cy.get('#appearance-blocked').should('not.be.visible');
+  });
+
+  it('texto escuro: o botao vira Clarear ate passar e corrige a cor do texto', () => {
+    cy.get('#text-color-hex').clear().type('#111827');
+    cy.get('#appearance-fix').should('be.visible').and('have.text', 'Clarear até passar').click();
+    cy.get('#text-color-badge').should('contain', 'AA aprovado');
+    cy.get('#appearance-save').should('not.be.disabled');
+  });
+
+  it('depois de ajustar, o salvamento envia as cores corrigidas', () => {
+    cy.intercept('PUT', '**/api/branding', (req) => {
+      expect(req.body.primaryColor).to.match(/^#[0-9a-f]{6}$/).and.not.eq('#e5d848');
+      req.reply({ statusCode: 200, body: { ...DEFAULT_DTO, isDefault: false } });
+    }).as('putAjustado');
+    cy.get('#primary-color-hex').clear().type('#e5d848');
+    cy.get('#appearance-fix').click();
+    cy.get('#appearance-save').click();
+    cy.wait('@putAjustado');
+  });
 });

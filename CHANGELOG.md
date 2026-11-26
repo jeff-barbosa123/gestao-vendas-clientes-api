@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-26 - Aparencia: botao Salvar bloqueado agora explica o motivo
+
+- Problema: com cor primaria ou de fundo abaixo de AA (4,5:1) o botao "Salvar aparencia" ficava desabilitado sem parecer desabilitado e sem aviso (a mensagem so aparecia ao enviar), entao parecia que "nao salva".
+- `appearance.css`: botao desabilitado fica esmaecido com cursor `not-allowed` (so tokens existentes); nova mensagem `.appearance-blocked`.
+- `appearance.html`/`appearance.js`: texto "Salvar bloqueado: ajuste as cores em vermelho para atingir 4,5:1" aparece enquanto algum selo reprovar (botao ligado por `aria-describedby`); ajuda explicando que primaria e fundo sao comparados com o branco e o texto com a superficie escura; botao `#appearance-fix` ("Escurecer ate passar" / "Clarear ate passar" / "Ajustar ate passar") que mistura a cor com preto ou branco ate atingir 4,5:1, igual a regra da API, e devolve o foco ao Salvar.
+- Cypress: 5 testes novos em `appearance.cy.js` (bloqueio visivel e mensagem, ajuda, Escurecer, Clarear no texto, salvar depois de ajustar). IDs e seletores existentes preservados; sem mudanca na API.
+
 ## 2026-11-26 - Seguranca: /metrics fechado por padrao em producao
 
 - `api/src/app.js`: em producao `/metrics` agora responde 404 quando `METRICS_ALLOWED_IPS` esta vazio ou o IP nao esta na lista (antes, lista vazia deixava a rota aberta a qualquer IP). Fora de producao nada muda.

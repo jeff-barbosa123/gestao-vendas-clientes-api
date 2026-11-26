@@ -78,10 +78,15 @@
                   </div>
                 </div>
 
+                <p class="help" id="contrast-help">Prim&aacute;ria e fundo s&atilde;o comparados com o branco (texto de bot&otilde;es e cabe&ccedil;alhos); o texto &eacute; comparado com a superf&iacute;cie escura. Cores claras costumam reprovar.</p>
+
                 <div class="profile-message is-inline" id="appearance-form-message" role="status" aria-live="polite" hidden></div>
 
+                <p class="appearance-blocked" id="appearance-blocked" role="status" aria-live="polite" hidden>Salvar bloqueado: ajuste as cores em vermelho para atingir 4,5:1</p>
+
                 <div class="appearance-actions">
-                  <button class="button is-link" type="submit" id="appearance-save">Salvar apar&ecirc;ncia</button>
+                  <button class="button is-link" type="submit" id="appearance-save" aria-describedby="appearance-blocked">Salvar apar&ecirc;ncia</button>
+                  <button class="button is-light" type="button" id="appearance-fix" hidden>Escurecer at&eacute; passar</button>
                   <button class="button is-light" type="button" id="appearance-reset">Restaurar padr&atilde;o</button>
                 </div>
               </form>

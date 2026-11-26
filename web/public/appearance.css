@@ -44,6 +44,22 @@
   margin-top: 12px;
 }
 
+.appearance-actions .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.appearance-blocked {
+  margin: 12px 0 0;
+  color: var(--danger-700);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.appearance-blocked:not([hidden]) + .appearance-actions {
+  margin-top: 8px;
+}
+
 .logo-box {
   min-height: 96px;
   display: flex;

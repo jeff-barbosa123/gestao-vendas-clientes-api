@@ -90,6 +90,35 @@
     '/recipes.html': [{ sel: '#create-form', perm: 'recipes:write', closest: '.panel-card' }, { sel: '#recipes-form-toggle', perm: 'recipes:write' }],
   };
 
+  // Telas de edicao: quem so le ve os dados, mas nao edita (campos desabilitados e botoes de escrita ocultos).
+  const READ_ONLY = {
+    '/product-edit.html': { perm: 'products:write', root: '#edit-form', hide: ['#save-btn', '#delete-btn'] },
+    '/client-edit.html': { perm: 'customers:write', root: '#edit-form', hide: ['#save-btn', '#delete-btn', '#cancel-edit'] },
+    '/recipe-edit.html': { perm: 'recipes:write', root: '#edit-form', hide: ['#save-btn', '#delete-btn'] },
+    '/vinculos.html': { perm: 'products:write', hide: ['#link-btn', '#unlink-btn'] },
+  };
+
+  function applyReadOnly() {
+    const cfg = READ_ONLY[window.location.pathname];
+    if (!cfg || allowed(cfg)) return;
+    const main = document.getElementById('main');
+    if (main && !main.querySelector('.readonly-notice')) {
+      const note = document.createElement('p');
+      note.className = 'help is-warning readonly-notice';
+      note.setAttribute('role', 'status');
+      note.textContent = 'Seu perfil permite apenas visualizar esta tela. Para alterar, fale com o Dono ou Gerente.';
+      main.prepend(note);
+    }
+    const root = cfg.root ? document.querySelector(cfg.root) : null;
+    const lock = () => {
+      if (root) root.querySelectorAll('input, select, textarea, button').forEach((el) => { el.disabled = true; });
+      (cfg.hide || []).forEach((sel) => document.querySelectorAll(sel).forEach(hide));
+    };
+    lock();
+    // itens criados depois (linhas de ingredientes, por exemplo) tambem nascem travados
+    if (root) new MutationObserver(lock).observe(root, { childList: true, subtree: true });
+  }
+
   function applyBlocks() {
     (PAGE_BLOCKS[window.location.pathname] || []).forEach((b) => {
       const el = document.querySelector(b.sel);
@@ -115,6 +144,7 @@
     applyNav();
     applyDashboard();
     applyBlocks();
+    applyReadOnly();
     window.dispatchEvent(new CustomEvent('sgvc:access', { detail: state.user }));
   }
 

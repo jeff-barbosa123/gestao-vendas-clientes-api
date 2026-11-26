@@ -3,6 +3,12 @@ const envArg = process.argv.find((a) => a.startsWith("--env="));
 if (envArg) process.env.NODE_ENV = envArg.slice("--env=".length);
 
 require("../src/config/loadEnv");
+
+// Cria usuarios com senhas conhecidas (admin123, user123...): nunca em producao.
+if (process.env.NODE_ENV === "production") {
+  console.error("seed-users e proibido em producao (cria usuarios com senhas conhecidas).");
+  process.exit(1);
+}
 const { pool } = require("../src/db");
 const { hashPassword } = require("../src/utils/passwordHash");
 

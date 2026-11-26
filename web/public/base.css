@@ -138,6 +138,8 @@ main {
 
 main:focus { outline: none; }
 
+.readonly-notice { margin: 0 0 12px; }
+
 .skip-link {
   position: absolute;
   left: -999px;

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-25 - Perfis: telas de edicao somente leitura e trava de seed em producao
+
+- `static/access.js` (`READ_ONLY`): em `product-edit`, `client-edit`, `recipe-edit` e `vinculos`, quem nao tem a permissao de escrita (`products:write`, `customers:write`, `recipes:write`; `vinculos` usa `products:write`) ve o aviso "Seu perfil permite apenas visualizar esta tela...", campos desabilitados e botoes de salvar/remover/vincular ocultos (linhas criadas depois tambem nascem travadas). Antes o Vendedor via "Remover produto" e o Estoquista editava a ficha e levava 403 ao salvar.
+- Varredura por perfil (Dono, Gerente, Vendedor/Caixa, Estoquista x 20 telas): redirecionamentos e menus corretos, sem erros de script; `error-monitoring.html` ja redirecionava quem nao e admin da plataforma.
+- `api/scripts/seed-users.js` recusa `NODE_ENV=production` (criava admin123/user123/placeholder/bloqueado).
+- `docs/CHECKLIST-DEPLOY.md`: e-mail de `PLATFORM_ADMIN_EMAILS` de conta existente e verificada; remover `EMAIL_USE_ETHEREAL`; item de validacao sobre somente leitura; item 15 (sem dados de seed em producao).
+- Cypress: `perfis-edicao.cy.js` (PERFIL-001 a PERFIL-005).
+
 ## 2026-11-25 - Acessibilidade: skip link, h1, contraste de borda e alternadores
 
 - Link "Pular para o conteudo" injetado por `static/nav.js` nas telas internas (primeiro elemento do body) e `#main` com `tabindex=-1`; cor, peso e z-index no foco ajustados em `base.css`.

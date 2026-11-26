@@ -23,11 +23,11 @@ A API **não sobe** em produção sem as marcadas com ⛔.
 | `JWT_REFRESH_SECRET` | ⛔ | ≥ 32 chars, **diferente** de `JWT_SECRET` e de `dev-refresh-secret`. |
 | `ALLOWED_ORIGINS` | ⛔ | Origem pública do Web, ex.: `https://app.seudominio.com` (lista separada por vírgula). |
 | `WEB_BASE_URL` | sim | URL pública do Web (links de e-mail e callback do Google). |
-| `PLATFORM_ADMIN_EMAILS` | sim | E-mails (vírgula) com acesso a `/error-monitoring.html`. **Em produção, sem isto ninguém acessa.** |
+| `PLATFORM_ADMIN_EMAILS` | sim | E-mails (vírgula) com acesso a `/error-monitoring.html`. **Em produção, sem isto ninguém acessa.** O e-mail precisa ser de uma conta já criada e com e-mail verificado: o painel compara apenas o e-mail do login. |
 | `GOOGLE_CLIENT_ID` | se usar login Google | Sem `GOOGLE_*` o botão fica oculto. |
 | `GOOGLE_CLIENT_SECRET` | se usar login Google | **Rotacionar** (ver seção 3) antes de usar em produção. |
 | `GOOGLE_REDIRECT_URI` | se usar login Google | `https://app.seudominio.com/api/auth/google/callback` (igual ao cadastrado no Google). Se omitida, deriva de `WEB_BASE_URL`. |
-| `SMTP_HOST` `SMTP_PORT` `SMTP_SECURE` `SMTP_USER` `SMTP_PASS` `SMTP_FROM` | sim | E-mail de boas-vindas, confirmação e reset de senha. Sem SMTP real o e-mail não chega. |
+| `SMTP_HOST` `SMTP_PORT` `SMTP_SECURE` `SMTP_USER` `SMTP_PASS` `SMTP_FROM` | sim | E-mail de boas-vindas, confirmação e reset de senha. Sem SMTP real o e-mail não chega. **Remova `EMAIL_USE_ETHEREAL`** do `render.yaml`/painel: ela tem prioridade sobre o SMTP e manda os e-mails para uma caixa de teste. |
 | `RESET_TOKEN_SECRET`, `EMAIL_VERIFY_TOKEN_SECRET` | recomendado | Se ausentes, usam `JWT_SECRET`. Prefira segredos próprios. |
 | `TRUST_PROXY_HOPS` | conforme hospedagem | Nº de proxies à frente da API (padrão 1). Errado = rate limit enxerga o IP do proxy. |
 | `JWT_PREVIOUS_SECRET`, `JWT_REFRESH_PREVIOUS_SECRET` | só em rotação | Mantêm sessões válidas durante a troca de segredo. |
@@ -62,7 +62,7 @@ Variáveis do **Web**: `API_BASE` (ex.: `http://sgvc-api:3000`), `PORT`, `NODE_E
 4. **Login + sessão:** entrar, recarregar a página (sessão continua), sair.
 5. **Reset de senha:** pedir reset → link do e-mail abre em `WEB_BASE_URL` e funciona.
 6. **Login Google** (se ativo): fluxo completa e volta logado; `redirect_uri_mismatch` = `GOOGLE_REDIRECT_URI` diferente do cadastrado.
-7. **Permissões:** convidar um Vendedor → ele **não** vê custo/CMV/lucro nem Financeiro (403 em `/api/finance/summary`).
+7. **Permissões:** convidar um Vendedor → ele **não** vê custo/CMV/lucro nem Financeiro (403 em `/api/finance/summary`). Vendedor em `product-edit` e Estoquista em `recipe-edit` veem o aviso de somente leitura, sem botões de salvar/remover.
 8. **Módulos:** em Aparência desligar/ligar Financeiro, PDV e CRM e conferir o menu.
 9. **Fluxo de negócio:** cadastrar produto → abrir caixa (PDV) → vender → fechar caixa cego → ver venda em Vendas → lançar conta a pagar e ver no Fluxo de caixa/DRE.
 10. **Painel de erros:** com e-mail de `PLATFORM_ADMIN_EMAILS` abrir `/error-monitoring.html`; com outro e-mail deve negar.
@@ -70,6 +70,7 @@ Variáveis do **Web**: `API_BASE` (ex.: `http://sgvc-api:3000`), `PORT`, `NODE_E
 12. **PWA:** no Chrome/Android abrir o site → botão **Instalar app** aparece no menu → instalar → abre em janela própria; DevTools → Application: manifesto válido, service worker ativo, nenhum cache de `/api`; desligar a rede e recarregar mostra `/offline.html`.
 13. **Mobile:** no celular, sem rolagem horizontal nas telas de PDV, Vendas, Clientes e Financeiro.
 14. **Logs e alertas:** ver logs da primeira hora, sem 5xx; configurar alerta de indisponibilidade em `/health`.
+15. **Sem dados de seed:** nunca rodar `db:seed:users` nem `db:reset` em produção (o `seed-users.js` agora recusa `NODE_ENV=production`). Conferir que não existem `admin@negocio.com`, `user@negocio.com`, `placeholder@local` nem `bloqueado@teste.com`.
 
 ## 6. Rollback
 - Manter a imagem/commit anterior pronto para redeploy.

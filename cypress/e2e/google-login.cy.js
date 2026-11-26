@@ -53,10 +53,13 @@ describe('Login com Google - tela de login', () => {
 
   it('GL-006 | Login por senha continua funcionando com o botao visivel', () => {
     mockProviders(true);
+    // Login simulado: nao depende de usuario do seed (no CI o seed usa ADMIN_EMAIL/ADMIN_PASSWORD do workflow)
+    cy.interceptLogin({ alias: 'loginSenha' });
     cy.visit('/');
     cy.get('#email').type('admin@negocio.com');
-    cy.get('#password').type('admin123', { log: false });
+    cy.get('#password').type('Admin@123!', { log: false });
     cy.get('#login-btn').click();
+    cy.wait('@loginSenha');
     cy.location('pathname').should('eq', '/dashboard.html');
   });
 });

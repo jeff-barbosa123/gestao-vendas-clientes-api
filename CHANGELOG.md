@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-26 - CI: GL-006 deixa de depender do usuario do seed
+
+- `cypress/e2e/google-login.cy.js` (GL-006): o login por senha agora usa `cy.interceptLogin()` (login simulado) em vez de bater na API real com `admin@negocio.com`/`admin123`. No GitHub Actions o seed cria o admin com `ADMIN_EMAIL`/`ADMIN_PASSWORD` do workflow, entao esse usuario nao existia e o teste ficava em `/`, deixando o job `e2e-tests` vermelho (560 de 561 testes passando). Sem mudanca em codigo de producao.
+
 ## 2026-11-26 - Aparencia: botao Salvar bloqueado agora explica o motivo
 
 - Problema: com cor primaria ou de fundo abaixo de AA (4,5:1) o botao "Salvar aparencia" ficava desabilitado sem parecer desabilitado e sem aviso (a mensagem so aparecia ao enviar), entao parecia que "nao salva".

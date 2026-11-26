@@ -90,13 +90,25 @@
                       required
                       aria-describedby="recipe-margin-error"
                     />
-                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. Exemplo sem entrega.</p>
+                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. A entrega é calculada à parte.</p>
                     <p class="help is-danger" id="recipe-margin-error" aria-live="polite" hidden></p>
                   </div>
-                  <div>
-                    <label class="label" for="recipe-fee">Entrega por pedido (R$)</label>
-                    <input class="input" id="recipe-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
-                    <p class="help" style="color:var(--slate-500);">Digite o custo médio da entrega. Se não houver, use 0.</p>
+                </div>
+                <div class="field" role="group" aria-labelledby="recipe-delivery-title">
+                  <p class="label" id="recipe-delivery-title">Entrega por pedido (opcional)</p>
+                  <div class="grouped">
+                    <div>
+                      <label class="label" for="recipe-fee">Quanto você cobra do cliente (R$)</label>
+                      <input class="input" id="recipe-fee" type="text" inputmode="decimal" placeholder="Ex: 8,00" aria-describedby="recipe-fee-help recipe-fee-error" />
+                      <p class="help" id="recipe-fee-help" style="color:var(--slate-500);">Entrega grátis? Use 0 ou deixe vazio.</p>
+                      <p class="help is-danger" id="recipe-fee-error" aria-live="polite" hidden></p>
+                    </div>
+                    <div>
+                      <label class="label" for="recipe-delivery-cost">Quanto você gasta (R$)</label>
+                      <input class="input" id="recipe-delivery-cost" type="text" inputmode="decimal" placeholder="Ex: 5,00" aria-describedby="recipe-delivery-cost-help recipe-delivery-cost-error" />
+                      <p class="help" id="recipe-delivery-cost-help" style="color:var(--slate-500);">Quanto a entrega custa para você. Sem gasto, use 0 ou deixe vazio.</p>
+                      <p class="help is-danger" id="recipe-delivery-cost-error" aria-live="polite" hidden></p>
+                    </div>
                   </div>
                 </div>
                 <button class="button is-link" type="submit" id="by-id-submit">Simular</button>
@@ -125,7 +137,7 @@
                       required
                       aria-describedby="quick-yield-error"
                     />
-                    <p class="help" style="color:var(--slate-500);">Total de porções ou pedidos que você entrega com essa receita.</p>
+                    <p class="help" style="color:var(--slate-500);">Quantas unidades ou porções a receita produz.</p>
                     <p class="help is-danger" id="quick-yield-error" aria-live="polite" hidden></p>
                   </div>
                   <div>
@@ -142,13 +154,8 @@
                       required
                       aria-describedby="quick-margin-error"
                     />
-                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. Exemplo sem entrega.</p>
+                    <p class="term-help">O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. A entrega é calculada à parte.</p>
                     <p class="help is-danger" id="quick-margin-error" aria-live="polite" hidden></p>
-                  </div>
-                  <div>
-                    <label class="label" for="quick-fee">Entrega por pedido (R$)</label>
-                    <input class="input" id="quick-fee" type="text" placeholder="Ex: 5,00 (opcional)" />
-                    <p class="help" style="color:var(--slate-500);">Digite o custo médio da entrega. Se não houver, use 0.</p>
                   </div>
                 </div>
                 <div class="field grouped">
@@ -161,6 +168,23 @@
                     <label class="label" for="quick-labor">Seu tempo de trabalho (R$)</label>
                     <input class="input" id="quick-labor" type="text" placeholder="Ex: 0,00" />
                     <p class="help" style="color:var(--slate-500);">Quanto você quer receber pelo tempo investido nessa receita.</p>
+                  </div>
+                </div>
+                <div class="field" role="group" aria-labelledby="quick-delivery-title">
+                  <p class="label" id="quick-delivery-title">Entrega por pedido (opcional)</p>
+                  <div class="grouped">
+                    <div>
+                      <label class="label" for="quick-fee">Quanto você cobra do cliente (R$)</label>
+                      <input class="input" id="quick-fee" type="text" inputmode="decimal" placeholder="Ex: 8,00" aria-describedby="quick-fee-help quick-fee-error" />
+                      <p class="help" id="quick-fee-help" style="color:var(--slate-500);">Entrega grátis? Use 0 ou deixe vazio.</p>
+                      <p class="help is-danger" id="quick-fee-error" aria-live="polite" hidden></p>
+                    </div>
+                    <div>
+                      <label class="label" for="quick-delivery-cost">Quanto você gasta (R$)</label>
+                      <input class="input" id="quick-delivery-cost" type="text" inputmode="decimal" placeholder="Ex: 5,00" aria-describedby="quick-delivery-cost-help quick-delivery-cost-error" />
+                      <p class="help" id="quick-delivery-cost-help" style="color:var(--slate-500);">Quanto a entrega custa para você. Sem gasto, use 0 ou deixe vazio.</p>
+                      <p class="help is-danger" id="quick-delivery-cost-error" aria-live="polite" hidden></p>
+                    </div>
                   </div>
                 </div>
                 <div class="field">
@@ -230,7 +254,7 @@
             <h4 class="sim-section-title">Resultado</h4>
             <div class="sim-result">
               <div>
-                <p class="result-label">Pre&ccedil;o final</p>
+                <p class="result-label">Pre&ccedil;o final por unidade</p>
                 <p class="result-value" id="result-price">R$ --</p>
               </div>
               <div>
@@ -238,7 +262,7 @@
                 <p class="result-value" id="result-cost">R$ --</p>
               </div>
               <div>
-                <p class="result-label">Lucro estimado</p>
+                <p class="result-label">Lucro do produto por unidade</p>
                 <p class="result-value" id="result-profit">R$ --</p>
               </div>
               <div>
@@ -254,26 +278,42 @@
             </div>
             <div class="result-details" id="result-details">
               <article class="detail-card">
-                <p class="detail-label">Custo total</p>
+                <p class="detail-label">Custo total da receita</p>
                 <p class="detail-value" id="result-total-cost">R$ --</p>
                 <p class="detail-note">Inclui ingredientes, custos fixos e sua m&atilde;o de obra.</p>
               </article>
               <article class="detail-card">
                 <p class="detail-label">Pre&ccedil;o m&iacute;nimo</p>
                 <p class="detail-value" id="result-min-price">R$ --</p>
-                <p class="detail-note">Menor valor que cobre todos os custos.</p>
+                <p class="detail-note">Menor preço por unidade que cobre o custo do produto.</p>
               </article>
               <article class="detail-card">
                 <p class="detail-label">Pre&ccedil;o ideal</p>
                 <p class="detail-value" id="result-ideal-price">R$ --</p>
-                <p class="detail-note">Pre&ccedil;o sugerido aplicando o acréscimo informado.</p>
+                <p class="detail-note">Preço por unidade com o acréscimo informado.</p>
               </article>
               <article class="detail-card">
-                <p class="detail-label">Lucro estimado</p>
+                <p class="detail-label">Lucro do produto por unidade</p>
                 <p class="detail-value" id="result-profit-detail">R$ --</p>
-                <p class="detail-note">Valor que sobra depois de pagar todos os custos.</p>
+                <p class="detail-note">Quanto sobra em cada unidade, sem contar a entrega.</p>
               </article>
             </div>
+            <h5 class="sim-section-title" style="margin-top:18px;">Entrega por pedido</h5>
+            <div class="result-details" id="result-delivery">
+              <article class="detail-card">
+                <p class="detail-label">Cobrado</p>
+                <p class="detail-value" id="result-delivery-charged">R$ --</p>
+              </article>
+              <article class="detail-card">
+                <p class="detail-label">Gasto</p>
+                <p class="detail-value" id="result-delivery-cost">R$ --</p>
+              </article>
+              <article class="detail-card">
+                <p class="detail-label">Saldo</p>
+                <p class="detail-value" id="result-delivery-balance">R$ --</p>
+              </article>
+            </div>
+            <p class="term-help" id="result-delivery-note" aria-live="polite">Simule para ver o saldo da entrega.</p>
           </section>
         </section>
       </div>

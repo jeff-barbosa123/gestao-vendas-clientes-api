@@ -45,9 +45,14 @@ async function simulateQuick(req, res, next) {
 
 async function simulateGet(req, res, next) {
   try {
-    ensureAllowedQuery(req.query, ['margem', 'taxaEntrega']);
+    ensureAllowedQuery(req.query, ['margem', 'taxaEntrega', 'custoEntrega']);
     const result = await priceSimulationService.simulateById(
-      { receitaId: req.params.id, margem: req.query.margem, taxaEntrega: req.query.taxaEntrega },
+      {
+        receitaId: req.params.id,
+        margem: req.query.margem,
+        taxaEntrega: req.query.taxaEntrega,
+        custoEntrega: req.query.custoEntrega,
+      },
       req.user
     );
     res.json(result);

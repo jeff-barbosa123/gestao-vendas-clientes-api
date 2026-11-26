@@ -35,7 +35,7 @@ Explorar riscos e comportamentos nao cobertos pelos testes automatizados na simu
 - **EXP-SIM-008 | Taxa de entrega alta**
   - Dado que informo taxaEntrega alta
   - Quando simulo
-  - Entao preco_final_simulado deve refletir a taxa
+  - Entao saldo_entrega deve ser a taxa menos o custoEntrega, sem alterar preco_final_simulado nem lucro_estimado
 - **EXP-SIM-009 | Ingrediente invalido na simulacao rapida**
   - Dado que informo ingrediente com nome vazio
   - Quando simulo rapido
@@ -76,6 +76,10 @@ Explorar riscos e comportamentos nao cobertos pelos testes automatizados na simu
   - Dado que uso GET /simulacao/preco/:id
   - Quando informo margem e taxaEntrega
   - Entao recebo simulacao equivalente ao POST
+- **EXP-SIM-018B | Custo e cobranca da entrega**
+  - Dado que informo taxaEntrega (cobrado) e custoEntrega (gasto), por pedido
+  - Quando simulo com saldo positivo, zero e negativo
+  - Entao saldo_entrega e cobrado menos gasto, e custoEntrega negativo ou invalido gera erro 400
 - **EXP-SIM-019 | Token ausente**
   - Dado que nao envio token
   - Quando simulo preco

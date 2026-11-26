@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-25 - Simulacao: custo e cobranca da entrega separados
+
+- `simulacao.html`/`simulacao.js`: a entrega por pedido agora tem dois campos opcionais (quanto cobra do cliente e quanto gasta) e um bloco proprio no resultado com cobrado, gasto e saldo (cobrado menos gasto). Valor invalido ou negativo mostra erro no campo (antes, no modo com ficha, virava zero). Rotulos deixam claro o que e por unidade. Novos ids `*-delivery-cost` e `result-delivery-*`; `recipe-fee`/`quick-fee` passam a ser o valor cobrado.
+- API (`/simulacao/preco`, `/preco/rapida` e `GET /preco/:id`): novo parametro opcional `custoEntrega` e campos `custo_entrega`/`saldo_entrega` (tambem em camelCase). **Mudanca de comportamento:** `preco_final_simulado` e `lucro_estimado` nao incluem mais a taxa de entrega.
+- Swagger, cenarios exploratorios, Mocha (US006) e Cypress atualizados. Sem mudanca no banco.
+
 ## 2026-11-25 - Ficha de custo neutra e itens da parte mais limpos
 
 - Linguagem neutra em `recipe-edit.html` e `recipes.html`: rendimento fala em "este item" e "a producao" (sem "preparo"); subtitulo repetido do rendimento removido. Atalhos de partes: Massa/Cobertura/Recheio viram Base/Complemento/Acessorios (a parte criada ao clicar usa o mesmo nome); placeholder do nome da parte atualizado. Ids, campos e fluxos inalterados; o exemplo preenchido continua o mesmo.

@@ -94,12 +94,16 @@ describe('US006 - Simulacao de Preco Ideal', () => {
       'preco_ideal',
       'margem',
       'taxa_entrega',
+      'custo_entrega',
+      'saldo_entrega',
       'preco_final_simulado',
       'valor_lucro',
       'lucro_estimado',
       'custoUnitario',
       'margemLucroPercentual',
       'taxaEntrega',
+      'custoEntrega',
+      'saldoEntrega',
       'precoFinalSimulado',
       'valorLucro',
       'lucroEstimado',
@@ -169,7 +173,76 @@ describe('US006 - Simulacao de Preco Ideal', () => {
 
     expect(response.status).to.equal(200);
     expect(response.body.taxa_entrega).to.equal(2.5);
-    expect(response.body.preco_final_simulado).to.be.greaterThan(response.body.preco_ideal);
+    expect(response.body.preco_final_simulado).to.equal(response.body.preco_ideal);
+    expect(response.body.saldo_entrega).to.equal(2.5);
+  });
+
+  // Exemplo usado tambem no Cypress: custo 12, rende 12, acrescimo 100% => R$ 2 por unidade e R$ 1 de lucro.
+  const twelveUnits = {
+    yield: 12,
+    ingredients: [{ name: 'Base', quantity: 1, cost: 12, packageQuantity: 1 }],
+    overhead: 0,
+    labor: 0,
+  };
+  const expectProduct = (body) => {
+    expect(body.custo_por_unidade).to.equal(1);
+    expect(body.preco_ideal).to.equal(2);
+    expect(body.preco_final_simulado).to.equal(2);
+    expect(body.precoFinalSimulado).to.equal(2);
+    expect(body.lucro_estimado).to.equal(1);
+    expect(body.lucroEstimado).to.equal(1);
+  };
+  const expectDelivery = (body, charged, cost, balance) => {
+    expect([body.taxa_entrega, body.custo_entrega, body.saldo_entrega]).to.deep.equal([charged, cost, balance]);
+    expect([body.taxaEntrega, body.custoEntrega, body.saldoEntrega]).to.deep.equal([charged, cost, balance]);
+  };
+
+  [
+    ['positivo', 8, 5, 3],
+    ['zero', 5, 5, 0],
+    ['negativo (entrega gratis)', 0, 5, -5],
+  ].forEach(([label, charged, cost, balance]) => {
+    it(`API-SIM-010C | Saldo da entrega ${label} nao altera preco nem lucro por unidade`, async () => {
+      const id = await createRecipe(twelveUnits);
+
+      const byId = await simulateById({ receitaId: id, margem: 100, taxaEntrega: charged, custoEntrega: cost });
+      const quick = await simulateQuick(
+        baseQuickPayload({
+          rendimento: 12,
+          ingredientes: [{ nome: 'Base', quantidade: 1, custo: 12 }],
+          overheads: {},
+          maoDeObra: 0,
+          margem: 100,
+          taxaEntrega: charged,
+          custoEntrega: cost,
+        })
+      );
+
+      [byId, quick].forEach((response) => {
+        expect(response.status).to.equal(200);
+        expectProduct(response.body);
+        expectDelivery(response.body, charged, cost, balance);
+      });
+    });
+  });
+
+  it('API-SIM-010D | Sem valores de entrega, tudo fica zerado', async () => {
+    const id = await createRecipe(twelveUnits);
+    const response = await simulateById({ receitaId: id, margem: 100 });
+
+    expect(response.status).to.equal(200);
+    expectProduct(response.body);
+    expectDelivery(response.body, 0, 0, 0);
+  });
+
+  it('API-SIM-010E | Deve bloquear gasto ou cobranca de entrega negativos ou invalidos', async () => {
+    for (const delivery of [{ custoEntrega: -1 }, { custoEntrega: 'abc' }, { taxaEntrega: -1 }, { taxaEntrega: 'abc' }]) {
+      const byId = await simulateById({ receitaId: recipeId, margem: 20, ...delivery });
+      const quick = await simulateQuick(baseQuickPayload(delivery));
+
+      expect(byId.status, JSON.stringify(delivery)).to.equal(400);
+      expect(quick.status, JSON.stringify(delivery)).to.equal(400);
+    }
   });
 
   it('API-SIM-011 | Deve bloquear simulacao rapida sem ingredientes', async () => {
@@ -365,6 +438,17 @@ describe('US006 - Simulacao de Preco Ideal', () => {
 
     expect(response.status).to.equal(200);
     expect(response.body).to.have.property('margem', 15);
+  });
+
+  it('API-SIM-023B | GET deve aceitar taxaEntrega e custoEntrega', async () => {
+    const response = await client
+      .get(`${SIM_PATH}/${recipeId}?margem=15&taxaEntrega=8&custoEntrega=5`)
+      .set(auth(token))
+      .set('x-forwarded-for', nextIp());
+
+    expect(response.status).to.equal(200);
+    expect(response.body.saldo_entrega).to.equal(3);
+    expect(response.body.preco_final_simulado).to.equal(response.body.preco_ideal);
   });
 
 });

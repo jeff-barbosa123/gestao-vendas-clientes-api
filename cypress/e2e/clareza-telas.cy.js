@@ -1,7 +1,7 @@
 // Explicacoes curtas em Simulacao, Produtos, edicao e Vinculos, com exemplos conferidos contra o calculo das telas (API simulada).
 describe('SGVC - Clareza nas telas de precos e vinculos', () => {
   const FICHA = 'A receita do produto: ingredientes, quantidades e custos.';
-  const ACRESCIMO = 'O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. Exemplo sem entrega.';
+  const ACRESCIMO = 'O percentual é somado ao custo: R$ 10 + 40% = R$ 14. No painel, a margem é sobre a venda: R$ 4 de R$ 14 = 28,6%. A entrega é calculada à parte.';
   const MARGEM_EX = 'Custo R$ 10 e margem de 40%: preço R$ 16,67.';
   const MARKUP_EX = 'Custo R$ 10 e markup de 40%: preço R$ 14.';
   const CUSTO_FICHA = 'Quanto custa produzir uma unidade, segundo a ficha.';
@@ -61,6 +61,26 @@ describe('SGVC - Clareza nas telas de precos e vinculos', () => {
         });
         cy.contains('.tip-title', 'Acréscimo ou margem?').should('exist');
         cy.get('#result-total-cost').siblings('.detail-note').should('not.contain', 'entrega');
+        [
+          'Preço final por unidade',
+          'Lucro do produto por unidade',
+        ].forEach((label) => cy.contains('.result-label', label).should('exist'));
+        cy.get('#result-total-cost').siblings('.detail-label').should('have.text', 'Custo total da receita');
+        cy.get('#result-min-price').siblings('.detail-note').should('have.text', 'Menor preço por unidade que cobre o custo do produto.');
+        cy.get('#result-ideal-price').siblings('.detail-note').should('have.text', 'Preço por unidade com o acréscimo informado.');
+        cy.get('#result-profit-detail').siblings('.detail-note').should('have.text', 'Quanto sobra em cada unidade, sem contar a entrega.');
+        cy.contains('p.help', 'Quantas unidades ou porções a receita produz.').should('be.visible');
+        [['quick', '#tab-quick'], ['recipe', '#tab-recipe']].forEach(([prefix, tab]) => {
+          cy.get(tab).click();
+          cy.contains(`#${prefix}-delivery-title`, 'Entrega por pedido (opcional)').should('be.visible');
+          cy.contains(`label[for="${prefix}-fee"]`, 'Quanto você cobra do cliente (R$)').should('be.visible');
+          cy.contains(`label[for="${prefix}-delivery-cost"]`, 'Quanto você gasta (R$)').should('be.visible');
+          cy.get(`#${prefix}-fee-help`).should('be.visible').and('have.text', 'Entrega grátis? Use 0 ou deixe vazio.');
+          cy.get(`#${prefix}-delivery-cost-help`).should('be.visible').and('contain', 'Sem gasto, use 0 ou deixe vazio.');
+          noSideScroll();
+        });
+        cy.get('#result-delivery').scrollIntoView().should('be.visible');
+        cy.get('#result-delivery-balance').should('have.text', 'R$ --');
         noSideScroll();
       });
 

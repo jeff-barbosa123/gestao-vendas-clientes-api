@@ -11,6 +11,9 @@
   const recipeMargin = document.getElementById('recipe-margin');
   const recipeMarginError = document.getElementById('recipe-margin-error');
   const recipeFee = document.getElementById('recipe-fee');
+  const recipeFeeError = document.getElementById('recipe-fee-error');
+  const recipeDeliveryCost = document.getElementById('recipe-delivery-cost');
+  const recipeDeliveryCostError = document.getElementById('recipe-delivery-cost-error');
   const byIdSubmit = document.getElementById('by-id-submit');
 
   const quickForm = document.getElementById('quick-form');
@@ -19,6 +22,9 @@
   const quickMargin = document.getElementById('quick-margin');
   const quickMarginError = document.getElementById('quick-margin-error');
   const quickFee = document.getElementById('quick-fee');
+  const quickFeeError = document.getElementById('quick-fee-error');
+  const quickDeliveryCost = document.getElementById('quick-delivery-cost');
+  const quickDeliveryCostError = document.getElementById('quick-delivery-cost-error');
   const quickOverhead = document.getElementById('quick-overhead');
   const quickLabor = document.getElementById('quick-labor');
   const ingredientName = document.getElementById('ingredient-name');
@@ -38,10 +44,16 @@
   const resultIdealPrice = document.getElementById('result-ideal-price');
   const resultProfitDetail = document.getElementById('result-profit-detail');
   const marginContext = document.getElementById('margin-context');
+  const resultDeliveryCharged = document.getElementById('result-delivery-charged');
+  const resultDeliveryCost = document.getElementById('result-delivery-cost');
+  const resultDeliveryBalance = document.getElementById('result-delivery-balance');
+  const resultDeliveryNote = document.getElementById('result-delivery-note');
   const quickSegment = document.getElementById('quick-segment');
   const marginHealth = document.getElementById('margin-health');
 
   const EMPTY_RESULT_MESSAGE = 'Informe os dados para visualizar o resultado.';
+  const EMPTY_DELIVERY_MESSAGE = 'Simule para ver o saldo da entrega.';
+  const INVALID_DELIVERY_MESSAGE = 'Informe um valor válido, igual ou maior que zero.';
 
   let ingredientesSimulacao = [];
   let recipes = [];
@@ -100,6 +112,8 @@
     setInputError(recipeMargin, recipeMarginError, '');
     setInputError(quickYield, quickYieldError, '');
     setInputError(quickMargin, quickMarginError, '');
+    setInputError(recipeFee, recipeFeeError, '');
+    setInputError(recipeDeliveryCost, recipeDeliveryCostError, '');
   }
 
   const CSRF_COOKIE_NAME = 'sgvc_csrf';
@@ -334,6 +348,35 @@
     });
   }
 
+  // Entrega é por pedido: aparece à parte e nunca entra no preço ou no lucro por unidade.
+  function renderDelivery(data) {
+    const charged = Number(resolveValue(data, ['taxa_entrega', 'taxaEntrega']) ?? 0);
+    const cost = Number(resolveValue(data, ['custo_entrega', 'custoEntrega']) ?? 0);
+    const balance = Number(resolveValue(data, ['saldo_entrega', 'saldoEntrega']) ?? 0);
+    formatCurrencyField(resultDeliveryCharged, charged);
+    formatCurrencyField(resultDeliveryCost, cost);
+    if (resultDeliveryBalance) {
+      resultDeliveryBalance.textContent = `${balance < 0 ? '-' : ''}R$ ${formatPrice(Math.abs(balance))}`;
+    }
+    if (!resultDeliveryNote) return;
+    if (!charged && !cost) {
+      resultDeliveryNote.textContent = 'Nenhum valor de entrega informado.';
+    } else if (balance > 0) {
+      resultDeliveryNote.textContent = `Sobram R$ ${formatPrice(balance)} por pedido na entrega.`;
+    } else if (balance < 0) {
+      resultDeliveryNote.textContent = `Faltam R$ ${formatPrice(Math.abs(balance))} por pedido para cobrir a entrega.`;
+    } else {
+      resultDeliveryNote.textContent = 'A cobrança cobre exatamente o gasto.';
+    }
+  }
+
+  // Lê um campo de entrega: vazio vale 0; inválido devolve null e mostra o erro no próprio campo.
+  function readDeliveryInput(input, errorEl) {
+    const value = parseOptionalNonNegativeInput(input);
+    setInputError(input, errorEl, value === null ? INVALID_DELIVERY_MESSAGE : '');
+    return value;
+  }
+
   function renderResult(data) {
     if (!data) return;
     if (resultPrice) resultPrice.textContent = `R$ ${formatPrice(data.preco_final_simulado ?? data.precoFinalSimulado)}`;
@@ -356,6 +399,7 @@
     formatCurrencyField(resultMinPrice, resolveValue(data, ['preco_minimo', 'precoMinimo']));
     formatCurrencyField(resultIdealPrice, resolveValue(data, ['preco_ideal', 'precoIdeal']));
     formatCurrencyField(resultProfitDetail, resolveValue(data, ['lucro_estimado', 'lucroEstimado']));
+    renderDelivery(data);
   }
 
   function roundValue(value) {
@@ -372,10 +416,12 @@
   }
 
   function resetDetailFields() {
-    [resultTotalCost, resultMinPrice, resultIdealPrice, resultProfitDetail].forEach((el) => {
+    [resultTotalCost, resultMinPrice, resultIdealPrice, resultProfitDetail,
+      resultDeliveryCharged, resultDeliveryCost, resultDeliveryBalance].forEach((el) => {
       if (!el) return;
       el.textContent = 'R$ --';
     });
+    if (resultDeliveryNote) resultDeliveryNote.textContent = EMPTY_DELIVERY_MESSAGE;
   }
 
   function limparResultado(message = EMPTY_RESULT_MESSAGE) {
@@ -402,10 +448,11 @@
     return roundValue(total);
   }
 
-  function buildQuickSimulationPayload(custoTotal, custoPorUnidade, margemPercent, taxaEntrega) {
+  function buildQuickSimulationPayload(custoTotal, custoPorUnidade, margemPercent, taxaEntrega, custoEntrega) {
     const precoMinimo = roundValue(custoPorUnidade);
     const precoIdeal = roundValue(custoPorUnidade * (1 + margemPercent / 100));
-    const precoFinalSimulado = roundValue(precoIdeal + taxaEntrega);
+    const precoFinalSimulado = precoIdeal;
+    const saldoEntrega = roundValue(roundValue(taxaEntrega) - roundValue(custoEntrega));
     const valorLucro = roundValue(custoPorUnidade * (margemPercent / 100));
     const lucroEstimado = roundValue(precoFinalSimulado - custoPorUnidade);
 
@@ -416,12 +463,16 @@
       preco_ideal: precoIdeal,
       margem: margemPercent,
       taxa_entrega: roundValue(taxaEntrega),
+      custo_entrega: roundValue(custoEntrega),
+      saldo_entrega: saldoEntrega,
       preco_final_simulado: precoFinalSimulado,
       valor_lucro: valorLucro,
       lucro_estimado: lucroEstimado,
       custoUnitario: roundValue(custoPorUnidade),
       margemLucroPercentual: margemPercent,
       taxaEntrega: roundValue(taxaEntrega),
+      custoEntrega: roundValue(custoEntrega),
+      saldoEntrega,
       precoFinalSimulado: precoFinalSimulado,
       valorLucro,
       lucroEstimado,
@@ -431,7 +482,8 @@
   function calcularPrecoFinal() {
     const rendimento = toNumber(quickYield?.value, 0.01);
     const margem = toNumber(quickMargin?.value, 0);
-    const taxaEntrega = parseOptionalNonNegativeInput(quickFee);
+    const taxaEntrega = readDeliveryInput(quickFee, quickFeeError);
+    const custoEntrega = readDeliveryInput(quickDeliveryCost, quickDeliveryCostError);
     const overhead = parseOptionalNonNegativeInput(quickOverhead);
     const labor = parseOptionalNonNegativeInput(quickLabor);
 
@@ -440,6 +492,7 @@
       rendimento == null ||
       margem == null ||
       taxaEntrega === null ||
+      custoEntrega === null ||
       overhead === null ||
       labor === null
     ) {
@@ -456,7 +509,7 @@
       return;
     }
 
-    const payload = buildQuickSimulationPayload(custoTotal, custoPorUnidade, margem, taxaEntrega);
+    const payload = buildQuickSimulationPayload(custoTotal, custoPorUnidade, margem, taxaEntrega, custoEntrega);
     renderResult(payload);
     if (messageBox) showMessage('');
   }
@@ -577,7 +630,8 @@
       clearFieldErrors();
       const receitaId = recipeId.value.trim();
       const margem = toNumber(recipeMargin.value, 0);
-      const taxaEntrega = toNumber(recipeFee.value, 0) || 0;
+      const taxaEntrega = readDeliveryInput(recipeFee, recipeFeeError);
+      const custoEntrega = readDeliveryInput(recipeDeliveryCost, recipeDeliveryCostError);
       let hasError = false;
       if (!receitaId) {
         setInputError(recipeId, recipeIdError, 'Selecione a ficha t\u00e9cnica.');
@@ -591,12 +645,16 @@
         showMessage('Revise os campos obrigat\u00f3rios.', 'is-danger');
         return;
       }
+      if (taxaEntrega === null || custoEntrega === null) {
+        showMessage('Revise os valores da entrega.', 'is-danger');
+        return;
+      }
       byIdSubmit.classList.add('is-loading');
       byIdSubmit.disabled = true;
       try {
         const result = await apiRequest('/api/simulacao/preco', null, {
           method: 'POST',
-          body: JSON.stringify({ receitaId, margem: margem, taxaEntrega }),
+          body: JSON.stringify({ receitaId, margem: margem, taxaEntrega, custoEntrega }),
         });
         renderResult(result);
         showMessage('Simulação concluída.', 'is-success');
@@ -622,11 +680,15 @@
     });
   }
 
-  [recipeMargin, quickYield, quickMargin, quickFee, quickOverhead, quickLabor, ingredientQty, ingredientCost].forEach(preventNegative);
-  [recipeFee, quickFee, quickOverhead, quickLabor, ingredientCost].forEach(formatCurrencyInput);
+  // Nos campos de entrega o "-" não é apagado: um valor negativo mostra erro em vez de virar positivo.
+  [recipeMargin, quickYield, quickMargin, quickOverhead, quickLabor, ingredientQty, ingredientCost].forEach(preventNegative);
+  [recipeFee, recipeDeliveryCost, quickFee, quickDeliveryCost, quickOverhead, quickLabor, ingredientCost].forEach(formatCurrencyInput);
+  [[recipeFee, recipeFeeError], [recipeDeliveryCost, recipeDeliveryCostError]].forEach(([input, errorEl]) => {
+    if (input) input.addEventListener('blur', () => readDeliveryInput(input, errorEl));
+  });
   attachBlurValidation(quickYield, quickYieldError, 'Informe o rendimento.', 0.01);
   attachBlurValidation(quickMargin, quickMarginError, 'Informe o percentual de acréscimo.', 0);
-  [quickYield, quickMargin, quickFee, quickOverhead, quickLabor].forEach((input) => {
+  [quickYield, quickMargin, quickFee, quickDeliveryCost, quickOverhead, quickLabor].forEach((input) => {
     if (!input) return;
     input.addEventListener('input', calcularPrecoFinal);
   });

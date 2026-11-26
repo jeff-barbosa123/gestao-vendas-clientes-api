@@ -626,7 +626,8 @@
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
           { "name": "margem", "in": "query", "required": true, "schema": { "type": "number" } },
-          { "name": "taxaEntrega", "in": "query", "required": false, "schema": { "type": "number" } }
+          { "name": "taxaEntrega", "in": "query", "required": false, "description": "Valor cobrado do cliente pela entrega, por pedido (padrão 0).", "schema": { "type": "number", "minimum": 0 } },
+          { "name": "custoEntrega", "in": "query", "required": false, "description": "Gasto com a entrega, por pedido (padrão 0).", "schema": { "type": "number", "minimum": 0 } }
         ],
         "responses": {
           "200": {
@@ -1328,7 +1329,8 @@
         "properties": {
           "receitaId": { "type": "string" },
           "margem": { "type": "number" },
-          "taxaEntrega": { "type": "number" }
+          "taxaEntrega": { "type": "number", "minimum": 0, "description": "Valor cobrado do cliente pela entrega, por pedido (padrão 0). Não entra no preço nem no lucro por unidade." },
+          "custoEntrega": { "type": "number", "minimum": 0, "description": "Gasto com a entrega, por pedido (padrão 0)." }
         }
       },
       "PriceSimulationQuickRequest": {
@@ -1352,7 +1354,8 @@
           "overheads": { "type": "object", "additionalProperties": { "type": "number" } },
           "maoDeObra": { "type": "number" },
           "margem": { "type": "number" },
-          "taxaEntrega": { "type": "number" }
+          "taxaEntrega": { "type": "number", "minimum": 0, "description": "Valor cobrado do cliente pela entrega, por pedido (padrão 0). Não entra no preço nem no lucro por unidade." },
+          "custoEntrega": { "type": "number", "minimum": 0, "description": "Gasto com a entrega, por pedido (padrão 0)." }
         }
       },
       "PriceSimulationResponse": {
@@ -1363,13 +1366,17 @@
           "preco_minimo": { "type": "number" },
           "preco_ideal": { "type": "number" },
           "margem": { "type": "number" },
-          "taxa_entrega": { "type": "number" },
-          "preco_final_simulado": { "type": "number" },
+          "taxa_entrega": { "type": "number", "description": "Cobrado pela entrega, por pedido." },
+          "custo_entrega": { "type": "number", "description": "Gasto com a entrega, por pedido." },
+          "saldo_entrega": { "type": "number", "description": "Cobrado menos gasto, por pedido; pode ser negativo." },
+          "preco_final_simulado": { "type": "number", "description": "Preço por unidade, sem a entrega." },
           "valor_lucro": { "type": "number" },
-          "lucro_estimado": { "type": "number" },
+          "lucro_estimado": { "type": "number", "description": "Lucro do produto por unidade, sem a entrega." },
           "custoUnitario": { "type": "number" },
           "margemLucroPercentual": { "type": "number" },
           "taxaEntrega": { "type": "number" },
+          "custoEntrega": { "type": "number" },
+          "saldoEntrega": { "type": "number" },
           "precoFinalSimulado": { "type": "number" },
           "valorLucro": { "type": "number" },
           "lucroEstimado": { "type": "number" }

@@ -42,7 +42,8 @@ function parseMarginPercent(margin) {
   return m;
 }
 
-function parseTaxaEntrega(value) {
+// Valores da entrega, por pedido: taxaEntrega = cobrado do cliente; custoEntrega = gasto.
+function parseDeliveryValue(value) {
   if (value == null) return 0;
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < 0) {
@@ -51,10 +52,12 @@ function parseTaxaEntrega(value) {
   return parsed;
 }
 
-function buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega) {
+// A entrega é por pedido e fica fora do preço e do lucro por unidade; só gera o saldo (cobrado - gasto).
+function buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega, custoEntrega) {
   const precoMinimo = custoPorUnidade;
   const precoIdeal = round2(custoPorUnidade * (1 + marginPercent / 100));
-  const precoFinalSimulado = round2(precoIdeal + taxaEntrega);
+  const precoFinalSimulado = precoIdeal;
+  const saldoEntrega = round2(round2(taxaEntrega) - round2(custoEntrega));
   const valorLucro = round2(custoPorUnidade * (marginPercent / 100));
   const lucroEstimado = round2(precoFinalSimulado - custoPorUnidade);
 
@@ -65,22 +68,26 @@ function buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxa
     preco_ideal: precoIdeal,
     margem: marginPercent,
     taxa_entrega: round2(taxaEntrega),
+    custo_entrega: round2(custoEntrega),
+    saldo_entrega: saldoEntrega,
     preco_final_simulado: precoFinalSimulado,
     valor_lucro: valorLucro,
     lucro_estimado: lucroEstimado,
     custoUnitario: round2(custoPorUnidade),
     margemLucroPercentual: marginPercent,
     taxaEntrega: round2(taxaEntrega),
+    custoEntrega: round2(custoEntrega),
+    saldoEntrega,
     precoFinalSimulado,
     valorLucro,
     lucroEstimado,
   };
 }
 
-function simulateFromRecipe(recipe, marginPercent, taxaEntrega) {
+function simulateFromRecipe(recipe, marginPercent, taxaEntrega, custoEntrega) {
   const custoTotal = round2(recipe.totalCost);
   const custoPorUnidade = round2(recipe.costPerUnit);
-  return buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega);
+  return buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega, custoEntrega);
 }
 
 function sumNumberObject(obj) {
@@ -160,25 +167,27 @@ function simulateQuickFromPayload(payload) {
     throw buildError('Dados incompletos para simulação de preço', 400);
   }
 
-  const taxaEntrega = parseTaxaEntrega(payload.taxaEntrega ?? payload.deliveryFee);
+  const taxaEntrega = parseDeliveryValue(payload.taxaEntrega ?? payload.deliveryFee);
+  const custoEntrega = parseDeliveryValue(payload.custoEntrega ?? payload.deliveryCost);
 
   const custoTotal = round2(custoIngredientes + overheadTotalRaw + maoDeObra);
   const custoPorUnidade = round2(custoTotal / yieldQty);
 
-  return buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega);
+  return buildSimulationPayload(custoTotal, custoPorUnidade, marginPercent, taxaEntrega, custoEntrega);
 }
 
-async function simulateById({ receitaId, margem, taxaEntrega }, user) {
+async function simulateById({ receitaId, margem, taxaEntrega, custoEntrega }, user) {
   if (!receitaId || margem == null) {
     throw buildError('Dados incompletos para simulação de preço', 400);
   }
   const marginPercent = parseMarginPercent(margem);
-  const deliveryFee = parseTaxaEntrega(taxaEntrega);
+  const deliveryFee = parseDeliveryValue(taxaEntrega);
+  const deliveryCost = parseDeliveryValue(custoEntrega);
   ensureSafeText(String(receitaId), 'receitaId');
 
   try {
     const recipe = await recipesService.getById(String(receitaId), user);
-    return simulateFromRecipe(recipe, marginPercent, deliveryFee);
+    return simulateFromRecipe(recipe, marginPercent, deliveryFee, deliveryCost);
   } catch (err) {
     if (err && err.status === 404) {
       throw buildError('Receita não encontrada', 404);

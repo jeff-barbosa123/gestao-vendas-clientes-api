@@ -1,7 +1,7 @@
 /**
  * Carga e exibição dos dados: clientes, produtos, receita, encomendas e métricas.
  */
-import { els } from './dom.js';
+import { els, emptyEls } from './dom.js';
 import { fetchJson, handleAuthFailure, money, normalizeError, toggleEmpty } from './core.js';
 import { computePreviousPeriod } from './period.js';
 import { renderCharts } from './charts.js';
@@ -14,8 +14,42 @@ import {
   updateRevenueAlert,
 } from './alerts.js';
 
+const METRIC_KEYS = ['customers', 'sales', 'revenue', 'cmv', 'profit', 'products', 'recipes', 'linked', 'margin'];
+const REVENUE_ERROR = 'Não foi possível carregar os dados financeiros';
+const notStale = () => false;
+
+// Frase abaixo do número de um indicador; texto vazio esconde a linha.
+function setMetricNote(key, text) {
+  if (text && emptyEls[key]) emptyEls[key].textContent = text;
+  toggleEmpty(key, Boolean(text));
+}
+
+// Sem valor confirmado: todos os indicadores mostram "—" com o motivo.
+function clearMetrics(note) {
+  Object.values(els).forEach((el) => {
+    if (!el) return;
+    el.textContent = '—';
+    el.classList.remove('is-negative');
+  });
+  METRIC_KEYS.forEach((key) => setMetricNote(key, note));
+  renderCharts({ salesCount: 0, revenueTotal: 0 });
+}
+
+// A cada carga (inclusive troca de período) os valores anteriores saem da tela.
+export function showDashboardLoading() {
+  clearMetrics('Carregando...');
+  setAlertCardError('alert-revenue', '');
+  const set = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+  set('alert-revenue-message', 'Carregando análise financeira...');
+  set('alert-revenue-hint', '');
+  set('alert-revenue-count', '');
+}
+
 // Encomendas em aberto nos próximos 7 dias (independe do período do painel)
-export async function loadUpcomingOrders() {
+export async function loadUpcomingOrders(isStale = notStale) {
   const msgEl = document.getElementById('alert-orders-message');
   const listEl = document.getElementById('alert-orders-list');
   const countEl = document.getElementById('alert-orders-count');
@@ -30,6 +64,7 @@ export async function loadUpcomingOrders() {
       { from: from.toISOString(), to: to.toISOString(), status: 'PENDING,READY' },
       { method: 'GET' }
     );
+    if (isStale()) return;
     const list = Array.isArray(orders) ? orders : [];
     listEl.textContent = '';
     if (countEl) countEl.textContent = list.length ? String(list.length) : '';
@@ -49,29 +84,23 @@ export async function loadUpcomingOrders() {
       listEl.appendChild(li);
     });
   } catch (_err) {
+    if (isStale()) return;
     msgEl.textContent = 'Não foi possível carregar as encomendas.';
   }
 }
 
 // Falha nos indicadores: mostra "—" em vez de zeros e nenhum aviso tranquilizador.
 export function showMetricsUnavailable() {
-  Object.values(els).forEach((el) => {
-    if (!el) return;
-    el.textContent = '—';
-    el.classList.remove('is-negative');
-  });
-  ['customers', 'sales', 'revenue', 'cmv', 'profit', 'products', 'recipes', 'linked', 'margin']
-    .forEach((key) => toggleEmpty(key, false));
+  clearMetrics('Não foi possível carregar.');
   const unavailable = { alertsUnavailable: true };
   renderPricingAlerts(unavailable);
   renderStockAlerts(unavailable);
   renderProductStockAlerts(unavailable);
-  renderCharts({ salesCount: 0, revenueTotal: 0 });
 }
 
 // Quando nem a sessão pôde ser conferida, os demais cartões também não ficam em "Carregando...".
 export function showSecondaryUnavailable() {
-  updateRevenueAlert(null, null);
+  showRevenueError();
   const orders = document.getElementById('alert-orders-message');
   if (orders) orders.textContent = 'Não foi possível carregar as encomendas.';
   const list = document.getElementById('alert-orders-list');
@@ -103,20 +132,24 @@ export function updateMetrics(data) {
   if (els.products) els.products.textContent = productsValue || 0;
   if (els.recipes) els.recipes.textContent = recipesValue || 0;
   if (els.linked) els.linked.textContent = linkedValue || 0;
+  // Sem faturamento não há margem: a API devolve 0, que não é um resultado real.
+  let marginNote = '';
+  if (revenueValue <= 0) marginNote = 'Sem faturamento no período para calcular a margem.';
+  else if (!Number.isFinite(marginValue)) marginNote = 'Não foi possível carregar.';
   if (els.margin) {
-    els.margin.textContent =
-      marginValue != null ? `${(marginValue * 100).toFixed(1).replace(".", ",")}%` : '0%';
+    els.margin.textContent = marginNote ? '—' : `${(marginValue * 100).toFixed(1).replace(".", ",")}%`;
   }
 
-  toggleEmpty('customers', customersValue <= 0);
-  toggleEmpty('sales', salesValue <= 0);
-  toggleEmpty('revenue', revenueValue <= 0);
-  toggleEmpty('cmv', revenueValue <= 0);
-  toggleEmpty('profit', revenueValue <= 0);
-  toggleEmpty('products', productsValue <= 0);
-  toggleEmpty('recipes', recipesValue <= 0);
-  toggleEmpty('linked', linkedValue <= 0);
-  toggleEmpty('margin', marginValue == null);
+  const noRevenue = revenueValue <= 0 ? 'Sem faturamento no período.' : '';
+  setMetricNote('customers', customersValue <= 0 ? 'Nenhum cliente cadastrado.' : '');
+  setMetricNote('sales', salesValue <= 0 ? 'Nenhuma venda no período.' : '');
+  setMetricNote('revenue', noRevenue);
+  setMetricNote('cmv', noRevenue);
+  setMetricNote('profit', noRevenue);
+  setMetricNote('products', productsValue <= 0 ? 'Nenhum produto cadastrado.' : '');
+  setMetricNote('recipes', recipesValue <= 0 ? 'Nenhuma ficha técnica cadastrada.' : '');
+  setMetricNote('linked', linkedValue <= 0 ? 'Nenhum produto vinculado.' : '');
+  setMetricNote('margin', marginNote);
 
   renderCharts({
     salesCount: salesValue,
@@ -155,15 +188,20 @@ export function showProductsError() {
   setAlertCardError('alert-products', 'Não foi possível carregar os produtos.');
 }
 
+export function showRevenueError() {
+  setAlertCardError('alert-revenue', REVENUE_ERROR);
+}
+
 // Sem permissão (403): o cartão some, sem tirar a pessoa do painel.
 function hideAlertCard(prefix) {
   const card = document.getElementById(`${prefix}-message`)?.closest('.dashboard-alert-card');
   if (card) card.hidden = true;
 }
 
-async function loadAlertList(path, prefix, render, showError) {
+async function loadAlertList(path, prefix, render, showError, isStale = notStale) {
   try {
     const data = await fetchJson(path, null);
+    if (isStale()) return { list: [] };
     // Suporta formato paginado e não paginado
     const list = Array.isArray(data)
       ? data
@@ -172,6 +210,7 @@ async function loadAlertList(path, prefix, render, showError) {
     render(list);
     return { list };
   } catch (err) {
+    if (isStale()) return { list: [] };
     if (err && err.status === 403) {
       hideAlertCard(prefix);
       return { list: [] };
@@ -184,15 +223,15 @@ async function loadAlertList(path, prefix, render, showError) {
   }
 }
 
-export function loadClients() {
-  return loadAlertList('/api/customers', 'alert-clients', updateClientAlert, showClientsError);
+export function loadClients(isStale) {
+  return loadAlertList('/api/customers', 'alert-clients', updateClientAlert, showClientsError, isStale);
 }
 
-export function loadProducts() {
-  return loadAlertList('/api/products', 'alert-products', updateProductAlert, showProductsError);
+export function loadProducts(isStale) {
+  return loadAlertList('/api/products', 'alert-products', updateProductAlert, showProductsError, isStale);
 }
 
-export async function loadRevenueInsights(token, period) {
+export async function loadRevenueInsights(token, period, isStale = notStale) {
   if (!period) return; // auth via cookie HttpOnly: não há token no navegador
   try {
     const current = await fetchJson("/api/reports/financial", token, {
@@ -213,10 +252,23 @@ export async function loadRevenueInsights(token, period) {
         previous = null;
       }
     }
+    if (isStale()) return;
+    if (!current) {
+      showRevenueError();
+      return;
+    }
+    setAlertCardError('alert-revenue', '');
     updateRevenueAlert(current, previous, previousPeriod ? previousPeriod.unit : null);
   } catch (err) {
+    if (isStale()) return;
     console.error("Revenue insight:", err);
-    updateRevenueAlert(null, null);
+    // Sem permissão (403), tentar de novo nao adianta: so a mensagem, sem o botao.
+    if (err && err.status === 403) {
+      const message = document.getElementById('alert-revenue-message');
+      if (message) message.textContent = REVENUE_ERROR;
+      return;
+    }
+    showRevenueError();
   }
 }
 
@@ -242,7 +294,7 @@ export async function loadFallbackMetrics(token, period) {
       linkedProducts: linked,
       revenueTotal: financial && Number.isFinite(financial.revenue) ? financial.revenue : 0,
       salesCount: financial && Number.isFinite(financial.salesCount) ? financial.salesCount : 0,
-      margin: financial && Number.isFinite(financial.margin) ? financial.margin : 0,
+      margin: financial && Number.isFinite(financial.margin) ? financial.margin : undefined,
       cmvTotal: financial && Number.isFinite(financial.cmv) ? financial.cmv : undefined,
       profitTotal: financial && Number.isFinite(financial.profit) ? financial.profit : undefined,
       // O caminho alternativo não traz avisos de preço e estoque: eles ficam como "não verificados".

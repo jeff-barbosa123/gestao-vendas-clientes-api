@@ -106,11 +106,11 @@ describe('SGVC - Periodo anterior completo no painel', () => {
       hint(HINT('+0,0%', 'mês'));
     });
 
-    it('sem faturamento no periodo anterior continua "Sem dados comparativos"', () => {
+    it('sem faturamento no periodo anterior diz isso, sem inventar variacao', () => {
       const queries = open('2026-11-25T15:00:00Z', { '2026-11-01..2026-11-30': 600 });
       asked(queries, '2026-10-01..2026-10-31');
       cy.get('#alert-revenue-message').should('contain', '600,00');
-      hint('Sem dados comparativos');
+      hint('Sem faturamento no mês anterior para comparar.');
     });
 
     [[1280, 800], [375, 812]].forEach(([width, height]) => {

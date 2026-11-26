@@ -20,6 +20,7 @@ import {
   loadUpcomingOrders,
   renderUserName,
   showClientsError,
+  showDashboardLoading,
   showMetricsUnavailable,
   showProductsError,
   showSecondaryUnavailable,
@@ -43,12 +44,20 @@ function retryLoad() {
 
 document.querySelectorAll('[data-retry]').forEach((button) => button.addEventListener('click', retryLoad));
 
+// Só a carga mais recente escreve na tela: respostas de um período já trocado são descartadas.
+let currentLoad = 0;
+
 export async function carregarDashboard() {
+  currentLoad += 1;
+  const load = currentLoad;
+  const isStale = () => load !== currentLoad;
+  showDashboardLoading();
+
   let user;
   try {
     user = await ensureAuthenticated();
   } catch (err) {
-    if (state.isNavigating) return;
+    if (state.isNavigating || isStale()) return;
     const reason = normalizeError(err);
     showMetricsUnavailable();
     showSecondaryUnavailable();
@@ -59,7 +68,7 @@ export async function carregarDashboard() {
     return;
   }
   // Sessão expirada (401): ensureAuthenticated já redireciona para o login.
-  if (!user) return;
+  if (!user || isStale()) return;
   renderUserName(user);
   const period = buildPeriodQuery(periodSelect ? periodSelect.value : null);
   let metricsError = null;
@@ -87,6 +96,8 @@ export async function carregarDashboard() {
     }
   }
 
+  if (isStale()) return;
+
   if (metrics) {
     updateMetrics(metrics);
   } else {
@@ -95,11 +106,12 @@ export async function carregarDashboard() {
   }
 
   const [, , clients, products] = await Promise.all([
-    loadUpcomingOrders(),
-    loadRevenueInsights(null, period),
-    loadClients(null),
-    loadProducts(null),
+    loadUpcomingOrders(isStale),
+    loadRevenueInsights(null, period, isStale),
+    loadClients(isStale),
+    loadProducts(isStale),
   ]);
+  if (isStale()) return;
 
   const failed = [];
   if (!metrics) failed.push('os indicadores');

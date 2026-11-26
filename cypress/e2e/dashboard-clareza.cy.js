@@ -111,7 +111,7 @@ describe('SGVC - Dashboard claro', () => {
       open({ dismissed: true });
       cy.get('#dashboard-message').should('be.visible').and('contain', 'Não foi possível carregar os indicadores');
       METRICS.forEach((key) => cy.get(`#metric-${key}`).should('have.text', '—'));
-      cy.get('.kpi-empty:visible').should('not.exist');
+      METRICS.forEach((key) => cy.get(`[data-empty="${key}"]`).should('be.visible').and('have.text', 'Não foi possível carregar.'));
       cy.get('#alert-pricing-message').should('contain', 'Não foi possível verificar').and('not.contain', 'mantêm a margem');
       cy.get('#alert-stock-message').should('contain', 'Não foi possível verificar');
       cy.get('#alert-product-stock-message').should('contain', 'Não foi possível verificar');

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-25 - Estados do painel: carregando, falha, sem faturamento e comparacao
+
+- Indicadores sem valor confirmado mostram sempre `—` com o motivo ("Carregando..." ou "Nao foi possivel carregar."); acabaram os `--`, `R$ 0,00` e `0%` iniciais.
+- Troca de periodo ou nova tentativa limpa os numeros anteriores e o cartao de faturamento; respostas de cargas antigas sao ignoradas.
+- Margem media sem faturamento mostra `—` com explicacao (tratado na tela; a API continua devolvendo 0). Com faturamento, `0,0%` e valores negativos seguem aparecendo.
+- Zeros reais com frase propria por cartao; cadastros nao falam mais em "periodo" e o texto do topo diz o que o periodo filtra.
+- Comparacao: textos separados para periodo anterior sem faturamento e para falha ao carrega-lo. Falha na analise financeira atual ganha "Tentar novamente" no cartao (exceto sem permissao, 403).
+- Cypress: `dashboard-estados.cy.js` (novo), `dashboard-clareza.cy.js` e `periodo-anterior.cy.js` ajustados. Sem mudanca na API.
+
 ## 2026-11-25 - Painel compara com o periodo anterior completo do calendario
 
 - `dashboard/period.js`: o periodo anterior do cartao "Faturamento e tendencia" passa a ser o mes, trimestre ou ano anterior inteiro do calendario (antes voltava a mesma quantidade de dias, deixando dias de fora ou incluindo dias de outro periodo).

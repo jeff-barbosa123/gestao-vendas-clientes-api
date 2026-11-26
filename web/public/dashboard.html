@@ -48,7 +48,7 @@
         </form>
 
         <p class="dashboard-period-note">
-          Todos os dados abaixo referem-se ao período selecionado.
+          Vendas, faturamento, CMV, lucro e margem são do período selecionado. Os cadastros mostram o total atual.
         </p>
       </div>
 
@@ -74,42 +74,42 @@
 
       <div class="dashboard-grid primary">
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-customers">--</p>
+          <p class="dashboard-value" id="metric-customers">—</p>
           <p class="dashboard-label">Clientes ativos</p>
-          <p class="kpi-empty is-hidden" data-empty="customers">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="customers">Carregando...</p>
           <button class="button is-link is-small" id="clients-manage-action">
             Ver clientes
           </button>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-sales">--</p>
+          <p class="dashboard-value" id="metric-sales">—</p>
           <p class="dashboard-label">Vendas no período</p>
-          <p class="kpi-empty is-hidden" data-empty="sales">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="sales">Carregando...</p>
           <button class="button is-light is-small" id="sales-manage-action">
             Cadastrar venda
           </button>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-revenue">R$ 0,00</p>
+          <p class="dashboard-value" id="metric-revenue">—</p>
           <p class="dashboard-label">Faturamento</p>
-          <p class="kpi-empty is-hidden" data-empty="revenue">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="revenue">Carregando...</p>
           <span class="kpi-spacer" aria-hidden="true"></span>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-cmv">R$ 0,00</p>
+          <p class="dashboard-value" id="metric-cmv">—</p>
           <p class="dashboard-label">CMV</p>
           <p class="term-help">Quanto custaram os produtos que você vendeu.</p>
-          <p class="kpi-empty is-hidden" data-empty="cmv">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="cmv">Carregando...</p>
           <span class="kpi-spacer" aria-hidden="true"></span>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-profit">R$ 0,00</p>
+          <p class="dashboard-value" id="metric-profit">—</p>
           <p class="dashboard-label">Lucro bruto (faturamento − CMV)</p>
-          <p class="kpi-empty is-hidden" data-empty="profit">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="profit">Carregando...</p>
           <span class="kpi-spacer" aria-hidden="true"></span>
         </div>
       </div>
@@ -144,32 +144,32 @@
 
       <div class="dashboard-grid secondary">
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-products">--</p>
+          <p class="dashboard-value" id="metric-products">—</p>
           <p class="dashboard-label">Produtos cadastrados</p>
-          <p class="kpi-empty is-hidden" data-empty="products">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="products">Carregando...</p>
           <button class="button is-link is-small" id="products-manage-action">Ver produtos</button>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-recipes">--</p>
+          <p class="dashboard-value" id="metric-recipes">—</p>
           <p class="dashboard-label">Fichas técnicas</p>
           <p class="term-help">A receita do produto: ingredientes, quantidades e custos.</p>
-          <p class="kpi-empty is-hidden" data-empty="recipes">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="recipes">Carregando...</p>
           <button class="button is-link is-small" id="recipes-manage-action">Ver fichas</button>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-linked">--</p>
+          <p class="dashboard-value" id="metric-linked">—</p>
           <p class="dashboard-label">Produtos vinculados</p>
-          <p class="kpi-empty is-hidden" data-empty="linked">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="linked">Carregando...</p>
           <button class="button is-link is-small" id="linked-manage-action">Ver vínculos</button>
         </div>
 
         <div class="dashboard-card">
-          <p class="dashboard-value" id="metric-margin">0%</p>
+          <p class="dashboard-value" id="metric-margin">—</p>
           <p class="dashboard-label">Margem média</p>
           <p class="term-help">Quanto sobra da venda após o custo do produto. 40% são R$ 40 a cada R$ 100, antes das outras despesas.</p>
-          <p class="kpi-empty is-hidden" data-empty="margin">Sem dados no período.</p>
+          <p class="kpi-empty" data-empty="margin">Carregando...</p>
           <button class="button is-light is-small" id="margin-manage-action">Simular preço</button>
         </div>
       </div>
@@ -213,6 +213,9 @@
           <p class="dashboard-alert-hint" id="alert-revenue-hint"></p>
           <button class="button is-link is-small dashboard-alert-button" id="alert-revenue-action">
             Ver vendas
+          </button>
+          <button class="button is-light is-small dashboard-alert-button" type="button" id="alert-revenue-retry" data-retry hidden>
+            Tentar novamente
           </button>
         </article>
 

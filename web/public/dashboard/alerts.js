@@ -211,7 +211,9 @@ export function updateProductAlert(products) {
   setAlertContent(alertProductsCount, pending, alertProductsMessage, message, alertProductsHint, hint);
 }
 
-export function updateRevenueAlert(current, previous) {
+const PREVIOUS_PERIOD_LABELS = { month: 'mês', quarter: 'trimestre', year: 'ano' };
+
+export function updateRevenueAlert(current, previous, unit) {
   if (!current) {
     setAlertContent(alertRevenueCount, 0, alertRevenueMessage, "Não foi possível carregar os dados financeiros", alertRevenueHint, "");
     return;
@@ -220,11 +222,11 @@ export function updateRevenueAlert(current, previous) {
   const salesCount = Number(current.salesCount || 0);
   const message = `Faturamento ${money(revenue)}`;
   let hint = "Sem dados comparativos";
-  if (previous && Number(previous.revenue) > 0) {
+  if (unit && previous && Number(previous.revenue) > 0) {
     const prevRevenue = Number(previous.revenue);
     const change = prevRevenue === 0 ? 0 : ((revenue - prevRevenue) / prevRevenue) * 100;
     const sign = change >= 0 ? "+" : "";
-    hint = `Variação de ${sign}${change.toFixed(1).replace(".", ",")}% em relação ao período anterior`;
+    hint = `Variação de ${sign}${change.toFixed(1).replace(".", ",")}% em relação ao ${PREVIOUS_PERIOD_LABELS[unit]} anterior completo. O período atual ainda está em andamento.`;
   }
   setAlertContent(alertRevenueCount, salesCount, alertRevenueMessage, message, alertRevenueHint, hint);
 }

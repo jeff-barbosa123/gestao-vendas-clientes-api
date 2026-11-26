@@ -49,15 +49,26 @@ export function daysBetween(from, to) {
   return Math.round(diff / (1000 * 60 * 60 * 24));
 }
 
+// Tamanho em meses de cada bloco do calendario aceito na comparacao.
+const CALENDAR_UNITS = { 1: 'month', 3: 'quarter', 12: 'year' };
+
+// Mes, trimestre ou ano anterior completo do calendario. Retorna null se o intervalo nao for um desses blocos.
 export function computePreviousPeriod(period) {
   const startDate = formatIso(period.start);
   const endDate = formatIso(period.end);
   if (!startDate || !endDate) return null;
-  const diffMs = endDate.getTime() - startDate.getTime();
-  const previousEnd = new Date(startDate.getTime() - 1);
-  const previousStart = new Date(previousEnd.getTime() - diffMs);
+  const nextDay = new Date(endDate.getTime() + 864e5);
+  if (startDate.getUTCDate() !== 1 || nextDay.getUTCDate() !== 1) return null;
+  const year = startDate.getUTCFullYear();
+  const month = startDate.getUTCMonth();
+  const months = (nextDay.getUTCFullYear() - year) * 12 + nextDay.getUTCMonth() - month;
+  const unit = CALENDAR_UNITS[months];
+  // Trimestre comeca em jan, abr, jul ou out; ano comeca em janeiro.
+  if (!unit || month % months !== 0) return null;
+  const fmt = (d) => d.toISOString().slice(0, 10);
   return {
-    start: previousStart.toISOString().slice(0, 10),
-    end: previousEnd.toISOString().slice(0, 10),
+    start: fmt(new Date(Date.UTC(year, month - months, 1))),
+    end: fmt(new Date(Date.UTC(year, month, 0))),
+    unit,
   };
 }

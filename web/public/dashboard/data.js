@@ -213,7 +213,7 @@ export async function loadRevenueInsights(token, period) {
         previous = null;
       }
     }
-    updateRevenueAlert(current, previous);
+    updateRevenueAlert(current, previous, previousPeriod ? previousPeriod.unit : null);
   } catch (err) {
     console.error("Revenue insight:", err);
     updateRevenueAlert(null, null);

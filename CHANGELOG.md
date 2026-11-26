@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-25 - Painel compara com o periodo anterior completo do calendario
+
+- `dashboard/period.js`: o periodo anterior do cartao "Faturamento e tendencia" passa a ser o mes, trimestre ou ano anterior inteiro do calendario (antes voltava a mesma quantidade de dias, deixando dias de fora ou incluindo dias de outro periodo).
+- `dashboard/alerts.js`/`data.js`: o texto diz com o que compara (mes, trimestre ou ano anterior completo) e avisa que o periodo atual ainda esta em andamento.
+- Cypress: `periodo-anterior.cy.js`. Sem mudanca na API.
+
 ## 2026-11-25 - Simulacao: custo e cobranca da entrega separados
 
 - `simulacao.html`/`simulacao.js`: a entrega por pedido agora tem dois campos opcionais (quanto cobra do cliente e quanto gasta) e um bloco proprio no resultado com cobrado, gasto e saldo (cobrado menos gasto). Valor invalido ou negativo mostra erro no campo (antes, no modo com ficha, virava zero). Rotulos deixam claro o que e por unidade. Novos ids `*-delivery-cost` e `result-delivery-*`; `recipe-fee`/`quick-fee` passam a ser o valor cobrado.

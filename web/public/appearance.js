@@ -230,7 +230,8 @@
       state.hasLogo = dto.hasLogo;
       state.logoUrl = dto.logoUrl;
       renderLogo();
-      show(logoMessage, 'Logotipo atualizado.');
+      window.dispatchEvent(new CustomEvent('sgvc:branding', { detail: dto }));
+      show(logoMessage, "Logotipo '" + file.name + "' atualizado.");
     } catch (err) {
       show(logoMessage, err.message || 'Erro ao enviar o logotipo.', true);
     }
@@ -243,6 +244,7 @@
       state.hasLogo = dto.hasLogo;
       state.logoUrl = dto.logoUrl;
       renderLogo();
+      window.dispatchEvent(new CustomEvent('sgvc:branding', { detail: dto }));
       show(logoMessage, 'Logotipo removido.');
     } catch (err) {
       show(logoMessage, err.message || 'Erro ao remover o logotipo.', true);

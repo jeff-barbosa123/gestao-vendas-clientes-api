@@ -98,7 +98,7 @@ describe('Aparência (White-Label)', () => {
     cy.intercept('GET', '**/api/branding/logo?v=1', { statusCode: 200, headers: { 'content-type': 'image/png' }, body: PNG.contents }).as('getLogo');
     cy.get('#logo-file').selectFile(PNG, { force: true });
     cy.wait('@postLogo');
-    cy.get('#logo-message').should('contain', 'Logotipo atualizado');
+    cy.get('#logo-message').should('contain', "Logotipo 'logo.png' atualizado");
     cy.get('#logo-preview').should('not.have.attr', 'hidden');
     cy.get('#logo-remove').should('not.have.attr', 'hidden');
   });
@@ -217,5 +217,36 @@ describe('Aparência (White-Label)', () => {
     cy.get('#appearance-fix').click();
     cy.get('#appearance-save').click();
     cy.wait('@putAjustado');
+  });
+
+  it('a ajuda do logotipo explica que ele salva ao escolher o arquivo', () => {
+    cy.get('#logo-help').should('be.visible').and('contain', 'salvo assim que').and('contain', 'sem precisar de "Salvar aparência"');
+  });
+
+  it('envia o logotipo mesmo com a cor abaixo de 4,5:1 (Salvar desabilitado) e mantem a edicao das cores', () => {
+    cy.intercept('POST', '**/api/branding/logo', { statusCode: 200, body: { ...DEFAULT_DTO, hasLogo: true, logoUrl: '/api/branding/logo?v=1' } }).as('postLogoBaixo');
+    cy.intercept('GET', '**/api/branding/logo?v=1', { statusCode: 200, headers: { 'content-type': 'image/png' }, body: PNG.contents });
+    cy.get('#primary-color-hex').clear().type('#e5d848');
+    cy.get('#appearance-save').should('be.disabled');
+    cy.get('#logo-file').selectFile(PNG, { force: true });
+    cy.wait('@postLogoBaixo');
+    cy.get('#logo-message').should('contain', "Logotipo 'logo.png' atualizado");
+    cy.get('#appearance-save').should('be.disabled');
+    cy.get('#primary-color-hex').should('have.value', '#e5d848');
+  });
+
+  it('a barra lateral troca o logotipo na hora ao enviar e volta ao texto SGVC ao remover', () => {
+    cy.intercept('POST', '**/api/branding/logo', { statusCode: 200, body: { ...DEFAULT_DTO, hasLogo: true, logoUrl: '/api/branding/logo?v=2', companyName: 'Doces da Ana' } }).as('postLogoNav');
+    cy.intercept('GET', '**/api/branding/logo?v=2', { statusCode: 200, headers: { 'content-type': 'image/png' }, body: PNG.contents });
+    cy.intercept('DELETE', '**/api/branding/logo', { statusCode: 200, body: DEFAULT_DTO }).as('deleteLogoNav');
+    cy.get('.app-nav-brand').should('contain', 'SGVC').and('not.have.class', 'has-logo');
+    cy.get('#logo-file').selectFile(PNG, { force: true });
+    cy.wait('@postLogoNav');
+    cy.get('.app-nav-brand').should('have.class', 'has-logo');
+    cy.get('#brand-logo').should('have.attr', 'src', '/api/branding/logo?v=2').and('have.attr', 'alt', 'Logotipo Doces da Ana');
+    cy.get('#logo-remove').click();
+    cy.wait('@deleteLogoNav');
+    cy.get('#brand-logo').should('not.exist');
+    cy.get('.app-nav-brand').should('contain', 'SGVC').and('not.have.class', 'has-logo');
   });
 });

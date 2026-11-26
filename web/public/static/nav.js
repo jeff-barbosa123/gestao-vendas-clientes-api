@@ -6,6 +6,30 @@
  * Não depende de nenhuma outra biblioteca.
  */
 (() => {
+  // Desenha o topo da sidebar: logotipo (se houver) ou o texto "SGVC". Reusado no carregamento e no evento sgvc:branding.
+  function renderBrand(brand, dto) {
+    if (dto && dto.hasLogo && dto.logoUrl) {
+      const name = dto.companyName || 'SGVC';
+      let img = brand.querySelector('#brand-logo');
+      if (!img) {
+        img = document.createElement('img');
+        img.id = 'brand-logo';
+        img.className = 'app-nav-logo';
+        img.decoding = 'async';
+        brand.textContent = '';
+        brand.appendChild(img);
+      }
+      img.alt = 'Logotipo ' + name;
+      img.src = dto.logoUrl;
+      brand.classList.add('has-logo');
+      brand.setAttribute('aria-label', name);
+    } else {
+      brand.textContent = 'SGVC';
+      brand.classList.remove('has-logo');
+      brand.removeAttribute('aria-label');
+    }
+  }
+
   // Logotipo White-Label da empresa no topo da sidebar (no lugar do texto "SGVC").
   // Sem logo (ou se a API falhar) o texto "SGVC" permanece. A imagem vem do banco via /api/branding/logo.
   function applyCompanyLogo(brand) {
@@ -15,23 +39,15 @@
         if (!api) return;
         const dto = await api.request('/api/branding', { method: 'GET', skipAuth: true });
         if (!dto || !dto.hasLogo || !dto.logoUrl) return;
-        const name = dto.companyName || 'SGVC';
-        const img = document.createElement('img');
-        img.id = 'brand-logo';
-        img.className = 'app-nav-logo';
-        img.alt = 'Logotipo ' + name;
-        img.decoding = 'async';
-        img.src = dto.logoUrl;
-        brand.textContent = '';
-        brand.classList.add('has-logo');
-        brand.setAttribute('aria-label', name);
-        brand.appendChild(img);
+        renderBrand(brand, dto);
       } catch (_err) {
         // identidade e opcional: o menu continua com o texto SGVC
       }
     };
     if (document.readyState === 'complete') run();
     else window.addEventListener('load', run, { once: true });
+    // A tela Aparencia avisa quando o logotipo e enviado/removido: o menu troca na hora, sem recarregar
+    window.addEventListener('sgvc:branding', (event) => renderBrand(brand, event.detail));
   }
 
   // Grupos da sidebar. Equipe (team:manage) é inserida por static/access.js antes de "Aparência".

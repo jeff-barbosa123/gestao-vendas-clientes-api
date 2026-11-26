@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-26 - Aparencia: logotipo com aviso claro e menu atualizado na hora
+
+- O logotipo ja era independente do botao "Salvar aparencia" e do contraste (salva ao escolher o arquivo, `POST /api/branding/logo`), mas parecia travado: sem aviso, o menu so trocava ao recarregar e a mensagem era generica.
+- `appearance.html`: ajuda `#logo-help` ("O logotipo e salvo assim que voce escolhe o arquivo, sem precisar de Salvar aparencia").
+- `appearance.js`: mensagem com o nome do arquivo ("Logotipo 'logo.png' atualizado.") e evento `sgvc:branding` ao enviar/remover.
+- `static/nav.js`: `renderBrand` desenha logotipo ou texto SGVC; ouve `sgvc:branding` e troca o topo da sidebar sem recarregar (IDs `#brand-logo` e `.app-nav-brand` preservados).
+- Cypress (`appearance.cy.js`): 3 testes novos (ajuda, envio com cor abaixo de 4,5:1 mantendo a edicao das cores, menu na hora) e o texto esperado do envio atualizado. Sem mudanca na API.
+
 ## 2026-11-26 - CI: GL-006 deixa de depender do usuario do seed
 
 - `cypress/e2e/google-login.cy.js` (GL-006): o login por senha agora usa `cy.interceptLogin()` (login simulado) em vez de bater na API real com `admin@negocio.com`/`admin123`. No GitHub Actions o seed cria o admin com `ADMIN_EMAIL`/`ADMIN_PASSWORD` do workflow, entao esse usuario nao existia e o teste ficava em `/`, deixando o job `e2e-tests` vermelho (560 de 561 testes passando). Sem mudanca em codigo de producao.
